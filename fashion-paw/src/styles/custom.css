@@ -47,27 +47,27 @@
 }
 
 .paw-bg-primary {
-    color: #E1C599
+    background-color: #E1C599
 }
 .paw-text-primary {
     color: black
 }
 .paw-btn-primary {
-    color: #988450
+    background-color: #988450
 }
 
 .paw-bg-secondary {
-    color: #70823C;
+    background-color: #70823C;
 }
 .paw-text-secondary {
     color: #ced4da;
 }
 .paw-btn-secondary {
-    color: #ECC978;
+    background-color: #ECC978;
 }
 
 .paw-hover-primary{
-    color:#F7F0E7
+    background-color:#F7F0E7
 }
 
 
