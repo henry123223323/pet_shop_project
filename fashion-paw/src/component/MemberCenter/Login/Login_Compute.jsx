@@ -1,13 +1,19 @@
 import React, { Component } from 'react';
-import Third_Login from './Third_login';
+import ThirdLogin from './Third_login';
 
 class Login_Compute extends Component {
-    state = {}
+    state = {
+        stylelist: {
+            minHeight: '550px',
+            textAlign: 'center',
+            marginTop: '100px'
+        }
+    }
 
     render() {
         return (
             <React.Fragment>
-                <div style={{ width: '50%', marginTop: '100px', marginLeft: 'auto', marginRight: 'auto' }}>
+                <div style={this.state.stylelist} className='col-md-6 col-12'>
                     <h1 className="text-center">登入</h1>
                     <div className="fs-2 text-center">
                         <form action="">
@@ -20,10 +26,10 @@ class Login_Compute extends Component {
                             <input type="submit" className="btn btn-primary" value="登入" />
                         </form>
                     </div>
-                    <a href="./myAcount.html">忘記密碼</a><br />
-                    <a href="./register.html">我還沒註冊帳號</a><br /><br />
+                    <a href="/MemberCenter">忘記密碼</a><br />
+                    <a href="/MemberCenter/Register">我還沒註冊帳號</a><br /><br />
                     <hr />
-                    <Third_Login />
+                    <ThirdLogin />
                 </div>
             </React.Fragment>
         );
