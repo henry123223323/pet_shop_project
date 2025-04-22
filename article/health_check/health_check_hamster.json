@@ -1,55 +1,171 @@
 [
     {
-        "title": "倉鼠種類介紹",
-        "banner_url": "https://i.pinimg.com/1200x/eb/a4/6d/eba46d738b11318c21c1edd2d304d272.jpg",
-        "intro": "倉鼠的種類繁多，像是黃金鼠、一線鼠、三線鼠、老公公鼠、老婆婆鼠等等，這些倉鼠的外觀及生活習性大有不同，文章會詳細介紹，讓你了解倉鼠的多樣性!",
-        "sections": [
-            {
-                "heading": "黃金鼠",
-                "image_url": "",
-                "body": "黃金鼠又稱敘利亞倉鼠，成鼠身長敘利亞倉鼠 13cm，成人平均體重105克，新生兒平均體重2.45克 壽命比坎貝爾倉鼠長，在寵養的環境下通常活二至三年。"
-            },
-            {
-                "heading": "一線鼠",
-                "image_url": "https://upload.wikimedia.org/wikipedia/commons/f/f8/Campbell_hamster.jpg",
-                "body": "一線鼠又稱坎貝爾侏儒倉鼠，坎貝爾侏儒倉鼠屬於侏儒倉鼠屬。 這個屬的倉鼠最大的特點在於其腳背與腳底都布滿毛，其他種倉鼠則只有腳背有毛，因為這個特點所以侏儒倉鼠屬又被稱為毛足屬"
-            },
-            {
-                "heading": "三線鼠",
-                "image_url": "https://upload.wikimedia.org/wikipedia/commons/f/f8/Campbell_hamster.jpg",
-                "body": "三線鼠又稱短尾侏儒倉鼠，特徵包括了典型的暗灰色背部條紋跟毛絨的腳，尾巴相當的短以至於他們坐下後難以看見尾巴。相比坎貝爾倉鼠，短尾倉鼠的毛色較為單調，均為不同程度的灰色。原始色（灰黑色）、珍珠色和藍寶石色是三種最為常見的毛色。"
-            }
-        ]
+      "title": "倉鼠皮毛健康檢查",
+      "banner_url": "https://upload.wikimedia.org/wikipedia/commons/7/7f/Hamster_fur.jpg",
+      "intro": "倉鼠光滑亮麗的毛色是健康的指標，透過日常觀察皮毛並定期梳理，可預防寄生蟲及皮膚疾病，讓毛孩保持最佳狀態。",
+      "product_category": "Health Supplements",
+      "pet_type": "mouse",
+      "sections": [
+        {
+          "heading": "日常梳理",
+          "image_url": "https://upload.wikimedia.org/wikipedia/commons/a/a0/Golden_Hamster_cute.jpg",
+          "body": "每日以柔軟小刷輕刷全身毛髮，去除污垢與死毛，有助促進血液循環並讓主人及早發現寄生蟲或皮膚紅腫問題。"
+        },
+        {
+          "heading": "皮膚檢查",
+          "image_url": "https://upload.wikimedia.org/wikipedia/commons/7/7f/Hamster_fur.jpg",
+          "body": "檢視皮膚是否有乾癢、紅斑、結痂或脫屑等等現象。異常狀況應立刻改善環境衛生，提高清理頻率，降低環境濕度、改善空氣流通應立即隔離並諮詢獸醫，避免皮膚病擴散。"
+        },
+        {
+          "heading": "寄生蟲防治",
+          "image_url": "https://upload.wikimedia.org/wikipedia/commons/3/3c/Dwarf_hamster_%28Cricetulus_barabensis%29_%28cropped%29.jpg",
+          "body": "每月以獸醫建議的外用驅蟲劑處理，同時保持籠內清潔乾燥，減少跳蚤、蜱蟲等寄生蟲滋生機會。"
+        }
+      ]
     },
-
     {
-        "title": "新手買倉鼠需要準備哪些用品？",
-        "banner_url": "https://i.pinimg.com/1200x/eb/a4/6d/eba46d738b11318c21c1edd2d304d272.jpg",
-        "intro": "倉鼠的種類繁多，像是黃金鼠、一線鼠、三線鼠、老公公鼠、老婆婆鼠等等，這些倉鼠的外觀及生活習性大有不同，文章會詳細介紹，讓你了解倉鼠的多樣性!",
-        "sections": [
-            {
-                "heading": "需要準備哪些用品呢?",
-                "image_url": "",
-                "body": [
-                    "以下是新手倉鼠飼養必備物品:",
-                    "鼠籠",
-                    "滾輪",
-                    "飲水器",
-                    "鼠廁",
-                    "廁所沙",
-                    "浴沙(侏儒倉鼠)",
-                    "墊材",
-                    "鼠食",
-                    "躲避屋(夏天陶瓷屋、冬天木屋)",
-                    "散熱板",
-                    "保暖燈"
-                ]
-            },
-            {
-                "heading": "鼠籠要多大呢?",
-                "image_url": "https://megapx-assets.dcard.tw/images/19ca12b9-cc8e-4a1d-9a88-4d95c2b665f1/full.jpeg",
-                "body": "籠子的尺寸要看倉鼠的大小來選擇，原則上要盡量買大一點，以確保倉鼠有足夠的活動空間。依照愛鼠協會的建議，黃金倉鼠體型比較大，需要底部面積達到 40*60＝2400平方公分，加卡利亞侏儒鼠的話，至少要 30*40＝1200平方公分公分以上的空間。"
-            }
-        ]
+      "title": "倉鼠體重與飲食監測",
+      "banner_url": "https://upload.wikimedia.org/wikipedia/commons/3/3c/Dwarf_hamster_%28Cricetulus_barabensis%29_%28cropped%29.jpg",
+      "intro": "倉鼠體重過輕或過重都會影響健康，每週測量並記錄體重，搭配均衡飼料及新鮮蔬果，可保持理想體態與活力。",
+      "product_category": "Health Supplements",
+      "pet_type": "mouse",
+      "sections": [
+        {
+          "heading": "每週稱重",
+          "image_url": "https://upload.wikimedia.org/wikipedia/commons/4/4f/Hamster_on_scale.jpg",
+          "body": "利用小型電子磅秤，每週固定同一時間測量體重並紀錄，以判斷飲食是否需要調整，及早預防營養不良或肥胖。"
+        },
+        {
+          "heading": "飼料配比",
+          "image_url": "https://upload.wikimedia.org/wikipedia/commons/1/16/Phodopus_roborovskii.jpg",
+          "body": "主食乾糧佔八成、種子類占兩成，避免高脂零食過多，每日餵量以體重5％左右為原則，保持營養均衡。"
+        },
+        {
+          "heading": "水分補給",
+          "image_url": "https://upload.wikimedia.org/wikipedia/commons/7/7b/Hamster-drinking-water.jpg",
+          "body": "使用滴水式飲水器，保持水質清潔，每天更換乾淨飲用水，避免使用開口碗以防沉入沙土造成污染。"
+        }
+      ]
+    },
+    {
+      "title": "倉鼠眼耳口腔檢查",
+      "banner_url": "https://upload.wikimedia.org/wikipedia/commons/2/2f/Hamster_face_closeup.jpg",
+      "intro": "清亮無分泌物的眼睛、乾淨無異味的耳朵與口腔，是倉鼠健康的重要指標，每週檢查能及早發現感染與牙齒問題。",
+      "product_category": "Health Supplements",
+      "pet_type": "mouse",
+      "sections": [
+        {
+          "heading": "眼部觀察",
+          "image_url": "https://upload.wikimedia.org/wikipedia/commons/2/2f/Hamster_face_closeup.jpg",
+          "body": "檢查看是否有結膜炎、分泌物或眼睛凹陷，若發現紅腫、流淚或眼周多毛黏附需即刻就醫。"
+        },
+        {
+          "heading": "耳朵檢查",
+          "image_url": "https://upload.wikimedia.org/wikipedia/commons/4/4a/Mouse_ear.jpg",
+          "body": "輕翻耳廓內側檢查是否有紅腫、分泌物或異味，並用無塵棉棒輕拭，若有異常皮屑或寄生蟲應清潔並治療。"
+        },
+        {
+          "heading": "牙齒狀況",
+          "image_url": "https://upload.wikimedia.org/wikipedia/commons/a/a0/Golden_Hamster_cute.jpg",
+          "body": "查看門齒是否過長、錯牙或裂缺，牙長過長需提供硬質啃咬玩具並諮詢獸醫定期修磨，避免進食困難。"
+        }
+      ]
+    },
+    {
+      "title": "倉鼠呼吸系統檢測",
+      "banner_url": "https://upload.wikimedia.org/wikipedia/commons/1/13/Hamster_health_check.jpg",
+      "intro": "呼吸急促、打噴嚏或咳嗽都是呼吸道感染警訊，透過觀察呼吸頻率與聲音，可及時發現肺部或鼻竇問題並給予治療。",
+      "product_category": "Health Supplements",
+      "pet_type": "mouse",
+      "sections": [
+        {
+          "heading": "呼吸頻率",
+          "image_url": "https://upload.wikimedia.org/wikipedia/commons/9/97/Hamster_asleep.jpg",
+          "body": "安靜時觀察胸腔起伏，每分鐘呼吸不超過100次，若持續喘氣加快或張口呼吸須降低環境溫差並就醫診治。"
+        },
+        {
+          "heading": "打噴嚏觀察",
+          "image_url": "https://upload.wikimedia.org/wikipedia/commons/7/7b/Hamster-drinking-water.jpg",
+          "body": "頻繁連續打噴嚏、流鼻涕代表上呼吸道可能有細菌或病毒感染，應立即隔離並諮詢專業用藥。"
+        },
+        {
+          "heading": "環境通風",
+          "image_url": "https://upload.wikimedia.org/wikipedia/commons/4/47/Hamster_toys.jpg",
+          "body": "避免潮濕及煙塵環境，每日開窗通風並定期消毒籠內設備，以減少病原菌繁殖及空氣汙染。"
+        }
+      ]
+    },
+    {
+      "title": "倉鼠排泄與泌尿檢查",
+      "banner_url": "https://upload.wikimedia.org/wikipedia/commons/3/3e/Hamster_litter_box.jpg",
+      "intro": "觀察排便形狀與頻率，可迅速掌握倉鼠腸胃及泌尿系統健康；異常排泄物或血尿皆需立即送醫檢查。",
+      "product_category": "Health Supplements",
+      "pet_type": "mouse",
+      "sections": [
+        {
+          "heading": "糞便形狀",
+          "image_url": "https://upload.wikimedia.org/wikipedia/commons/d/d8/Hamster_sleeping.jpg",
+          "body": "正常糞便呈小圓柱狀且偏乾硬，若出現鬆散軟膏狀或黏液，可能是消化不良或腸道感染。"
+        },
+        {
+          "heading": "尿液顏色",
+          "image_url": "https://upload.wikimedia.org/wikipedia/commons/6/6c/Hamster_bowl.jpg",
+          "body": "健康尿液呈淡黃色透明，若顏色深黃甚至帶血色、伴隨臭味，須懷疑泌尿道感染或結石問題。"
+        },
+        {
+          "heading": "清潔砂盆",
+          "image_url": "https://upload.wikimedia.org/wikipedia/commons/a/ae/Hamster_toys.jpg",
+          "body": "提供專用砂盆並每日更換清潔，保持尿砂乾燥，減少細菌滋生與異味，同時方便觀察排泄狀況。"
+        }
+      ]
+    },
+    {
+      "title": "倉鼠骨骼與運動功能檢查",
+      "banner_url": "https://upload.wikimedia.org/wikipedia/commons/9/9c/Hamster_paws.jpg",
+      "intro": "透過觀察倉鼠行走姿態及抓握能力，可檢測四肢與關節健康；定期提供運動玩具，並留意是否有跛行或無力現象。",
+      "product_category": "Health Supplements",
+      "pet_type": "mouse",
+      "sections": [
+        {
+          "heading": "行走姿態",
+          "image_url": "https://upload.wikimedia.org/wikipedia/commons/9/9c/Hamster_paws.jpg",
+          "body": "觀察倉鼠行走時是否平衡、無任何一側拖步或跛行，如有需檢查是否軟組織受傷或關節炎。"
+        },
+        {
+          "heading": "抓握測試",
+          "image_url": "https://upload.wikimedia.org/wikipedia/commons/5/59/Roborovski_dwarf_hamster_pups.jpg",
+          "body": "將倉鼠輕放於手掌，測試其抓握及跳躍能力，若出現無力或握不住邊緣，可能有肌肉或神經問題。"
+        },
+        {
+          "heading": "運動建議",
+          "image_url": "https://upload.wikimedia.org/wikipedia/commons/4/47/Hamster_toys.jpg",
+          "body": "提供跑輪、隧道與攀爬架，讓倉鼠每日適度運動，保持肌肉張力並預防骨質疏鬆或肌力退化。"
+        }
+      ]
+    },
+    {
+      "title": "倉鼠老年健康監測",
+      "banner_url": "https://upload.wikimedia.org/wikipedia/commons/9/97/Hamster_asleep.jpg",
+      "intro": "倉鼠進入老年後，身體機能逐漸退化，需要更細緻的日常關懷，透過定期檢查與環境調整，提升銀髮倉鼠的生活品質。",
+      "product_category": "Health Supplements",
+      "pet_type": "mouse",
+      "sections": [
+        {
+          "heading": "行動力觀察",
+          "image_url": "https://upload.wikimedia.org/wikipedia/commons/9/9c/Hamster_paws.jpg",
+          "body": "老年倉鼠運動量會減少，若連基本走動都變困難，可能是關節退化或肌力不足，需提供防滑墊與低坡道。"
+        },
+        {
+          "heading": "食慾與體重",
+          "image_url": "https://upload.wikimedia.org/wikipedia/commons/4/4f/Hamster_on_scale.jpg",
+          "body": "注意老年倉鼠是否開始食慾不振、體重異常下降，透過調整飼料質地與餵食頻率，確保營養充足。"
+        },
+        {
+          "heading": "環境舒適度",
+          "image_url": "https://upload.wikimedia.org/wikipedia/commons/3/3e/Hamster_litter_box.jpg",
+          "body": "為銀髮倉鼠提供更溫暖柔軟的睡窩，並降低籠內障礙物高度，減少跳躍與攀爬負擔，提升日常安全性。"
+        }
+      ]
     }
-]
+  ]
+  
