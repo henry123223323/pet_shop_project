@@ -1,0 +1,47 @@
+/* 字型大小 */
+/* 基本上會使用的  h3-h5、20-12px */
+
+.p1 {
+    font-size: 32px;
+}
+
+.pb1 {
+    font-weight: bold;
+    font-size: 32px;
+}
+
+.p2 {
+    font-size: 24px;
+}
+
+.pb2 {
+    font-weight: bold;
+    font-size: 24px;
+}
+
+.p3 {
+    font-size: 18px;
+}
+
+.pb3 {
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.p4 {
+    font-size: 16px;
+}
+
+.pb4 {
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.p5 {
+    font-size: 12px;
+}
+
+.pb5 {
+    font-weight: bold;
+    font-size: 12px;
+}
