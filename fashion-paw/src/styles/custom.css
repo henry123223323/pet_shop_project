@@ -49,25 +49,32 @@
 .paw-bg-primary {
     background-color: #E1C599
 }
-.paw-text-primary {
-    color: black
-}
-.paw-btn-primary {
-    background-color: #988450
-}
 
 .paw-bg-secondary {
     background-color: #70823C;
 }
+
+.paw-text-primary {
+    color: black
+}
+
 .paw-text-secondary {
     color: #ced4da;
 }
+
+.paw-btn-primary {
+    background-color: #988450
+}
+
 .paw-btn-secondary {
     background-color: #ECC978;
 }
 
-.paw-hover-primary{
-    background-color:#F7F0E7
+.paw-hover-primary {
+    background-color: #F7F0E7
 }
 
-
+.btn-outline-primary {
+    color:#988450;
+    border-color: #988450;
+  }
