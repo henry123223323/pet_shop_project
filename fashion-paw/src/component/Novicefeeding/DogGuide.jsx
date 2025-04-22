@@ -25,6 +25,7 @@ class DogGuide extends Component {
                         <h5 className="border border-5 border-warning border-top-0 border-start-0 border-end-0 text-center">
                             ｜早上：起床＋巡邏
                         </h5>
+                        <button className='btn btn-outline-primary'>測試按鈕</button>
                         <p>
                             早上 6 點整，胖虎就開始在家中四處走動，確認地板上沒有敵人、窗外的貓沒靠太近。昨天沒吃完的飼料還在不在。之後他會挑一個最舒服的位置坐下來盯著人類吃早餐，眼神裡充滿疑問：「我咧？」
                         </p>
