@@ -1,7 +1,6 @@
 // src/component/ProductCard/ProductCard.jsx
 import React from 'react';
 import styles from './ProductCard.module.css';
-import { FaHeart, FaShoppingCart } from 'react-icons/fa'; // 你也可換成其他圖示庫
 
 export default function ProductCard({
   id,
@@ -14,28 +13,33 @@ export default function ProductCard({
 }) {
   return (
     <div className={styles.card} data-id={id}>
-      <img src={imageUrl} alt={name} className={styles.img} />
-      <h2 className={styles.title}>{name}</h2>
-      <p className={styles.price}>NT${price}</p>
+      <div className={styles.imageWrapper}>
+        <img src={imageUrl} alt={name} />
+      </div>
 
-      <div className={styles.actions}>
-        {/* 收藏按鈕 */}
-        <button
-          className={`${styles.btn} ${isFavorite ? styles.favorited : ''}`}
-          onClick={() => onToggleFavorite(id)}
-          aria-label="收藏"
-        >
-          <FaHeart />
-        </button>
+      <div className={styles.content}>
+        <div className={styles.info}>
+          <h4 className={styles.title}>{name}</h4>
+          <p className={styles.price}>NT${price}</p>
+          <p className={styles.desc}> </p>
+        </div>
 
-        {/* 加入購物車按鈕 */}
-        <button
-          className={styles.btn}
-          onClick={() => onAddToCart(id)}
-          aria-label="加入購物車"
-        >
-          <FaShoppingCart />
-        </button>
+        <div className={styles.actions}>
+          <button
+            className={`${styles.btn} ${isFavorite ? styles.favorited : ''}`}
+            onClick={() => onToggleFavorite(id)}
+            aria-label="收藏"
+          >
+            {isFavorite ? '❤️' : '🤍'}
+          </button>
+          <button
+            className={styles.btn}
+            onClick={() => onAddToCart(id)}
+            aria-label="加入購物車"
+          >
+            🛒
+          </button>
+        </div>
       </div>
     </div>
   );

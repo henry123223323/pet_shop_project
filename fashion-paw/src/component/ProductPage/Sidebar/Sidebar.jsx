@@ -1,40 +1,67 @@
 // src/component/Sidebar/Sidebar.jsx
-import React from 'react';
+import React, { useState } from 'react';
 import styles from './Sidebar.module.css';
 
-const petTypes = ['狗', '貓', '鳥', '老鼠'];
-const categories = ['玩具', '乾糧', '保健食品', '副食/零食','生活家居'];
-
 export default function Sidebar() {
+  // expandedType 存放目前展開的是哪個區域（'dog' or 'cat' or null）
+  const [expandedType, setExpandedType] = useState(null);
+
+  const toggleType = (type) => {
+    setExpandedType(prev => (prev === type ? null : type));
+  };
+
   return (
     <div className={styles.sidebar}>
+      {/* 動物專區 */}
       <section className={styles.section}>
-        <h4>狗狗區</h4>
-        <ul>
-          {categories.map(type => (
-            <li key={type}>
-              <label>
-                <input type="checkbox" name="petType" value={type} />{' '}
-                {type}
-              </label>
-            </li>
-          ))}
+        <ul className={styles.menu}>
+          <li>
+            <button
+              className={styles.toggleBtn}
+              onClick={() => toggleType('dog')}
+            >
+               狗狗專區
+              <span className={styles.arrow}>
+                {expandedType === 'dog' ? '▾' : '▸'}
+              </span>
+            </button>
+            {expandedType === 'dog' && (
+              <ul className={styles.sublist}>
+                <li><label><input type="checkbox" /> 飼料</label></li>
+                <li><label><input type="checkbox" /> 副食</label></li>
+                <li><label><input type="checkbox" /> 零食</label></li>
+                <li><label><input type="checkbox" /> 保健食品</label></li>
+                <li><label><input type="checkbox" /> 家居</label></li>
+                <li><label><input type="checkbox" /> 玩具</label></li>
+              </ul>
+            )}
+          </li>
+          <li>
+            <button
+              className={styles.toggleBtn}
+              onClick={() => toggleType('cat')}
+            >
+               貓貓專區
+              <span className={styles.arrow}>
+                {expandedType === 'cat' ? '▾' : '▸'}
+              </span>
+            </button>
+            {expandedType === 'cat' && (
+              <ul className={styles.sublist}>
+                {/* 這裡放貓貓專區的子項 */}
+                <li><label><input type="checkbox" /> 飼料</label></li>
+                <li><label><input type="checkbox" /> 副食</label></li>
+                <li><label><input type="checkbox" /> 零食</label></li>
+                <li><label><input type="checkbox" /> 保健食品</label></li>
+                <li><label><input type="checkbox" /> 家居</label></li>
+                <li><label><input type="checkbox" /> 玩具</label></li>
+              </ul>
+            )}
+          </li>
+          {/* 你可以再多加其他動物 */}
         </ul>
       </section>
-
-      <section className={styles.section}>
-        <h4>貓貓區</h4>
-        <ul>
-          {categories.map(cat => (
-            <li key={cat}>
-              <label>
-                <input type="checkbox" name="category" value={cat} />{' '}
-                {cat}
-              </label>
-            </li>
-          ))}
-        </ul>
-      </section>
+      {/* 其他 section… */}
     </div>
   );
 }
