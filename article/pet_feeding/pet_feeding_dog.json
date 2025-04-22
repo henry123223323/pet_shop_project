@@ -1,8 +1,9 @@
 [
     {
         "title": "新手飼主必讀：如何迎接你的第一隻狗狗？",
-        "banner_url": "https://imgur.com/a/HxFOpxK",
+        "banner_url": "https://imgur.com/a/PndKs2C",
         "intro": "迎接一隻新狗狗是每位飼主夢寐以求的時刻，對於新手飼主來說，這同時也是一段充滿學習和挑戰的過程。從準備狗狗的基本需求，到了解如何與狗狗建立良好的關係，每一步都是確保你與狗狗建立長久、健康關係的基礎。",
+        "product_category": "pet_feeding_dog",
         "sections": [
             {
                 "heading": "1. 準備基本設施",
@@ -35,6 +36,7 @@
         "title": "愛犬養成記：新手飼主如何教狗狗基礎命令",
         "banner_url": "https://imgur.com/a/iZgeP8y",
         "intro": "對於新手飼主來說，教狗狗基礎命令是一個非常重要的過程。這不僅能幫助建立你與狗狗之間的良好關係，還能讓你們的日常生活更加和諧。以下是一些簡單又有效的技巧，幫助你開始教狗狗基礎命令。",
+        "product_category": "pet_feeding_dog",
         "sections": [
             {
                 "heading": "1. 讓狗狗熟悉「坐下」命令",
@@ -85,6 +87,7 @@
         "title": "新手飼主的困擾：如何解決狗狗咬東西、亂大小便等行為問題？",
         "banner_url": "https://imgur.com/a/XhX7ew1",
         "intro": "養狗狗是件充滿樂趣的事情，但對於新手飼主來說，狗狗的某些行為問題可能會讓你感到困惑或焦慮。比如，狗狗亂咬東西、隨地大小便、甚至是過度吠叫，這些都是新手飼主常遇到的挑戰。別擔心，這些問題是可以解決的，只需要掌握一些訓練技巧和耐心。以下是幾個常見問題及其解決方法：",
+        "product_category": "pet_feeding_dog",
         "sections": [
             {
                 "heading": "1. 狗狗亂咬東西",
@@ -134,6 +137,7 @@
         "title": "狗狗飲食入門：新手飼主該如何挑選最適合的狗糧？",
         "banner_url": "https://imgur.com/a/jAWtTrA",
         "intro": "對於新手飼主來說，挑選合適的狗糧是保證狗狗健康的重要步驟。市場上的狗糧品牌和種類繁多，該如何選擇最適合自己狗狗的食物呢？以下幾個關鍵因素可以幫助你做出最佳選擇",
+        "product_category": "pet_feeding_dog",
         "sections": [
             {
                 "heading": "1. 根據狗狗的年齡選擇",
@@ -185,6 +189,7 @@
         "title": "狗狗生活：新手飼主如何建立穩定的作息和訓練計劃",
         "banner_url": "https://imgur.com/a/iUs6W93",
         "intro": "迎接新狗狗進入家庭後，如何建立穩定的作息和訓練計劃是每位新手飼主必須面對的重要任務。一個良好的作息和訓練計劃不僅能幫助你的狗狗過上健康、快樂的生活，還能增進你與狗狗之間的關係。以下是幾個實用的建議，幫助你開始為狗狗設立規律的生活方式。",
+        "product_category": "pet_feeding_dog",
         "sections": [
             {
                 "heading": "1. 建立規律的作息時間",
@@ -236,6 +241,7 @@
         "title": "從選擇品種到生活習慣：新手飼養狗狗的全面手冊",
         "banner_url": "https://imgur.com/a/CG8MtZ9",
         "intro": "養一隻狗狗是每位愛犬人士夢寐以求的事情，尤其對新手飼主來說，從挑選適合的品種到確立健康的生活習慣，都是關鍵步驟。這份全面手冊將幫助你一步步了解如何成功地飼養狗狗，並確保牠們過上健康快樂的生活。",
+        "product_category": "pet_feeding_dog",
         "sections": [
             {
                 "heading": "1. 如何選擇適合的狗狗品種",
