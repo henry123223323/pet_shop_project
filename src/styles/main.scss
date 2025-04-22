@@ -1,0 +1,3 @@
+// main.scss
+@import './theme';        // 先定義的主視覺色彩
+@import '~bootstrap/scss/bootstrap';  // 再載入 Bootstrap
