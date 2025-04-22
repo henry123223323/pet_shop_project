@@ -6,6 +6,7 @@ import MemberCenter from './component/MemberCenter/MyAccount'
 import Homepage from './component/Homepage/Homepage';
 import Login from './component/MemberCenter/Login';
 import Register from './component/MemberCenter/Register';
+import DogGuide from '';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="/MemberCenter" component={ MemberCenter } exact/>
         <Route path="/MemberCenter/Login" component={ Login } exact/>
         <Route path="/MemberCenter/Register" component={ Register } exact/>
+        <Route path="/Novicefeeding/DogGuide" component={DogGuide} exact/>
       </Switch>
       <h1 className='bg-primary'>Footer</h1>
     </BrowserRouter>
