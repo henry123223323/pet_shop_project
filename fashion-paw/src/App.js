@@ -3,6 +3,7 @@ import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import MemberCenter from './component/MemberCenter/MyAccount'
 import Homepage from './component/Homepage/Homepage';
+import ProductPage from './component/ProductPage/ProductPage';
 
 function App() {
   return (
@@ -11,6 +12,7 @@ function App() {
       <Switch>
         <Route path="/" component={ Homepage } exact/>
         <Route path="/MemberCenter" component={ MemberCenter } exact/>
+        <Route path="/ProductPage" component={ ProductPage } exact/>
       </Switch>
       <h1 className='bg-primary'>Footer</h1>
     </BrowserRouter>
