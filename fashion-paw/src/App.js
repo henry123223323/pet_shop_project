@@ -4,6 +4,7 @@ import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import MemberCenter from './component/MemberCenter/MyAccount'
 import Homepage from './component/Homepage/Homepage';
+import ProductPage from './component/ProductPage/ProductPage';
 import Login from './component/MemberCenter/Login';
 import Register from './component/MemberCenter/Register';
 import DogGuide from './component/Novicefeeding/DogGuide';
@@ -15,6 +16,7 @@ function App() {
       <Switch>
         <Route path="/" component={ Homepage } exact/>
         <Route path="/MemberCenter" component={ MemberCenter } exact/>
+        <Route path="/ProductPage" component={ ProductPage } exact/>
         <Route path="/MemberCenter/Login" component={ Login } exact/>
         <Route path="/MemberCenter/Register" component={ Register } exact/>
         <Route path="/Novicefeeding/DogGuide" component={DogGuide} exact/>

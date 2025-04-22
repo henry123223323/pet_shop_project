@@ -1,0 +1,44 @@
+/* src/component/ProductCard/ProductCard.module.css */
+.card {
+    background: #fff;
+    border-radius: 8px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 4px;
+  }
+  .title {
+    margin: 8px 0 4px;
+    font-size: 1rem;
+    text-align: center;
+  }
+  .price {
+    margin-bottom: 12px;
+    color: #333;
+    font-weight: bold;
+  }
+  .actions {
+    display: flex;
+    gap: 8px;
+  }
+  .btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+    padding: 4px;
+    transition: transform 0.1s;
+  }
+  .btn:hover {
+    transform: scale(1.1);
+  }
+  .favorited {
+    color: #e74c3c; /* 已收藏時變色 */
+  }
+  
