@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 class Main_img
  extends Component {
-    state = {  } 
+    state = { 
+        class: this.props.className
+     } 
     render() { 
         return (
-            <div className='w-50'>
-                <img src={this.props.source} alt="主視覺" className='w-50 h-auto' />
+            <div className={this.state.class}>
+                <img src={this.props.source} alt="主視覺" className="img-fluid" />
             </div>
         );
     }
