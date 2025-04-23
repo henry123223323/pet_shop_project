@@ -7,7 +7,7 @@ import Homepage from './component/Homepage/Homepage';
 import ProductPage from './component/ProductPage/ProductPage';
 import Login from './component/MemberCenter/Login';
 import Register from './component/MemberCenter/Register';
-import DogGuide from './component/Novicefeeding/DogGuide';
+import DogGuide from './component/PetKnowledge/Novicefeeding/DogGuide';
 
 function App() {
   return (
