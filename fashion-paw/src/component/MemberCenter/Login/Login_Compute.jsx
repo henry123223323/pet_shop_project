@@ -23,7 +23,7 @@ class Login_Compute extends Component {
                             <label htmlFor="password">密碼:</label>
                             <input type="password" id="password" />
                             <p></p>
-                            <input type="submit" className="btn btn-primary" value="登入" />
+                            <input type="submit" className="btn paw-btn-primary" value="登入" />
                         </form>
                     </div>
                     <a href="/MemberCenter">忘記密碼</a><br />
