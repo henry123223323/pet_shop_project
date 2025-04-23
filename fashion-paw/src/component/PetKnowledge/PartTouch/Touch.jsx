@@ -5,6 +5,7 @@ class Touch extends Component {
         return (
             <div className="container-xl">
                 <h1 className='paw-bg-primary'>部位碰碰看</h1>
+                <label htmlFor="next">貓貓</label>
                 <label htmlFor="next">狗狗</label>
                 <button id='next'>▶️</button>
                 <img src="" alt="" />
