@@ -7,7 +7,7 @@ class StepBasicInfo extends Component {
     } 
     //一進入畫面就帶入所有縣市
     async componentDidMount() {
-        let city = await axios.get('/city.json')
+        let city = await axios.get('/media/member_center/city.json')
         console.log(city.data);
         let newState = { ...this.state }
         newState.city = city.data

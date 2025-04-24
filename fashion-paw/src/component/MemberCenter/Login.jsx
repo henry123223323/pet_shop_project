@@ -7,7 +7,7 @@ class Login extends Component {
         return (
             
                 <div className="row paw-bg-primary">
-                    <MainImg source="/cat.jpg"  className="d-none d-md-block col-md-6"/>
+                    <MainImg source="/media/member_center/cat.jpg"  className="d-none d-md-block col-md-6"/>
                     <LoginCompute />
                 </div>
     
