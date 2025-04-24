@@ -1,68 +1,68 @@
 [
   {
     "title": "養第一隻貓前要準備的10樣東西",
-    "banner_url": "https://example.com/images/prepare_for_cat.jpg",
+    "banner_url": "https://images.pexels.com/photos/45201/kitty-cat-kitten-pet-45201.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
     "intro": "第一次迎接毛孩進家門，既期待又緊張？別擔心！只要準備好以下這些基本用品，就能大大降低新手飼主的手忙腳亂，給貓咪一個舒適又安全的新家。",
-    "product_category": "Health Supplements",
+    "product_category": "Pet Food",
     "pet_type": "cat",
     "sections": [
       {
         "heading": "1. 基本食用品：貓飼料與餐具",
-        "image_url": "https://example.com/images/cat_food_bowls.jpg",
+        "image_url": "",
         "body": "貓咪雖然體型小，但對食物的品質可是很講究。選擇符合年齡與健康狀況的貓飼料，如幼貓專用或無穀配方，不僅有助於發育，還能避免過敏或腸胃不適。食器方面建議使用陶瓷或不鏽鋼材質，除了較不易滋生細菌，也能避免貓咪對塑膠過敏。此外，分開準備食碗與水碗能鼓勵貓咪多喝水，幫助預防泌尿道疾病。"
       },
       {
         "heading": "2. 貓砂與貓砂盆：如廁禮儀從小養成",
-        "image_url": "https://example.com/images/cat_litter_box.jpg",
+        "image_url": "",
         "body": "適合的貓砂盆與貓砂不僅讓貓咪安心如廁，也關係到主人的清潔便利性。盆子的大小要讓貓咪能輕鬆轉身，開放式與密閉式各有優缺，視貓咪性格選擇即可。貓砂種類多元，建議新手可從礦砂或豆腐砂開始嘗試，這些種類吸收力好、易清理。務必定期清潔，保持乾淨整潔，否則小貓可是會拒絕上廁所，甚至亂尿尿抗議喔！"
       },
       {
         "heading": "3. 貓窩與跳台：打造牠的舒適小天地",
-        "image_url": "https://example.com/images/cat_bed_tower.jpg",
+        "image_url": "https://images.unsplash.com/photo-1545249390-6bdfa286032f?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTM1fHwlRTglQjIlOTMlRTglQjclQjMlRTUlOEYlQjB8ZW58MHx8MHx8fDA%3D",
         "body": "貓咪對於「領地」的需求非常強烈，提供專屬的貓窩與跳台，不只能讓牠安心休息，也有助於建立家的歸屬感。挑選時可選有圍繞感的布窩，讓貓咪能藏身其中，增加安全感。跳台則提供垂直空間，滿足牠們愛往高處窩的天性。尤其對都市家庭空間有限者來說，垂直設施不只能當作活動空間，也是貓咪放鬆觀察世界的觀景台。"
       },
       {
         "heading": "4. 玩具與抓抓板：消耗精力、防抓沙發",
-        "image_url": "https://example.com/images/cat_toys.jpg",
+        "image_url": "https://images.unsplash.com/photo-1708979346021-e7dad8f83096?q=80&w=3087&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
         "body": "貓咪天生好奇又充滿狩獵本能，若沒適當玩耍，很可能會變得焦躁，甚至破壞家中物品。準備一些互動玩具如逗貓棒、小老鼠、滾球，不僅能促進感情，還能有效放電。而抓抓板更是每隻貓的必需品，除了磨爪還能標記領域。建議在家中多處設置抓板，材質可選瓦楞紙或麻繩柱，從小引導正確抓地方，才能救回你的沙發！"
       },
       {
         "heading": "5. 外出籠與健康用品：準備好上診所也不怕",
-        "image_url": "https://example.com/images/cat_carrier_vet.jpg",
+        "image_url": "",
         "body": "雖然貓咪不像狗常需要外出，但外出籠卻是新手飼主不可少的用品之一。從接回家的第一天就開始讓牠習慣籠內環境，有助於未來看診或移動時降低壓力。此外，也建議備好常用的健康用品，如指甲剪、防蚤驅蟲劑、毛梳與耳朵清潔液。這些小工具能協助日常保養，也是在貓咪出現小問題時的第一道防線。備而不用，總比臨時找不到來得安心。"
       }
     ]
   },
   {
     "title": "貓咪需要洗澡嗎？多久洗一次？",
-    "banner_url": "https://example.com/images/cat_bath_question.jpg",
+    "banner_url": "",
     "intro": "貓咪愛乾淨是出了名的，那到底還需不需要幫牠洗澡呢？本篇將帶你了解貓咪洗澡的必要性、建議頻率，以及替貓洗澡時該注意的小細節，讓你不再為洗不洗傷腦筋！",
-    "product_category": "Health Supplements",
+    "product_category": "",
     "pet_type": "cat",
     "sections": [
       {
         "heading": "1. 自然清潔大師：貓咪其實會自己洗澡",
-        "image_url": "https://example.com/images/cat_self_cleaning.jpg",
+        "image_url": "",
         "body": "貓咪每天花好幾個小時舔毛，這不只是為了愛漂亮，還能清除髒污、調節體溫、放鬆心情。這種天生的清潔行為，讓牠們在沒特殊狀況下，其實不太需要常洗澡。也因此，和狗狗不同，貓咪「定期洗澡」並不是日常必要事項。"
       },
       {
         "heading": "2. 哪些情況下需要幫貓咪洗澡？",
-        "image_url": "https://example.com/images/cat_dirty.jpg",
+        "image_url": "",
         "body": "儘管多數情況下貓咪不必洗澡，但還是有例外。像是皮膚病、跳蚤感染、長毛打結太嚴重，或誤踩排泄物、沾到油漬等特殊狀況，就必須出動洗澡這招。另外，有些從小習慣洗澡的貓咪也能接受偶爾清潔，但仍建議視情況而定，避免太頻繁。"
       },
       {
         "heading": "3. 洗澡頻率建議：每月一次最多",
-        "image_url": "https://example.com/images/cat_bath_timing.jpg",
+        "image_url": "",
         "body": "如果你的貓咪真的需要洗澡，一般來說「一到兩個月一次」就足夠，絕對不需要每週洗。有些貓甚至半年才洗一次也沒問題。洗太頻繁可能會破壞毛皮上的保護油脂，反而導致皮膚乾癢、毛髮粗糙。除非獸醫另有建議，洗澡就當成偶爾的特殊任務吧！"
       },
       {
         "heading": "4. 幫貓洗澡的注意事項",
-        "image_url": "https://example.com/images/cat_bath_tips.jpg",
+        "image_url": "",
         "body": "幫貓咪洗澡前，記得先剪指甲、梳理打結，並選擇溫和的貓專用洗毛精。水溫約攝氏 38 度最剛好。洗的過程儘量快狠準，避免讓貓咪暴躁。洗完後要用毛巾壓乾多餘水分，再用吹風機低溫模式慢慢吹乾。記得過程中給予安撫和獎勵，讓洗澡經驗不那麼可怕。"
       },
       {
         "heading": "5. 替代方案：乾洗、濕紙巾也有幫助",
-        "image_url": "https://example.com/images/cat_dry_cleaning.jpg",
+        "image_url": "",
         "body": "若貓咪實在抗拒水洗，也可以嘗試使用無需沖洗的貓咪乾洗泡沫，或是專用濕紙巾擦拭髒污。這些方式對於輕度清潔、小範圍髒汙特別好用。不過還是要記得選用「寵物專用」產品，才能確保成分溫和、不刺激牠們嬌嫩的皮膚喔！"
       }
     ]
@@ -70,7 +70,7 @@
 
   {
     "title": "餵貓的新手指南：乾飼料 vs 濕飼料",
-    "banner_url": "https://example.com/images/cat_food_guide.jpg",
+    "banner_url": "https://plus.unsplash.com/premium_photo-1664392016062-00dbc12253fa?q=80&w=3145&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     "intro": "剛開始養貓的你，是不是也站在寵物店貨架前發呆，不知道該選乾飼料還是濕飼料？這篇文章幫你整理兩者的差異、優缺點與搭配方式，讓你餵得安心，貓咪也吃得開心！",
     "product_category": "Health Supplements",
     "pet_type": "cat",
