@@ -1,31 +1,31 @@
 [
     {
         "title": "倉鼠種類介紹",
-        "banner_url": "https://i.pinimg.com/736x/2e/81/45/2e8145aa8dd74df9603015f1447e2f74.jpg",
+        "banner_url": "/mouse/typeintro.jpg",
         "intro": "倉鼠主要分布於亞洲，少數分布於歐洲，現今被當成家寵飼養，因為其相當容易繁殖，經常被用作於動物實驗。",
         "product_category": "",
         "pet_type": "mouse",
         "sections": [
             {
                 "heading": "黃金鼠",
-                "image_url": "https://i.pinimg.com/736x/b4/a3/8e/b4a38eb7c59a188203f659434b739250.jpg",
+                "image_url": "/mouse/secgolden.jpg",
                 "body": "黃金鼠是一種「敘利亞倉鼠（學名：Mesocricetus auratus）」。臺灣俗稱：哈姆太郎，中國則稱：黃金熊、熊、熊鼠、熊仔鼠等。黃金鼠原產於敘利亞，體型較大，成年後可達 15 公分，毛色多為金黃色，性格溫和，適合新手飼養。"
             },
             {
                 "heading": "三線鼠",
-                "image_url": "https://i.pinimg.com/736x/1c/09/df/1c09df64d8a16bf72830e232c36367ce.jpg",
+                "image_url": "/mouse/secthree.jpg",
                 "body": "三線鼠屬於「侏儒倉鼠」的一種，原生棲地主要分布於中國大陸、蒙古、哈薩克以及西伯利亞賽米巴拉金斯克西部，一般生活於草原半荒漠及部分森林草原，是侏儒鼠中最為常見的鼠種。三線鼠體型較小，成年後約 7-10 公分，毛色多為灰色或棕色，背部有三條明顯的黑色條紋，性格活潑好動，適合喜歡觀賞的小朋友。"
             },
             {
                 "heading": "一線鼠",
-                "image_url": "https://i.pinimg.com/736x/61/fa/50/61fa50893be852e708cd6a7c54f20bae.jpg",
+                "image_url": "/mouse/secone.jpg",
                 "body": "一線鼠屬於「侏儒倉鼠」的一種，學術上稱做「坎貝爾侏儒倉鼠（學名：Phodopus campbelli）」，俗稱「一線鼠」。原生棲地主要分布於原中亞草原和半乾旱地區，同時在阿爾泰山脈、俄羅斯、中國北部省份有所分布。一線鼠體型較小，成年後約 7-10 公分，毛色多為灰色或棕色，背部有一條明顯的黑色條紋，性格活潑好動，適合喜歡觀賞的小朋友。"
             }
         ]
     },
     {
         "title": "新手必讀：如何選擇合適的倉鼠鼠籠",
-        "banner_url": "https://i.pinimg.com/736x/7d/d2/e5/7dd2e581e2d46c0304eeb496ac509c02.jpg",
+        "banner_url": "/mouse/mousecage.jpg",
         "intro": "為新手挑選倉鼠鼠籠時，需要考量底部面積、材質安全與通風狀況。本文將教你如何根據倉鼠品種與生活習性，挑到最適合的鼠籠。",
         "product_category": "Living Essentials",
         "pet_type": "mouse",
@@ -49,7 +49,7 @@
     },
     {
         "title": "倉鼠可以吃什麼呢?",
-        "banner_url": "https://i.pinimg.com/736x/84/93/32/8493324430f7bd6b6a05d54986b66802.jpg",
+        "banner_url": "/mouse/whatcaneat.jpg",
         "intro": "今天我就給大家科普一下倉鼠可以吃的食物，首先我把生活中常見的，倉鼠的食物歸成三類：第一種健康食品-可以正常餵食、對倉鼠有好處;第二種垃圾食品-不建議餵食、對倉鼠沒有好處，但是倉鼠可能特別喜歡的食物;第三種有害食品-強烈反對餵食、短期或長期內可能毒害倉鼠。對倉鼠來說，最健康的食物就是倉鼠糧食。",
         "product_category": "Pet Food",
         "pet_type": "mouse",
@@ -78,7 +78,7 @@
     },
     {
         "title": "倉鼠為什麼晚上活動？日夜習性解析",
-        "banner_url": "https://i.pinimg.com/736x/90/61/e7/9061e760f5db52cf24364c81ceaa1753.jpg",
+        "banner_url": "/mouse/nightactivity.jpg",
         "intro": "倉鼠天生屬於夜行性動物，黃昏與夜間最為活躍；白天則喜歡在安全的巢窩中休息。本文將從生理時鐘、環境因素與演化需求三方面，帶你了解倉鼠的日夜習性。",
         "product_category": "",
         "pet_type": "mouse",
@@ -102,7 +102,7 @@
     },
     {
         "title": "倉鼠會認主人嗎？怎麼建立信任？",
-        "banner_url": "https://i.pinimg.com/736x/37/a0/da/37a0da852184dc47b36fbb1b288221d8.jpg",
+        "banner_url": "/mouse/ownertrust.jpg",
         "intro": "倉鼠雖然天性膽小，但牠們能透過氣味、聲音和日常互動辨識主人。要和倉鼠建立信任，需要耐心、獎勵與穩定的環境。本文將從感知能力、信任培養與避免錯誤三方面詳解技巧。",
         "product_category": "",
         "pet_type": "mouse",
