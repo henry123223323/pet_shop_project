@@ -22,8 +22,8 @@ export default function HotRanking() {
               <button className={styles.btn} aria-label="收藏">
                 🤍
               </button>
-              <button className={styles.btn} aria-label="上鎖">
-                🔒
+              <button className={styles.btn} aria-label="加入購物車">
+               🛒
               </button>
             </div>
           </div>

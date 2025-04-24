@@ -1,4 +1,3 @@
-// src/component/Sidebar/Sidebar.jsx
 import React, { useState } from 'react';
 import styles from './Sidebar.module.css';
 
@@ -12,17 +11,14 @@ export default function Sidebar() {
 
   return (
     <div className={styles.sidebar}>
-      {/* 動物專區 */}
-      <section className={styles.section}>
         <ul className={styles.menu}>
           <li>
             <button
-              className={styles.toggleBtn}
+              className='paw-bg-primary'
               onClick={() => toggleType('dog')}
             >
-               狗狗專區
-              <span className={styles.arrow}>
-                {expandedType === 'dog' ? '▾' : '▸'}
+              <span className= 'paw-bg-primary'>
+              狗狗專區{expandedType === 'dog' ? '▾' : '▸'}
               </span>
             </button>
             {expandedType === 'dog' && (
@@ -38,17 +34,15 @@ export default function Sidebar() {
           </li>
           <li>
             <button
-              className={styles.toggleBtn}
+              className='paw-bg-primary'
               onClick={() => toggleType('cat')}
             >
-               貓貓專區
-              <span className={styles.arrow}>
-                {expandedType === 'cat' ? '▾' : '▸'}
+              <span className='paw-bg-primary'>
+              貓貓專區{expandedType === 'cat' ? '▾' : '▸'}
               </span>
             </button>
             {expandedType === 'cat' && (
               <ul className={styles.sublist}>
-                {/* 這裡放貓貓專區的子項 */}
                 <li><label><input type="checkbox" /> 飼料</label></li>
                 <li><label><input type="checkbox" /> 副食</label></li>
                 <li><label><input type="checkbox" /> 零食</label></li>
@@ -58,10 +52,43 @@ export default function Sidebar() {
               </ul>
             )}
           </li>
-          {/* 你可以再多加其他動物 */}
+          <button
+              className='paw-bg-primary'
+              onClick={() => toggleType('bird')}
+            >
+              <span className='paw-bg-primary'>
+              鳥類專區{expandedType === 'bird' ? '▾' : '▸'}
+              </span>
+            </button>
+            {expandedType === 'bird' && (
+              <ul className={styles.sublist}>
+                <li><label><input type="checkbox" /> 飼料</label></li>
+                <li><label><input type="checkbox" /> 副食</label></li>
+                <li><label><input type="checkbox" /> 零食</label></li>
+                <li><label><input type="checkbox" /> 保健食品</label></li>
+                <li><label><input type="checkbox" /> 家居</label></li>
+                <li><label><input type="checkbox" /> 玩具</label></li>
+              </ul>
+            )}
+            <button
+              className='paw-bg-primary'
+              onClick={() => toggleType('mouse')}
+            >
+              <span className='paw-bg-primary'>
+              老鼠專區{expandedType === 'mouse' ? '▾' : '▸'}
+              </span>
+            </button>
+            {expandedType === 'mouse' && (
+              <ul className={styles.sublist}>
+                <li><label><input type="checkbox" /> 飼料</label></li>
+                <li><label><input type="checkbox" /> 副食</label></li>
+                <li><label><input type="checkbox" /> 零食</label></li>
+                <li><label><input type="checkbox" /> 保健食品</label></li>
+                <li><label><input type="checkbox" /> 家居</label></li>
+                <li><label><input type="checkbox" /> 玩具</label></li>
+              </ul>
+            )}
         </ul>
-      </section>
-      {/* 其他 section… */}
     </div>
   );
 }

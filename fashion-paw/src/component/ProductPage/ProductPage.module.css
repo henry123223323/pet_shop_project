@@ -1,4 +1,3 @@
-/* src/component/ProductPage/ProductPage.module.css */
 .container {
   display: grid;
   grid-template-columns: 200px 1fr 200px;
@@ -20,4 +19,24 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
+}
+
+.viewToggle {
+  display: flex;
+  gap: 8px;
+  margin: 16px 0;
+}
+.activeBtn {
+  background-color: var(--primary);
+  color: #fff;
+  border: none;
+}
+.inactiveBtn {
+  background: transparent;
+  border: 1px solid var(--primary);
+  color: var(--primary);
+}
+.listView {
+  list-style: none;
+  padding: 0;
 }
