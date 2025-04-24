@@ -1,9 +1,9 @@
 [
   {
     "title": "養第一隻貓前要準備的10樣東西",
-    "banner_url": "",
+    "banner_url": "/cat/petfeedingb_1.avif",
     "intro": "第一次迎接毛孩進家門，既期待又緊張？別擔心！只要準備好以下這些基本用品，就能大大降低新手飼主的手忙腳亂，給貓咪一個舒適又安全的新家。",
-    "product_category": "Health Supplements",
+    "product_category": "Toys",
     "pet_type": "cat",
     "sections": [
       {
@@ -18,7 +18,7 @@
       },
       {
         "heading": "3. 貓窩與跳台：打造牠的舒適小天地",
-        "image_url": "",
+        "image_url": "/cat/petfeedingb_1_3.avif",
         "body": "貓咪對於「領地」的需求非常強烈，提供專屬的貓窩與跳台，不只能讓牠安心休息，也有助於建立家的歸屬感。挑選時可選有圍繞感的布窩，讓貓咪能藏身其中，增加安全感。跳台則提供垂直空間，滿足牠們愛往高處窩的天性。尤其對都市家庭空間有限者來說，垂直設施不只能當作活動空間，也是貓咪放鬆觀察世界的觀景台。"
       },
       {
@@ -35,9 +35,9 @@
   },
   {
     "title": "貓咪需要洗澡嗎？多久洗一次？",
-    "banner_url": "",
+    "banner_url": "/cat/petfeedingb_2.avif",
     "intro": "貓咪愛乾淨是出了名的，那到底還需不需要幫牠洗澡呢？本篇將帶你了解貓咪洗澡的必要性、建議頻率，以及替貓洗澡時該注意的小細節，讓你不再為洗不洗傷腦筋！",
-    "product_category": "Health Supplements",
+    "product_category": "",
     "pet_type": "cat",
     "sections": [
       {
@@ -70,9 +70,9 @@
 
   {
     "title": "餵貓的新手指南：乾飼料 vs 濕飼料",
-    "banner_url": "",
+    "banner_url": "/cat/petfeedingb_3.avif",
     "intro": "剛開始養貓的你，是不是也站在寵物店貨架前發呆，不知道該選乾飼料還是濕飼料？這篇文章幫你整理兩者的差異、優缺點與搭配方式，讓你餵得安心，貓咪也吃得開心！",
-    "product_category": "Health Supplements",
+    "product_category": "Pet Food",
     "pet_type": "cat",
     "sections": [
       {
@@ -104,9 +104,9 @@
   },
   {
     "title": "貓咪抓沙發怎麼辦？怎麼訓練？",
-    "banner_url": "",
+    "banner_url": "/cat/petfeedingb_4.avif",
     "intro": "你是不是每天都在和貓咪的爪子展開沙發保衛戰？抓沙發是貓咪的天性，但透過適當的引導與訓練，是有機會讓家俱全身而退的！這篇文章將教你理解抓抓行為、選對工具、引導訓練，與貓咪和平共存。",
-    "product_category": "Health Supplements",
+    "product_category": "Toys",
     "pet_type": "cat",
     "sections": [
       {
@@ -138,9 +138,9 @@
   },
   {
     "title": "如何選擇貓砂與貓砂盆？",
-    "banner_url": "",
+    "banner_url": "/cat/petfeedingb_5.avif",
     "intro": "別小看貓砂與貓砂盆的選擇，這關乎貓咪的如廁意願與你日後的清潔幸福感！本篇帶你了解不同種類的貓砂與貓砂盆差異，幫你為家中主子打造一個理想的「貓廁所」。",
-    "product_category": "Health Supplements",
+    "product_category": "Living Essentials",
     "pet_type": "cat",
     "sections": [
       {
@@ -173,9 +173,9 @@
 
   {
     "title": "幫貓咪刷牙真的有必要嗎？",
-    "banner_url": "",
+    "banner_url": "/cat/petfeedingb_6.avif",
     "intro": "你是不是也曾看著寵物牙刷，心裡冒出問號：「貓咪真的需要刷牙嗎？」其實牙齒健康跟腎臟、免疫、甚至壽命都有關。這篇文章帶你了解幫貓咪刷牙的必要性、執行方式與替代方案，讓主子的笑容亮晶晶！",
-    "product_category": "Health Supplements",
+    "product_category": "",
     "pet_type": "cat",
     "sections": [
       {
@@ -207,7 +207,7 @@
   },
   {
     "title": "貓咪的身體語言你看得懂嗎？",
-    "banner_url": "",
+    "banner_url": "/cat/petfeedingb_7.avif",
     "intro": "貓咪不會說話，但卻用全身上下的動作在傳遞情緒與需求。懂得看貓咪的身體語言，不只能避免誤會牠的意思，還能加深彼此的信任關係！快來學會如何讀懂主子的心思吧！",
     "product_category": "Health Supplements",
     "pet_type": "cat",
@@ -241,9 +241,9 @@
   },
   {
     "title": "幼貓與成貓飼養方式差異",
-    "banner_url": "",
+    "banner_url": "/cat/petfeedingb_8.avif",
     "intro": "雖然都是貓，但幼貓和成貓在照顧方式上可是有不少不同！從飲食需求到環境安全，了解這些差異不僅能避免養育誤區，更能讓毛孩們健康快樂地成長。",
-    "product_category": "Health Supplements",
+    "product_category": "",
     "pet_type": "cat",
     "sections": [
       {
@@ -258,7 +258,7 @@
       },
       {
         "heading": "3. 環境與安全的設計需調整",
-        "image_url": "",
+        "image_url": "/cat/petfeedingb_8_3.avif",
         "body": "對幼貓來說，家中所有東西都是玩具，電線、小物件、窗戶都是潛在危險。建議新手飼主事先做好防護：封窗、收線、限制活動範圍等。而成貓已有較強的判斷力與生活習慣，環境設計可較開放，重點是保留牠們的專屬空間與觀察高台。"
       },
       {
@@ -275,7 +275,7 @@
   },
   {
     "title": "貓咪怕水怎麼幫牠洗澡？",
-    "banner_url": "",
+    "banner_url": "/cat/petfeedingb_9.avif",
     "intro": "大多數的貓咪天生怕水，洗澡對牠們來說簡直像是天災人禍。不過遇到必須清潔的狀況該怎麼辦？這篇文章將教你如何降低牠的恐懼，讓洗澡不再是雙方的惡夢。",
     "product_category": "Health Supplements",
     "pet_type": "cat",
@@ -309,9 +309,9 @@
   },
   {
     "title": "如何幫貓咪挑選玩具？",
-    "banner_url": "",
+    "banner_url": "/cat/petfeedingb_10.avif",
     "intro": "貓咪天生愛玩，玩具不只是消遣，更關係到牠的運動量、心理健康與主子間的感情連結。市面玩具百百款，該怎麼挑才不踩雷？這篇文章一次告訴你選購貓玩具的重點與建議！",
-    "product_category": "Health Supplements",
+    "product_category": "Toys",
     "pet_type": "cat",
     "sections": [
       {
