@@ -5,12 +5,12 @@ class Login extends Component {
     state = {}
     render() {
         return (
-            <React.Fragment>
-                <div className="row">
-                    <MainImg source="/cat.jpg"  className="d-none d-md-block col-md-6"/>
+            
+                <div className="row paw-bg-primary">
+                    <MainImg source="/media/member_center/cat.jpg"  className="d-none d-md-block col-md-6"/>
                     <LoginCompute />
                 </div>
-            </React.Fragment>
+    
         );
     }
 }
