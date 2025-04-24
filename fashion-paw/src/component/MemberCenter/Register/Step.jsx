@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 class Step extends Component {
-    
+    // 註冊上面的步驟圈圈
     render() {
         const stylelist = {
             height: '100px',

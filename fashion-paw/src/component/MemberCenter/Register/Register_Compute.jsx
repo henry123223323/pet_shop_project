@@ -14,15 +14,19 @@ class Register_Compute extends Component {
     };
 
     handleNext = () => {
+        //按下一步 currentStep+1
         this.setState((prevState) => ({
             currentStep: Math.min(prevState.currentStep + 1, prevState.steps.length)
         }));
     };
     renderStepContent = () => {
+        //根據進行到的步驟切換表單 next=傳送handleNext function供表單元件使用
         if (this.state.currentStep == 1) {
             return <StepEmail next={this.handleNext}/>
         }
         else if (this.state.currentStep == 2) {
+            console.log("step2");
+            
             return <StepPassword next={this.handleNext}/>
         }
         else {
@@ -38,7 +42,8 @@ class Register_Compute extends Component {
             <div className='col-md-6 text-center'>
                 <div className="container mx-auto my-2 col-6">
                     <div className="row">
-                        {steps.map((step, index) => (
+                        {//建立註冊表單商方的步驟圈圈 statement判斷是否完成該步驟true為完成
+                            steps.map((step, index) => (
                             <Step
                                 key={index}
                                 number={step.number}
