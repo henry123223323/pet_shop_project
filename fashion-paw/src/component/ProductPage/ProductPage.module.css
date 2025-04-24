@@ -1,42 +1,28 @@
 .container {
-  display: grid;
-  grid-template-columns: 200px 1fr 200px;
+  display: flex;
   gap: 24px;
-  padding: 20px;
-}
-
-/* 左／右兩欄可以做固定寬度與捲動 */
-.sidebar,
-.hotRanking {
-  background: #fff;
-  border-radius: 8px;
   padding: 16px;
-  height: fit-content;
 }
 
-/* 中間主內容欄 */
+/* 左側 Sidebar */
+.sidebar {
+  width: 220px;
+  position: relative;
+  z-index: 10; /* 確保不會被右邊蓋住 */
+}
+
+/* 中間商品主區域 */
 .main {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+  flex: 1;
+  min-width: 0; /* 防止超寬 */
+  background: #f9f9f9;
+  padding: 16px;
+  border-radius: 8px;
+  overflow: auto;
 }
 
-.viewToggle {
-  display: flex;
-  gap: 8px;
-  margin: 16px 0;
-}
-.activeBtn {
-  background-color: var(--primary);
-  color: #fff;
-  border: none;
-}
-.inactiveBtn {
-  background: transparent;
-  border: 1px solid var(--primary);
-  color: var(--primary);
-}
-.listView {
-  list-style: none;
-  padding: 0;
+/* 右側熱銷區塊 */
+.hotRanking {
+  width: 220px;
+  position: relative;
 }

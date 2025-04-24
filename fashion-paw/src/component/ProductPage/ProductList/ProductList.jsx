@@ -1,4 +1,3 @@
-// src/component/ProductList/ProductList.jsx
 import React from 'react';
 import ProductCard from '../ProductCard/ProductCard';
 import styles from './ProductList.module.css';

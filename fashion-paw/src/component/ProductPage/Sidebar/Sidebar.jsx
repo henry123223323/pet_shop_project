@@ -1,94 +1,48 @@
 import React, { useState } from 'react';
 import styles from './Sidebar.module.css';
 
-export default function Sidebar() {
-  // expandedType 存放目前展開的是哪個區域（'dog' or 'cat' or null）
+export default function Sidebar({ onSelectCategory = () => {} }) {
   const [expandedType, setExpandedType] = useState(null);
 
   const toggleType = (type) => {
     setExpandedType(prev => (prev === type ? null : type));
   };
 
+  const categories = ['飼料', '副食', '零食', '保健食品', '家居', '玩具'];
+
   return (
     <div className={styles.sidebar}>
-        <ul className={styles.menu}>
-          <li>
-            <button
-              className='paw-bg-primary'
-              onClick={() => toggleType('dog')}
-            >
-              <span className= 'paw-bg-primary'>
-              狗狗專區{expandedType === 'dog' ? '▾' : '▸'}
+      <ul className={styles.menu}>
+        {['dog', 'cat', 'bird', 'mouse'].map((type) => (
+          <li key={type}>
+            <button className='paw-bg-primary' onClick={() => toggleType(type)}>
+              <span className='paw-bg-primary'>
+                {type === 'dog' && '狗狗專區'}
+                {type === 'cat' && '貓貓專區'}
+                {type === 'bird' && '鳥類專區'}
+                {type === 'mouse' && '老鼠專區'}
+                {expandedType === type ? '▾' : '▸'}
               </span>
             </button>
-            {expandedType === 'dog' && (
+            {expandedType === type && (
               <ul className={styles.sublist}>
-                <li><label><input type="checkbox" /> 飼料</label></li>
-                <li><label><input type="checkbox" /> 副食</label></li>
-                <li><label><input type="checkbox" /> 零食</label></li>
-                <li><label><input type="checkbox" /> 保健食品</label></li>
-                <li><label><input type="checkbox" /> 家居</label></li>
-                <li><label><input type="checkbox" /> 玩具</label></li>
+                {categories.map((cat) => (
+                  <li 
+                    key={cat}
+                    onClick={() => {
+                      console.log(`選擇 ${type} 的 ${cat}`);
+                      onSelectCategory(type, cat);
+                    }}
+                    className={styles.subitem}
+                  >
+                    {cat}
+                  </li>
+                ))}
               </ul>
             )}
           </li>
-          <li>
-            <button
-              className='paw-bg-primary'
-              onClick={() => toggleType('cat')}
-            >
-              <span className='paw-bg-primary'>
-              貓貓專區{expandedType === 'cat' ? '▾' : '▸'}
-              </span>
-            </button>
-            {expandedType === 'cat' && (
-              <ul className={styles.sublist}>
-                <li><label><input type="checkbox" /> 飼料</label></li>
-                <li><label><input type="checkbox" /> 副食</label></li>
-                <li><label><input type="checkbox" /> 零食</label></li>
-                <li><label><input type="checkbox" /> 保健食品</label></li>
-                <li><label><input type="checkbox" /> 家居</label></li>
-                <li><label><input type="checkbox" /> 玩具</label></li>
-              </ul>
-            )}
-          </li>
-          <button
-              className='paw-bg-primary'
-              onClick={() => toggleType('bird')}
-            >
-              <span className='paw-bg-primary'>
-              鳥類專區{expandedType === 'bird' ? '▾' : '▸'}
-              </span>
-            </button>
-            {expandedType === 'bird' && (
-              <ul className={styles.sublist}>
-                <li><label><input type="checkbox" /> 飼料</label></li>
-                <li><label><input type="checkbox" /> 副食</label></li>
-                <li><label><input type="checkbox" /> 零食</label></li>
-                <li><label><input type="checkbox" /> 保健食品</label></li>
-                <li><label><input type="checkbox" /> 家居</label></li>
-                <li><label><input type="checkbox" /> 玩具</label></li>
-              </ul>
-            )}
-            <button
-              className='paw-bg-primary'
-              onClick={() => toggleType('mouse')}
-            >
-              <span className='paw-bg-primary'>
-              老鼠專區{expandedType === 'mouse' ? '▾' : '▸'}
-              </span>
-            </button>
-            {expandedType === 'mouse' && (
-              <ul className={styles.sublist}>
-                <li><label><input type="checkbox" /> 飼料</label></li>
-                <li><label><input type="checkbox" /> 副食</label></li>
-                <li><label><input type="checkbox" /> 零食</label></li>
-                <li><label><input type="checkbox" /> 保健食品</label></li>
-                <li><label><input type="checkbox" /> 家居</label></li>
-                <li><label><input type="checkbox" /> 玩具</label></li>
-              </ul>
-            )}
-        </ul>
+        ))}
+      </ul>
     </div>
   );
 }
