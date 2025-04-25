@@ -54,7 +54,7 @@ class Sidebar extends Component {
     }
     render() {
         return (
-            <div className="bg-light p-3" style={{ width: "200px" }}>
+            <div className="paw-bg-lighteorange p-3" style={{ width: "200px" }}>
                 <ul className="list-unstyled">
                     {this.state.list.map((obj, index) => {
                         return <li className='btn btn-outline-warning'><Link to={`/MemberCenter/${obj.link}`}>{obj.content}</Link></li>

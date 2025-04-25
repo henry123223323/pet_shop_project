@@ -13,7 +13,7 @@ import DogGuide from './component/PetKnowledge/Novicefeeding/DogGuide';
 function App() {
   return (
     <BrowserRouter>
-    <h1 className='paw-bg-primary top-0'>Header</h1>
+    <h1 className='paw-bg-primary top-0 bg-danger'>Header</h1>
       <Switch>
         <Route path="/" component={ Homepage } exact/>
         <Route path="/MemberCenter" component={ MemberCenter } />
@@ -23,7 +23,7 @@ function App() {
         <Route path="/Novicefeeding/DogGuide" component={DogGuide} exact/>
         <Route path="/PartTouch/Touch" component={Touch} exact/>
       </Switch>
-      <h1 className='paw-bg-secondary'>Footer</h1>
+      <h1 className='bg-secondary'>Footer</h1>
     </BrowserRouter>
   );
 }

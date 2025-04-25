@@ -63,7 +63,7 @@ class Orders extends Component {
     render() {
         let { products } = this.state
         return (
-            <div id="p_list">
+            <div>
                 <h3>購物紀錄</h3>
                 <label for="">搜尋</label>
                 <input type="search" name="" id="" />

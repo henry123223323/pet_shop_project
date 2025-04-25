@@ -46,11 +46,11 @@ class Order_detail extends Component {
                         <div className="modal-content">
                             <div className="modal-header">
 
-                            <span className='badge badge-primary rounded-pill'>{this.state.order.ordernum}</span>
-                            <span className='badge badge-primary rounded-pill'>{(this.state.order.neworsecond == "new") ? "全新" : "二手"}</span>
-                            <span className='badge badge-primary rounded-pill'>{this.state.order.orderstate}</span>
-                            <span className='badge badge-primary rounded-pill'>{this.state.order.orderdate}</span>
-                            <span className='badge badge-primary rounded-pill'>{this.state.order.price}</span>
+                            <span className='badge badge-warning rounded-pill'>{this.state.order.ordernum}</span>
+                            <span className='badge badge-warning rounded-pill'>{(this.state.order.neworsecond == "new") ? "全新" : "二手"}</span>
+                            <span className='badge badge-warning rounded-pill'>{this.state.order.orderstate}</span>
+                            <span className='badge badge-warning rounded-pill'>{this.state.order.orderdate}</span>
+                            <span className='badge badge-warning rounded-pill'>{this.state.order.price}</span>
                                 <button type="button" className="close btn" onClick={this.props.close}>
                                     <span>&times;</span>
                                 </button>
