@@ -5,8 +5,14 @@
   }
   
   .main {
-    width: 100%;
+    display: flex;
     margin-bottom: 8px;
+    width: 100%;
+  }
+
+  .mainGallery {
+    display: block;
+    border: 1px solid black;
   }
   
   .small {
