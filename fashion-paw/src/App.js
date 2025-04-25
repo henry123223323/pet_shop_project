@@ -1,31 +1,41 @@
 import './App.css';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
-// import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
-// import MemberCenter from './component/MemberCenter/MyAccount'
-// import Homepage from './component/Homepage/Homepage';
-// import ProductPage from './component/ProductPage/ProductPage';
-// import Login from './component/MemberCenter/Login';
-// import Register from './component/MemberCenter/Register';
-// import Touch from './component/PetKnowledge/PartTouch/Touch';
-// import DogGuide from './component/PetKnowledge/Novicefeeding/DogGuide';
-import PdImageGallery from './component/ProductDetailPage/top/PdImageGallery';
+import pdImageGallery from './component/ProductDetailPage/top/PdImageGallery';
+// import pdTitleMessage from './component/ProductDetailPage/top/pdTitleMessage';
+// import addToCartBtn from './component/ProductDetailPage/top/addToCartBtn';
+// import addToMyFavorite from './component/ProductDetailPage/top/addToMyFavorite';
+// import pdAttr from './component/ProductDetailPage/bottom/pdInfo/pdAttr';
+// import pdDescription from './component/ProductDetailPage/bottom/pdInfo/pdDescription';
+// import nReview from './component/ProductDetailPage/bottom/pdInfo/nReview';
+// import sellerOtherPd from './component/ProductDetailPage/bottom/sellerInfo/sellerOtherPd';
+// import sellerProfile from './component/ProductDetailPage/bottom/sellerInfo/sellerProfile';
+// import sReview from './component/ProductDetailPage/bottom/sellerInfo/sReview';
 
 function App() {
   return (
     <BrowserRouter>
-    {/* <h1 className='paw-bg-primary top-0'>Header</h1> */}
+    <h1 className='paw-bg-primary top-0'>Header</h1>
       <Switch>
-        <Route path="/topimage" component={ PdImageGallery } exact/>
-        {/* <Route path="/" component={ Homepage } exact/>
-        <Route path="/MemberCenter" component={ MemberCenter } exact/>
-        <Route path="/ProductPage" component={ ProductPage } exact/>
-        <Route path="/MemberCenter/Login" component={ Login } exact/>
-        <Route path="/MemberCenter/Register" component={ Register } exact/>
-        <Route path="/Novicefeeding/DogGuide" component={DogGuide} exact/>
-        <Route path="/PartTouch/Touch" component={Touch} exact/> */}
+        {/* 完成的再隱藏註解 */}
+        <Route path="/" component={ Homepage } exact/>
+        {/* ProductDetailPage-TOP */}
+        <Route path="/pdImageGallery" component={ pdImageGallery } exact/>
+        {/* <Route path="/pdTitleMessage" component={ pdTitleMessage } exact/> */}
+        {/* <Route path="/addToCartBtn" component={ addToCartBtn } exact/> */}
+        {/* <Route path="/addToMyFavorite" component={ addToMyFavorite } exact/> */}
+
+        {/* ProductDetailPage-BOTTOM */}
+        {/* <Route path="/pdAttr" component={ pdAttr } exact/>
+        <Route path="/pdDescription" component={ pdDescription } exact/>
+        <Route path="/nReview" component={ nReview } exact/>
+        <Route path="/sellerOtherPd" component={ sellerOtherPd } exact/>
+        <Route path="/sellerProfile" component={ sellerProfile } exact/> 
+        <Route path="/sReview" component={ sReview } exact/>*/}
+
+
       </Switch>
-      {/* <h1 className='paw-bg-secondary'>Footer</h1> */}
+      <h1 className='paw-bg-secondary'>Footer</h1>
     </BrowserRouter>
   );
 }
