@@ -3,7 +3,7 @@ class Third_Login extends Component {
     state = {
         stylelist: {
             display: 'flex',
-            justifyContent: 'space-evenly' 
+            justifyContent: 'space-evenly',
         }
     }
     render() {

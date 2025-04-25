@@ -1,3 +1,4 @@
+// src/component/ProductPage/SortBar/SortBar.jsx
 import React from 'react';
 import styles from './SortBar.module.css';
 
@@ -10,10 +11,10 @@ export default function SortBar({ onSortChange }) {
         onChange={e => onSortChange(e.target.value)}
       >
         <option value="">— 選擇 —</option>
-        <option value="price_asc"> 依價格排序：低至高</option>
-        <option value="price_desc">依價格排序：高至低</option>
-        <option value="createdAt">依最新項目排序</option>
-        <option value="hotranking">依熱銷度</option>
+        <option value="price_asc">價格：低→高</option>
+        <option value="price_desc">價格：高→低</option>
+        <option value="createdAt">上架日期</option>
+        <option value="updatedAt">更新日期</option>
       </select>
     </div>
   );
