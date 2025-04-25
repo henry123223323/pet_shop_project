@@ -110,11 +110,12 @@ function Touch() {
         <div className="container-xl">
             <h3 className="paw-hover-primary text-center" style={{ width: 200 }}>這是標題</h3>
             {/* 切換寵物按鈕 */}
+            <p className='ptxt5 paw-text-darkgreen'>我是測試文字</p>
             <label htmlFor="change">{touchPet.name}</label>
             {/* <button id="change" onClick={petSwitchBtn}>▶️</button> */}
             <div className="flex justify-center gap-2 mb-4">
-                <button onClick={prevPet} className="px-3 py-1 bg-gray-200 rounded">上一隻</button>
-                <button onClick={nextPet} className="px-3 py-1 bg-gray-200 rounded">下一隻</button>
+                <button onClick={prevPet} className="px-3 py-1 btn paw-btn-outline-lightorangepink rounded">上一隻</button>
+                <button onClick={nextPet} className="px-3 py-1 btn paw-btn-outline-darkorange rounded">下一隻</button>
             </div>
 
             {/* 點擊部位觸發訊息並連動說明區塊 */}
