@@ -1,5 +1,30 @@
 .imageGallery {
-    width: 80%;
-    height: 80%;
-    color: aqua;
-}
+    width: 300px;
+    padding: 8px;
+    border: 1px solid black;
+  }
+  
+  .main {
+    width: 100%;
+    margin-bottom: 8px;
+  }
+  
+  .small {
+    border: 1px solid black;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  .smallGallery {
+    /* 4圖左右margin-8px */
+    width: calc(25% - 8px); 
+    border: 1px solid black;
+  }
+  
+  img {
+    width: 100%;
+    object-fit: contain;
+    display: block;
+  }
