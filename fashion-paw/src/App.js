@@ -1,7 +1,8 @@
 import './App.css';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import 'bootstrap-icons/font/bootstrap-icons.css';
-import pdImageGallery from './component/ProductDetailPage/top/PdImageGallery';
+import Homepage from './component/Homepage/Homepage';
+import pdImageGallery from './component/ProductDetailPage/top/pdImageGallery';
 // import pdTitleMessage from './component/ProductDetailPage/top/pdTitleMessage';
 // import addToCartBtn from './component/ProductDetailPage/top/addToCartBtn';
 // import addToMyFavorite from './component/ProductDetailPage/top/addToMyFavorite';
@@ -15,7 +16,7 @@ import pdImageGallery from './component/ProductDetailPage/top/PdImageGallery';
 function App() {
   return (
     <BrowserRouter>
-    <h1 className='paw-bg-primary top-0'>Header</h1>
+    <h1 className='shadow-sm top-0'>Header</h1>
       <Switch>
         {/* 完成的再隱藏註解 */}
         <Route path="/" component={ Homepage } exact/>
@@ -35,7 +36,7 @@ function App() {
 
 
       </Switch>
-      <h1 className='paw-bg-secondary'>Footer</h1>
+      <h1 className='paw-bg-pri-darkgreen'>Footer</h1>
     </BrowserRouter>
   );
 }
