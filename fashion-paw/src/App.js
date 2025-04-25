@@ -16,10 +16,10 @@ function App() {
     <h1 className='paw-bg-primary top-0'>Header</h1>
       <Switch>
         <Route path="/" component={ Homepage } exact/>
-        <Route path="/MemberCenter" component={ MemberCenter } exact/>
+        <Route path="/MemberCenter" component={ MemberCenter } />
         <Route path="/ProductPage" component={ ProductPage } exact/>
-        <Route path="/MemberCenter/Login" component={ Login } exact/>
-        <Route path="/MemberCenter/Register" component={ Register } exact/>
+        <Route path="/Login" component={ Login } />
+        <Route path="/Register" component={ Register } />
         <Route path="/Novicefeeding/DogGuide" component={DogGuide} exact/>
         <Route path="/PartTouch/Touch" component={Touch} exact/>
       </Switch>
