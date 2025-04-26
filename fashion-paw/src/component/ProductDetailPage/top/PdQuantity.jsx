@@ -1,6 +1,6 @@
 import React, { Component} from 'react';
-import styles from './AddToCartBtn.module.css'
-class AddToCartBtn extends Component {
+
+class PdQuantity extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -19,7 +19,10 @@ class AddToCartBtn extends Component {
                     <i className="bi bi-caret-down-fill"></i>
                 </button>
                 {/* 數量格子 */}
-                <div className={`${styles.quantity}`}>
+                <div 
+                style={{
+                    width: 60 ,
+                  }}>
                     <input className='w-100 text-center' type="text" value={this.state.count} 
                     onChange={this.inputChange}/>
                 </div>
@@ -28,9 +31,7 @@ class AddToCartBtn extends Component {
                 className='mx-2 rounded paw-btn-outline-pri-darkbrown'
                 onClick={this.quantityUp}>
                     <i className="bi bi-caret-up-fill"></i> 
-                </button> 
-                {/* 加入購物車 */}
-                <button className={`btn paw-btn-pink paw-text-lightorange rounded-pill mx-3 ${styles.textShadow}`}>加入購物車</button>   
+                </button>  
             </div>
         </>
         );
@@ -59,4 +60,4 @@ class AddToCartBtn extends Component {
     }
 }
  
-export default AddToCartBtn;
+export default PdQuantity;

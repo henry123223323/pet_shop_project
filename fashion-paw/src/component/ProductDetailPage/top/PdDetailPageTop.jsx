@@ -5,6 +5,7 @@ import AddToCartBtn from './AddToCartBtn.jsx';
 import AddToMyFavorite from './AddToMyFavorite.jsx';
 import ShareProducts from './ShareProductsBtn.jsx';
 import PdTitle from './PdTitle.jsx';
+import PdQuantity from './PdQuantity.jsx';
 
 class PdDetailPageTop extends Component {
   state = { };
@@ -28,10 +29,12 @@ class PdDetailPageTop extends Component {
                 <div>
                   <PdTitleMessage />
                 </div>
-                <div className='d-flex align-items-center flex-md-row  '>
-                  <AddToCartBtn />
+                
+                <div className='d-flex align-items-center flex-md-row flex-wrap'>
+                  <PdQuantity />
 
                 <div className='d-flex align-items-center'>
+                  <AddToCartBtn />
                   <AddToMyFavorite />
                   <ShareProducts />
                 </div>
