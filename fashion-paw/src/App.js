@@ -2,11 +2,6 @@ import './App.css';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import Homepage from './component/Homepage/Homepage';
-// import PdImageGallery from './component/ProductDetailPage/top/PdImageGallery';
-// import PdTitleMessage from './component/ProductDetailPage/top/PdTitleMessage';
-// import AddToCartBtn from './component/ProductDetailPage/top/AddToCartBtn';
-// import AddToMyFavorite from './component/ProductDetailPage/top/AddToMyFavorite';
-// import ShareProducts from './component/ProductDetailPage/top/ShareProductsBtn';
 import PdDetailPage from './component/ProductDetailPage/top/PdDetailPage';
 // import pdAttr from './component/ProductDetailPage/bottom/pdInfo/pdAttr';
 // import pdDescription from './component/ProductDetailPage/bottom/pdInfo/pdDescription';
@@ -22,12 +17,6 @@ function App() {
       <Switch>
         {/* 完成的再隱藏註解 */}
         <Route path="/" component={ Homepage } exact/>
-        {/* ProductDetailPage-TOP */}
-        {/* <Route path="/PdImageGallery" component={ PdImageGallery } exact/>
-        <Route path="/PdTitleMessage" component={ PdTitleMessage } exact/>
-        <Route path="/AddToCartBtn" component={ AddToCartBtn } exact/>
-        <Route path="/AddToMyFavorite" component={ AddToMyFavorite } exact/>
-        <Route path="/ShareProducts" component={ ShareProducts } exact/> */}
         <Route path="/PdDetailPage" component={ PdDetailPage } exact/>
 
         {/* ProductDetailPage-BOTTOM */}
