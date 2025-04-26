@@ -56,7 +56,7 @@
     background-color: #ECC978;
 }
 
-.paw-bg-lighteorange {
+.paw-bg-lightorange {
     background-color: #E9D1B0;
 }
 
@@ -136,7 +136,7 @@
     color: #ECC978;
 }
 
-.paw-text-lighteorange {
+.paw-text-lightorange {
     color: #E9D1B0;
 }
 
@@ -180,7 +180,7 @@
     background-color: #ECC978;
 }
 
-.paw-btn-lighteorange {
+.paw-btn-lightorange {
     background-color: #E9D1B0;
 }
 
@@ -226,7 +226,7 @@
 /* -----按鈕_outline----- */
 /* 引用btn paw-btn-outline-darkorange就好了，不用再引用hover、focus */
 /* 橘黃色系列 */
-/* --paw-btn-outline-middleorange-- */
+/* --paw-btn-outline-darkorange-- */
 .paw-btn-outline-darkorange {
     color: #DDB227;
     border-color: #DDB227;
@@ -252,14 +252,14 @@
     border-color: #ECC978;
 }
 
-/* --paw-btn-outline-lighteorange-- */
-.paw-btn-outline-lighteorange {
+/* --paw-btn-outline-lightorange-- */
+.paw-btn-outline-lightorange {
     color: #E9D1B0;
     border-color: #E9D1B0;
 }
 
-.paw-btn-outline-lighteorange:hover,
-.paw-btn-outline-lighteorange:focus {
+.paw-btn-outline-lightorange:hover,
+.paw-btn-outline-lightorange:focus {
     background-color: #E9D1B0;
     color: #ffffff;
     border-color: #E9D1B0;
