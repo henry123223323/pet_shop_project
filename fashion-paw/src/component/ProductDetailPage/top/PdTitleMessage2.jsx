@@ -1,13 +1,11 @@
 import React, { Component } from 'react';
-class pdTitleMessage extends Component {
+class PdTitleMessage extends Component {
     state = {  } 
     render() { 
         return (<>
-        <h1>商品重點區</h1>
+        {/* <h1>商品重點區</h1> */}
 
-        <div className='my-3'>
-            <h3>灰色毛氈立方貓窩（可折疊）</h3>
-        </div>
+        
         <div className='d-flex my-2'>
             <div> 商品座標：</div><div>台中市南屯區</div>
         </div>
@@ -35,4 +33,4 @@ class pdTitleMessage extends Component {
     }
 }
  
-export default pdTitleMessage;
+export default PdTitleMessage;

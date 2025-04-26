@@ -1,6 +1,6 @@
 import React, { Component} from 'react';
-import styles from './addToCartBtn.module.css'
-class addToCartBtn extends Component {
+import styles from './AddToCartBtn.module.css'
+class AddToCartBtn extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -10,7 +10,7 @@ class addToCartBtn extends Component {
     render() { 
         return (
         <>
-            <h1>商品重點區</h1>
+            {/* <h1>加入購物車</h1> */}
             <div className='d-flex align-items-center my-3'>
                 {/* 減少按鈕 */}
                 <button 
@@ -59,4 +59,4 @@ class addToCartBtn extends Component {
     }
 }
  
-export default addToCartBtn;
+export default AddToCartBtn;

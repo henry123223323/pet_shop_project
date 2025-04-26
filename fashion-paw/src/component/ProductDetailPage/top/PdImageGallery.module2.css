@@ -1,8 +1,4 @@
-.imageGallery {
-    width: 400px;
-    padding: 8px;
-    /* border: 1px solid black; */
-  }
+
   
   .main {
     display: flex;
@@ -44,13 +40,14 @@
 
   .zoomBox {
     position: absolute;
-    width: 150px;
-    height: 150px;
+    width: 200px;
+    height: 200px;
     background-repeat: no-repeat;
-    background-size: 500px 500px;
+    background-size: 400% 400%;
     border-radius: 50%; 
     box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
     border: 2px solid #F1E3C2;
     pointer-events:none;
     z-index: 10;
+    transform: translate(-50%, -50%);
   }

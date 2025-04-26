@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import styles from './pdImageGallery.module.css';
+import styles from './PdImageGallery.module.css';
 
-class pdImageGallery extends Component {
+class PdImageGallery extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -23,8 +23,8 @@ class pdImageGallery extends Component {
 
     return (
       <>
-        <h1>這是商品圖片窗</h1>
-        <div className={styles.imageGallery}>
+        {/* <h1>這是商品圖片窗</h1> */}
+        <div>
           {/* 大圖區 */}
           <div className={styles.main}>
             <div className="d-flex justify-content-center align-items-center">
@@ -48,10 +48,10 @@ class pdImageGallery extends Component {
                 <div
                   className={styles.zoomBox}
                   style={{
-                    top: `${zoomPosition.y - 75}px`,
-                    left: `${zoomPosition.x - 75}px`,
+                    top: `${zoomPosition.y}px`,
+                    left: `${zoomPosition.x}px`,
                     backgroundImage: `url(${currentImage})`,
-                    backgroundPosition: `${-zoomPosition.x * 2 + 75}px ${-zoomPosition.y * 2 + 75}px`,
+                    backgroundPosition: `${-zoomPosition.x *2 +75}px ${-zoomPosition.y *2 +75}px`,
                   }}
                 ></div>
               )}
@@ -117,4 +117,4 @@ class pdImageGallery extends Component {
   };
 }
 
-export default pdImageGallery;
+export default PdImageGallery;

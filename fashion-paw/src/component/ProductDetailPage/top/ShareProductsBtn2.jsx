@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import styles from './shareProducts.module.css';
+import styles from './ShareProductsBtn.module.css';
 
-class shareProducts extends Component {
+class ShareProducts extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -12,7 +12,7 @@ class shareProducts extends Component {
   render() {
     return (
       <>
-        <h1>這是分享按鈕</h1>
+        {/* <h1>這是分享按鈕</h1> */}
         <div className={styles.share}>
         <button
           className={`btn rounded ptxtb2 ${styles.shareBtn}`}
@@ -47,4 +47,4 @@ class shareProducts extends Component {
   };
 }
 
-export default shareProducts;
+export default ShareProducts;

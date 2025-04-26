@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import styles from './addToMyFavorite.module.css'
-class addToMyFavorite extends Component {
+import styles from './AddToMyFavorite.module.css'
+class AddToMyFavorite extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -9,7 +9,7 @@ class addToMyFavorite extends Component {
       }    
     render() { 
         return (<>
-        <h1>這是收藏按鈕</h1>
+        {/* <h1>這是收藏按鈕</h1> */}
         <button 
         className={`btn rounded ptxtb2 ${styles.favBtn}`}
         onClick={this.favBtnClick}>
@@ -33,4 +33,4 @@ class addToMyFavorite extends Component {
     
 }
  
-export default addToMyFavorite;
+export default AddToMyFavorite;

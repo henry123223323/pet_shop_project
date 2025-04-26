@@ -3,4 +3,5 @@
 }
 .textShadow {
     text-shadow: 1px 1px 2px rgba(31, 26, 26, 0.3);
+    font-size: 0.7em;
   }
