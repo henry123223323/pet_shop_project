@@ -29,7 +29,7 @@ class pdImageGallery extends Component {
           <div className={styles.main}>
             <div className="d-flex justify-content-center align-items-center">
               <i
-                className="btn paw-btn-middlebrown paw-btn-outline-pri-darkbrown:hover bi bi-caret-left-fill ptxt2"
+                className="paw-btn-outline-pri-darkbrown bi bi-caret-left-fill ptxt2"
                 onClick={this.leftArrowClick}
               ></i>
             </div>
@@ -45,21 +45,21 @@ class pdImageGallery extends Component {
                 onMouseMove={this.handleMouseMove}
               />
              {isZoomVisible && (
-  <div
-    className={styles.zoomBox}
-    style={{
-      top: `${zoomPosition.y - 75}px`,
-      left: `${zoomPosition.x - 75}px`,
-      backgroundImage: `url(${currentImage})`,
-      backgroundPosition: `${-zoomPosition.x * 2 + 75}px ${-zoomPosition.y * 2 + 75}px`,
-    }}
-  ></div>
-)}
+                <div
+                  className={styles.zoomBox}
+                  style={{
+                    top: `${zoomPosition.y - 75}px`,
+                    left: `${zoomPosition.x - 75}px`,
+                    backgroundImage: `url(${currentImage})`,
+                    backgroundPosition: `${-zoomPosition.x * 2 + 75}px ${-zoomPosition.y * 2 + 75}px`,
+                  }}
+                ></div>
+              )}
             </div>
 
             <div className="d-flex justify-content-center align-items-center">
               <i
-                className="btn paw-btn-middlebrown paw-btn-outline-pri-darkbrown:hover bi bi-caret-right-fill ptxt2"
+                className="paw-btn-outline-pri-darkbrown bi bi-caret-right-fill ptxt2"
                 onClick={this.rightArrowClick}
               ></i>
             </div>

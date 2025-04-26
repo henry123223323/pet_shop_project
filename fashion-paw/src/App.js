@@ -3,9 +3,10 @@ import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import Homepage from './component/Homepage/Homepage';
 import pdImageGallery from './component/ProductDetailPage/top/pdImageGallery';
-// import pdTitleMessage from './component/ProductDetailPage/top/pdTitleMessage';
-// import addToCartBtn from './component/ProductDetailPage/top/addToCartBtn';
-// import addToMyFavorite from './component/ProductDetailPage/top/addToMyFavorite';
+import pdTitleMessage from './component/ProductDetailPage/top/pdTitleMessage';
+import addToCartBtn from './component/ProductDetailPage/top/addToCartBtn';
+import addToMyFavorite from './component/ProductDetailPage/top/addToMyFavorite';
+import shareProducts from './component/ProductDetailPage/top/shareProducts';
 // import pdAttr from './component/ProductDetailPage/bottom/pdInfo/pdAttr';
 // import pdDescription from './component/ProductDetailPage/bottom/pdInfo/pdDescription';
 // import nReview from './component/ProductDetailPage/bottom/pdInfo/nReview';
@@ -22,9 +23,10 @@ function App() {
         <Route path="/" component={ Homepage } exact/>
         {/* ProductDetailPage-TOP */}
         <Route path="/pdImageGallery" component={ pdImageGallery } exact/>
-        {/* <Route path="/pdTitleMessage" component={ pdTitleMessage } exact/> */}
-        {/* <Route path="/addToCartBtn" component={ addToCartBtn } exact/> */}
-        {/* <Route path="/addToMyFavorite" component={ addToMyFavorite } exact/> */}
+        <Route path="/pdTitleMessage" component={ pdTitleMessage } exact/>
+        <Route path="/addToCartBtn" component={ addToCartBtn } exact/>
+        <Route path="/addToMyFavorite" component={ addToMyFavorite } exact/>
+        <Route path="/shareProducts" component={ shareProducts } exact/>
 
         {/* ProductDetailPage-BOTTOM */}
         {/* <Route path="/pdAttr" component={ pdAttr } exact/>
