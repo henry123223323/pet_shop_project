@@ -7,7 +7,7 @@ import Homepage from './component/Homepage/Homepage';
 // import AddToCartBtn from './component/ProductDetailPage/top/AddToCartBtn';
 // import AddToMyFavorite from './component/ProductDetailPage/top/AddToMyFavorite';
 // import ShareProducts from './component/ProductDetailPage/top/ShareProductsBtn';
-import PdDetailPageTop from './component/ProductDetailPage/top/PdDetailPageTop';
+import PdDetailPage from './component/ProductDetailPage/top/PdDetailPage';
 // import pdAttr from './component/ProductDetailPage/bottom/pdInfo/pdAttr';
 // import pdDescription from './component/ProductDetailPage/bottom/pdInfo/pdDescription';
 // import nReview from './component/ProductDetailPage/bottom/pdInfo/nReview';
@@ -28,7 +28,7 @@ function App() {
         <Route path="/AddToCartBtn" component={ AddToCartBtn } exact/>
         <Route path="/AddToMyFavorite" component={ AddToMyFavorite } exact/>
         <Route path="/ShareProducts" component={ ShareProducts } exact/> */}
-        <Route path="/PdDetailPageTop" component={ PdDetailPageTop } exact/>
+        <Route path="/PdDetailPage" component={ PdDetailPage } exact/>
 
         {/* ProductDetailPage-BOTTOM */}
         {/* <Route path="/pdAttr" component={ pdAttr } exact/>

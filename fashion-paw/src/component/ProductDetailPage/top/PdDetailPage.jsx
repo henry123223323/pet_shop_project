@@ -7,7 +7,7 @@ import ShareProducts from './ShareProductsBtn.jsx';
 import PdTitle from './PdTitle.jsx';
 import PdQuantity from './PdQuantity.jsx';
 
-class PdDetailPageTop extends Component {
+class PdDetailPage extends Component {
   state = { };
 
   render() {
@@ -67,4 +67,4 @@ class PdDetailPageTop extends Component {
   }
 }
 
-export default PdDetailPageTop;
+export default PdDetailPage;
