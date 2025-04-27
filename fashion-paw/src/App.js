@@ -2,7 +2,7 @@ import './App.css';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import Homepage from './component/Homepage/Homepage';
-import PdDetailPage from './component/ProductDetailPage/PdDetailPage';
+import PdDetailPageSecond from './component/ProductDetailPage/PdDetailPageSecond';
 
 
 function App() {
@@ -11,7 +11,7 @@ function App() {
     <h1 className='shadow-sm top-0'>Header</h1>
       <Switch>
         <Route path="/" component={ Homepage } exact/>
-        <Route path="/PdDetailPage" component={ PdDetailPage } exact/>
+        <Route path="/PdDetailPageSecond" component={ PdDetailPageSecond } exact/>
 
       </Switch>
       <h1 className='paw-bg-pri-darkgreen'>Footer</h1>
