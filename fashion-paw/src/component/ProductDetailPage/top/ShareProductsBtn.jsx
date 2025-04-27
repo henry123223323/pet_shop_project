@@ -40,7 +40,7 @@ class ShareProducts extends Component {
 
       setTimeout(() => {
         this.setState({ shareHint: false });
-      }, 500);
+      }, 1000);
     } catch (err) {
       console.error('複製失敗', err);
     }

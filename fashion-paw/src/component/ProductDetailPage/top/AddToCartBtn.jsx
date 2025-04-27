@@ -9,13 +9,17 @@ class AddToCartBtn extends Component {
                 {/* <h1>加入購物車</h1> */}
                 <div className='d-flex align-items-center my-3'>
 
-                    <button className={`btn paw-btn-pink paw-text-lightorange rounded-pill mx-3 ${styles.textShadow} ${styles.cartBtn}`}>
+                    <button className={`btn paw-btn-pink paw-text-lightorange rounded-pill mx-3 ${styles.textShadow} ${styles.cartBtn}`}
+                    onClick={this.addToCart}>
                         {type === "text" ? "加入購物車" : <i className="bi bi-cart4"></i> }
                     </button>
                 </div>
                 
             </>
         );
+    }
+    addToCart = () => {
+        alert("要連購物車！")
     }
 }
 
