@@ -2,7 +2,6 @@
     padding: 16px;
     background: #fff;
     border-radius: 8px;
-      border: 2px dashed red;
     
   }
   
@@ -28,27 +27,6 @@
   }
   
   .sublist li:hover {
-    background-color: #ffe082;
-  }
-  
-  
-  .sublist label {
-    cursor: pointer;
-    font-size: 0.9rem;
-  }
-  
-  .sublist input {
-    margin-right: 6px;
-  }
-  
-  .subitem {
-    cursor: pointer;
-    font-size: 0.9rem;
-    padding: 4px 8px;
-    border-radius: 4px;
-  }
-  
-  .subitem:hover {
     background-color: #ffe082;
   }
   

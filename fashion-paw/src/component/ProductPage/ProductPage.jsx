@@ -1,37 +1,39 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+// import axios from 'axios'; 先不用 axios，先註解掉
 import styles from './ProductPage.module.css';
 
 // Components
-import Sidebar     from './Sidebar/Sidebar';
-import FilterBar   from './FilterBar/FilterBar';
-import SortBar     from './SortBar/SortBar';
+import Sidebar from './Sidebar/Sidebar';
+import FilterBar from './FilterBar/FilterBar';
+import SortBar from './SortBar/SortBar';
 import ProductList from './ProductList/ProductList';
-import HotRanking  from './HotRanking/HotRanking';
+import HotRanking from './HotRanking/HotRanking';
+
+// Mock Data
+import mockProducts from './mockProducts'; // ⭐ 引入你的假資料
 
 export default function ProductPage() {
   // ---------------------------------------------
-  // 🔧 State 區塊
+  //  State 區塊
   // ---------------------------------------------
-  const [products, setProducts]       = useState([]);      // 所有商品資料
-  const [filtered, setFiltered]       = useState([]);      // 篩選後的商品
-  const [filters, setFilters]         = useState({         // 篩選條件
+  const [products, setProducts] = useState([]);      
+  const [filtered, setFiltered] = useState([]);      
+  const [filters, setFilters] = useState({          
     functions: [],
     brands: [],
     price: ''
   });
-  const [sortBy, setSortBy]           = useState('');      // 排序依據
-  const [favoriteIds, setFavoriteIds] = useState([]);      // 收藏商品 ID 列表
-  const [selectedType, setSelectedType] = useState(null);  // 寵物類型
-  const [selectedCategory, setSelectedCategory] = useState(null); // 商品分類
+  const [sortBy, setSortBy] = useState('');      
+  const [favoriteIds, setFavoriteIds] = useState([]);      
+  const [selectedType, setSelectedType] = useState(null);  
+  const [selectedCategory, setSelectedCategory] = useState(null); 
 
   // ---------------------------------------------
-  // 🚀 第一次掛載：取得所有商品
+  //  第一次掛載：載入假資料
   // ---------------------------------------------
   useEffect(() => {
-    axios.get('/api/products')
-      .then(res => setProducts(res.data))
-      .catch(err => console.error('Fetch products error:', err));
+    // ✅ 這邊改成直接用假資料
+    setProducts(mockProducts);
   }, []);
 
   // ---------------------------------------------
@@ -41,7 +43,6 @@ export default function ProductPage() {
     let result = [...products];
     const { functions, brands, price } = filters;
 
-    // 類型分類（狗、貓…）
     if (selectedType) {
       result = result.filter(p => p.pet_type === selectedType);
     }
@@ -50,7 +51,6 @@ export default function ProductPage() {
       result = result.filter(p => p.category === selectedCategory);
     }
 
-    // 價格區間
     if (price) {
       const [min, max] = price.includes('+')
         ? [Number(price), Infinity]
@@ -58,17 +58,14 @@ export default function ProductPage() {
       result = result.filter(p => p.price >= min && p.price <= max);
     }
 
-    // 品牌
     if (brands.length) {
       result = result.filter(p => brands.includes(p.brand));
     }
 
-    // 功能
     if (functions.length) {
       result = result.filter(p => functions.includes(p.function));
     }
 
-    // 排序
     if (sortBy === 'price_asc') {
       result.sort((a, b) => a.price - b.price);
     } else if (sortBy === 'price_desc') {
@@ -83,19 +80,27 @@ export default function ProductPage() {
   }, [products, filters, sortBy, selectedType, selectedCategory]);
 
   // ---------------------------------------------
-  // 🔁 處理 filter 與 sort 傳回的 callback
+  // 🔁處理 filter 與 sort 傳回的 callback
   // ---------------------------------------------
   const handleFilterChange = newFilters => setFilters(newFilters);
   const handleSortChange = sortKey => setSortBy(sortKey);
 
   // ---------------------------------------------
-  // 💖 收藏 / 🛒 加入購物車（可自行補功能）
+  //  收藏 / 🛒 加入購物車
   // ---------------------------------------------
-  const handleToggleFavorite = id => { /* your code here */ };
-  const handleAddToCart = id => { /* your code here */ };
+  const handleToggleFavorite = id => {
+    setFavoriteIds(prev =>
+      prev.includes(id) ? prev.filter(favId => favId !== id) : [...prev, id]
+    );
+  };
+
+  const handleAddToCart = id => {
+    console.log(`加入購物車 id=${id}`);
+    // 可以接後端購物車 API
+  };
 
   // ---------------------------------------------
-  // 📂 處理 Sidebar 點選分類
+  //  處理 Sidebar 點選分類
   // ---------------------------------------------
   const handleSelectCategory = (type, category) => {
     setSelectedType(type);
@@ -103,7 +108,7 @@ export default function ProductPage() {
   };
 
   // ---------------------------------------------
-  // 📦 畫面輸出
+  // 畫面輸出
   // ---------------------------------------------
   return (
     <div className={styles.container}>
@@ -113,7 +118,7 @@ export default function ProductPage() {
 
       <main className={styles.main}>
         <FilterBar onFilterChange={handleFilterChange} />
-        <SortBar   onSortChange={handleSortChange} />
+        <SortBar onSortChange={handleSortChange} />
 
         <ProductList
           products={filtered}

@@ -33,7 +33,10 @@ export default function ProductCard({
           </button>
           <button
             className={styles.btn}
-            onClick={() => onAddToCart(id)}
+            onClick={() => {
+              alert('已加入購物車');
+              onAddToCart(id);
+            }}
             aria-label="加入購物車"
           >
             🛒
