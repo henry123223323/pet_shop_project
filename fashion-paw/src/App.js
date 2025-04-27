@@ -10,7 +10,6 @@ function App() {
     <BrowserRouter>
     <h1 className='shadow-sm top-0'>Header</h1>
       <Switch>
-        {/* 完成的再隱藏註解 */}
         <Route path="/" component={ Homepage } exact/>
         <Route path="/PdDetailPage" component={ PdDetailPage } exact/>
 

@@ -7,10 +7,10 @@ class PdInfo extends Component {
     render() { 
         const {commentState} = this.state
         return (<>
-        <h1>賣家評論</h1>
+        {/* <h1>賣家評論</h1> */}
  
             {/* 按鈕-展開評論 */}
-            <div className={`btn paw-btn-outline-pri-darkgreen d-flex flex-fill justify-content-between ${commentState === true ? style.btnClicking : ""}`}
+            <div className={`my-3 btn paw-btn-outline-pri-darkgreen d-flex flex-fill justify-content-between ${commentState === true ? style.btnClicking : ""}`}
             onClick={this.commentShow}>
                 <div>對賣家的評論</div>
                 <div >
