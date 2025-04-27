@@ -1,7 +1,7 @@
 [
     {
       "title": "倉鼠皮毛健康檢查",
-      "banner_url": "https://i.pinimg.com/736x/e9/46/0d/e9460d75d56dd983e438d9d04fb8d9a1.jpg",
+      "banner_url": "/mouse/skincheck.jpg",
       "intro": "倉鼠光滑亮麗的毛色是健康的指標，透過日常觀察皮毛並定期梳理，可預防寄生蟲及皮膚疾病，讓毛孩保持最佳狀態。",
       "product_category": "Health Supplements",
       "pet_type": "mouse",
@@ -25,7 +25,7 @@
     },
     {
       "title": "倉鼠體重與飲食監測",
-      "banner_url": "https://i.pinimg.com/736x/80/31/66/8031664119ebb98471ea438fdef43b49.jpg",
+      "banner_url": "/mouse/weightdiet.jpg",
       "intro": "倉鼠體重過輕或過重都會影響健康，每週測量並記錄體重，搭配均衡飼料及新鮮蔬果，可保持理想體態與活力。",
       "product_category": "Health Supplements",
       "pet_type": "mouse",
@@ -49,7 +49,7 @@
     },
     {
       "title": "倉鼠眼耳口腔檢查",
-      "banner_url": "https://i.pinimg.com/736x/cc/34/8e/cc348ec2f6ba89fe9d00e32b49bb0f61.jpg",
+      "banner_url": "/mouse/eyesearsmouth.jpg",
       "intro": "清亮無分泌物的眼睛、乾淨無異味的耳朵與口腔，是倉鼠健康的重要指標，每週檢查能及早發現感染與牙齒問題。",
       "product_category": "Health Supplements",
       "pet_type": "mouse",
@@ -73,7 +73,7 @@
     },
     {
       "title": "倉鼠呼吸系統檢測",
-      "banner_url": "https://i.pinimg.com/736x/be/41/68/be4168dea7332a75f08ad45833146e66.jpg",
+      "banner_url": "/mouse/breathe.jpg",
       "intro": "呼吸急促、打噴嚏或咳嗽都是呼吸道感染警訊，透過觀察呼吸頻率與聲音，可及時發現肺部或鼻竇問題並給予治療。",
       "product_category": "Health Supplements",
       "pet_type": "mouse",
@@ -97,7 +97,7 @@
     },
     {
       "title": "倉鼠排泄與泌尿檢查",
-      "banner_url": "https://i.pinimg.com/736x/9e/29/11/9e2911accf54dcddaab20ad0bf31b0b8.jpg",
+      "banner_url": "/mouse/defecationpee.jpg",
       "intro": "觀察排便形狀與頻率，可迅速掌握倉鼠腸胃及泌尿系統健康；異常排泄物或血尿皆需立即送醫檢查。",
       "product_category": "Health Supplements",
       "pet_type": "mouse",
@@ -121,7 +121,7 @@
     },
     {
       "title": "倉鼠骨骼與運動功能檢查",
-      "banner_url": "",
+      "banner_url": "/mouse/walksports.jpg",
       "intro": "透過觀察倉鼠行走姿態及抓握能力，可檢測四肢與關節健康；定期提供運動玩具，並留意是否有跛行或無力現象。",
       "product_category": "Health Supplements",
       "pet_type": "mouse",
@@ -145,7 +145,7 @@
     },
     {
       "title": "倉鼠老年健康監測",
-      "banner_url": "",
+      "banner_url": "/mouse/oldcheck.jpg",
       "intro": "倉鼠進入老年後，身體機能逐漸退化，需要更細緻的日常關懷，透過定期檢查與環境調整，提升銀髮倉鼠的生活品質。",
       "product_category": "Health Supplements",
       "pet_type": "mouse",
