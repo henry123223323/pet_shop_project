@@ -3,6 +3,7 @@ import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import Homepage from './component/Homepage/Homepage';
 import PdDetailPageSecond from './component/ProductDetailPage/PdDetailPageSecond';
+import ShoppingCart from './component/Cart/ShoppingCart';
 
 
 function App() {
@@ -12,6 +13,7 @@ function App() {
       <Switch>
         <Route path="/" component={ Homepage } exact/>
         <Route path="/PdDetailPageSecond" component={ PdDetailPageSecond } exact/>
+        <Route path="/ShoppingCart" component={ ShoppingCart } exact/>
 
       </Switch>
       <h1 className='paw-bg-pri-darkgreen'>Footer</h1>
