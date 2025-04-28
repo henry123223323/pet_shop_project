@@ -1,4 +1,3 @@
-// src/component/HotRanking/HotRanking.jsx
 import React, { useState } from 'react';
 import styles from './HotRanking.module.css';
 import mockRanking from './mockRanking';
