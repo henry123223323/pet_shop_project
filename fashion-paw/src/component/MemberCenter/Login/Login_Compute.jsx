@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
+import { BrowserRouter as Router, Route, Switch,Link } from 'react-router-dom';
 import ThirdLogin from './Third_login';
+
 
 class Login_Compute extends Component {
     state = {
@@ -23,11 +25,12 @@ class Login_Compute extends Component {
                             <label htmlFor="password">密碼:</label>
                             <input type="password" id="password" />
                             <p></p>
-                            <input type="submit" className="btn btn-primary" value="登入" />
+                            <input type="submit" className="btn paw-btn-primary" value="登入" />
                         </form>
                     </div>
-                    <a href="/MemberCenter">忘記密碼</a><br />
-                    <a href="/MemberCenter/Register">我還沒註冊帳號</a><br /><br />
+
+                    <a><Link to="/MemberCenter/change-password">忘記密碼</Link></a><br />
+                    <a href="/Register">我還沒註冊帳號</a><br /><br />
                     <hr />
                     <ThirdLogin />
                 </div>

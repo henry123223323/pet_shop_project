@@ -1,0 +1,41 @@
+[
+    {
+        "pid": "",
+        "condition": "new",
+        "status": 0,
+        "pet_type": "",
+        "pd_name": "",
+        "price": "",
+        "description": "",
+        "categories": "",
+        "attribute": {
+            "brand": "",
+            "pattern": "",
+            "buydate": "",
+            "new_level": "",
+            "size": "",
+            "color": "",
+            "weight": ""
+        },
+        "images": {
+            "point__area": {
+                "img_path": "",
+                "img_value": ""
+            },
+            "content_area": [
+                {
+                    "img_path": "",
+                    "img_value": ""
+                },
+                {
+                    "img_path": "",
+                    "img_value": ""
+                },
+                {
+                    "img_path": "",
+                    "img_value": ""
+                }
+            ]
+        }
+    }
+]
