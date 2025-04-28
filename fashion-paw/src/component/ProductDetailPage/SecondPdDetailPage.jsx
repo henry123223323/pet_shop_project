@@ -61,8 +61,8 @@ class PdDetailPage extends Component {
                 <SwitchPage
                   currentPage={this.state.currentPage}
                   changePage={(click) => { this.setState({ currentPage: click }) }} />
-                {this.state.currentPage === "description" && <PdInfo />}
-                {this.state.currentPage === "seller" && <SellerInfo />}
+
+                {this.state.currentPage === "description" ? <PdInfo /> : <SellerInfo />}
               </div>
             </div>
 
