@@ -29,7 +29,7 @@ class PdAttr extends Component {
                             </tr>
                             <tr>
                                 <td>保存狀況</td>
-                                <td>2024-03</td>
+                                <td>良好</td>
                             </tr>
 
                             <tr>

@@ -3,6 +3,7 @@ import CheckList from '../Cart/CheckList';
 import PayWay from './PayWay'
 import DeliverWay from './DeliverWay'
 import Receipt from './Receipt';
+import ConfirmBtn from '../share/ConfirmBtn';
 
 
 class CheckBillPage extends Component {
@@ -60,6 +61,8 @@ class CheckBillPage extends Component {
                             </div>
                             <div className='border rounded'>
                                 <CheckList />
+                                <ConfirmBtn 
+                                onClick={this.confirmToPay}/>
                             </div>
                         </div>
 
@@ -70,6 +73,9 @@ class CheckBillPage extends Component {
 
             </>
         );
+    }
+    confirmToPay = () => {
+        alert("完成結帳")
     }
 }
 

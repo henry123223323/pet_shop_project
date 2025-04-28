@@ -13,9 +13,14 @@ import PdInfo from './bottom/pdInfo/PdInfo.jsx';
 import SellerInfo from './bottom/sellerInfo/SellerInfo.jsx';
 
 class PdDetailPage extends Component {
-  state = {
-    currentPage: "description",
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      currentPage: "description",
+      isFavorite: false,
+      isShare: false,
+    };
+  }    
 
   render() {
     return (
@@ -45,12 +50,16 @@ class PdDetailPage extends Component {
                       <PdQuantity />
 
                       <div className='d-flex align-items-center'>
-                        <AddToCartBtn type="text" />
-                        <AddToMyFavorite />
-                        <ShareProducts />
+                        <AddToCartBtn type="text" onClick={this.addToCart} />
+                        <AddToMyFavorite 
+                            onClick={this.favBtnClick} 
+                            isFavorite={this.state.isFavorite}
+                            size="24px"
+                            type="icon"/>
+                        <ShareProducts 
+                            onClick={this.shareOthers}
+                            isShare={this.state.isShare}/>
                       </div>
-
-
                     </div>
                   </div>
                 </div>
@@ -74,6 +83,28 @@ class PdDetailPage extends Component {
       </>
     );
   }
+  addToCart = () => {
+    alert("要連購物車！")
+  }
+  favBtnClick = (e) => {
+    alert('已收藏')
+    this.setState((prevState) => ({
+      isFavorite: !prevState.isFavorite,
+    }));
+  }
+  shareOthers = async () => {
+    try {
+    // 複製網址
+      await navigator.clipboard.writeText(window.location.href); 
+      this.setState({ isShare: true });
+
+      setTimeout(() => {
+        this.setState({ isShare: false });
+      }, 1000);
+    } catch (err) {
+      console.error('複製失敗', err);
+    }
+  };
 }
 
 export default PdDetailPage;

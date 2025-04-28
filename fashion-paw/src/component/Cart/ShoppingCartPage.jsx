@@ -3,6 +3,7 @@ import CartList from './CartList';
 import SellerTitle from './SellerTitle';
 import Coupon from './Coupon';
 import CheckList from './CheckList';
+import ConfirmBtn from '../share/ConfirmBtn';
 
 class ShoppingCartPage extends Component {
   state = {
@@ -92,8 +93,11 @@ class ShoppingCartPage extends Component {
                 <h3 className='p-2'>結帳明細</h3>
               </div>
               <div className='border rounded'>
-              <CheckList />
+                <CheckList />
+                <a href="/CheckBillPage"><ConfirmBtn type="toPayPage" /></a>
+
               </div>
+
             </div>
 
           </div>
@@ -104,6 +108,7 @@ class ShoppingCartPage extends Component {
       </>
     );
   }
+
 }
 
 export default ShoppingCartPage;
