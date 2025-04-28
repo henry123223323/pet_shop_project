@@ -1,3 +1,5 @@
+// 這是購物車跟結帳頁面的確認按鈕
+
 import React, { Component } from 'react';
 class ConfirmBtn extends Component {
     render() {

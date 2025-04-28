@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import styles from './SellerOtherPd.module.css'
-import AddToMyFavorite from '../../top/AddToMyFavorite';
-import AddToCartBtn from '../../top/AddToCartBtn';
+import AddToMyFavorite from '../../../share/AddToMyFavorite';
+import AddToCartBtn from '../../../share/AddToCartBtn';
 class PdInfo extends Component {
     state = {}
     render() {

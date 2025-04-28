@@ -2,11 +2,11 @@ import React, { Component } from 'react';
 //top
 import PdImageGallery from './top/PdImageGallery.jsx'
 import PdTitleMessage from './top/PdTitleMessage.jsx';
-import AddToCartBtn from './top/AddToCartBtn.jsx';
-import AddToMyFavorite from './top/AddToMyFavorite.jsx';
+import AddToCartBtn from '../share/AddToCartBtn.jsx';
+import AddToMyFavorite from '../share/AddToMyFavorite.jsx';
 import ShareProducts from './top/ShareProductsBtn.jsx';
 import PdTitle from './top/PdTitle.jsx';
-import PdQuantity from './top/PdQuantity.jsx';
+import PdQuantity from '../share/PdQuantity.jsx';
 //bottom
 import SwitchPage from './bottom/SwitchPage.jsx';
 import PdInfo from './bottom/pdInfo/PdInfo.jsx';

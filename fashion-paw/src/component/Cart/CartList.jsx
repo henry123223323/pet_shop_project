@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import PdQuantity from '../ProductDetailPage/top/PdQuantity';
-import AddToMyFavorite from '../ProductDetailPage/top/AddToMyFavorite';
+import PdQuantity from '../share/PdQuantity';
+import AddToMyFavorite from '../share/AddToMyFavorite';
 
 class CartList extends Component {
   render() {
