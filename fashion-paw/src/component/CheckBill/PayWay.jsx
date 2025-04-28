@@ -21,7 +21,7 @@ class PayWay extends Component {
                 <input name="payWay" type="radio" id="installment" onChange={this.payWayChange} />
                 <label className='px-2' htmlFor="installment"
                 > 信用卡：分期付款</label><br />
-                 {selectedPayWay === "installment" && (
+                {selectedPayWay === "installment" && (
                     <div className="px-3">
                         <input name="installmentOption" type="radio" id="three" />
                         <label className='px-2' htmlFor="three">3期</label><br />
@@ -41,26 +41,27 @@ class PayWay extends Component {
                 {selectedPayWay === "thirdPartyPayment" && (
                     <div className="px-3">
                         <div className='d-flex align-items-center my-1'>
-                        <input name="thirdPartyOption" type="radio" id="linepay" />
-                        <label className='px-2' style={{width:"100px"}} htmlFor="linepay"><img src={linepayLogo} alt="LINEPAY" /></label><br />
+                            <input name="thirdPartyOption" type="radio" id="linepay" />
+                            <label className='px-2' style={{ width: "100px" }} htmlFor="linepay"><img src={linepayLogo} alt="LINEPAY" /></label><br />
                         </div>
 
                         <div className='d-flex align-items-center my-1'>
-                        <input name="thirdPartyOption" type="radio" id="streetpay" />
-                        <label className='px-2' style={{width:"100px"}} htmlFor="streetpay"><img src={jkoLogo} alt="JKOPay" /></label><br />
+                            <input name="thirdPartyOption" type="radio" id="streetpay" />
+                            <label className='px-2' style={{ width: "100px" }} htmlFor="streetpay"><img src={jkoLogo} alt="JKOPay" /></label><br />
                         </div>
 
                         <div className='d-flex align-items-center my-1'>
-                        <input name="thirdPartyOption" type="radio" id="paypal" />
-                        <label className='px-2' style={{width:"100px"}} htmlFor="paypal"><img src={PayPalLogo} alt="PayPalLogo" /></label><br />
+                            <input name="thirdPartyOption" type="radio" id="paypal" />
+                            <label className='px-2' style={{ width: "100px" }} htmlFor="paypal"><img src={PayPalLogo} alt="PayPalLogo" /></label><br />
                         </div>
                     </div>
                 )}
 
 
-                <input name="payWay" type="radio" id="Cash" onChange={this.payWayChange} />
-                <label className='px-2' htmlFor="Cash"
+                <input name="payWay" type="radio" id="cash" onChange={this.payWayChange} />
+                <label className='px-2' htmlFor="cash"
                 > 貨到付款</label>
+
             </div>
         </>);
     }

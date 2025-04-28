@@ -4,14 +4,17 @@ import AddToMyFavorite from '../share/AddToMyFavorite';
 
 class CartList extends Component {
   render() {
-    const { productName, image, color, unit_price,  } = this.props.item;
+    const { item, selected } = this.props;
+    const { productName, image, color, unit_price } = item;
 
     return (
       <div className='p-3 m-3'>
         <div className="row align-items-center justify-content-start border-bottom pb-3 mb-3">
           {/* 勾選框 */}
           <div className='mt-1 col-1 d-flex justify-content-center align-items-center'>
-            <input type="checkbox" className="form-check-input" />
+            <input type="checkbox" className="form-check-input" 
+            checked={!!selected} 
+            onChange={() => this.props.onSelectedChange(this.props.item.cart_id)}/>
           </div>
 
           {/* 商品圖片 */}
@@ -40,7 +43,9 @@ class CartList extends Component {
             <div className="d-flex flex-column justify-content-center align-items-center">
               {/* 數量調整器 */}
               <div className="d-flex justify-content-center">
-                <PdQuantity />
+                <PdQuantity 
+                quantity={item.quantity}
+                onQuantityChange={(newQty) => this.props.onQuantityChange(item.cart_id, newQty)}/>
               </div>
 
               {/* 收藏刪除按鈕 */}
@@ -59,5 +64,6 @@ class CartList extends Component {
     );
   }
 }
+
 
 export default CartList;

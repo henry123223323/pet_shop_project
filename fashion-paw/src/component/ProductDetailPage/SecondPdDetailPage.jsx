@@ -19,6 +19,7 @@ class PdDetailPage extends Component {
       currentPage: "description",
       isFavorite: false,
       isShare: false,
+      count:1,
     };
   }    
 
@@ -47,7 +48,9 @@ class PdDetailPage extends Component {
                     </div>
 
                     <div className='d-flex align-items-center flex-md-row flex-wrap'>
-                      <PdQuantity />
+                      <PdQuantity 
+                      quantity={this.state.count}
+                      onQuantityChange={(newQty) => this.setState({ count: newQty })}/>
 
                       <div className='d-flex align-items-center'>
                         <AddToCartBtn type="text" onClick={this.addToCart} />
@@ -87,7 +90,7 @@ class PdDetailPage extends Component {
     alert("要連購物車！")
   }
   favBtnClick = (e) => {
-    alert('已收藏')
+    // alert('已收藏')
     this.setState((prevState) => ({
       isFavorite: !prevState.isFavorite,
     }));

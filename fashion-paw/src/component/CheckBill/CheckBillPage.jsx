@@ -7,6 +7,10 @@ import ConfirmBtn from '../share/ConfirmBtn';
 
 
 class CheckBillPage extends Component {
+    state = {
+        selectedItems: [],
+        discountAmount: 0
+      };
 
     render() {
 
@@ -60,7 +64,8 @@ class CheckBillPage extends Component {
                                 <h3 className='p-2'>結帳明細</h3>
                             </div>
                             <div className='border rounded'>
-                                <CheckList />
+                                <CheckList selectedItems={this.state.selectedItems}
+  discountAmount={this.state.discountAmount}/>
                                 <ConfirmBtn 
                                 onClick={this.confirmToPay}/>
                             </div>
@@ -74,6 +79,12 @@ class CheckBillPage extends Component {
             </>
         );
     }
+    componentDidMount() {
+        const selectedItems = JSON.parse(localStorage.getItem('selectedItems')) || [];
+        const discountAmount = Number(localStorage.getItem('discountAmount')) || 0;
+      
+        this.setState({ selectedItems, discountAmount });
+      }
     confirmToPay = () => {
         alert("完成結帳")
     }

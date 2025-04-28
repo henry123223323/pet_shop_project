@@ -2,13 +2,13 @@ import React, { Component } from 'react';
 
 class Coupon extends Component {
   state = {
-    coupon: '',        // 使用者輸入的折扣碼
-    discountAmount: 0, // 折扣金額
+    coupon: '', 
+    discountAmount:0,
     applied: false     // 是否已套用折扣
   };
 
   render() {
-    const { coupon, discountAmount, applied } = this.state;
+    const { coupon, applied,discountAmount } = this.state;
 
     return (
       <div className="p-3 border rounded">
@@ -18,7 +18,7 @@ class Coupon extends Component {
           <input 
             type="text" 
             value={coupon}
-            onChange={this.handleInputChange}
+            onChange={this.inputChange}
             placeholder="請輸入折扣碼"
             className="form-control me-2 "
           />
@@ -39,21 +39,27 @@ class Coupon extends Component {
     );
   }
 
-  handleInputChange = (e) => {
+  inputChange = (e) => {
     this.setState({ coupon: e.target.value });
   };
 
   applyCoupon = () => {
     const { coupon } = this.state;
-    // 假設只認 "discount99" 這個折扣碼
-    if (coupon === 'discount99') {
-      this.setState({ discountAmount: 99, applied: true });
+    let discountAmount = 0;
+
+    if (coupon.trim().toLowerCase() === 'discount99') {
+      discountAmount = 99;
+      this.setState({ applied: true, discountAmount: discountAmount });
     } else {
-      this.setState({ discountAmount: 0, applied: false });
+      this.setState({ applied: false, discountAmount: 0 });
       alert('折扣碼無效，請重新輸入！');
     }
-  };
 
+    // 回傳給父層
+    if (this.props.onApplyDiscount) {
+      this.props.onApplyDiscount(discountAmount);
+    }
+  };
 
 }
 

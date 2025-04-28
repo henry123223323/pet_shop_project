@@ -1,28 +1,52 @@
 import React, { Component } from 'react';
+
 class CheckList extends Component {
-    state = {}
-    render() {
-        return (<>
-            {/* <h3>結帳確認區</h3> */}
-            <div className='px-4'>
-                <div className='my-2'>
-                    <span>原價總金額：</span> <span>$$</span>
-                </div>
-                <div className='my-2'>
-                    <span >折扣：</span> <span>-$$</span>
-                </div>
-                <hr />
-                <div>
-                    <span className='ptxtb3'>結帳金額：</span> <span>$$$</span>
-                    <p></p>
-                    
-                </div>
-            </div>
-        </>);
-    }
-    checkOut = () => {
-        alert("結帳button")
-    }
+
+  render() {
+    const { selectedItems, discountAmount } = this.props;
+
+    // 1. 計算勾選的商品總金額 A
+    const totalOriginal = selectedItems.reduce((sum, item) => {
+      return sum + item.unit_price * item.quantity;
+    }, 0);
+
+    // 2. 折扣金額 B 已經存在 state.discountAmount
+    // 3. 判斷運費 C
+    const afterDiscount = totalOriginal - discountAmount;
+    const shippingFee = afterDiscount < 399 && afterDiscount > 0 ? 70 : 0;
+
+    // 4. 結帳金額 = A - B + C
+    const finalAmount = afterDiscount + shippingFee;
+
+
+    return (
+      <>
+        <div className='px-4'>
+
+          {/* 結帳明細 */}
+          <div className='my-2'>
+            <span>原價總金額：</span> <span>{totalOriginal.toLocaleString()} </span>
+          </div>
+          <div className='my-2'>
+            <span>運費：</span> <span> {shippingFee.toLocaleString()}</span>
+          </div>
+          <div className='my-2'>
+            <span>折扣：</span> <span>- {discountAmount.toLocaleString()}</span>
+          </div>
+          <hr />
+          <div>
+            <span className='ptxtb3'>結帳金額：</span> 
+            <span> {finalAmount.toLocaleString()} 元</span>
+            <p></p>
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  checkOut = () => {
+    alert("結帳button");
+  }
 }
 
 export default CheckList;

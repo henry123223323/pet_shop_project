@@ -1,12 +1,6 @@
 import React, { Component} from 'react';
 
 class PdQuantity extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-          count: 1
-        };
-      }
     render() { 
         return (
         <>
@@ -23,7 +17,7 @@ class PdQuantity extends Component {
                 style={{
                     width: 60 ,
                   }}>
-                    <input className='w-100 text-center' type="text" value={this.state.count} 
+                    <input className='w-100 text-center' type="text" value={this.props.quantity} 
                     onChange={this.inputChange}/>
                 </div>
                 {/* 增加按鈕 */}
@@ -39,24 +33,28 @@ class PdQuantity extends Component {
     inputChange = (e)=>{
         const value = e.target.value
         if ( value === "" ){
-            this.setState({count:""})
+            this.props.onQuantityChange("")
         }else{
             const number = parseInt(value)
-            if ( !isNaN(number) && value >= 1 ){
-                this.setState({count:number})
+            if ( !isNaN(number) && number >= 1 ){
+                this.props.onQuantityChange(number)
             }
         }
     }
     quantityDown = () => {
         // alert("Down")
-        if(this.state.count > 1){
-            this.setState({count:this.state.count - 1})
-
+        const { quantity, onQuantityChange } = this.props;
+        if (quantity > 1) {
+          onQuantityChange(quantity - 1);
         }
     }
     quantityUp = () => {
         // alert("Up")
-        this.setState({count: this.state.count + 1})
+        const { quantity, onQuantityChange } = this.props;
+    onQuantityChange(quantity + 1);
+    // if (quantity < stock) { 
+    //     onQuantityChange(quantity + 1);
+    //   }
     }
 }
  

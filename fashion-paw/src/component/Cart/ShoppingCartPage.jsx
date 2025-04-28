@@ -8,26 +8,58 @@ import ConfirmBtn from '../share/ConfirmBtn';
 class ShoppingCartPage extends Component {
   state = {
     coupon: "discount99",
+    discountAmount:0,
     cartList: [
-      { cart_id: 1, pid: 501, uid: null, condition: "new", quantity: 2, productName: "新品貓窩", unit_price: 899, image: "/media/second_pd/cat/cat2_home1_2.jpeg", color: "灰色" },
-      { cart_id: 2, pid: 502, uid: 1001, condition: "second", quantity: 1, productName: "二手貓窩-小橘貓", unit_price: 499, image: "/media/second_pd/cat/cat2_home1_1.jpeg", color: "藍色" },
-      { cart_id: 3, pid: 503, uid: 1002, condition: "second", quantity: 1, productName: "二手狗狗墊-阿柴", unit_price: 299, image: "/media/second_pd/cat/cat2_home1_3.jpeg", color: "咖啡色" }
+      {
+        cart_id: 1,
+        pid: 501,
+        uid: null,
+        condition: "new",
+        quantity: 2,
+        productName: "新品貓窩",
+        unit_price: 899,
+        image: "/media/second_pd/cat/cat2_home1_2.jpeg",
+        color: "灰色"
+      },
+      {
+        cart_id: 2,
+        pid: 502,
+        uid: 1001,
+        condition: "second",
+        quantity: 1,
+        productName: "二手貓窩-小橘貓",
+        unit_price: 499,
+        image: "/media/second_pd/cat/cat2_home1_1.jpeg",
+        color: "藍色"
+      },
+      {
+        cart_id: 3,
+        pid: 503,
+        uid: 1002,
+        condition: "second",
+        quantity: 1,
+        productName: "二手狗狗墊-阿柴",
+        unit_price: 299,
+        image: "/media/second_pd/cat/cat2_home1_3.jpeg",
+        color: "咖啡色"
+      }
     ],
     sellers: {
       1001: "小橘貓",
-      1002: "阿柴",
+      1002: "阿柴2",
       1: "拾毛百貨"
-    }
+    },
+    selectedItems: [] // ✅ 乾淨：專門記錄有勾選的 cart_id
   };
 
   render() {
-    const { cartList, sellers } = this.state;
+    const { cartList, sellers, selectedItems } = this.state;
 
     // 分類：新品 & 二手
     const newItems = cartList.filter(item => item.condition === "new");
     const secondItems = cartList.filter(item => item.condition === "second");
 
-    // 再把二手商品，依賣家分組
+    // 二手商品依賣家分組
     const secondItemsBySeller = {};
     secondItems.forEach(item => {
       if (!secondItemsBySeller[item.uid]) {
@@ -42,9 +74,11 @@ class ShoppingCartPage extends Component {
         <div className='my-2 p-3'>
           <h3>購物車</h3>
         </div>
+
         <div className='row g-5'>
           {/* 左邊 */}
           <div className="col-12 col-md-8">
+
             {/* 新品購物車 */}
             <div className='p-4'>
               <div className='paw-bg-middleorange'>
@@ -52,29 +86,40 @@ class ShoppingCartPage extends Component {
               </div>
               <div className='border rounded px-1'>
                 {newItems.map(item => (
-                  <CartList key={item.cart_id} item={item} />
+                  <CartList
+                    key={item.cart_id}
+                    item={item}
+                    selected={selectedItems.includes(item.cart_id)}
+                    onSelectedChange={this.selectChange}
+                    onQuantityChange={this.changeQuantity}
+                  />
                 ))}
               </div>
             </div>
 
             {/* 二手購物車 */}
-            <div className=' p-4'>
+            <div className='p-4'>
               <div className='paw-bg-middleorange'>
                 <h3 className='p-2'>拾毛市場</h3>
               </div>
 
               {Object.keys(secondItemsBySeller).map(uid => (
                 <div key={uid} className='border rounded my-2'>
-                  {/* 賣家名稱 */}
                   <SellerTitle sellerName={sellers[uid]} />
                   <hr />
-                  {/* 賣家商品列表 */}
                   {secondItemsBySeller[uid].map(item => (
-                    <CartList key={item.cart_id} item={item} />
+                    <CartList
+                      key={item.cart_id}
+                      item={item}
+                      selected={selectedItems.includes(item.cart_id)}
+                      onSelectedChange={this.selectChange}
+                      onQuantityChange={this.changeQuantity}
+                    />
                   ))}
                 </div>
               ))}
             </div>
+
           </div>
 
           {/* 右邊 */}
@@ -84,7 +129,8 @@ class ShoppingCartPage extends Component {
               <div className='paw-bg-middleorange'>
                 <h3 className='p-2'>折價券</h3>
               </div>
-              <Coupon />
+              <Coupon 
+              onApplyDiscount={this.applyDiscount} />
             </div>
 
             {/* 訂單確認 */}
@@ -93,22 +139,55 @@ class ShoppingCartPage extends Component {
                 <h3 className='p-2'>結帳明細</h3>
               </div>
               <div className='border rounded'>
-                <CheckList />
-                <a href="/CheckBillPage"><ConfirmBtn type="toPayPage" /></a>
+                <CheckList
+                  selectedItems={cartList.filter(item => selectedItems.includes(item.cart_id))}
+
+  discountAmount={this.state.discountAmount}
+                />
+
+                  <ConfirmBtn type="toPayPage" onClick={this.goToCheckBillPage}/>
 
               </div>
-
             </div>
 
           </div>
         </div>
-
-
-
       </>
     );
   }
 
+
+  selectChange = (changeId) => {
+    this.setState(prevState => {
+      const isSelected = prevState.selectedItems.includes(changeId);
+      const newSelectedItems = isSelected
+        ? prevState.selectedItems.filter(id => id !== changeId)
+        : [...prevState.selectedItems, changeId];
+      return { selectedItems: newSelectedItems };
+    });
+  }
+  changeQuantity = (cartId, newQuantity) => {
+    const updatedCartList = this.state.cartList.map(item => {
+      if (item.cart_id === cartId) {
+        return { ...item, quantity: newQuantity };
+      }
+      return item;
+    });
+    this.setState({ cartList: updatedCartList });
+  }
+  applyDiscount = (discountAmount) => {
+    this.setState({ discountAmount });
+  }
+
+  goToCheckBillPage = () => {
+    const { selectedItems, discountAmount, cartList } = this.state;
+    const selectedCartItems = cartList.filter(item => selectedItems.includes(item.cart_id));
+  
+    localStorage.setItem('selectedItems', JSON.stringify(selectedCartItems));
+    localStorage.setItem('discountAmount', discountAmount);
+  
+    window.location.href = '/CheckBillPage';
+  }
 }
 
 export default ShoppingCartPage;
