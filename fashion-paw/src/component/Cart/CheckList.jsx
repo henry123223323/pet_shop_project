@@ -14,9 +14,16 @@ class CheckList extends Component {
                 <hr />
                 <div>
                     <span className='ptxtb3'>結帳金額：</span> <span>$$$</span>
+                    <p></p>
+                    <div className="btn paw-btn-lightorangepink w-100" onClick={this.checkOut}>
+                                結帳
+                            </div>
                 </div>
             </div>
         </>);
+    }
+    checkOut = () => {
+        alert("結帳button")
     }
 }
 

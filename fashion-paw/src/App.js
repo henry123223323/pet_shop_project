@@ -2,8 +2,9 @@ import './App.css';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import Homepage from './component/Homepage/Homepage';
-import PdDetailPageSecond from './component/ProductDetailPage/PdDetailPageSecond';
-import ShoppingCart from './component/Cart/ShoppingCart';
+import SecondPdDetailPage from './component/ProductDetailPage/SecondPdDetailPage';
+import ShoppingCartPage from './component/Cart/ShoppingCartPage';
+import CheckBillPage from './component/CheckBill/CheckBillPage';
 
 
 function App() {
@@ -12,8 +13,9 @@ function App() {
     <h1 className='shadow-sm top-0'>Header</h1>
       <Switch>
         <Route path="/" component={ Homepage } exact/>
-        <Route path="/PdDetailPageSecond" component={ PdDetailPageSecond } exact/>
-        <Route path="/ShoppingCart" component={ ShoppingCart } exact/>
+        <Route path="/SecondPdDetailPage" component={ SecondPdDetailPage } exact/>
+        <Route path="/ShoppingCartPage" component={ ShoppingCartPage } exact/>
+        <Route path="/CheckBillPage" component={ CheckBillPage } exact/>
 
       </Switch>
       <h1 className='paw-bg-pri-darkgreen'>Footer</h1>
