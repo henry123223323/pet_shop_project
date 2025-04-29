@@ -22,10 +22,10 @@ class Content_manage extends Component {
                         <Route path="/MemberCenter/Content-manage/User" component={User_manage} />
                         <Route path="/MemberCenter/Content-manage/Article" component={Article_manage} />
                     </Switch>
+                    <Route path="/MemberCenter/Content-manage" exact>
+                        <Redirect to="/MemberCenter/Content-manage/New_Products" />
+                    </Route>
                 </Router >
-                <Route path="/MemberCenter/Content-manage">
-                    <Redirect to="/MemberCenter/Content-manage/New_Products" exact />
-                </Route>
             </>
         );
     }
