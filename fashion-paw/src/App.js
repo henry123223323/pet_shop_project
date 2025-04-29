@@ -19,6 +19,9 @@ import Quiz from './component/PetKnowledge/PetQuiz/Quiz';
 import Header from './component/Homepage/Header';
 import Footer from './component/Homepage/Footer';
 
+import Helpme from './component/Aboutus/helpme';
+
+
 function App() {
   return (
     <BrowserRouter>
@@ -37,6 +40,7 @@ function App() {
           <Route path="/SecondPdDetailPage" component={SecondPdDetailPage} exact />
           <Route path="/ShoppingCartPage" component={ShoppingCartPage} exact />
           <Route path="/CheckBillPage" component={CheckBillPage} exact />
+          <Route path="/Aboutus" component={Helpme} exact />
         </Switch>
       </main>
       <Footer />
