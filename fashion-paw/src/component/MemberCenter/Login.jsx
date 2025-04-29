@@ -10,7 +10,7 @@ class Login extends Component {
                     <MainImg source="/media/member_center/cat.jpg"  className="d-none d-md-block col-md-6"/>
                     <LoginCompute />
                 </div>
-    
+        //登入後session記憶username 使用者權限...
         );
     }
 }

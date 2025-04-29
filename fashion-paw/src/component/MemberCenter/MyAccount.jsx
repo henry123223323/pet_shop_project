@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
 
 import Sidebar from './MyAcc/Sidebar';
 import Profile from './MyAcc/Profile';
@@ -31,6 +31,11 @@ class MyAccount extends Component {
                                 <Route path="/MemberCenter/change-password" component={Change_Password} />
                                 <Route path="/MemberCenter/manage-market" component={manage_market} />
                                 <Route path="/MemberCenter/Content-manage" component={Content_manage} />
+
+                                <Route path="/MemberCenter" exact>
+                                    <Redirect to="/MemberCenter/profile" />
+                                </Route>
+
                             </Switch>
                         </div>
 

@@ -1,0 +1,162 @@
+import React, { useState } from 'react'
+import { useHistory } from 'react-router-dom';
+
+// 先宣告 ProgressBar 在上面
+function ProgressBar({ current, total }) {
+    return (
+        <div className="progress">
+            <div
+                className="progress-bar"
+                role="progressbar"
+                style={{ width: `${((current + 1) / total) * 100}%` }}
+                aria-valuenow={current + 1}
+                aria-valuemin={1}
+                aria-valuemax={total}
+            />
+        </div>
+    )
+}
+
+function QuizGame({ pet, questions }) {
+    // 1. 管理「第幾題」
+    const [currentQuestion, setCurrentQuestion] = useState(0)
+    // 2. 管理「答對幾題」
+    const [score, setScore] = useState(0)
+    // 3. 管理「是否已經結束」
+    const [finished, setFinished] = useState(false)
+    // 4. 管理「回饋訊息」(null 表示還沒按過／已經消失)
+    const [feedback, setFeedback] = useState(null)
+    // <-- 拿到 navigation
+    const history = useHistory();
+
+    // 按鈕點擊後呼叫
+    const answer = (isYes) => {
+        // 還在答題中
+        const q = questions[currentQuestion]
+        // 檢查答案
+        const correct = q.answerIsYes
+
+        if (isYes === correct) {
+            setScore(score + 1)
+            setFeedback({
+                title: '答對了！',
+                // message: '恭喜你答對囉！',
+                message: q.explanation.yes,
+                isCorrect: true
+            })
+        }
+        else {
+            // 假設你的 JSON 裡每題都有一個 explanation 欄位
+            setFeedback({
+                title: '答錯了…',
+                message: q.explanation.no,
+                isCorrect: false
+            })
+        }
+    }
+
+    // 按「下一題」才真的推進到下一題或結算
+    const nextQuestion = () => {
+        setFeedback(null)  // 關掉彈跳窗
+        if (currentQuestion + 1 < questions.length) {
+            setCurrentQuestion(currentQuestion + 1)
+        } else {
+            setFinished(true)
+        }
+    }
+
+    // 已經答完
+    if (finished) {
+        return (
+            <div className="quiz-game p-4 border rounded text-center">
+                <h2>完成了！</h2>
+                <p>總分：{score} / {questions.length}</p>
+                <div className="mt-4 flex justify-center gap-4">
+                    {/* 重新遊戲：把本元件的 state 重置回初始 */}
+                    <button
+                        className="btn btn-outline-primary"
+                        onClick={() => {
+                            setCurrentQuestion(0);
+                            setScore(0);
+                            setFinished(false);
+                        }}
+                    >
+                        重新遊戲
+                    </button>
+                    {/* 回首頁 */}
+                    <button
+                        className="btn btn-outline-secondary"
+                        onClick={() => history.push('/')}
+                    >
+                        回首頁
+                    </button>
+                </div>
+            </div>
+        )
+    }
+
+    const q = questions[currentQuestion]
+
+    return (
+        <div className="quiz-game p-4 border rounded" style={{ maxWidth: 600, margin: '0 auto' }}>
+            <img
+                src={pet.img}
+                alt={pet.name}
+                className="quiz-pet-img"
+                style={{
+                    width: 100,
+                    height: 100
+                }}
+            />
+
+            <p className="question-text">{q.text}</p>
+
+            <div className="btn-group">
+                <button onClick={() => answer(true)}>可以</button>
+                <button onClick={() => answer(false)}>不可以</button>
+            </div>
+
+            {/* 這裡放進度文字 */}
+            <div className="text-center mb-2">
+                目前第 <strong>{currentQuestion + 1}</strong> 題 / 共 <strong>{questions.length}</strong> 題
+            </div>
+
+            {/* 這裡放進度條 */}
+            <ProgressBar current={currentQuestion} total={questions.length} />
+
+            {/* 4. 如果 feedback 不為 null，就顯示彈跳窗 */}
+            {feedback && (
+                <div
+                    className={"feedback-modal"}
+                    style={{
+                        position: 'absolute',
+                        top: 0, left: 0, right: 0, bottom: 0,
+                        backgroundColor: 'rgba(0,0,0,0.4)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                    }}
+                >
+                    <div
+                        className="feedback-content"
+                        style={{
+                            background: '#fff',
+                            borderRadius: 8,
+                            padding: '1.5rem',
+                            width: 300,
+                            textAlign: 'center',
+                        }}
+                    >
+                        <h3>{feedback.title}</h3>
+                        <p style={{ margin: '1rem 0' }}>{feedback.message}</p>
+                        <p style={{ margin: '1rem 0' }}>{feedback.detail}</p>
+                        <button onClick={nextQuestion}>下一題</button>
+                    </div>
+                </div>
+            )}
+
+        </div>
+    )
+}
+
+export default QuizGame

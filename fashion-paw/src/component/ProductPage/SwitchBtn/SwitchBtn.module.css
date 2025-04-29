@@ -1,0 +1,32 @@
+/* src/component/ProductPage/SwitchBtn.module.css */
+.switchBtn {
+  display: flex;
+  gap: 8px;
+}
+
+/* 共用按鈕樣式 */
+.btn {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #f5f5f5;
+  padding: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+/* SVG 圖示大小 */
+.btn svg {
+  width: 20px;
+  height: 20px;
+  fill: #888;
+}
+
+/* 選中狀態 */
+.active {
+  background: #e6f7ff;
+  border-color: #1890ff;
+}
+.active svg {
+  fill: #1890ff;
+}
