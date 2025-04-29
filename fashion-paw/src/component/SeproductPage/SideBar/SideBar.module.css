@@ -2,16 +2,13 @@
     padding: 16px;
     background: #fff;
     border-radius: 8px;
-<<<<<<< HEAD:fashion-paw/src/component/ProductPage/Sidebar/Sidebar.module.css
   }
   
   .section h4 {
     margin-bottom: 8px;
     font-size: 1rem;
     font-weight: bold;
-=======
     
->>>>>>> test:fashion-paw/src/component/SeproductPage/Sidebar/Sidebar.module.css
   }
   
   .menu {
@@ -51,7 +48,6 @@
     margin-bottom: 6px;
   }
   
-<<<<<<< HEAD:fashion-paw/src/component/ProductPage/Sidebar/Sidebar.module.css
   .sublist label {
     cursor: pointer;
     font-size: 0.9rem;
@@ -61,9 +57,7 @@
     margin-right: 6px;
   }
   
-=======
   .sublist li:hover {
     background-color: #ffe082;
   }
   
->>>>>>> test:fashion-paw/src/component/SeproductPage/Sidebar/Sidebar.module.css
