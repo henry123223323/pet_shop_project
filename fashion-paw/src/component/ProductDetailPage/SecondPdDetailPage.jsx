@@ -20,6 +20,70 @@ class PdDetailPage extends Component {
       isFavorite: false,
       isShare: false,
       count:1,
+      products: [
+        {
+          pid: "sc01",
+          condition: "second",
+          status: 1,
+          pet_type: "貓",
+          pd_name: "灰色毛氈立方貓窩（可折疊）",
+          price: "請填入",
+          description: "這款立方造型的毛氈貓窩，原本是為家中小貓準備的...",
+          categories: "貓用品",
+          city: "台中市",
+          district: "南屯區",
+          uid: "user1234",
+          new_level: "3",
+          stock: "1",
+          sale_count: "0",
+          delivery_method: ["面交", "宅配", "超商取貨"],
+          attribute: {
+            brand: "無品牌",
+            name: "灰色毛氈貓窩",
+            model: "立方折疊款",
+            purchase_date: "2024/03",
+            condition_level: "良好",
+            size: "約長38cm × 寬38cm × 高38cm（展開）",
+            color: "灰色",
+            weight: "約1kg（含墊子）"
+          },
+          images: [
+            { img_path: "/media/second_pd/cat/cat2_home1_1.jpeg", img_value: "整體正面照，展示貓窩與坐墊" },
+            { img_path: "/media/second_pd/cat/cat2_home1_2.jpeg", img_value: "貓窩側面展示，明顯可見進出口圓洞" },
+            { img_path: "/media/second_pd/cat/cat2_home1_3.jpeg", img_value: "俯視角度，展示上方圓形入口設計" },
+            { img_path: "/media/second_pd/cat/cat2_home1_4.jpeg", img_value: "貓窩折疊收納狀態，附上坐墊" }
+          ]
+        },
+        {
+          pid: "np01",
+          condition: "new",
+          status: 1,
+          pet_type: "貓",
+          pd_name: "加厚耐抓雙面貓抓板",
+          price: "請填入",
+          description: "全新加厚款雙面貓抓板，採用高密度瓦楞紙製作...",
+          categories: "貓用品",
+          uid: "user5678",
+          stock: "10",
+          sale_count: "0",
+          delivery_method: ["宅配", "超商取貨"],
+          attribute: {
+            brand: "毛小孩日常",
+            name: "雙面貓抓板",
+            model: "加厚耐抓版",
+            size: "長45cm × 寬22cm × 厚4cm",
+            color: "棕色",
+            weight: "約500g"
+          },
+          images: [
+            { img_path: "/media/second_pd/cat/cat2_home1_1.jpeg", img_value: "貓抓板整體外觀展示" },
+            { img_path: "/media/second_pd/cat/cat2_home1_2.jpeg", img_value: "展示雙面可使用設計" },
+            { img_path: "/media/second_pd/cat/cat2_home1_3.jpeg", img_value: "附贈天然貓薄荷包裝示意" },
+            { img_path: "/media/second_pd/cat/cat2_home1_4.jpeg", img_value: "貓咪實際使用情境圖" }
+          ]
+        }
+      ],
+      currentProductIndex: 0, // 目前要顯示第幾個商品（初始先顯示第1筆）
     };
   }    
 
@@ -35,11 +99,12 @@ class PdDetailPage extends Component {
             <div className='col-md-8 '>
 
               <div className='paw-bg-lightenbrown p-2'>
-                <div className='mx-4'><PdTitle /></div>
+                <div className='mx-4'><PdTitle pdname={this.state.products[this.state.currentProductIndex].pd_name}/></div>
                 <div className='d-flex flex-column flex-md-row '>
                   <div className='d-flex align-items-center col-md-5'>
                     {/* 左邊圖片 */}
-                    <PdImageGallery />
+                    <PdImageGallery 
+                      images={this.state.products[this.state.currentProductIndex].images}/>
                   </div>
                   <div className='col-md-7 my-4'>
                     {/* 右邊說明 */}
