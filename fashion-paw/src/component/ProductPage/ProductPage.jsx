@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import styles from './ProductPage.module.css';
 import FilterBar from './FilterBar/FilterBar';
-import Sidebar from './Sidebar/Sidebar';
+import Sidebar from './SideBar/SideBar';
 import SortBar from './SortBar/SortBar';
 import SwitchBtn from './SwitchBtn/SwitchBtn';
 import ProductList from './ProductList/ProductList';
@@ -12,12 +12,12 @@ export default function ProductPage() {
   // 篩選條件
   const [filters, setFilters] = useState({ functions: [], brands: [], price: '' });
   // 排序方式
-  const [sortBy, setSortBy]     = useState('');
+  const [sortBy, setSortBy] = useState('');
   // 顯示模式：grid or list
   const [viewMode, setViewMode] = useState('grid');
 
   // 全部商品
-  const [products, setProducts]         = useState([]);
+  const [products, setProducts] = useState([]);
   // 畫面上要顯示的商品
   const [displayItems, setDisplayItems] = useState([]);
 
@@ -34,33 +34,35 @@ export default function ProductPage() {
     setDisplayItems(items);
   }, [products, filters, sortBy]);
 
-return (
-  <div className={styles.container}>
+  return (
+    <div className={styles.container}>
+      {/* 上方篩選列 */}
+      <div className={styles.card}>
+        <FilterBar onFilterChange={setFilters} />
+      </div>
 
-    {/* 第一張卡：篩選器 */}
-    <div className={styles.card}>
-      <FilterBar onFilterChange={setFilters} />
-    </div>
-
-    {/* 第二張卡：分類＋列表 */}
-    <div className={styles.card}>
-      <div className={styles.layout}>
-        <div className={styles.sidebar}>
-          <Sidebar />
-        </div>
-        <div className={styles.main}>
-          <div className={styles.sortBar}>
-            <SortBar onSortChange={setSortBy} />
-            <SwitchBtn viewMode={viewMode} onViewChange={setViewMode} />
+      <div className={styles.card}>
+        <div className={styles.layout}>
+          {/* 側邊分類 */}
+          <div className={styles.sidebar}>
+            <Sidebar onSelectCategory={() => {}} />
           </div>
-          <div className={viewMode === 'grid' ? styles.gridView : styles.listView}>
-            <ProductList products={displayItems} viewMode={viewMode} />
+
+          {/* 主區域：排序 + 顯示切換 + 商品列表 */}
+          <div className={styles.main}>
+            <div className={styles.sortBar}>
+              <SortBar onSortChange={setSortBy} />
+              <SwitchBtn viewMode={viewMode} onViewChange={setViewMode} />
+            </div>
+
+            <div className={
+              viewMode === 'grid' ? styles.gridView : styles.listView
+            }>
+              <ProductList products={displayItems} viewMode={viewMode} />
+            </div>
           </div>
         </div>
       </div>
     </div>
-
-  </div>
-);
-
+  );
 }

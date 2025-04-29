@@ -27,6 +27,7 @@ function App() {
         <Route path="/" component={ Homepage } exact/>
         <Route path="/MemberCenter" component={ MemberCenter } />
         <Route path="/ProductPage" component={ ProductPage } exact/>
+        <Route path="/SeProductPage" component={ SeProductPage } exact/>
         <Route path="/Login" component={ Login } />
         <Route path="/Register" component={ Register } />
         <Route path="/Novicefeeding/DogGuide" component={DogGuide} exact/>
