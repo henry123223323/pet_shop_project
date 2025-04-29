@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import styles from './ProductPage.module.css';
 import FilterBar from './FilterBar/FilterBar';
+import SideBar from './SideBar/SideBar';
 import Sidebar from './SideBar/SideBar';
 import SortBar from './SortBar/SortBar';
 import SwitchBtn from './SwitchBtn/SwitchBtn';

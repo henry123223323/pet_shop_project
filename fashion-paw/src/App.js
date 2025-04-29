@@ -13,10 +13,11 @@ import Login from './component/MemberCenter/Login';
 import Register from './component/MemberCenter/Register';
 import Touch from './component/PetKnowledge/PartTouch/Touch';
 import DogGuide from './component/PetKnowledge/Novicefeeding/DogGuide';
+import SeProductPage from './component/SeProductPage/SeProductPage';
+
 import Quiz from './component/PetKnowledge/PetQuiz/Quiz';
 import Header from './component/Homepage/Header';
 import Footer from './component/Homepage/Footer';
-import SeProductPage from './component/SeproductPage/SeProductPage'
 
 function App() {
   return (
