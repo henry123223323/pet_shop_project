@@ -14,34 +14,35 @@ import mockSeProducts from './mockSepProducts';
 
 export default function SeProductPage() {
   // ---------------------------------------------
-  //  State 區塊：移除 functions
+  //  State 區塊
   // ---------------------------------------------
-  const [products, setProducts]                 = useState([]);
-  const [filtered, setFiltered]                 = useState([]);
-  const [filters, setFilters]                   = useState({
+  const [products, setProducts]               = useState([]);
+  const [filtered, setFiltered]               = useState([]);
+  const [filters, setFilters]                 = useState({
+    functions: [],
     price: '',
     locations: [],
     depreciation: 0
   });
 
-  const [sortBy, setSortBy]                     = useState('');
-  const [favoriteIds, setFavoriteIds]           = useState([]);
-  const [selectedType, setSelectedType]         = useState(null);
+  const [sortBy, setSortBy]                   = useState('');
+  const [favoriteIds, setFavoriteIds]         = useState([]);
+  const [selectedType, setSelectedType]       = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
 
   // ---------------------------------------------
-  // 第一次掛載：載入假資料
+  //  第一次掛載：載入假資料
   // ---------------------------------------------
   useEffect(() => {
     setProducts(mockSeProducts);
   }, []);
 
   // ---------------------------------------------
-  // 根據 filters（無 functions）、sortBy、類型分類做過濾 + 排序
+  // 根據 filters、sortBy、類型分類做商品過濾 + 排序
   // ---------------------------------------------
   useEffect(() => {
     let result = [...products];
-    const { price, locations, depreciation } = filters;
+    const { functions, price, locations, depreciation } = filters;
 
     // 類型＆分類
     if (selectedType) {
@@ -59,9 +60,9 @@ export default function SeProductPage() {
       result = result.filter(p => p.price >= min && p.price <= max);
     }
 
-    // 所在位置篩選
-    if (locations.length) {
-      result = result.filter(p => locations.includes(p.location));
+    // 功能篩選
+    if (functions.length) {
+      result = result.filter(p => functions.includes(p.function));
     }
 
     // 折舊程度篩選
@@ -83,6 +84,7 @@ export default function SeProductPage() {
     setFiltered(result);
   }, [
     products,
+    filters.functions,
     filters.price,
     filters.locations,
     filters.depreciation,
@@ -92,7 +94,7 @@ export default function SeProductPage() {
   ]);
 
   // ---------------------------------------------
-  // 處理 filter 與 sort 傳回的 callback
+  // 🔁 處理 filter 與 sort 傳回的 callback
   // ---------------------------------------------
   const handleFilterChange = newFilters => setFilters(newFilters);
   const handleSortChange   = sortKey    => setSortBy(sortKey);
@@ -109,6 +111,7 @@ export default function SeProductPage() {
   };
   const handleAddToCart = id => {
     console.log(`加入購物車 id=${id}`);
+    // 可以接後端購物車 API
   };
 
   // ---------------------------------------------
