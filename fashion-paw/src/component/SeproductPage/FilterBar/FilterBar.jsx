@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import styles from './FilterBar.module.css';
 
 const functions   = ['乾糧', '副食', '保健食品', '玩具', '零食', '生活用品'];
-const brands      = ['AAAA', 'BBBB', 'CCCC'];
 const prices      = [
   { value: '0-100',   label: '100以下' },
   { value: '101-300', label: '101–300' },
@@ -15,22 +14,19 @@ const locations   = ['OO縣', 'OO市', 'OO縣', 'OO縣', 'OO縣'];
 const depreciates = [1, 2, 3, 4, 5];  // 代表 🐾、🐾🐾 …等級
 
 export default function FilterBar({ onFilterChange = () => {} }) {
-  const [selFuncs,  setSelFuncs]  = useState([]);
-  const [selBrands, setSelBrands] = useState([]);
-  const [selPrice,  setSelPrice]  = useState('');
-  const [selLocs,   setSelLocs]   = useState([]);
-  const [selDep,    setSelDep]    = useState(0);
+  const [selFuncs, setSelFuncs] = useState([]);
+  const [selPrice, setSelPrice] = useState('');
+  const [selLocs, setSelLocs]   = useState([]);
+  const [selDep, setSelDep]     = useState(0);
 
-  // 狀態改變就回傳給父元件
   useEffect(() => {
     onFilterChange({
-      functions:   selFuncs,
-      brands:      selBrands,
-      price:       selPrice,
-      locations:   selLocs,
+      functions: selFuncs,
+      price:      selPrice,
+      locations:  selLocs,
       depreciation: selDep
     });
-  }, [selFuncs, selBrands, selPrice, selLocs, selDep]);
+  }, [selFuncs, selPrice, selLocs, selDep]);
 
   const toggleArray = (arr, setFn, val) => {
     setFn(prev => prev.includes(val)
@@ -53,23 +49,6 @@ export default function FilterBar({ onFilterChange = () => {} }) {
                 onChange={() => toggleArray(selFuncs, setSelFuncs, f)}
               />
               {f}
-            </label>
-          ))}
-        </div>
-      </div>
-
-      {/* 品牌 */}
-      <div className={styles.row}>
-        <span className={styles.label}>品牌</span>
-        <div className={styles.options}>
-          {brands.map(b => (
-            <label key={b}>
-              <input
-                type="checkbox"
-                checked={selBrands.includes(b)}
-                onChange={() => toggleArray(selBrands, setSelBrands, b)}
-              />
-              {b}
             </label>
           ))}
         </div>
@@ -124,7 +103,6 @@ export default function FilterBar({ onFilterChange = () => {} }) {
                 checked={selDep === n}
                 onChange={() => setSelDep(n)}
               />
-              {/* 顯示 n 個 🐾 */}
               {Array(n).fill('🐾').join('')}
             </label>
           ))}
