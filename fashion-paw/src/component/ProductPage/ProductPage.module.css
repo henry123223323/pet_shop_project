@@ -1,5 +1,4 @@
 /* src/component/ProductPage/ProductPage.module.css */
-<<<<<<< HEAD
 .container {
   display: grid;
   grid-template-columns: 200px 1fr 200px;
@@ -21,8 +20,7 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-=======
-
+}
 /* 外層兩張卡片排列 */
 .container {
   display: flex;
@@ -100,5 +98,4 @@
 
   /* 多一點間距 */
   padding: 16px;
->>>>>>> test
 }
