@@ -1,4 +1,9 @@
-/* Header.module.css */
+/* 涵蓋homepage的module.css */
+:root {
+  --header-height: 200px;
+  /* 一次定義，全局可用 */
+}
+
 .header {
   width: 100%;
   display: flex;
@@ -6,8 +11,13 @@
   row-gap: 0.5rem;
   padding: 0.5rem 1rem;
   position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: var(--header-height);
   box-shadow: 0 2px 0 rgba(0, 0, 0, 0.1);
-  background: rgba(255, 255, 255,0.9);
+  background: rgba(255, 255, 255, 0.9);
+  z-index: 999;
 }
 
 /* 第一列：搜尋 + 購物 + 登入註冊 */
@@ -52,7 +62,8 @@
   justify-content: center;
   column-gap: 2rem;
   font-weight: 500;
-  background-color: #F8A07F;
+  /* background-color: #F8A07F; */
+  z-index: 999;
 }
 
 .mainNav a {
@@ -62,7 +73,11 @@
 }
 
 .mainNav a:hover {
-  color: #FFF;
+  color: #70823C;
+}
+
+.mainContent {
+  padding-top: var(--header-height);
 }
 
 /* ----------------------------------------- */
@@ -75,7 +90,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 0.5rem 1rem;
-  background: rgb(255, 255, 255,0.9);
+  background: rgb(255, 255, 255, 0.9);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 

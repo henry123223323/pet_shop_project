@@ -25,11 +25,13 @@ function Header() {
                 <Link to="/">
                     <img src={Logo} alt="好拾毛 Logo" className={styles.logoSmall} />
                 </Link>
+                <MainNav />
                 <div className={styles.iconGroup}>
                     <button className={styles.iconBtn}><i className="bi bi-search" /></button>
                     <button className={styles.iconBtn}><i className="bi bi-cart" /></button>
                     <Link to="/Login">登入</Link><span>｜</span><Link to="/Register">註冊</Link>
                 </div>
+                
             </header>
         );
     }

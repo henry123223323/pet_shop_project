@@ -1,6 +1,7 @@
 import './App.css';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import styles from '../src/component/Homepage/IndexStyle.module.css'
 import MemberCenter from './component/MemberCenter/MyAccount'
 import Homepage from './component/Homepage/Homepage';
 import ProductPage from './component/ProductPage/ProductPage';
@@ -16,16 +17,18 @@ function App() {
   return (
     <BrowserRouter>
       <Header />
-      <Switch>
-        <Route path="/" component={Homepage} exact />
-        <Route path="/MemberCenter" component={MemberCenter} />
-        <Route path="/ProductPage" component={ProductPage} exact />
-        <Route path="/Login" component={Login} />
-        <Route path="/Register" component={Register} />
-        <Route path="/Novicefeeding/DogGuide" component={DogGuide} exact />
-        <Route path="/PartTouch/Touch" component={Touch} exact />
-        <Route path="/PetQuiz/Quiz" component={Quiz} exact />
-      </Switch>
+      <main className={styles.mainContent}>
+        <Switch>
+          <Route path="/" component={Homepage} exact />
+          <Route path="/MemberCenter" component={MemberCenter} />
+          <Route path="/ProductPage" component={ProductPage} exact />
+          <Route path="/Login" component={Login} />
+          <Route path="/Register" component={Register} />
+          <Route path="/Novicefeeding/DogGuide" component={DogGuide} exact />
+          <Route path="/PartTouch/Touch" component={Touch} exact />
+          <Route path="/PetQuiz/Quiz" component={Quiz} exact />
+        </Switch>
+      </main>
       <Footer />
     </BrowserRouter>
   );
