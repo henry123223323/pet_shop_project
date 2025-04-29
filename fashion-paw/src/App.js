@@ -16,8 +16,7 @@ import DogGuide from './component/PetKnowledge/Novicefeeding/DogGuide';
 import Quiz from './component/PetKnowledge/PetQuiz/Quiz';
 import Header from './component/Homepage/Header';
 import Footer from './component/Homepage/Footer';
-import SeProductPage from './component/SeProductPage/SeProductPage';
-
+import SeProductPage from './component/SeproductPage/SeProductPage'
 
 function App() {
   return (
