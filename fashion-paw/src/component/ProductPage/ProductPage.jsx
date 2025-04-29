@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import styles from './ProductPage.module.css';
 import FilterBar from './FilterBar/FilterBar';
-import Sidebar from './Sidebar/Sidebar';
+import SideBar from './SideBar/SideBar';
 import SortBar from './SortBar/SortBar';
 import SwitchBtn from './SwitchBtn/SwitchBtn';
 import ProductList from './ProductList/ProductList';
@@ -46,7 +46,7 @@ return (
     <div className={styles.card}>
       <div className={styles.layout}>
         <div className={styles.sidebar}>
-          <Sidebar />
+          <SideBar />
         </div>
         <div className={styles.main}>
           <div className={styles.sortBar}>
