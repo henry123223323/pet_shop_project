@@ -2,9 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import styles from './FilterBar.module.css';
 
-const functions   = ['乾糧', '副食', '保健食品', '玩具', '零食', '生活用品'];
 const prices      = [
-  { value: '0-100',   label: '100以下' },
   { value: '101-300', label: '101–300' },
   { value: '301-600', label: '301–600' },
   { value: '601-999', label: '601–999' },
@@ -14,19 +12,18 @@ const locations   = ['OO縣', 'OO市', 'OO縣', 'OO縣', 'OO縣'];
 const depreciates = [1, 2, 3, 4, 5];  // 代表 🐾、🐾🐾 …等級
 
 export default function FilterBar({ onFilterChange = () => {} }) {
-  const [selFuncs, setSelFuncs] = useState([]);
   const [selPrice, setSelPrice] = useState('');
-  const [selLocs, setSelLocs]   = useState([]);
-  const [selDep, setSelDep]     = useState(0);
+  const [selLocs,  setSelLocs]  = useState([]);
+  const [selDep,   setSelDep]   = useState(0);
 
+  // 狀態改變就回傳給父元件
   useEffect(() => {
     onFilterChange({
-      functions: selFuncs,
-      price:      selPrice,
-      locations:  selLocs,
+      price:        selPrice,
+      locations:    selLocs,
       depreciation: selDep
     });
-  }, [selFuncs, selPrice, selLocs, selDep]);
+  }, [selPrice, selLocs, selDep]);
 
   const toggleArray = (arr, setFn, val) => {
     setFn(prev => prev.includes(val)
@@ -37,23 +34,6 @@ export default function FilterBar({ onFilterChange = () => {} }) {
 
   return (
     <div className={styles.filterBar}>
-      {/* 功能 */}
-      <div className={styles.row}>
-        <span className={styles.label}>功能</span>
-        <div className={styles.options}>
-          {functions.map(f => (
-            <label key={f}>
-              <input
-                type="checkbox"
-                checked={selFuncs.includes(f)}
-                onChange={() => toggleArray(selFuncs, setSelFuncs, f)}
-              />
-              {f}
-            </label>
-          ))}
-        </div>
-      </div>
-
       {/* 價格 */}
       <div className={styles.row}>
         <span className={styles.label}>價格</span>

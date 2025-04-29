@@ -6,8 +6,8 @@ function MainNav() {
   return (
     <nav className={styles.mainNav}>
       <NavLink to="/about">關於我們</NavLink>
-      <NavLink to="/new">新品專區</NavLink>
-      <NavLink to="/second">二手專區</NavLink>
+      <NavLink to="/ProductPage">新品專區</NavLink>
+      <NavLink to="/SeProductPage">二手專區</NavLink>
       <NavLink to="/knowledge">寵物小知識</NavLink>
     </nav>
   );
