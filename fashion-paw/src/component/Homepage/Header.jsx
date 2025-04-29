@@ -12,7 +12,7 @@ function Header() {
     useEffect(() => {
         const handleScroll = () => {
             // 當捲動超過 100px 就切換到「黏貼＋一列」模式
-            setScrolled(window.scrollY > 300);
+            setScrolled(window.scrollY > 100);
         };
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
