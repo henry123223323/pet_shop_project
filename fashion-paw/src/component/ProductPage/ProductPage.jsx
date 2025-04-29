@@ -1,136 +1,66 @@
+// src/component/ProductPage/ProductPage.jsx
 import React, { useState, useEffect } from 'react';
-// import axios from 'axios'; 先不用 axios，先註解掉
 import styles from './ProductPage.module.css';
-
-// Components
-import Sidebar from './Sidebar/Sidebar';
 import FilterBar from './FilterBar/FilterBar';
+import Sidebar from './Sidebar/Sidebar';
 import SortBar from './SortBar/SortBar';
+import SwitchBtn from './SwitchBtn/SwitchBtn';
 import ProductList from './ProductList/ProductList';
-import HotRanking from './HotRanking/HotRanking';
-
-// Mock Data
-import mockProducts from './mockProducts'; // ⭐ 引入你的假資料
+import mockProducts from './mockProducts';
 
 export default function ProductPage() {
-  // ---------------------------------------------
-  //  State 區塊
-  // ---------------------------------------------
-  const [products, setProducts] = useState([]);      
-  const [filtered, setFiltered] = useState([]);      
-  const [filters, setFilters] = useState({          
-    functions: [],
-    brands: [],
-    price: ''
-  });
-  const [sortBy, setSortBy] = useState('');      
-  const [favoriteIds, setFavoriteIds] = useState([]);      
-  const [selectedType, setSelectedType] = useState(null);  
-  const [selectedCategory, setSelectedCategory] = useState(null); 
+  // 篩選條件
+  const [filters, setFilters] = useState({ functions: [], brands: [], price: '' });
+  // 排序方式
+  const [sortBy, setSortBy]     = useState('');
+  // 顯示模式：grid or list
+  const [viewMode, setViewMode] = useState('grid');
 
-  // ---------------------------------------------
-  //  第一次掛載：載入假資料
-  // ---------------------------------------------
+  // 全部商品
+  const [products, setProducts]         = useState([]);
+  // 畫面上要顯示的商品
+  const [displayItems, setDisplayItems] = useState([]);
+
+  // 初始讀取 mock 資料
   useEffect(() => {
-    // ✅ 這邊改成直接用假資料
     setProducts(mockProducts);
   }, []);
 
-  // ---------------------------------------------
-  // 📦 根據 filters、sortBy、類型分類做商品過濾 + 排序
-  // ---------------------------------------------
+  // 當 products/filters/sortBy 變動時，刷新畫面列表
   useEffect(() => {
-    let result = [...products];
-    const { functions, brands, price } = filters;
+    let items = [...products];
+    // TODO: 加入過濾邏輯 (functions, brands, price)
+    // TODO: 加入排序邏輯 (sortBy)
+    setDisplayItems(items);
+  }, [products, filters, sortBy]);
 
-    if (selectedType) {
-      result = result.filter(p => p.pet_type === selectedType);
-    }
+return (
+  <div className={styles.container}>
 
-    if (selectedCategory) {
-      result = result.filter(p => p.category === selectedCategory);
-    }
-
-    if (price) {
-      const [min, max] = price.includes('+')
-        ? [Number(price), Infinity]
-        : price.split('-').map(Number);
-      result = result.filter(p => p.price >= min && p.price <= max);
-    }
-
-    if (brands.length) {
-      result = result.filter(p => brands.includes(p.brand));
-    }
-
-    if (functions.length) {
-      result = result.filter(p => functions.includes(p.function));
-    }
-
-    if (sortBy === 'price_asc') {
-      result.sort((a, b) => a.price - b.price);
-    } else if (sortBy === 'price_desc') {
-      result.sort((a, b) => b.price - a.price);
-    } else if (sortBy === 'createdAt') {
-      result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-    } else if (sortBy === 'hotranking') {
-      result.sort((a, b) => b.hotranking - a.hotranking);
-    }
-
-    setFiltered(result);
-  }, [products, filters, sortBy, selectedType, selectedCategory]);
-
-  // ---------------------------------------------
-  // 🔁處理 filter 與 sort 傳回的 callback
-  // ---------------------------------------------
-  const handleFilterChange = newFilters => setFilters(newFilters);
-  const handleSortChange = sortKey => setSortBy(sortKey);
-
-  // ---------------------------------------------
-  //  收藏 / 🛒 加入購物車
-  // ---------------------------------------------
-  const handleToggleFavorite = id => {
-    setFavoriteIds(prev =>
-      prev.includes(id) ? prev.filter(favId => favId !== id) : [...prev, id]
-    );
-  };
-
-  const handleAddToCart = id => {
-    console.log(`加入購物車 id=${id}`);
-    // 可以接後端購物車 API
-  };
-
-  // ---------------------------------------------
-  //  處理 Sidebar 點選分類
-  // ---------------------------------------------
-  const handleSelectCategory = (type, category) => {
-    setSelectedType(type);
-    setSelectedCategory(category);
-  };
-
-  // ---------------------------------------------
-  // 畫面輸出
-  // ---------------------------------------------
-  return (
-    <div className={styles.container}>
-      <aside className={styles.sidebar}>
-        <Sidebar onSelectCategory={handleSelectCategory} />
-      </aside>
-
-      <main className={styles.main}>
-        <FilterBar onFilterChange={handleFilterChange} />
-        <SortBar onSortChange={handleSortChange} />
-
-        <ProductList
-          products={filtered}
-          favoriteIds={favoriteIds}
-          onToggleFavorite={handleToggleFavorite}
-          onAddToCart={handleAddToCart}
-        />
-      </main>
-
-      <aside className={styles.hotRanking}>
-        <HotRanking />
-      </aside>
+    {/* 第一張卡：篩選器 */}
+    <div className={styles.card}>
+      <FilterBar onFilterChange={setFilters} />
     </div>
-  );
+
+    {/* 第二張卡：分類＋列表 */}
+    <div className={styles.card}>
+      <div className={styles.layout}>
+        <div className={styles.sidebar}>
+          <Sidebar />
+        </div>
+        <div className={styles.main}>
+          <div className={styles.sortBar}>
+            <SortBar onSortChange={setSortBy} />
+            <SwitchBtn viewMode={viewMode} onViewChange={setViewMode} />
+          </div>
+          <div className={viewMode === 'grid' ? styles.gridView : styles.listView}>
+            <ProductList products={displayItems} viewMode={viewMode} />
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+);
+
 }
