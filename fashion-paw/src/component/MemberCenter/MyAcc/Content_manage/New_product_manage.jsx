@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import Market_modal from './market_manage/Market_Modal';
-class manage_market extends Component {
+import NewPD_modal from './Newpd_modal';
+class New_Products_Manage extends Component {
     state = {
         showModal: false,
         ModalState: "Add",//Add ,Find ,Edit
         thisIndex: 0,
-        second_product: [
+        new_product: [
             {
                 "pid": "1",//db自動編號
                 "status": 1,//上架or下架,新增預設0
@@ -14,13 +14,8 @@ class manage_market extends Component {
                 "price": 1200,
                 "description": "堅固耐用，讓貓咪盡情玩耍的跳台。",
                 "categories": "pet_food",
-                "city": "台中市",
-                "district": "北屯區",
-                "uid": "1",
-                "new_level": "5",
                 "stock": 5,
                 "sale_count": 12,
-                "delivery_method": "宅配",
                 "attribute": {
                     "brand": "喵星人樂園",
                     "name": "抓抓樂",
@@ -61,13 +56,8 @@ class manage_market extends Component {
                 "price": 800,
                 "description": "適合大型犬使用的厚實睡墊，舒適又耐咬。",
                 "categories": "Living_Essentials",
-                "city": "新北市",
-                "district": "板橋區",
-                "uid": "2",
-                "new_level": "1",
                 "stock": 3,
                 "sale_count": 5,
-                "delivery_method": "面交",
                 "attribute": {
                     "brand": "汪汪屋",
                     "name": "厚睡墊",
@@ -110,7 +100,7 @@ class manage_market extends Component {
         this.setState({ showModal: !this.state.showModal });
     }
     findProduct = (index) => {
-        return this.state.second_product[index]
+        return this.state.new_product[index]
     }
     renderStatus = (status) => {
         return status === 1
@@ -118,14 +108,7 @@ class manage_market extends Component {
             : <span className="badge bg-secondary">下架</span>;
     }
 
-    renderNewLevel = (level) => {
-        const stars = '★★★★★'.slice(0, parseInt(level));
-        return (
-            <span style={{ color: '#FFD700' }}>
-                {stars.padEnd(5, '☆')}
-            </span>
-        );
-    }
+
     renderCategory = (category) => {
         const map = {
             pet_food: "寵物食品",
@@ -154,7 +137,7 @@ class manage_market extends Component {
 
     }
     render() {
-        let { second_product, showModal, ModalState, thisIndex } = this.state
+        let { new_product, showModal, ModalState, thisIndex } = this.state
         return (
             <>
                 <form action="">
@@ -171,19 +154,17 @@ class manage_market extends Component {
                             <th>商品名稱</th>
                             <th>價格</th>
                             <th>類型</th>
-                            <th>新舊程度</th>
                             <th>狀態</th>
                             <th>操作</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {second_product.map((product, index) => (
+                        {new_product.map((product, index) => (
                             <tr key={product.pid}>
                                 <td><img src={product.images.point_area.img_path} alt="主圖" width="80" /></td>
                                 <td>{product.pd_name}</td>
                                 <td>{product.price}</td>
                                 <td>{this.renderCategory(product.categories)}</td>
-                                <td>{this.renderNewLevel(product.new_level)}</td>
                                 <td>{this.renderStatus(product.status)}</td>
                                 <td>
                                     <button className="btn btn-primary btn-sm me-1" onClick={() => this.OpenFound(index)}>查看</button>
@@ -198,7 +179,7 @@ class manage_market extends Component {
 
                 {showModal && (
 
-                    <Market_modal close={this.toggleModal} new={this.new} edit={this.edit} product={this.findProduct(thisIndex)} modalstate={ModalState} />
+                    <NewPD_modal close={this.toggleModal} new={this.new} edit={this.edit} product={this.findProduct(thisIndex)} modalstate={ModalState} />
 
                 )}
 
@@ -210,7 +191,7 @@ class manage_market extends Component {
     }
     Delete = (index) => {
         // 修改資料庫(delete)
-        console.log(this.state.second_product[index].pd_name);
+        console.log(this.state.new_product[index].pd_name);
 
     }
     new = (product) => {//這裡是新增商品儲存後的新商品物件
@@ -227,4 +208,4 @@ class manage_market extends Component {
 
 }
 
-export default manage_market;
+export default New_Products_Manage;

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import Market_modal from './market_manage/Market_Modal';
-class manage_market extends Component {
+import Market_modal from '../market_manage/Market_Modal';
+class Second_product_manage extends Component {
     state = {
         showModal: false,
         ModalState: "Add",//Add ,Find ,Edit
@@ -227,4 +227,4 @@ class manage_market extends Component {
 
 }
 
-export default manage_market;
+export default Second_product_manage;

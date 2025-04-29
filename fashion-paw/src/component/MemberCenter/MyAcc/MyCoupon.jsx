@@ -3,7 +3,7 @@ class MyCoupon extends Component {
     state = {  } 
     render() { 
         return (
-            <h1>MyCoupon</h1>
+            <h1>我的優惠券</h1>
         );
     }
 }

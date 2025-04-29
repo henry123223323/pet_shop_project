@@ -65,7 +65,7 @@ class Credit_Card extends Component {
                                    
                                     <div className="form-group">
                                         <label>信用卡卡號:</label>
-                                        <input type="email" pattern='\d{4}\s\d{4}\s\d{4}\s\d{4}' className="form-control" required/>
+                                        <input type="text" pattern='\d{4}\s\d{4}\s\d{4}\s\d{4}' className="form-control" required/>
                                     </div>
                                     <div className="form-group">
                                         <label>有效日期:</label>
