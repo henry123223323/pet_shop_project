@@ -1,0 +1,109 @@
+/* Header.module.css */
+.header {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  row-gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  position: fixed;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255,0.9);
+}
+
+/* 第一列：搜尋 + 購物 + 登入註冊 */
+.headerTop {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  column-gap: 0.5rem;
+}
+
+/* 搜尋、購物、登入註冊按鈕 */
+.iconBtn {
+  background: none;
+  border: none;
+  font-size: 1.25rem;
+  cursor: pointer;
+}
+
+.iconBtn:hover {
+  color: #70823C;
+}
+
+.link {
+  color: black;
+}
+
+.link:hover {
+  color: #70823C;
+  text-decoration-line: none;
+}
+
+/* 第二列：Logo 置中 */
+.headerLogo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* 第三列：主選單 */
+.mainNav {
+  display: flex;
+  justify-content: center;
+  column-gap: 2rem;
+  font-weight: 500;
+  background-color: #F8A07F;
+}
+
+.mainNav a {
+  color: #333;
+  text-decoration: none;
+  padding: 0.25rem;
+}
+
+.mainNav a:hover {
+  color: #FFF;
+}
+
+/* ----------------------------------------- */
+/* 滑動後的一列版型 */
+.stickyHeader {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  background: rgb(255, 255, 255,0.9);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* 切到一列時 Logo 縮小 */
+.logoSmall {
+  height: 40px;
+}
+
+/* 滑動後圖示+連結群組 */
+.iconGroup {
+  display: flex;
+  align-items: center;
+  column-gap: 0.5rem;
+}
+
+.iconGroup a {
+  color: #333;
+  text-decoration: none;
+}
+
+
+
+/* ----------------footer--------------- */
+
+.footer {
+  color: white;
+  background-color: #70823C;
+  display: flex;
+  margin-top: 2rem;
+  padding: 1rem 1rem;
+}

@@ -9,22 +9,24 @@ import Register from './component/MemberCenter/Register';
 import Touch from './component/PetKnowledge/PartTouch/Touch';
 import DogGuide from './component/PetKnowledge/Novicefeeding/DogGuide';
 import Quiz from './component/PetKnowledge/PetQuiz/Quiz';
+import Header from './component/Homepage/Header';
+import Footer from './component/Homepage/Footer';
 
 function App() {
   return (
     <BrowserRouter>
-    <h1 className='paw-bg-primary top-0 bg-danger'>Header</h1>
+      <Header />
       <Switch>
-        <Route path="/" component={ Homepage } exact/>
-        <Route path="/MemberCenter" component={ MemberCenter } />
-        <Route path="/ProductPage" component={ ProductPage } exact/>
-        <Route path="/Login" component={ Login } />
-        <Route path="/Register" component={ Register } />
-        <Route path="/Novicefeeding/DogGuide" component={DogGuide} exact/>
-        <Route path="/PartTouch/Touch" component={Touch} exact/>
-        <Route path="/PetQuiz/Quiz" component={Quiz} exact/>
+        <Route path="/" component={Homepage} exact />
+        <Route path="/MemberCenter" component={MemberCenter} />
+        <Route path="/ProductPage" component={ProductPage} exact />
+        <Route path="/Login" component={Login} />
+        <Route path="/Register" component={Register} />
+        <Route path="/Novicefeeding/DogGuide" component={DogGuide} exact />
+        <Route path="/PartTouch/Touch" component={Touch} exact />
+        <Route path="/PetQuiz/Quiz" component={Quiz} exact />
       </Switch>
-      <h1 className='bg-secondary'>Footer</h1>
+      <Footer />
     </BrowserRouter>
   );
 }
