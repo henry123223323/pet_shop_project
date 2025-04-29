@@ -3,6 +3,8 @@
         "title": "狗狗基本健康檢查項目",
         "banner_url": "/dog/doghealthcheck.png",
         "intro": "定期為狗狗進行健康檢查對於確保牠們的健康至關重要。這些檢查能幫助及早發現疾病，並保持狗狗的身心健康。常見的基本健康檢查項目包括體重、牙齒、眼睛、耳朵、皮膚和毛髮等檢查。",
+        "product_category": "Health Supplements",
+        "pet_type": "dog",
         "sections": [
             {
                 "heading": "體重與體態檢查",
@@ -24,6 +26,8 @@
         "title": "如何辨識狗狗是否發燒",
         "banner_url": "/dog/doghot.png",
         "intro": "發燒是狗狗健康的重要警訊之一。當狗狗的體溫異常升高時，這可能是生病的徵兆。了解如何辨識狗狗發燒，及時採取措施，有助於避免病情惡化。",
+        "product_category": "Health Supplements",
+        "pet_type": "dog",
         "sections": [
             {
                 "heading": "體溫異常升高",
@@ -50,6 +54,8 @@
         "title": "狗狗常見皮膚病徵兆與處理方式",
         "banner_url": "/dog/dogskinsuck.png",
         "intro": "狗狗的皮膚健康與整體健康息息相關。常見的皮膚病不僅讓狗狗感到不適，還可能引發其他健康問題。了解常見的皮膚病徵兆與處理方式，能夠有效保護狗狗的健康。",
+        "product_category": "Health Supplements",
+        "pet_type": "dog",
         "sections": [
             {
                 "heading": "皮膚發紅與脫毛",
@@ -76,6 +82,8 @@
         "title": "狗狗眼睛有分泌物正常嗎？",
         "banner_url": "/dog/dogeyes.png",
         "intro": "狗狗眼睛有分泌物可能是健康問題的徵兆。分泌物的種類和顏色可以提供有關狗狗健康的線索。了解何時眼睛分泌物是正常的，何時需要尋求獸醫的幫助，對狗狗的健康非常重要。",
+        "product_category": "Health Supplements",
+        "pet_type": "dog",
         "sections": [
             {
                 "heading": "正常的眼部分泌物",
@@ -102,6 +110,8 @@
         "title": "如何預防狗狗牙周病？",
         "banner_url": "/dog/dogmouse.png",
         "intro": "牙周病是狗狗常見的口腔問題之一，若未及時處理，可能導致牙齒掉落、感染或其他更嚴重的健康問題。定期照顧狗狗的牙齒，並採取預防措施，能有效減少牙周病的風險。",
+        "product_category": "Health Supplements",
+        "pet_type": "dog",
         "sections": [
             {
                 "heading": "定期刷牙",
@@ -128,6 +138,8 @@
         "title": "狗狗耳朵護理重點",
         "banner_url": "/dog/dogear.png",
         "intro": "狗狗的耳朵是容易積聚汙垢和細菌的部位，長期忽視耳朵護理可能會導致耳朵感染、發炎或其他健康問題。定期清潔和檢查狗狗的耳朵，對於保持牠們的耳部健康至關重要。",
+        "product_category": "Health Supplements",
+        "pet_type": "dog",
         "sections": [
             {
                 "heading": "定期檢查耳朵",
@@ -154,6 +166,8 @@
         "title": "狗狗疫苗接種時程與注意事項",
         "banner_url": "/dog/dogcry.png",
         "intro": "疫苗接種是保護狗狗免於許多傳染病的重要手段。定期接種疫苗可以有效預防許多致命或致病的疾病，並確保狗狗的長期健康。了解狗狗疫苗的接種時程與注意事項，對於狗狗的健康至關重要。",
+        "product_category": "Health Supplements",
+        "pet_type": "dog",
         "sections": [
             {
                 "heading": "幼犬疫苗接種時程",
@@ -180,6 +194,8 @@
         "title": "狗狗常見寄生蟲與防治方式",
         "banner_url": "/dog/dogbug.png",
         "intro": "寄生蟲是狗狗常見的健康問題之一，牠們可能會引起皮膚病、消化不良、貧血等症狀。了解常見的狗狗寄生蟲及其防治方式，有助於保護狗狗免於感染並維持牠們的健康。",
+        "product_category": "Health Supplements",
+        "pet_type": "dog",
         "sections": [
             {
                 "heading": "跳蚤",
@@ -206,6 +222,8 @@
         "title": "如何判斷狗狗是否肥胖？",
         "banner_url": "/dog/dogfat.png",
         "intro": "肥胖會對狗狗的健康造成多方面的影響，包括心臟病、糖尿病和關節問題。及早發現並控制狗狗的體重對保持牠們的健康至關重要。了解如何判斷狗狗是否肥胖，能夠幫助您做出正確的飲食和運動決策。",
+        "product_category": "Health Supplements",
+        "pet_type": "dog",
         "sections": [
             {
                 "heading": "體重過重的警示信號",
@@ -232,6 +250,8 @@
         "title": "狗狗的口臭代表什麼問題？",
         "banner_url": "/dog/dogkusa.png",
         "intro": "狗狗的口臭有時可能是健康問題的警訊。口腔中的不正常氣味可能源於多種原因，了解這些可能的問題並及時處理，能夠維護狗狗的口腔健康和整體健康。",
+        "product_category": "Health Supplements",
+        "pet_type": "dog",
         "sections": [
             {
                 "heading": "牙周病",
@@ -258,6 +278,8 @@
         "title": "狗狗關節炎症狀與護理方式",
         "banner_url": "/dog/dogcare.png",
         "intro": "關節炎是狗狗中常見的疾病，特別是年長狗狗，這種疾病會導致關節疼痛、僵硬和運動困難。了解關節炎的症狀及護理方式，有助於減輕狗狗的痛苦，並改善牠們的生活品質。",
+        "product_category": "Health Supplements",
+        "pet_type": "dog",
         "sections": [
             {
                 "heading": "關節僵硬與活動困難",
@@ -284,6 +306,8 @@
         "title": "狗狗咳嗽可能是哪些疾病？",
         "banner_url": "/dog/dognotgood.png",
         "intro": "狗狗的咳嗽可能是許多疾病的徵兆，從輕微的呼吸道感染到更嚴重的心臟病或肺部疾病。了解咳嗽的原因並及時處理，對於狗狗的健康至關重要。",
+        "product_category": "Health Supplements",
+        "pet_type": "dog",
         "sections": [
             {
                 "heading": "犬窩咳（Kennel Cough）",
@@ -315,6 +339,8 @@
         "title": "如何判斷狗狗消化系統健康？",
         "banner_url": "/dog/dogi.png",
         "intro": "狗狗的消化系統健康對牠們的整體健康至關重要。若狗狗的消化系統出現問題，可能會引起嘔吐、腹瀉、便秘等症狀。了解如何判斷狗狗的消化系統是否健康，有助於及早發現潛在問題。",
+        "product_category": "Health Supplements",
+        "pet_type": "dog",
         "sections": [
             {
                 "heading": "正常的食慾與排便習慣",
@@ -341,6 +367,8 @@
         "title": "狗狗過敏的常見原因與處理方法",
         "banner_url": "/dog/dogkafun.png",
         "intro": "狗狗過敏可能由許多不同的因素引起，從食物過敏到環境過敏源。了解過敏的常見原因並及時處理，對於狗狗的健康至關重要。這可以幫助減輕過敏反應，避免嚴重的健康問題。",
+        "product_category": "Health Supplements",
+        "pet_type": "dog",
         "sections": [
             {
                 "heading": "食物過敏",
@@ -367,6 +395,8 @@
         "title": "狗狗泌尿系統疾病的早期徵兆",
         "banner_url": "/dog/dogkafun.png",
         "intro": "泌尿系統疾病在狗狗中相當常見，若未及時處理可能會引發更嚴重的健康問題。了解早期徵兆，有助於及時發現病症並進行治療，從而提高狗狗的生活品質。",
+        "product_category": "Health Supplements",
+        "pet_type": "dog",
         "sections": [
             {
                 "heading": "頻繁排尿或尿急",
@@ -398,6 +428,8 @@
         "title": "老年狗狗的健康保養須知",
         "banner_url": "/dog/dogold.png",
         "intro": "隨著年齡增長，狗狗的身體狀況會發生變化。適當的健康保養能夠改善牠們的生活品質，延長健康的年齡。了解老年狗狗的健康保養須知，及時調整飲食、運動和醫療護理，讓牠們過上更舒適的晚年生活。",
+        "product_category": "Health Supplements",
+        "pet_type": "dog",
         "sections": [
             {
                 "heading": "定期健康檢查",
@@ -429,6 +461,8 @@
         "title": "如何辨識狗狗的疼痛徵兆",
         "banner_url": "/dog/doghunt.png",
         "intro": "狗狗無法像人類一樣表達疼痛，因此主人需要觀察狗狗的行為和生理變化來判斷是否感到不適。及早辨識疼痛徵兆，有助於為狗狗提供及時的治療與舒適。",
+        "product_category": "Health Supplements",
+        "pet_type": "dog",
         "sections": [
             {
                 "heading": "不正常的叫聲或呻吟",
@@ -460,6 +494,8 @@
         "title": "狗狗常見呼吸道問題與居家照護",
         "banner_url": "/dog/dogkokyu.png",
         "intro": "狗狗的呼吸道問題可能包括感冒、過敏、咳嗽等症狀。這些問題會影響狗狗的日常生活，因此了解常見的呼吸道疾病以及如何進行居家照護對於狗狗的健康非常重要。",
+        "product_category": "Health Supplements",
+        "pet_type": "dog",
         "sections": [
             {
                 "heading": "犬窩咳（Kennel Cough）",
@@ -491,6 +527,8 @@
         "title": "狗狗的皮膚腫塊該如何處理",
         "banner_url": "/dog/dogbutton.png",
         "intro": "狗狗的皮膚腫塊可能是由於多種原因引起的，從良性腫瘤到感染或過敏反應。了解如何處理狗狗的皮膚腫塊對於及時發現潛在健康問題並提供適當的處理至關重要。",
+        "product_category": "Health Supplements",
+        "pet_type": "dog",
         "sections": [
             {
                 "heading": "腫塊的種類",
@@ -522,6 +560,8 @@
         "title": "狗狗常見疾病快速檢查懶人包",
         "banner_url": "/dog/dogevery.png",
         "intro": "狗狗會面臨各種健康挑戰，從消化問題到皮膚病等。掌握一些常見疾病的早期徵兆，能幫助您快速判斷狗狗的健康狀況，並及時尋求獸醫幫助，確保牠們的健康與快樂。",
+        "product_category": "Health Supplements",
+        "pet_type": "dog",
         "sections": [
             {
                 "heading": "犬窩咳（Kennel Cough）",
