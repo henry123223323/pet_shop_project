@@ -1,36 +1,57 @@
 import React, { Component } from 'react';
 class PdTitleMessage extends Component {
-    state = {  } 
-    render() { 
+    state = {}
+    render() {
+        const { condition, pid, price, stock, deliveryMethod, brand, city, district, newLevel } = this.props  
         return (<>
-        {/* <h1>商品重點區</h1> */}
+            {/* <h1>商品重點區</h1> */}
 
-        
-        <div className='d-flex my-2'>
-            <div> 商品座標：</div><div>台中市南屯區</div>
-        </div>
-        <div className='d-flex my-2'>
-            <div> 保存狀況：</div>
-            <div>3星</div>
-        </div>
-        <div className='d-flex my-2'>
-            <div> 交貨方式：</div>
-            <div>面交/宅配/超商取貨</div>
-        </div>
+            <div>
+                <div className='d-flex my-2'>
+                    <div> 商品編號：</div><div>{pid}</div>
+                </div>
+                {/* 二手出現座標｜新品出現品牌 */}
+                {condition === "second" ? <>
+                <div className='d-flex my-2'>
+                    <div> 商品座標：</div><div>{city}{district}</div>
+                </div>
+                </>: <>
+                <div className='d-flex my-2'>
+                    <div> 商品品牌：</div><div>{brand}</div>
+                </div>
+                </>}
+                {/* 二手出現保存狀況｜新品沒資料 */}
+                {condition === "second" ? <>
+                    <div className='d-flex my-2'>
+                    <div> 保存狀況：</div>
+                    <div>{newLevel}</div>
+                </div>
+                </>: <>
+                {/* <div className='d-flex my-2'>
+                    <div> 商品類別：</div><div>{categories}</div>
+                </div> */}
+                </>}
+                
+                <div className='d-flex my-2'>
+                    <div> 配送方式：</div>
+                    <div>{deliveryMethod.join(' / ')}</div>
+                </div>
 
-        <div className={`d-flex align-items-end my-3`}>
-            <div className=''>價格</div>
-            <div className='ptxtb2 paw-text-pink mx-2'>199</div>
-            <div>元</div>
-            <div className='mx-3'>
-                <span>還剩</span>
-                <span className='mx-2 ptxtb4 paw-text-pink'>1</span> 
-                <span>件</span>
+                <div className={`d-flex align-items-end my-3`}>
+                    <div className=''>價格</div>
+                    <div className='ptxtb2 paw-text-pink mx-2'>{price}</div>
+                    <div>元</div>
+                    <div className='mx-3'>
+                        <span>還剩</span>
+                        <span className='mx-2 ptxtb4 paw-text-pink'>{stock}</span>
+                        <span>件</span>
+                    </div>
+                </div>
             </div>
-        </div>
-        
+
+
         </>);
     }
 }
- 
+
 export default PdTitleMessage;

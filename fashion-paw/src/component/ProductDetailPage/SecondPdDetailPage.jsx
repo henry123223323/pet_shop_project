@@ -27,7 +27,7 @@ class PdDetailPage extends Component {
           status: 1,
           pet_type: "貓",
           pd_name: "灰色毛氈立方貓窩（可折疊）",
-          price: "請填入",
+          price: "199",
           description: "這款立方造型的毛氈貓窩，原本是為家中小貓準備的...",
           categories: "貓用品",
           city: "台中市",
@@ -60,9 +60,9 @@ class PdDetailPage extends Component {
           status: 1,
           pet_type: "貓",
           pd_name: "加厚耐抓雙面貓抓板",
-          price: "請填入",
+          price: "599",
           description: "全新加厚款雙面貓抓板，採用高密度瓦楞紙製作...",
-          categories: "貓用品",
+          categories: "居家用品",
           uid: "user5678",
           stock: "10",
           sale_count: "0",
@@ -76,14 +76,14 @@ class PdDetailPage extends Component {
             weight: "約500g"
           },
           images: [
-            { img_path: "/media/second_pd/cat/cat2_home1_1.jpeg", img_value: "貓抓板整體外觀展示" },
-            { img_path: "/media/second_pd/cat/cat2_home1_2.jpeg", img_value: "展示雙面可使用設計" },
-            { img_path: "/media/second_pd/cat/cat2_home1_3.jpeg", img_value: "附贈天然貓薄荷包裝示意" },
-            { img_path: "/media/second_pd/cat/cat2_home1_4.jpeg", img_value: "貓咪實際使用情境圖" }
+            { img_path: "/media/new_pd/cat/livingEssentials/cat1_scratch1_1.jpg", img_value: "貓抓板整體外觀展示" },
+            { img_path: "/media/new_pd/cat/livingEssentials/cat1_scratch1_2.jpg", img_value: "展示雙面可使用設計" },
+            { img_path: "/media/new_pd/cat/livingEssentials/cat1_scratch1_3.jpg", img_value: "附贈天然貓薄荷包裝示意" },
+            { img_path: "/media/new_pd/cat/livingEssentials/cat1_scratch1_4.jpg", img_value: "貓咪實際使用情境圖" }
           ]
         }
       ],
-      currentProductIndex: 0, // 目前要顯示第幾個商品（初始先顯示第1筆）
+      currentProductIndex: 1, // 目前要顯示第幾個商品（初始先顯示第1筆）
     };
   }    
 
@@ -99,7 +99,10 @@ class PdDetailPage extends Component {
             <div className='col-md-8 '>
 
               <div className='paw-bg-lightenbrown p-2'>
-                <div className='mx-4'><PdTitle pdname={this.state.products[this.state.currentProductIndex].pd_name}/></div>
+                <div className='mx-4'>
+                  <PdTitle 
+                    pdname={this.state.products[this.state.currentProductIndex].pd_name}/>
+                </div>
                 <div className='d-flex flex-column flex-md-row '>
                   <div className='d-flex align-items-center col-md-5'>
                     {/* 左邊圖片 */}
@@ -109,7 +112,18 @@ class PdDetailPage extends Component {
                   <div className='col-md-7 my-4'>
                     {/* 右邊說明 */}
                     <div>
-                      <PdTitleMessage />
+                      <PdTitleMessage 
+                        condition={this.state.products[this.state.currentProductIndex].condition}
+                        pid={this.state.products[this.state.currentProductIndex].pid}
+                        categories={this.state.products[this.state.currentProductIndex].categories}
+                        price={this.state.products[this.state.currentProductIndex].price}
+                        stock={this.state.products[this.state.currentProductIndex].stock}
+                        deliveryMethod={this.state.products[this.state.currentProductIndex].delivery_method}
+                        brand={this.state.products[this.state.currentProductIndex].attribute.brand}
+                        city={this.state.products[this.state.currentProductIndex].city}
+                        district={this.state.products[this.state.currentProductIndex].district}
+                        newLevel={this.state.products[this.state.currentProductIndex].new_level}
+                        />
                     </div>
 
                     <div className='d-flex align-items-center flex-md-row flex-wrap'>
