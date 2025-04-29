@@ -42,14 +42,11 @@ class SellerProfile extends Component {
                     <div className="col-md-6 rounded p-3">
                         <div>
                             <p>
-                                <span>賣家：</span> <span>毛🐱主人</span>
-                            </p>
-                            <p>
                                 <span>上次登錄時間：</span> <span>2025-04-09 03:33:20</span>
                             </p>
                             <div>
-                                <p>關於賣家：</p>
-                                <p>
+                                <p className='ptxtb4'>關於毛🐱主人</p>
+                                <p className='px-3 '>
                                     熱愛毛孩生活，分享家中用不到但保存良好的寵物用品，希望能讓更多小動物享受舒適生活。
                                     商品皆細心清潔整理，誠信交易，歡迎喜歡的朋友來訊聊聊！
                                 </p>

@@ -4,7 +4,7 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import styles from '../src/component/Homepage/IndexStyle.module.css'
 import MemberCenter from './component/MemberCenter/MyAccount'
 import Homepage from './component/Homepage/Homepage';
-import SecondPdDetailPage from './component/ProductDetailPage/SecondPdDetailPage';
+import ProductDetailPage from './component/ProductDetailPage/ProductDetailPage';
 import ShoppingCartPage from './component/Cart/ShoppingCartPage';
 import CheckBillPage from './component/CheckBill/CheckBillPage';
 
@@ -37,7 +37,7 @@ function App() {
           <Route path="/Novicefeeding/DogGuide" component={DogGuide} exact />
           <Route path="/PartTouch/Touch" component={Touch} exact />
           <Route path="/PetQuiz/Quiz" component={Quiz} exact />
-          <Route path="/SecondPdDetailPage" component={SecondPdDetailPage} exact />
+          <Route path="/ProductDetailPage" component={ProductDetailPage} exact />
           <Route path="/ShoppingCartPage" component={ShoppingCartPage} exact />
           <Route path="/CheckBillPage" component={CheckBillPage} exact />
           <Route path="/Aboutus" component={Helpme} exact />
