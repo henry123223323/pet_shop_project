@@ -2,15 +2,6 @@
     padding: 16px;
     background: #fff;
     border-radius: 8px;
-<<<<<<< HEAD
-  }
-  
-  .section h4 {
-    margin-bottom: 8px;
-    font-size: 1rem;
-    font-weight: bold;
-=======
->>>>>>> yudong
     
   }
   
@@ -20,29 +11,6 @@
     margin: 0;
   }
   
-<<<<<<< HEAD
-  .toggleBtn {
-    width: 100%;
-    background: none;
-    border: none;
-    padding: 8px 4px;
-    text-align: left;
-    font-size: 0.95rem;
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
-  .toggleBtn:hover {
-    background: #f0f0f0;
-  }
-  
-  .arrow {
-    font-size: 0.8rem;
-  }
-=======
->>>>>>> yudong
   
   .sublist {
     list-style: none;
@@ -52,22 +20,10 @@
   
   .sublist li {
     margin-bottom: 6px;
-<<<<<<< HEAD
-  }
-  
-  .sublist label {
-    cursor: pointer;
-    font-size: 0.9rem;
-  }
-  
-  .sublist input {
-    margin-right: 6px;
-=======
     cursor: pointer;
     font-size: 0.9rem;
     padding: 4px 8px;
     border-radius: 4px;
->>>>>>> yudong
   }
   
   .sublist li:hover {
