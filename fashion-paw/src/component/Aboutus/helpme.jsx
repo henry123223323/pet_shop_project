@@ -1,6 +1,6 @@
 // HelpMe.jsx
 import React, { Component } from 'react';
-import './aboutus.css';
+import style from './aboutus.module.css';
 import birdwatchyou from './image/birdwatchyou.png';
 import dogcatcar from './image/dogcatcar.png';
 import kusa from './image/kusa.png';
@@ -132,8 +132,8 @@ class HelpMe extends Component {
             if (movepan && onebox && kusa1 && movepan.offsetLeft > onebox.offsetLeft) {
                 if (onebox.style.visibility !== "visible") {
                     onebox.style.visibility = "visible";
-                    onebox.classList.add("dancebox");
-                    kusa1.classList.add("bush-disappear");
+                    onebox.classList.add(style["dancebox"]);
+                    kusa1.classList.add(style["bush-disappear"]);
                 } else {
                     clearInterval(this.intervalId);
                 }
@@ -147,8 +147,8 @@ class HelpMe extends Component {
             if (movepan && twobox && kusa2 && movepan.offsetLeft > twobox.offsetLeft) {
                 if (twobox.style.visibility !== "visible") {
                     twobox.style.visibility = "visible";
-                    twobox.classList.add("dancebox");
-                    kusa2.classList.add("bush-disappear");
+                    twobox.classList.add(style["dancebox"]);
+                    kusa2.classList.add(style["bush-disappear"]);
                 } else {
                     clearInterval(this.intervalId2);
                 }
@@ -162,8 +162,8 @@ class HelpMe extends Component {
             if (movepan && threebox && kusa3 && movepan.offsetLeft > threebox.offsetLeft) {
                 if (threebox.style.visibility !== "visible") {
                     threebox.style.visibility = "visible";
-                    threebox.classList.add("dancebox");
-                    kusa3.classList.add("dogruning");
+                    threebox.classList.add(style["dancebox"]);
+                    kusa3.classList.add(style["dogruning"]);
                 } else {
                     clearInterval(this.intervalId3);
                 }
@@ -177,8 +177,8 @@ class HelpMe extends Component {
             if (movepan && fourbox && kusa4 && movepan.offsetLeft > fourbox.offsetLeft) {
                 if (fourbox.style.visibility !== "visible") {
                     fourbox.style.visibility = "visible";
-                    fourbox.classList.add("dancebox");
-                    kusa4.classList.add("fade-up");
+                    fourbox.classList.add(style["dancebox"]);
+                    kusa4.classList.add(style["fade-up"]);
                 } else {
                     clearInterval(this.intervalId4);
                 }
@@ -206,7 +206,7 @@ class HelpMe extends Component {
                 {/* 車 */}
                 <img
                     src={dogcatcar}
-                    className="moveimg"
+                    className={style.moveimg}
                     id="movepan"
                     ref={this.movepanRef}
                     style={{ width: "200px", height: "200px" }}
@@ -216,58 +216,58 @@ class HelpMe extends Component {
                 {/* 草叢 */}
                 <img
                     src={kusa}
-                    className="kusa"
-                    id="kusa1"
+                    className={style.kusa}
+                    id={style.kusa1}
                     ref={this.kusa1Ref}
                     style={{ visibility: "visible", border: "none" }}
                     alt="kusa1"
                 />
                 <img
                     src={cutebird}
-                    className="kusa"
-                    id="kusa2"
+                    className={style.kusa}
+                    id={style.kusa2}
                     ref={this.kusa2Ref}
                     alt="kusa2"
                 />
                 <img
                     src={doginkusa}
-                    className="kusa"
-                    id="kusa3"
+                    className={style.kusa}
+                    id={style.kusa3}
                     ref={this.kusa3Ref}
                     alt="kusa3"
                 />
                 <img
                     src={catinkusasa}
-                    className="kusa"
-                    id="kusa4"
+                    className={style.kusa}
+                    id={style.kusa4}
                     ref={this.kusa4Ref}
                     alt="kusa4"
                 />
 
                 {/* 四個box */}
                 <a href="#123">
-                    <div className="first_box" id="onebox" ref={this.oneboxRef}>
+                    <div className={style.first_box} id="onebox" ref={this.oneboxRef}>
                         <p>假字標題</p>
                         <span>你知道狗不能吃巧克力嗎</span>
                     </div>
                 </a>
 
                 <a href="#456">
-                    <div className="two_box" id="twobox" ref={this.twoboxRef}>
+                    <div className={style.two_box} id="twobox" ref={this.twoboxRef}>
                         <p>假字標題</p>
                         <span>你知道狗不能吃巧克力嗎</span>
                     </div>
                 </a>
 
                 <a href="#789">
-                    <div className="three_box" id="threebox" ref={this.threeboxRef}>
+                    <div className={style.three_box} id="threebox" ref={this.threeboxRef}>
                         <p>假字標題</p>
                         <span>你知道狗不能吃巧克力嗎</span>
                     </div>
                 </a>
 
                 <a href="#101">
-                    <div className="four_box" id="fourbox" ref={this.fourboxRef}>
+                    <div className={style.four_box} id="fourbox" ref={this.fourboxRef}>
                         <p>假字標題</p>
                         <span>你知道狗不能吃巧克力嗎</span>
                     </div>

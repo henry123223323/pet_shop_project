@@ -19,8 +19,8 @@ import Quiz from './component/PetKnowledge/PetQuiz/Quiz';
 import Header from './component/Homepage/Header';
 import Footer from './component/Homepage/Footer';
 
-import Helpme from './component/Abouts/helpme.jsx';
-import './component/Abouts/aboutus.css'
+import Helpme from './component/Aboutus/helpme';
+
 
 function App() {
   return (
