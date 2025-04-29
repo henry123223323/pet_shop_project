@@ -1,0 +1,67 @@
+.moveimg {
+    position: absolute;
+    top: 40%;
+    left: 90%;
+    height: 100px;
+    width: 100px;
+    animation-name: gotoright;
+    animation-duration: 4s;
+}
+
+.the_hr{
+    margin-top: 49%;
+}
+
+@keyframes gotoright {
+    0% {
+        left: 0%
+    }
+
+    20% {top:30%}
+    40% {top:50%}
+    60% {top:40%}
+
+    100% {
+        left: 90%
+    }
+}
+
+.theone {
+    width: 200px;
+    height: 200px;
+    background-color: black;
+}
+
+
+
+
+
+.first_box,.two_box,.three_box,.four_box {
+    width: 200px;
+    height: 200px;
+    position: absolute;
+    visibility: hidden;
+    /* top: 10%;
+    left: 20%; */
+    border: 1px black solid;
+}
+.three_box{
+    top: 10%;
+    left: 50%;
+}
+
+.four_box{
+    top: 60%;
+    left: 65%;
+}
+
+
+.two_box{
+    top: 60%;
+    left: 35%;
+}
+
+.first_box{
+    top: 10%;
+    left: 20%;
+}

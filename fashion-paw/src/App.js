@@ -9,6 +9,8 @@ import Login from './component/MemberCenter/Login';
 import Register from './component/MemberCenter/Register';
 import DogGuide from './component/PetKnowledge/Novicefeeding/DogGuide';
 import Touch from './component/PetKnowledge/PartTouch/Touch';
+import Helpme from './component/Aboutus/helpme.jsx';
+import './component/Aboutus/aboutus.css'
 
 function App() {
   return (
@@ -22,6 +24,7 @@ function App() {
         <Route path="/MemberCenter/Register" component={ Register } exact/>
         <Route path="/Novicefeeding/DogGuide" component={DogGuide} exact/>
         <Route path="/PartTouch/Touch" component={Touch} exact/>
+        <Route path="/Aboutus" component={Helpme} exact />
       </Switch>
       <h1 className='paw-bg-secondary'>Footer</h1>
     </BrowserRouter>
