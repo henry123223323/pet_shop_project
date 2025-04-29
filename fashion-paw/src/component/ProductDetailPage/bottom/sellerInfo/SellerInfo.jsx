@@ -6,12 +6,13 @@ import SReview from './SReview';
 class SellerInfo extends Component {
     state = {  } 
     render() { 
+        const {review}=this.props
         return (<>
         {/* <h1>賣家合併頁</h1> */}
         <div className='paw-bg-lightenbrown my-3 py-3'>
         <SellerProfile />
         <SellerOtherPd />
-        <SReview />
+        <SReview review={review}/>
         </div>
         </>);
     }
