@@ -1,4 +1,3 @@
-// src/component/SeProductPage/SeProductPage.jsx
 import React, { useState, useEffect } from 'react';
 // import axios from 'axios'; 先不用 axios，先註解掉
 import styles from './SeProductPage.module.css';
