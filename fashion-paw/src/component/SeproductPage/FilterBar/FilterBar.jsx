@@ -2,33 +2,46 @@
 import React, { useState, useEffect } from 'react';
 import styles from './FilterBar.module.css';
 
-const functions = ['乾糧', '副食', '保健食品', '玩具','零食','生活用品'];
-const brands    = ['AAAA', 'BBBB', 'CCCC'];
-const prices    = [
-  { value: '0-100',    label: '100以下' },
-  { value: '101-300',  label: '101–300' },
-  { value: '301-600',  label: '301–600' },
-  { value: '601-999',  label: '601–999' },
-  { value: '1000+',    label: '1000以上' },
+const functions   = ['乾糧', '副食', '保健食品', '玩具', '零食', '生活用品'];
+const brands      = ['AAAA', 'BBBB', 'CCCC'];
+const prices      = [
+  { value: '0-100',   label: '100以下' },
+  { value: '101-300', label: '101–300' },
+  { value: '301-600', label: '301–600' },
+  { value: '601-999', label: '601–999' },
+  { value: '1000+',   label: '1000以上' },
 ];
+const locations   = ['OO縣', 'OO市', 'OO縣', 'OO縣', 'OO縣'];
+const depreciates = [1, 2, 3, 4, 5];  // 代表 🐾、🐾🐾 …等級
 
 export default function FilterBar({ onFilterChange = () => {} }) {
-  const [selFuncs, setSelFuncs] = useState([]);
+  const [selFuncs,  setSelFuncs]  = useState([]);
   const [selBrands, setSelBrands] = useState([]);
   const [selPrice,  setSelPrice]  = useState('');
+  const [selLocs,   setSelLocs]   = useState([]);
+  const [selDep,    setSelDep]    = useState(0);
 
-  // 每次狀態改變就通知父元件
+  // 狀態改變就回傳給父元件
   useEffect(() => {
-    onFilterChange({ functions: selFuncs, brands: selBrands, price: selPrice });
-  }, [selFuncs, selBrands, selPrice]);
+    onFilterChange({
+      functions:   selFuncs,
+      brands:      selBrands,
+      price:       selPrice,
+      locations:   selLocs,
+      depreciation: selDep
+    });
+  }, [selFuncs, selBrands, selPrice, selLocs, selDep]);
 
   const toggleArray = (arr, setFn, val) => {
-    setFn(prev => prev.includes(val) ? prev.filter(x => x!==val) : [...prev, val]);
+    setFn(prev => prev.includes(val)
+      ? prev.filter(x => x !== val)
+      : [...prev, val]
+    );
   };
 
   return (
     <div className={styles.filterBar}>
-      {/* 第一行：功能 */}
+      {/* 功能 */}
       <div className={styles.row}>
         <span className={styles.label}>功能</span>
         <div className={styles.options}>
@@ -45,7 +58,7 @@ export default function FilterBar({ onFilterChange = () => {} }) {
         </div>
       </div>
 
-      {/* 第二行：品牌 */}
+      {/* 品牌 */}
       <div className={styles.row}>
         <span className={styles.label}>品牌</span>
         <div className={styles.options}>
@@ -62,7 +75,7 @@ export default function FilterBar({ onFilterChange = () => {} }) {
         </div>
       </div>
 
-      {/* 第三行：價格 */}
+      {/* 價格 */}
       <div className={styles.row}>
         <span className={styles.label}>價格</span>
         <div className={styles.options}>
@@ -76,6 +89,43 @@ export default function FilterBar({ onFilterChange = () => {} }) {
                 onChange={() => setSelPrice(p.value)}
               />
               {p.label}
+            </label>
+          ))}
+        </div>
+      </div>
+
+      {/* 所在位置 */}
+      <div className={styles.row}>
+        <span className={styles.label}>所在地</span>
+        <div className={styles.options}>
+          {locations.map(loc => (
+            <label key={loc}>
+              <input
+                type="checkbox"
+                checked={selLocs.includes(loc)}
+                onChange={() => toggleArray(selLocs, setSelLocs, loc)}
+              />
+              {loc}
+            </label>
+          ))}
+        </div>
+      </div>
+
+      {/* 折舊程度 */}
+      <div className={styles.row}>
+        <span className={styles.label}>折舊程度</span>
+        <div className={styles.options}>
+          {depreciates.map(n => (
+            <label key={n}>
+              <input
+                type="radio"
+                name="depreciation"
+                value={n}
+                checked={selDep === n}
+                onChange={() => setSelDep(n)}
+              />
+              {/* 顯示 n 個 🐾 */}
+              {Array(n).fill('🐾').join('')}
             </label>
           ))}
         </div>

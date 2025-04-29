@@ -9,6 +9,8 @@ import Login from './component/MemberCenter/Login';
 import Register from './component/MemberCenter/Register';
 import Touch from './component/PetKnowledge/PartTouch/Touch';
 import DogGuide from './component/PetKnowledge/Novicefeeding/DogGuide';
+import SeProductPage from './component/SeProductPage/SeProductPage';
+
 
 function App() {
   return (
@@ -18,6 +20,7 @@ function App() {
         <Route path="/" component={ Homepage } exact/>
         <Route path="/MemberCenter" component={ MemberCenter } />
         <Route path="/ProductPage" component={ ProductPage } exact/>
+        <Route path="/SeProductPage" component={ SeProductPage } exact/>
         <Route path="/Login" component={ Login } />
         <Route path="/Register" component={ Register } />
         <Route path="/Novicefeeding/DogGuide" component={DogGuide} exact/>
