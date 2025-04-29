@@ -1,19 +1,22 @@
 [
   {
     "title": "貓咪日常健康檢查重點",
-    "banner_url": "https://example.com/images/cat_health_banner.jpg",
+    "banner_url": "",
+    "banner_url": "/cat/pethealthb_1.avif",
     "intro": "身為飼主，了解貓咪的健康狀況是日常照護中不可忽視的一環。雖然貓咪習慣隱藏不適，但透過觀察生活中的細節，仍能掌握牠們的身體訊號。以下整理出五項日常檢查的重點，協助您更安心地守護牠的健康。",
     "product_category": "Health Supplements",
     "pet_type": "cat",
     "sections": [
       {
         "heading": "1. 食慾與飲水行為",
-        "image_url": "https://example.com/images/cat_eating.jpg",
+        "image_url": "",
+        "image_url": "",
         "body": "食慾與飲水量是觀察貓咪健康的重要參考依據。若出現食量減少、突然挑食，或喝水頻率明顯異常，都可能是身體出現不適的早期跡象。尤其對年長貓來說，飲水過少恐增加泌尿道與腎臟問題的風險。建議平日可透過定時餵食、使用飲水器，搭配簡單記錄，以便及早發現異狀。"
       },
       {
         "heading": "2. 排泄習慣的觀察",
-        "image_url": "https://example.com/images/cat_litterbox.jpg",
+        "image_url": "",
+        "image_url": "",
         "body": "貓咪的排便與排尿狀況，能清楚反映牠們的消化與泌尿健康。正常的排泄應該規律、形狀穩定且無異味。若發現腹瀉、便秘、血尿或頻繁上廁所卻排不出來，便可能與泌尿道感染、腸胃異常或其他疾病有關。清理貓砂盆的同時，不妨也留意這些細節，對預防急症尤其重要。"
       },
       {
@@ -23,7 +26,8 @@
       },
       {
         "heading": "4. 毛髮與皮膚的整潔狀態",
-        "image_url": "https://example.com/images/cat_grooming.jpg",
+        "image_url": "",
+        "image_url": "",
         "body": "健康的毛髮應柔順、富光澤，皮膚則不應出現紅腫、搔癢或異味。若出現掉毛明顯、持續抓咬、局部脫毛等情況，可能與寄生蟲、皮膚炎或過敏反應有關。建議每週定期梳毛，除了維持整潔，也有助於及早察覺異常。對長毛貓而言，這樣的照護更是不可或缺。"
       },
       {
@@ -35,7 +39,8 @@
   },
   {
     "title": "如何辨識貓咪生病的徵兆？",
-    "banner_url": "https://example.com/images/cat_sick_signs.jpg",
+    "banner_url": "",
+    "banner_url": "/cat/pethealthb_2.avif",
     "intro": "貓咪擅長隱藏不適，許多疾病在出現明顯症狀時往往已進展至中後期。因此，學會辨識貓咪生病的早期徵兆，是每位飼主不可或缺的重要能力。",
     "product_category": "Health Supplements",
     "pet_type": "cat",
@@ -67,10 +72,10 @@
       }
     ]
   },
-
   {
     "title": "貓咪皮膚病常見類型與治療",
-    "banner_url": "https://example.com/images/cat_skin_conditions.jpg",
+    "banner_url": "",
+    "banner_url": "/cat/pethealthb_3.avif",
     "intro": "皮膚病是貓咪常見的健康問題之一，可能因過敏、寄生蟲、黴菌等多種因素引起。若未及時處理，不僅影響外觀，還可能導致持續搔癢與感染。本篇文章將介紹幾種常見皮膚病與處理方法，幫助飼主有效因應。",
     "product_category": "Health Supplements",
     "pet_type": "cat",
@@ -102,12 +107,12 @@
       }
     ]
   },
-
   {
     "title": "貓咪牙齒、耳朵保健護理常識",
-    "banner_url": "https://example.com/images/cat_dental_ear_care.jpg",
+    "banner_url": "",
+    "banner_url": "/cat/pethealthb_4.avif",
     "intro": "牙齒與耳朵的健康對貓咪來說同樣重要，若未妥善照顧，容易引發口腔感染、中耳炎等問題。透過定期檢查與簡單保健，飼主可在日常生活中有效維護貓咪的整體健康。",
-    "product_category": "Health Supplements",
+    "product_category": "",
     "pet_type": "cat",
     "sections": [
       {
@@ -139,7 +144,8 @@
   },
   {
     "title": "貓咪體重管理與肥胖問題",
-    "banner_url": "https://example.com/images/cat_weight_management.jpg",
+    "banner_url": "",
+    "banner_url": "",
     "intro": "肥胖會增加貓咪罹患多種疾病的風險，如糖尿病、關節炎與心血管問題。維持理想體態是確保貓咪健康與延年益壽的關鍵，本文將帶您了解體重管理的實用原則與方法。",
     "product_category": "Health Supplements",
     "pet_type": "cat",
@@ -171,10 +177,10 @@
       }
     ]
   },
-
   {
     "title": "貓咪常見腸胃問題處理方法",
-    "banner_url": "https://example.com/images/cat_digestive_issues.jpg",
+    "banner_url": "",
+    "banner_url": "/cat/pethealthb_6.avif",
     "intro": "貓咪的腸胃系統相對敏感，常見問題如嘔吐、腹瀉與便秘若處理不當，可能影響健康與食慾。了解成因與對應處理方式，是飼主照護工作的重要一環。",
     "product_category": "Health Supplements",
     "pet_type": "cat",
@@ -208,9 +214,10 @@
   },
   {
     "title": "貓咪腎臟疾病如何早期偵測？",
-    "banner_url": "https://example.com/images/cat_kidney_detection.jpg",
+    "banner_url": "",
+    "banner_url": "/cat/pethealthb_7.avif",
     "intro": "腎臟疾病是貓咪常見的慢性病之一，尤其高齡貓更是高風險族群。早期症狀不明顯，需透過觀察與定期健檢及早發現，才能有效延緩病程。",
-    "product_category": "Health Supplements",
+    "product_category": "",
     "pet_type": "cat",
     "sections": [
       {
@@ -242,7 +249,8 @@
   },
   {
     "title": "貓咪過敏的症狀與處理方式",
-    "banner_url": "https://example.com/images/cat_allergy_symptoms.jpg",
+    "banner_url": "",
+    "banner_url": "/cat/pethealthb_8.avif",
     "intro": "貓咪的過敏反應可能來自食物、環境、藥物等多種因素，症狀也因個體而異。透過細心觀察與排除法，能夠找出過敏源並提供適當處理。",
     "product_category": "Health Supplements",
     "pet_type": "cat",
@@ -274,12 +282,12 @@
       }
     ]
   },
-
   {
     "title": "貓咪情緒壓力對健康的影響",
-    "banner_url": "https://example.com/images/cat_emotional_stress.jpg",
+    "banner_url": "",
+    "banner_url": "/cat/pethealthb_9.avif",
     "intro": "貓咪雖個性獨立，但其實對環境變化與生活壓力相當敏感。長期處於高壓狀態可能導致行為改變甚至身體疾病，了解壓力來源與紓解方式對飼主來說極為重要。",
-    "product_category": "Health Supplements",
+    "product_category": "Toys",
     "pet_type": "cat",
     "sections": [
       {
@@ -311,7 +319,8 @@
   },
   {
     "title": "老年貓咪的健康管理技巧",
-    "banner_url": "https://example.com/images/senior_cat_care.jpg",
+    "banner_url": "",
+    "banner_url": "/cat/pethealthb_10.avif",
     "intro": "隨著年齡增長，貓咪的生理機能逐漸退化，疾病風險也隨之提升。透過針對性的照護與定期健檢，飼主能協助高齡貓維持良好的生活品質與健康狀態。",
     "product_category": "Health Supplements",
     "pet_type": "cat",
