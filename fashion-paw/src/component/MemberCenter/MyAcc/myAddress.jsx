@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+<<<<<<< HEAD
 import MyAddressItem from './myAddress/myAddress_item';
 import axios from 'axios';
 
@@ -153,3 +154,15 @@ class MyAddress extends Component {
 }
 
 export default MyAddress;
+=======
+class myAddress extends Component {
+    state = {  } 
+    render() { 
+        return (
+            <h1>myAddress</h1>
+        );
+    }
+}
+ 
+export default myAddress;
+>>>>>>> test

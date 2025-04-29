@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+<<<<<<< HEAD
 import FavoriteCard from './mycollect/Favorite';
 class mycollect extends Component {
     constructor(props) {
@@ -41,3 +42,15 @@ class mycollect extends Component {
 }
 
 export default mycollect;
+=======
+class mycollect extends Component {
+    state = {  } 
+    render() { 
+        return (
+            <h1>mycollect</h1>
+        );
+    }
+}
+ 
+export default mycollect;
+>>>>>>> test

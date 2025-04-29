@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+<<<<<<< HEAD
 import { BrowserRouter as Router, Route, Switch, Link, Redirect } from 'react-router-dom';
 
 import New_Products_Manage from './Content_manage/New_product_manage';
@@ -33,3 +34,15 @@ class Content_manage extends Component {
 
 export default Content_manage;
 
+=======
+class Content_manage extends Component {
+    state = {  } 
+    render() { 
+        return (
+            <h1>Content_manage</h1>
+        );
+    }
+}
+ 
+export default Content_manage;
+>>>>>>> test

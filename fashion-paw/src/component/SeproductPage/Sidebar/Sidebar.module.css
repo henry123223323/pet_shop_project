@@ -1,0 +1,69 @@
+.sidebar {
+    padding: 16px;
+    background: #fff;
+    border-radius: 8px;
+<<<<<<< HEAD:fashion-paw/src/component/ProductPage/Sidebar/Sidebar.module.css
+  }
+  
+  .section h4 {
+    margin-bottom: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+=======
+    
+>>>>>>> test:fashion-paw/src/component/SeproductPage/Sidebar/Sidebar.module.css
+  }
+  
+  .menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .toggleBtn {
+    width: 100%;
+    background: none;
+    border: none;
+    padding: 8px 4px;
+    text-align: left;
+    font-size: 0.95rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .toggleBtn:hover {
+    background: #f0f0f0;
+  }
+  
+  .arrow {
+    font-size: 0.8rem;
+  }
+  
+  .sublist {
+    list-style: none;
+    padding-left: 16px;
+    margin: 4px 0 12px;
+  }
+  
+  .sublist li {
+    margin-bottom: 6px;
+  }
+  
+<<<<<<< HEAD:fashion-paw/src/component/ProductPage/Sidebar/Sidebar.module.css
+  .sublist label {
+    cursor: pointer;
+    font-size: 0.9rem;
+  }
+  
+  .sublist input {
+    margin-right: 6px;
+  }
+  
+=======
+  .sublist li:hover {
+    background-color: #ffe082;
+  }
+  
+>>>>>>> test:fashion-paw/src/component/SeproductPage/Sidebar/Sidebar.module.css

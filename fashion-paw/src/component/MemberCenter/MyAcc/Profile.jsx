@@ -3,8 +3,12 @@ import React, { Component } from 'react';
 
 class Profile extends Component {
     state = {
+<<<<<<< HEAD
         showModal: false,
         photo: ""
+=======
+        showModal: false
+>>>>>>> test
     }
 
     toggleModal = () => {
@@ -15,6 +19,7 @@ class Profile extends Component {
         //去資料庫抓username email 大頭照 生日 電話......
         // 自動帶入編輯裡的資料
     }
+<<<<<<< HEAD
     PhotoChange = (event) => {
         const file = event.target.files[0];
         if (file) {
@@ -24,6 +29,9 @@ class Profile extends Component {
             });
         }
     }
+=======
+
+>>>>>>> test
     render() {
         const { showModal } = this.state;
 
@@ -64,8 +72,13 @@ class Profile extends Component {
                                     </div>
                                     <div className="form-group">
                                         <label>大頭照</label>
+<<<<<<< HEAD
                                         <input type="file" className="form-control" onChange={this.PhotoChange} />
                                         <img width={100} src={this.state.photo} alt="大頭照" />
+=======
+                                        <input type="file" className="form-control" />
+                                        <img src="" alt="大頭照" />
+>>>>>>> test
                                         {/* 這裡顯示選擇的圖片 */}
                                     </div>
                                     <div className="form-group">
