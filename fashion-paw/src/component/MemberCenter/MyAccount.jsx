@@ -32,22 +32,10 @@ class MyAccount extends Component {
                                 <Route path="/MemberCenter/manage-market" component={manage_market} />
                                 <Route path="/MemberCenter/Content-manage" component={Content_manage} />
 
-<<<<<<< HEAD
                                 <Route path="/MemberCenter" exact>
                                     <Redirect to="/MemberCenter/profile" />
                                 </Route>
 
-=======
-                                <Route  path="/MemberCenter" exact>
-                                    <Redirect to="/MemberCenter/profile" />
-                                </Route>
-
-                                
-
-
-                                
-
->>>>>>> test
                             </Switch>
                         </div>
 

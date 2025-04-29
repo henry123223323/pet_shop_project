@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-<<<<<<< HEAD
 import Market_modal from './market_manage/Market_Modal';
 class manage_market extends Component {
     state = {
@@ -228,15 +227,4 @@ class manage_market extends Component {
 
 }
 
-=======
-class manage_market extends Component {
-    state = {  } 
-    render() { 
-        return (
-            <h1>manage_market</h1>
-        );
-    }
-}
- 
->>>>>>> test
 export default manage_market;

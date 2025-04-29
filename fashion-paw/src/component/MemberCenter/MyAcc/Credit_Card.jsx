@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-<<<<<<< HEAD
 // import 'bootstrap/dist/css/bootstrap.min.css';
 import Credit_Card_item from './credit_card/Credit_card_item';
 class Credit_Card extends Component {
@@ -42,9 +41,9 @@ class Credit_Card extends Component {
             <>
                 <h2>我的信用卡</h2>
                 <button className="btn btn-primary" onClick={this.toggleModal}>編輯</button>
-                {card.map((card_item, index) => {                
-                return <Credit_Card_item delete={() => this.deletecard(index)} key={index} card={card_item} />
-            })}
+                {card.map((card_item, index) => {
+                    return <Credit_Card_item delete={() => this.deletecard(index)} key={index} card={card_item} />
+                })}
 
                 {/* 下面是編輯信用卡 */}
                 {showModal && (
@@ -52,33 +51,33 @@ class Credit_Card extends Component {
                         <div className="modal-dialog" role="document">
                             <div className="modal-content">
                                 <form action="">
-                                <div className="modal-header">
-                                    <h5 className="modal-title">新增信用卡</h5>
-                                    <button type="button" className="close btn" onClick={this.toggleModal}>
-                                        <span>&times;</span>
-                                    </button>
-                                </div>
-                                <div className="modal-body">
-                                    <div className="form-group">
-                                        <label>持卡人:</label>
-                                        <input type="text" className="form-control" required/>
+                                    <div className="modal-header">
+                                        <h5 className="modal-title">新增信用卡</h5>
+                                        <button type="button" className="close btn" onClick={this.toggleModal}>
+                                            <span>&times;</span>
+                                        </button>
                                     </div>
-                                   
-                                    <div className="form-group">
-                                        <label>信用卡卡號:</label>
-                                        <input type="text" pattern='\d{4}\s\d{4}\s\d{4}\s\d{4}' className="form-control" required/>
+                                    <div className="modal-body">
+                                        <div className="form-group">
+                                            <label>持卡人:</label>
+                                            <input type="text" className="form-control" required />
+                                        </div>
+
+                                        <div className="form-group">
+                                            <label>信用卡卡號:</label>
+                                            <input type="text" pattern='\d{4}\s\d{4}\s\d{4}\s\d{4}' className="form-control" required />
+                                        </div>
+                                        <div className="form-group">
+                                            <label>有效日期:</label>
+                                            <input type="text" placeholder='MM/YY' pattern='(0[1-9]|1[0-2])\/\d{2}' className="form-control" required />
+                                        </div>
+
                                     </div>
-                                    <div className="form-group">
-                                        <label>有效日期:</label>
-                                        <input type="text" placeholder='MM/YY' pattern='(0[1-9]|1[0-2])\/\d{2}' className="form-control" required/>
+                                    <div className="modal-footer">
+                                        <button type="button" className="btn btn-secondary" onClick={this.toggleModal}>取消</button>
+                                        <input type="submit" className="btn btn-primary" value="確認" />
                                     </div>
-                                   
-                                </div>
-                                <div className="modal-footer">
-                                    <button type="button" className="btn btn-secondary" onClick={this.toggleModal}>取消</button>
-                                    <input type="submit" className="btn btn-primary" value="確認"/>
-                                    </div>
-                                </form>    
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -89,27 +88,5 @@ class Credit_Card extends Component {
 }
 
 export default Credit_Card;
-=======
-<<<<<<<< HEAD:fashion-paw/src/component/MemberCenter/MyAcc/Change_Password.jsx
-class Change_Password extends Component {
-    state = {  } 
-    render() { 
-        return (
-            <h1>Change_Password</h1>
-========
-class Credit_Card extends Component {
-    state = {  } 
-    render() { 
-        return (
-            <h1>Credit_Card</h1>
->>>>>>>> test:fashion-paw/src/component/MemberCenter/MyAcc/Credit_Card.jsx
-        );
-    }
-}
- 
-<<<<<<<< HEAD:fashion-paw/src/component/MemberCenter/MyAcc/Change_Password.jsx
-export default Change_Password;
-========
-export default Credit_Card;
->>>>>>>> test:fashion-paw/src/component/MemberCenter/MyAcc/Credit_Card.jsx
->>>>>>> test
+
+

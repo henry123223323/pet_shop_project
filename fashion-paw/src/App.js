@@ -13,14 +13,11 @@ import Login from './component/MemberCenter/Login';
 import Register from './component/MemberCenter/Register';
 import Touch from './component/PetKnowledge/PartTouch/Touch';
 import DogGuide from './component/PetKnowledge/Novicefeeding/DogGuide';
-<<<<<<< HEAD
-=======
 import Quiz from './component/PetKnowledge/PetQuiz/Quiz';
 import Header from './component/Homepage/Header';
 import Footer from './component/Homepage/Footer';
 import SeProductPage from './component/SeProductPage/SeProductPage';
 
->>>>>>> test
 
 function App() {
   return (
@@ -30,10 +27,7 @@ function App() {
         <Route path="/" component={ Homepage } exact/>
         <Route path="/MemberCenter" component={ MemberCenter } />
         <Route path="/ProductPage" component={ ProductPage } exact/>
-<<<<<<< HEAD
-=======
         <Route path="/SeProductPage" component={ SeProductPage } exact/>
->>>>>>> test
         <Route path="/Login" component={ Login } />
         <Route path="/Register" component={ Register } />
         <Route path="/Novicefeeding/DogGuide" component={DogGuide} exact/>
