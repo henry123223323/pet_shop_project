@@ -245,28 +245,28 @@ class HelpMe extends Component {
                 />
 
                 {/* 四個box */}
-                <a href="#123">
+                <a href="#123" className={style.aboutusdera}>
                     <div className={style.first_box} id="onebox" ref={this.oneboxRef}>
                         <p>假字標題</p>
                         <span>你知道狗不能吃巧克力嗎</span>
                     </div>
                 </a>
 
-                <a href="#456">
+                <a href="#456" className={style.aboutusdera}>
                     <div className={style.two_box} id="twobox" ref={this.twoboxRef}>
                         <p>假字標題</p>
                         <span>你知道狗不能吃巧克力嗎</span>
                     </div>
                 </a>
 
-                <a href="#789">
+                <a href="#789" className={style.aboutusdera}>
                     <div className={style.three_box} id="threebox" ref={this.threeboxRef}>
                         <p>假字標題</p>
                         <span>你知道狗不能吃巧克力嗎</span>
                     </div>
                 </a>
 
-                <a href="#101">
+                <a href="#101" className={style.aboutusdera}>
                     <div className={style.four_box} id="fourbox" ref={this.fourboxRef}>
                         <p>假字標題</p>
                         <span>你知道狗不能吃巧克力嗎</span>
