@@ -15,19 +15,19 @@ export default function SeProductPage() {
   // ---------------------------------------------
   //  State 區塊
   // ---------------------------------------------
-  const [products, setProducts]               = useState([]);
-  const [filtered, setFiltered]               = useState([]);
-  const [filters, setFilters]                 = useState({
+  const [products, setProducts]                   = useState([]);
+  const [filtered, setFiltered]                   = useState([]);
+  const [filters, setFilters]                     = useState({
     functions: [],
     price: '',
     locations: [],
     depreciation: 0
   });
 
-  const [sortBy, setSortBy]                   = useState('');
-  const [favoriteIds, setFavoriteIds]         = useState([]);
-  const [selectedType, setSelectedType]       = useState(null);
-  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [sortBy, setSortBy]                       = useState('');
+  const [favoriteIds, setFavoriteIds]             = useState([]);
+  const [selectedType, setSelectedType]           = useState(null);
+  const [selectedCategory, setSelectedCategory]   = useState(null);
 
   // ---------------------------------------------
   //  第一次掛載：載入假資料
@@ -35,6 +35,13 @@ export default function SeProductPage() {
   useEffect(() => {
     setProducts(mockSeProducts);
   }, []);
+
+  // ---------------------------------------------
+  //  去重後的地點清單（給 FilterBar 用）
+  // ---------------------------------------------
+  const uniqueLocations = Array.from(
+    new Set(products.map(p => p.location))
+  );
 
   // ---------------------------------------------
   // 根據 filters、sortBy、類型分類做商品過濾 + 排序
@@ -62,6 +69,11 @@ export default function SeProductPage() {
     // 功能篩選
     if (functions.length) {
       result = result.filter(p => functions.includes(p.function));
+    }
+
+    // 地點篩選
+    if (locations.length) {
+      result = result.filter(p => locations.includes(p.location));
     }
 
     // 折舊程度篩選
@@ -131,7 +143,12 @@ export default function SeProductPage() {
       </aside>
 
       <main className={styles.main}>
-        <FilterBar onFilterChange={handleFilterChange} />
+        {/* 傳入去重後的 locations */}
+        <FilterBar
+          locations={uniqueLocations}
+          onFilterChange={handleFilterChange}
+        />
+
         <SortBar onSortChange={handleSortChange} />
 
         <ProductList

@@ -8,17 +8,20 @@ const prices      = [
   { value: '601-999', label: '601–999' },
   { value: '1000+',   label: '1000以上' },
 ];
-const locations   = ['OO縣', 'OO市', 'OO縣', 'OO縣', 'OO縣'];
-const depreciates = [1, 2, 3, 4, 5];  // 代表 🐾、🐾🐾 …等級
+const depreciates = [1, 2, 3, 4, 5];
 
-export default function FilterBar({ onFilterChange = () => {} }) {
+export default function FilterBar({
+  locations = [],
+  onFilterChange = () => {}
+}) {
   const [selPrice, setSelPrice] = useState('');
   const [selLocs,  setSelLocs]  = useState([]);
   const [selDep,   setSelDep]   = useState(0);
 
-  // 狀態改變就回傳給父元件
+  // 把 functions 一并传回去，避免父组件取不到
   useEffect(() => {
     onFilterChange({
+      functions:    [],         // ← 这里新增
       price:        selPrice,
       locations:    selLocs,
       depreciation: selDep
@@ -26,9 +29,10 @@ export default function FilterBar({ onFilterChange = () => {} }) {
   }, [selPrice, selLocs, selDep]);
 
   const toggleArray = (arr, setFn, val) => {
-    setFn(prev => prev.includes(val)
-      ? prev.filter(x => x !== val)
-      : [...prev, val]
+    setFn(prev =>
+      prev.includes(val)
+        ? prev.filter(x => x !== val)
+        : [...prev, val]
     );
   };
 
@@ -57,10 +61,11 @@ export default function FilterBar({ onFilterChange = () => {} }) {
       <div className={styles.row}>
         <span className={styles.label}>所在地</span>
         <div className={styles.options}>
-          {locations.map(loc => (
-            <label key={loc}>
+          {locations.map((loc, idx) => (
+            <label key={`${loc}-${idx}`}>
               <input
                 type="checkbox"
+                value={loc}
                 checked={selLocs.includes(loc)}
                 onChange={() => toggleArray(selLocs, setSelLocs, loc)}
               />
