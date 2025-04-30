@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import styles from './IndexStyle.module.css'
+import navstyles from './MainNav.module.css'
 
 
-const megaNewProduct = {
-  '/new': {
+const megaData = {
+  '/ProductPage': {
     sidebar: [
       { label: '狗狗', icon: '/feather 1.svg', to: '/new/Dog' },
       { label: '貓咪', icon: '/feather 1.svg', to: '/second/snack' },
@@ -22,7 +22,7 @@ const megaNewProduct = {
       玩具: [ /* … */]
     }
   },
-  '/second': {
+  '/SeProductPage': {
     sidebar: [
       { label: '狗狗', icon: '/feather 1.svg', to: '/new/Dog' },
       { label: '貓咪', icon: '/feather 1.svg', to: '/second/snack' },
@@ -44,15 +44,91 @@ const megaNewProduct = {
 };
 
 
-function MainNav() {
-  return (
-    <nav className={styles.mainNav}>
-      <ul className={styles.menu}>
-        <li><NavLink to="/about">關於我們</NavLink></li>
 
-        <li>
-          <NavLink to="/new" className={styles.dropdown}>新品專區</NavLink>
-          <ul className={styles.dropdownMenu}>
+function MainNav() {
+  const [openKey, setOpenKey] = useState(null);
+  const [activeTab, setActiveTab] = useState(null);
+  
+
+  return (
+    <nav className={navstyles.mainNav}>
+      <ul className={navstyles.menu}>
+        <li><NavLink to="/Aboutus">關於我們</NavLink></li>
+        {/* --------------------------------------------------- */}
+        {['/ProductPage', '/SeProductPage'].map(path => (
+          <li key={path}
+            className={navstyles.menuItem}
+            onMouseEnter={() => {
+              setOpenKey(path);
+              setActiveTab(megaData[path].tabs[0]);
+            }}
+            
+            // onMouseEnter={() => setOpenKey(path)}
+            onMouseLeave={() => setOpenKey(null)}>
+            <NavLink to={path}>
+              {{
+                '/ProductPage': '新品專區',
+                '/SeProductPage': '二手專區'
+              }[path]}
+            </NavLink>
+            {megaData[path] && openKey === path && (
+              <div className={navstyles.megaPanel}>
+                {/* 左側子分類 */}
+                <aside className={navstyles.sidebar}>
+                  <ul>
+                    {megaData[path].sidebar.map(item => (
+                      <li key={item.to}>
+                        <NavLink to={item.to}>
+                          <img src={item.icon} alt="" />
+                          <span>{item.label}</span>
+                        </NavLink>
+                      </li>
+                    ))}
+                  </ul>
+                </aside>
+
+                {/* 右側標籤＋內容 */}
+                <section className={navstyles.content}>
+                  <div className={navstyles.tabs}>
+                    {megaData[path].tabs.map(tab => (
+                      <button
+                        key={tab}
+                        className={activeTab === tab ? navstyles.activeTab : ''}
+                        onMouseEnter={() => setActiveTab(tab)}
+                      >
+                        {tab}
+                      </button>
+                    ))}
+                  </div>
+                  <div className={navstyles.tabPane}>
+                    {(megaData[path].content[activeTab] || [])
+                      .map((prod, i) => (
+                        <div key={i} className={navstyles.card}>
+                          {/* 假設 prod 物件有 img & title */}
+                          <img src={prod.img} alt={prod.title} />
+                          <p>{prod.title}</p>
+                        </div>
+                      ))}
+                  </div>
+                </section>
+              </div>
+            )}
+          </li>
+        ))}
+        {/* ------------------------------------------------------------------------ */}
+        <li className={navstyles.dropdown}><NavLink to="/knowledge">寵物小知識</NavLink>
+          <ul className={navstyles.dropdownMenu}>
+            <li>知識小文章</li>
+            <li><NavLink to="/second/food">新手飼養指南</NavLink></li>
+            <li><NavLink to="/second/food">健康檢查篇</NavLink></li>
+            <li>互動小專區</li>
+            <li><NavLink to="/second/food">部位有話說</NavLink></li>
+            <li><NavLink to="/second/food">問答知多少</NavLink></li>
+          </ul></li>
+
+        {/* <li className={navstyles.dropdown}>
+          <NavLink to="/new">新品專區</NavLink>
+          <ul className={navstyles.dropdownMenu}>
             <li><NavLink to="/second/food">狗狗</NavLink></li>
             <li><NavLink to="/second/food">貓咪</NavLink></li>
             <li><NavLink to="/second/food">倉鼠</NavLink></li>
@@ -62,7 +138,7 @@ function MainNav() {
 
         <li><NavLink to="/second">二手專區</NavLink></li>
 
-        <li><NavLink to="/knowledge" className={styles.dropdown}>寵物小知識</NavLink>
+        <li className={navstyles.dropdown}><NavLink to="/knowledge">寵物小知識</NavLink>
           <ul className={styles.dropdownMenu}>
             <li>知識小文章</li>
             <li><NavLink to="/second/food">新手飼養指南</NavLink></li>
@@ -70,7 +146,7 @@ function MainNav() {
             <li>互動小專區</li>
             <li><NavLink to="/second/food">部位有話說</NavLink></li>
             <li><NavLink to="/second/food">問答知多少</NavLink></li>
-          </ul></li>
+          </ul></li> */}
       </ul>
 
 
