@@ -3,33 +3,33 @@ import React, { useState, useEffect } from 'react';
 import styles from './FilterBar.module.css';
 
 const functionsList = ['食品', '玩具', '家居'];
-const brandsList    = ['AAAA', 'BBBB', 'CCCC'];
-const prices        = [
-  { value: '100以下',   label: '100以下' },
-  { value: '101-300',   label: '101–300' },
-  { value: '301-600',   label: '301–600' },
-  { value: '601-999',   label: '601–999' },
-  { value: '1000+',     label: '1000以上' },
+const brandsList = ['AAAA', 'BBBB', 'CCCC'];
+const prices = [
+  { value: '100以下', label: '100以下' },
+  { value: '101-300', label: '101–300' },
+  { value: '301-600', label: '301–600' },
+  { value: '601-999', label: '601–999' },
+  { value: '1000+', label: '1000以上' },
 ];
-const depreciates   = [1, 2, 3, 4, 5];  // 🐾…🐾🐾🐾🐾
+const depreciates = [1, 2, 3, 4, 5];  // 🐾…🐾🐾🐾🐾
 
 export default function FilterBar({
   locations = [],            // 從父層傳入去重後的地點清單
-  onFilterChange = () => {}
+  onFilterChange = () => { }
 }) {
   const [selFunctions, setSelFunctions] = useState([]);
-  const [selBrands,    setSelBrands]    = useState([]);
-  const [selPrice,     setSelPrice]     = useState('');
-  const [selLocs,      setSelLocs]      = useState([]);
-  const [selDep,       setSelDep]       = useState(0);
+  const [selBrands, setSelBrands] = useState([]);
+  const [selPrice, setSelPrice] = useState('');
+  const [selLocs, setSelLocs] = useState([]);
+  const [selDep, setSelDep] = useState(0);
 
   // 每次任何篩選參數改變就送給父元件
   useEffect(() => {
     onFilterChange({
-      functions:    selFunctions,
-      brands:       selBrands,
-      price:        selPrice,
-      locations:    selLocs,
+      functions: selFunctions,
+      brands: selBrands,
+      price: selPrice,
+      locations: selLocs,
       depreciation: selDep
     });
   }, [selFunctions, selBrands, selPrice, selLocs, selDep]);
@@ -92,10 +92,7 @@ export default function FilterBar({
               ))}
             </div>
           </div>
-        </div>
-
-        {/* 右半：地區篩選＋搜尋按鈕 */}
-        <div className={styles.locationFilters}>
+          <div className={styles.locationFilters}>
           <div className={styles.row}>
             <span className={styles.label}>所在地</span>
             <div className={styles.options}>
@@ -111,23 +108,10 @@ export default function FilterBar({
               ))}
             </div>
           </div>
-
-          <div className={styles.searchBtnWrapper}>
-            <button
-              type="button"
-              className={styles.searchBtn}
-              onClick={() => onFilterChange({  // 如果你想要點按才觸發一次過濾
-                functions:    selFunctions,
-                brands:       selBrands,
-                price:        selPrice,
-                locations:    selLocs,
-                depreciation: selDep
-              })}
-            >
-              搜尋
-            </button>
-          </div>
         </div>
+        </div>
+
+       
       </div>
     </div>
   );
