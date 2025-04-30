@@ -1,0 +1,231 @@
+這是目前的MainNav.module.css
+
+
+/* 第三列：主選單 */
+.mainNav {
+    position: relative;
+    /* display: flex; */
+    /* justify-content: center; */
+    /* column-gap: 3rem; */
+    /* background-color: #F8A07F; */
+    font-weight: 400;
+    z-index: 999;
+  }
+  
+  /* .mainNav a {
+    position: relative;
+    padding-top: 10rem;
+    color: #333;
+    text-decoration: none;
+    padding: 0.25rem;
+    transition: color .2s;
+  } */
+  
+  .mainNav a::before {
+    content: '';
+    position: absolute;
+    /* 底邊緊貼文字上方，調整與文字的距離 */
+    /* bottom: 50%; */
+    /* 水平置中文字 */
+    /* left: 50%;                 */
+    transform: translateX(-80%) translateY(-30%);
+    width: 3rem;
+    /* icon 大小 */
+    height: 3rem;
+    background-image: url('./images/feather\ 1.svg');
+    background-size: contain;
+    background-repeat: no-repeat;
+    opacity: 0;
+    transition: opacity .2s;
+  }
+  
+  /* .mainNav a:hover {
+    color: #70823C;
+  } */
+  
+  .mainNav a:hover::before {
+    opacity: 1;
+  }
+  
+  /* ------把原本的 .mainNav 拆成 ul.menu------ */
+  
+  .menu {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    column-gap: 3rem;
+    margin: 0;
+    padding: 0;
+  }
+  
+  /* 所有 li + a 的基本樣式 */
+  .menu li,
+  .menu li a {
+    position: relative;
+  }
+  
+  .menu li a {
+    color: #333;
+    text-decoration: none;
+    padding: 0.25rem;
+    transition: color 0.2s;
+  }
+  
+  .menu li a:hover {
+    color: #70823C;
+  }
+  
+  /* dropdown 容器 */
+  .dropdown {
+    /* 需要相對定位，才能讓子選單絕對定位於此 */
+    position: relative;
+  }
+  
+  /* 子選單預設隱藏 */
+  .dropdownMenu {
+    list-style: none;
+    position: absolute;
+    top: 100%;
+    /* 緊貼父 li 下方 */
+    left: 0;
+    margin: 0.5rem 0 0 0;
+    padding: 0;
+    background: white;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+    display: none;
+    min-width: 120px;
+    /* 可依內容調整最小寬度 */
+    z-index: 1000;
+  }
+  
+  /* 子選單每個項目 */
+  .dropdownMenu li a {
+    display: block;
+    padding: 0.5rem 1rem;
+    white-space: nowrap;
+  }
+  
+  /* hover 時顯示子選單 */
+  .dropdown:hover .dropdownMenu {
+    display: block;
+  }
+  
+  /* 如果想讓子選單項目也有 hover 效果 */
+  .dropdownMenu li a:hover {
+    background: #F8F6EE;
+    color: #70823C;
+  }
+  
+  /* ----------------下拉式選單的大版塊------------------- */
+  .menuItem {
+    position: relative;
+    /* 讓下面的 megaPanel 以此定位 */
+  }
+  
+  /* Mega Menu Panel */
+  .megaPanel {
+    position: absolute;
+    top: 100%;
+    /* 緊貼主選單底部 */
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    max-width: 1200px;
+    width: 800px;
+    /* 或設定固定最大寬度 */
+    justify-content:center;
+    background: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 1rem;
+    z-index: 1000;
+  }
+  
+  /* 左側子選單 */
+  .sidebar {
+    width: 200px;
+    border-right: 1px solid #eee;
+  }
+  
+  .sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .sidebar li {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+  }
+  
+  .sidebar li img {
+    width: 1.2rem;
+    margin-right: 0.5rem;
+  }
+  
+  .sidebar li a {
+    color: #333;
+    text-decoration: none;
+  }
+  
+  .sidebar li a:hover {
+    color: #70823C;
+  }
+  
+  /* 右側內容區 */
+  .content {
+    flex: 1;
+    padding-left: 1rem;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* 標籤列 */
+  .tabs {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .tabs button {
+    background: none;
+    border: none;
+    font-size: 1rem;
+    color: #666;
+    cursor: pointer;
+    padding-bottom: 0.25rem;
+    transition: color 0.2s, border-bottom 0.2s;
+  }
+  
+  .tabs button:hover,
+  .tabs .activeTab {
+    color: #70823C;
+    border-bottom: 2px solid #70823C;
+  }
+  
+  /* 卡片列表 */
+  .tabPane {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 1rem;
+    max-height: 300px;
+    /* 如果要滾動 */
+    overflow-y: auto;
+  }
+  
+  .card {
+    text-align: center;
+  }
+  
+  .card img {
+    width: 100%;
+    height: auto;
+    border-radius: 4px;
+  }
+  
+  .card p {
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    color: #333;
+  }
