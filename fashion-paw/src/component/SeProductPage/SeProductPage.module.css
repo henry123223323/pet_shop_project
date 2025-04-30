@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 /* src/component/SeProductPage/SeProductPage.module.css */
 
 .container {
@@ -42,27 +41,4 @@
     width: 100%;
     margin-bottom: 16px;
   }
-=======
-.container {
-  display: flex;
-  gap: 24px;
-  padding: 16px;
-}
-
-/* 左側 Sidebar */
-.sidebar {
-  width: 220px;
-  position: relative;
-  z-index: 10; /* 確保不會被右邊蓋住 */
-}
-
-/* 中間商品主區域 */
-.main {
-  flex: 1;
-  min-width: 0; /* 防止超寬 */
-  background: #f9f9f9;
-  padding: 16px;
-  border-radius: 8px;
-  overflow: auto;
->>>>>>> test
 }

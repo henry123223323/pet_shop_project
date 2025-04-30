@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 /* 重置 ul & li */
 .container {
   list-style: none;
@@ -29,15 +28,3 @@
   border: none;
   padding: 0;
 }
-=======
-/* src/component/ProductList/ProductList.module.css */
-.list {
-    display: flex;
-    flex-direction: column;
-    gap: 16px; /* 卡片間距 */
-    padding: 0;
-    margin: 0;
-    list-style: none;
-  }
-  
->>>>>>> test
