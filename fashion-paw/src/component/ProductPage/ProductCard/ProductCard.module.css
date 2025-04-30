@@ -21,7 +21,7 @@
 }
 .imageWrapper img {
   max-width: 100%;
-  max-height: 200px;  /* 设定最大高度 */
+  max-height: 200px;
   object-fit: contain;
 }
 
@@ -48,22 +48,6 @@
   gap: 12px;
   margin-top: auto;
 }
-.actions button {
-  width: 36px;
-  height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #fff;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-/* Favorited 状态 */
-.favorited {
-  color: red;
-}
 
 /* === List 模式下才启用横排样式 === */
 .horizontal {
@@ -87,7 +71,7 @@
   margin: 0;
 }
 
-/* List：按钮推到最右 */
+/* List：按钮区保留布局，移除特定按钮样式 */
 .horizontal .actions {
   margin-top: 0;
   margin-left: auto;

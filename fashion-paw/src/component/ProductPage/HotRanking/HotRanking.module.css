@@ -44,7 +44,9 @@
   }
   .actions {
     display: flex;
-    gap: 8px;
+    justify-content: center;
+    gap: 12px;
+    margin-top: auto;
   }
   .btn {
     background: none;
@@ -56,4 +58,14 @@
   .btn:active {
     transform: scale(0.9);
   }
-  
+
+/* 給 icon 按鈕簡單的 reset 樣式 */
+.iconBtn {
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
