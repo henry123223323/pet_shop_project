@@ -1,3 +1,4 @@
+// src/component/ProductPage/HotRanking/HotRanking.jsx
 import React, { useState } from 'react';
 import styles from './HotRanking.module.css';
 import mockRanking from './mockRanking';
@@ -40,30 +41,14 @@ export default function HotRanking() {
                 <button
                   className={styles.btn}
                   aria-label="加入購物車"
-                  onClick={() => {
-                    alert('已加入購物車');
-                  }}
+                  onClick={() => alert('已加入購物車')}
                 >
                   🛒
                 </button>
               </div>
             </div>
-<<<<<<< HEAD
-            <p className={styles.name}>{item.name}</p>
-            <div className={styles.actions}>
-              <button className={styles.btn} aria-label="收藏">
-                🤍
-              </button>
-              <button className={styles.btn} aria-label="上鎖">
-                🔒
-              </button>
-            </div>
-          </div>
-        ))}
-=======
           );
         })}
->>>>>>> test
       </div>
     </div>
   );

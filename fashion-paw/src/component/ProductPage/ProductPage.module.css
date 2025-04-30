@@ -1,44 +1,27 @@
-.container {
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
+/* 外層 flex: 左邊主內容 / 右邊排行 */
+.pageWrapper {
+  display: flex;
+  gap: 16px;
   padding: 16px;
   box-sizing: border-box;
 }
 
-.filterBar {
-  margin-bottom: 16px;
-}
-
-.content {
-  display: flex;
-  gap: 16px;
-}
-
-.sidebar {
-  width: 220px;
-  flex-shrink: 0;
-}
-
-.main {
+/* 左側主內容撐滿剩餘空間 */
+.mainContent {
   flex: 1;
   display: flex;
   flex-direction: column;
 }
 
-.topBar {
-  display: flex;
-  justify-content: flex-end;  /* 讓裡面的 SortBar + 切換按鈕往右 */
-  align-items: center;
-  gap: 8px;                    /* 選單和按鈕之間留空隙 */
-  margin-bottom: 16px;
-}
-@media (max-width: 768px) {s
-  .content {
-    flex-direction: column;
-  }
-  .sidebar {
-    width: 100%;
-    margin-bottom: 16px;
-  }
+/* filterBar, topBar, content 如之前不變 */
+.filterBar { margin-bottom: 16px; }
+.topBar { display: flex; justify-content: flex-end; align-items: center; gap:8px; margin-bottom:16px; }
+.content { display: flex; gap: 16px; }
+.sidebar { width: 220px; flex-shrink: 0; }
+.main { flex: 1; display: flex; flex-direction: column; }
+
+/* 右側 heat ranking 固定寬度 */
+.rankingSection {
+  width: 280px; /* 或你想要的寬度 */
+  flex-shrink: 0;
 }

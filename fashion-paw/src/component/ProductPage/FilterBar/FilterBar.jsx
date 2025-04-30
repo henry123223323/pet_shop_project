@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import styles from './FilterBar.module.css';
 
-const functions = ['功能', '食品', '玩具', '家居'];
+const functions = ['乾糧', '副食','零食', '保健食品','玩具', '家居'];
 const brands    = ['AAAA', 'BBBB', 'CCCC'];
 const prices    = [
   { value: '101-300',  label: '101–300' },
