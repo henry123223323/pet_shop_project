@@ -1,81 +1,44 @@
-/* src/component/ProductPage/ProductPage.module.css */
-
-
-/* 外層兩張卡片排列 */
 .container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.filterBar {
+  margin-bottom: 16px;
+}
+
+.content {
   display: flex;
-  flex-direction: column;
   gap: 16px;
 }
 
-/* 卡片共用樣式 */
-.card {
-  background: #fff;
-  padding: 16px;
-  border-radius: 8px;
-}
-
-/* 內部左右欄排版 */
-.layout {
-  display: flex;
-  align-items: flex-start;
-  gap: 24px;
-}
-
-/* 側邊欄 */
 .sidebar {
-  width: 200px;
+  width: 220px;
   flex-shrink: 0;
 }
 
-/* 主內容：排序＋切換＋列表 */
 .main {
   flex: 1;
   display: flex;
   flex-direction: column;
 }
 
-/* 排序列＋切換按鈕 */
-.sortBar {
+.topBar {
   display: flex;
+  justify-content: flex-end;  /* 讓裡面的 SortBar + 切換按鈕往右 */
   align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid #e0d7b8;
-  padding-bottom: 8px;
+  gap: 8px;                    /* 選單和按鈕之間留空隙 */
+  margin-bottom: 16px;
 }
-
-/* 格子檢視 */
-.gridView {
-  display: grid;
-  /* 把最小尺寸調高，讓卡片自動放大 */
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 16px;
-  margin-top: 16px;
-}
-
-
-/* 列表檢視 */
-.listView {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  margin-top: 16px;
-}
-
-/* 列表檢視時，讓每張卡片撐滿寬度 */
-.listView :global(.productCard) {
-  width: calc(100% - 32px); /* 例如左右各預留 16px 間距 */
-  padding: 16px;
-}
-
-.productCard {
-  border: 1px solid #eee;
-  border-radius: 8px;
-  background: #fff;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-
-  /* 多一點間距 */
-  padding: 16px;
+@media (max-width: 768px) {s
+  .content {
+    flex-direction: column;
+  }
+  .sidebar {
+    width: 100%;
+    margin-bottom: 16px;
+  }
 }

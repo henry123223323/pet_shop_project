@@ -2,8 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import styles from './FilterBar.module.css';
 
-const functionsList = ['食品', '玩具', '家居'];
-const brandsList = ['AAAA', 'BBBB', 'CCCC'];
+// 一定要有這個 prices 陣列
 const prices = [
   { value: '100以下', label: '100以下' },
   { value: '101-300', label: '101–300' },
@@ -11,50 +10,60 @@ const prices = [
   { value: '601-999', label: '601–999' },
   { value: '1000+', label: '1000以上' },
 ];
-const depreciates = [1, 2, 3, 4, 5];  // 🐾…🐾🐾🐾🐾
+const depreciates = [1, 2, 3, 4, 5];
 
 export default function FilterBar({
-  locations = [],            // 從父層傳入去重後的地點清單
-  onFilterChange = () => { }
+  locations = [],
+  onFilterChange = () => {}
 }) {
-  const [selFunctions, setSelFunctions] = useState([]);
-  const [selBrands, setSelBrands] = useState([]);
-  const [selPrice, setSelPrice] = useState('');
-  const [selLocs, setSelLocs] = useState([]);
-  const [selDep, setSelDep] = useState(0);
+  const [activeTab, setActiveTab] = useState('product');
+  const [showModal, setShowModal] = useState(false);
 
-  // 每次任何篩選參數改變就送給父元件
+  const [selPrice, setSelPrice] = useState('');
+  const [selDep, setSelDep]     = useState(0);
+  const [selLocs, setSelLocs]   = useState([]);
+
   useEffect(() => {
     onFilterChange({
-      functions: selFunctions,
-      brands: selBrands,
       price: selPrice,
-      locations: selLocs,
-      depreciation: selDep
+      depreciation: selDep,
+      locations: selLocs
     });
-  }, [selFunctions, selBrands, selPrice, selLocs, selDep]);
+  }, [selPrice, selDep, selLocs]);
 
-  const toggleArray = (arr, setFn, val) => {
-    setFn(prev =>
-      prev.includes(val)
-        ? prev.filter(x => x !== val)
-        : [...prev, val]
-    );
+  const toggleArray = (arr, setFn, val) =>
+    setFn(prev => prev.includes(val) ? prev.filter(x => x !== val) : [...prev, val]);
+
+  const handleLocationTab = () => {
+    setActiveTab('location');
+    setShowModal(true);
+  };
+  const closeModal = () => {
+    setShowModal(false);
+    setActiveTab('product');
   };
 
   return (
     <div className={styles.filterBar}>
-      {/* 上方標題列 */}
+      {/* Tab 列 */}
       <div className={styles.headers}>
-        <div className={styles.productHeader}>找商品</div>
-        <div className={styles.locationHeader}>找地區</div>
+        <div
+          className={`${styles.tab} ${activeTab === 'product' ? styles.active : styles.inactive}`}
+          onClick={() => setActiveTab('product')}
+        >
+          找商品
+        </div>
+        <div
+          className={`${styles.tab} ${activeTab === 'location' ? styles.active : styles.inactive}`}
+          onClick={handleLocationTab}
+        >
+          找地區
+        </div>
       </div>
 
-      {/* 內容區：左右並排 */}
-      <div className={styles.content}>
-        {/* 左半：商品篩選 */}
-        <div className={styles.productFilters}>
-
+      {/* 找商品 區塊：價格／折舊／所在地 */}
+      {activeTab === 'product' && (
+        <div className={styles.content}>
           {/* 價格 */}
           <div className={styles.row}>
             <span className={styles.label}>價格</span>
@@ -92,7 +101,8 @@ export default function FilterBar({
               ))}
             </div>
           </div>
-          <div className={styles.locationFilters}>
+
+          {/* 所在地 */}
           <div className={styles.row}>
             <span className={styles.label}>所在地</span>
             <div className={styles.options}>
@@ -109,10 +119,18 @@ export default function FilterBar({
             </div>
           </div>
         </div>
-        </div>
+      )}
 
-       
-      </div>
+      {/* 找地區 Modal（不動內容） */}
+      {showModal && (
+        <div className={styles.modalOverlay}>
+          <div className={styles.modalContent}>
+            <button className={styles.modalClose} onClick={closeModal}>&times;</button>
+            <h3>地圖搜尋 (待串接)</h3>
+            <div className={styles.mapPlaceholder}>地圖元件 Placeholder</div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
