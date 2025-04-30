@@ -1,41 +1,79 @@
+/* src/component/ProductPage/FilterBar/FilterBar.module.css */
 .filterBar {
-    background: #fafafa;
-    padding: 12px 16px;
-    border-radius: 6px;
-    border: 1px solid #eee;
-  }
-  
-  /* 每一行 */
-  .row {
-    display: flex;
-    align-items: center;
-    margin-bottom: 10px;
-  }
-  
-  /* 左側固定寬度標籤 */
-  .label {
-    width: 70px;
-    font-weight: bold;
-    color: #333;
-  }
-  
-  /* 右側選項群 */
-  .options {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-  }
-  
-  /* 單個選項 */
-  .options label {
-    display: flex;
-    align-items: center;
-    font-size: 0.95rem;
-    cursor: pointer;
-  }
-  
-  /* input 與文字間距 */
-  .options input {
-    margin-right: 4px;
-  }
-  
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+  font-size: 14px;
+}
+
+/* 標題列 */
+.headers {
+  display: flex;
+  user-select: none;
+}
+.productHeader {
+  flex: 1;
+  background: #8a9a4b;
+  color: #fff;
+  text-align: center;
+  padding: 8px 0;
+}
+.locationHeader {
+  flex: 1;
+  background: #f8efc2;
+  text-align: center;
+  padding: 8px 0;
+}
+
+/* 內容區 */
+.content {
+  display: flex;
+  background: #faf7ec;
+}
+
+/* 左側商品篩選 */
+.productFilters {
+  flex: 1;
+  padding: 12px;
+  border-right: 1px solid #e0e0e0;
+}
+
+/* 右側地區篩選 */
+.locationFilters {
+  flex: 1;
+  padding: 12px;
+}
+
+/* 每一行 */
+.row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.label {
+  width: 70px;
+  flex-shrink: 0;
+  font-weight: bold;
+}
+.options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* 搜尋按鈕 */
+.searchBtnWrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 16px;
+}
+.searchBtn {
+  width: 80px;
+  height: 80px;
+  border: none;
+  border-radius: 50%;
+  background: url('/path/to/paw-icon.png') no-repeat center;
+  background-size: 60%;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
