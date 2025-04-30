@@ -3,5 +3,5 @@
       "baseUrl": "./src",
       "checkJs": false
     },
-    "include": ["src", "src/component/TEMp/SeProductPage.jsx"]
+    "include": ["src", "src/component/SeProductPage/SeProductPage.jsx"]
   }
