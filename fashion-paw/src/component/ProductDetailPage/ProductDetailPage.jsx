@@ -84,6 +84,102 @@ class PdDetailPage extends Component {
             { img_path: "/media/new_pd/cat/livingEssentials/cat1_scratch1_3.jpg", img_value: "附贈天然貓薄荷包裝示意" },
             { img_path: "/media/new_pd/cat/livingEssentials/cat1_scratch1_2.jpg", img_value: "貓咪實際使用情境圖" }
           ]
+        },
+        {
+          "pid": "sc02",
+          "condition": "second",
+          "status": 1,
+          "pet_type": "狗",
+          "pd_name": "可拆洗狗狗睡墊（中型犬適用）",
+          "price": "250",
+          "description": "中型犬用可拆洗睡墊，外層為柔軟布料，內部填充棉花，提供舒適支撐力。原為家中柯基所使用，但因更換新床故出清。睡墊可拆洗設計方便清潔，適合室內使用。整體狀況良好，僅表面略有使用痕跡。",
+          "categories": "狗用品",
+          "city": "台中市",
+          "district": "南屯區",
+          "uid": "1",
+          "new_level": "3星",
+          "stock": "1",
+          "sale_count": "0",
+          "delivery_method": ["面交", "宅配"],
+          "attribute": {
+            "brand": "PawsCare",
+            "name": "可拆洗狗狗睡墊",
+            "model": "DC-B02",
+            "purchase_date": "2023/11",
+            "condition_level": "良好",
+            "size": "約長80cm × 寬60cm × 厚6cm",
+            "color": "深灰",
+            "weight": "約1.2kg"
+          },
+          "images": [
+            { "img_path": "/media/second_pd/dog/dog2_bed1_1.jpeg", "img_value": "整體正面照，展示睡墊外觀" },
+            { "img_path": "/media/second_pd/dog/dog2_bed1_2.jpeg", "img_value": "睡墊布套拆卸展示" },
+            { "img_path": "/media/second_pd/dog/dog2_bed1_3.jpeg", "img_value": "內部填充棉狀況良好" }
+          ]
+        },
+        {
+          "pid": "sc03",
+          "condition": "second",
+          "status": 1,
+          "pet_type": "貓",
+          "pd_name": "透明貓太空包（背負式外出包）",
+          "price": "380",
+          "description": "背負式透明貓太空包，設有多處透氣孔與可視窗設計，能讓毛孩安心出門。原為偶爾帶貓出門所用，約使用4-5次，外觀小有刮痕但功能正常。適合體型中小的貓咪使用。",
+          "categories": "外出用品",
+          "city": "台中市",
+          "district": "南屯區",
+          "uid": "1",
+          "new_level": "4星",
+          "stock": "1",
+          "sale_count": "1",
+          "delivery_method": ["宅配", "超商取貨"],
+          "attribute": {
+            "brand": "PETGO",
+            "name": "貓咪太空背包",
+            "model": "SP-07",
+            "purchase_date": "2024/01",
+            "condition_level": "輕微使用痕跡",
+            "size": "約高40cm × 寬32cm × 深25cm",
+            "color": "透明 + 灰",
+            "weight": "約900g"
+          },
+          "images": [
+            { "img_path": "/media/second_pd/cat/cat2_travel1_1.jpeg", "img_value": "背包正面展示，有透明罩" },
+            { "img_path": "/media/second_pd/cat/cat2_travel1_2.jpeg", "img_value": "側邊透氣孔設計展示" },
+            { "img_path": "/media/second_pd/cat/cat2_travel1_3.jpeg", "img_value": "實際背負示意圖（未包含貓）" }
+          ]
+        },
+        {
+          "pid": "sc04",
+          "condition": "second",
+          "status": 1,
+          "pet_type": "小動物",
+          "pd_name": "小型動物活動滾輪（靜音款）",
+          "price": "120",
+          "description": "適合倉鼠、刺蝟等小型動物使用的活動滾輪，靜音軸承設計，不打擾夜間生活。原本為飼養刺蝟所購入，僅使用兩個月後因毛孩送養而閒置。無明顯磨損，功能正常，底部有止滑墊設計。",
+          "categories": "小動物用品",
+          "city": "台中市",
+          "district": "南屯區",
+          "uid": "1",
+          "new_level": "4星",
+          "stock": "1",
+          "sale_count": "0",
+          "delivery_method": ["面交", "超商取貨"],
+          "attribute": {
+            "brand": "QuietRun",
+            "name": "靜音滾輪",
+            "model": "QR-H18",
+            "purchase_date": "2024/02",
+            "condition_level": "近新",
+            "size": "直徑約18cm，高度約22cm",
+            "color": "透明 + 粉色",
+            "weight": "約300g"
+          },
+          "images": [
+            { "img_path": "/media/second_pd/small/small2_wheel1_1.jpeg", "img_value": "整體外觀展示" },
+            { "img_path": "/media/second_pd/small/small2_wheel1_2.jpeg", "img_value": "實際組裝狀況" },
+            { "img_path": "/media/second_pd/small/small2_wheel1_3.jpeg", "img_value": "滾輪軸心近照，展示無損耗" }
+          ]
         }
       ],
       userinfo: [
@@ -219,15 +315,22 @@ class PdDetailPage extends Component {
   }
 
   render() {
+    //目前商品
     const currentPd = this.state.products[this.state.currentPdIdx]
+    //目前商品的賣家資訊
     const userProfile = this.state.userinfo.find(user => user.uid === currentPd.uid);
+    //賣家的其他商品
+    const sellerOtherPd = this.state.products.filter((pd,idx)=>pd.uid === currentPd.uid && idx !== this.state.currentPdIdx)
     //屬於這個商品賣家的所有評論
     const sellerReview = this.state.review.filter(review=>{
       const product = this.state.products.find(p=>p.pid === review.pid)
       return product && product.uid ===currentPd.uid
     })
+    //評價總分
     const totalRating = sellerReview.reduce((sum,review)=>sum+review.rating,0)
+    //平均分數
     const avgRating = sellerReview.length > 0 ? (totalRating / sellerReview.length).toFixed(2) : "還沒有評價";
+    //評價數量
     const ratingCount=sellerReview.length
     
     
@@ -313,7 +416,8 @@ class PdDetailPage extends Component {
                       userProfile={userProfile}
                       review={this.state.review.filter(r => r.pid === currentPd.pid)} 
                       avgRating={avgRating}
-                      ratingCount={ratingCount}/>)}
+                      ratingCount={ratingCount}
+                      sellerOtherPd={sellerOtherPd}/>)}
               </div>
             </div>
 
