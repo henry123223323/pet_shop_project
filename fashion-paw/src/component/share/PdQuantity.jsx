@@ -2,11 +2,11 @@ import React, { Component } from 'react';
 
 class PdQuantity extends Component {
     render() {
-        const { quantity,max } = this.props
+        const { quantity, max } = this.props
         const reachMax = max !== undefined && quantity >= max;
-        const reachMin = quantity <= 1;
+        const reachMin = !this.props.allowZero && quantity <= 1;
         const disabledMax = max !== undefined && quantity >= max
-        const disabledMin = quantity <= 1;
+        const disabledMin = !this.props.allowZero && quantity <= 1;
         return (
             <>
                 {/* <h1>加入購物車</h1> */}
@@ -50,8 +50,11 @@ class PdQuantity extends Component {
     }
     quantityDown = () => {
         // alert("Down")
-        const { quantity, onQuantityChange } = this.props;
-        if (quantity > 1) {
+        const { quantity, onQuantityChange, allowZero } = this.props;
+
+        if (allowZero && quantity === 1) {
+            onQuantityChange(0); // 允許變成 0
+        } else if (quantity > 1) {
             onQuantityChange(quantity - 1);
         }
     }
@@ -59,9 +62,9 @@ class PdQuantity extends Component {
         // alert("Up")
         const { quantity, onQuantityChange, max } = this.props;
         const nextQty = quantity + 1;
-    if (max === undefined || nextQty <= max) {
-      onQuantityChange(nextQty);
-    }
+        if (max === undefined || nextQty <= max) {
+            onQuantityChange(nextQty);
+        }
     }
 }
 
