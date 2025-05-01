@@ -36,5 +36,17 @@ app.get("/get/article", function (req, res) {
     });
 });
 
+app.get("/get/userinfo", function (req, res) {
+    conn.query("SELECT uid,email,username,photo,fullname,birthday,power,last_time_login,AboutMe as aboutme,Device as device FROM userinfo", function (err, results) {
+        if (err) {
+            console.error("資料庫查詢錯誤:", err);
+            res.status(500).send("伺服器錯誤");
+        } else {
+            console.log("http://localhost:8000/get/userinfo 被連線");
+            res.json(results); // 正確回傳結果給前端
+        }
+    });
+});
+
 
 
