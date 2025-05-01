@@ -2,10 +2,9 @@
 import React, { useState, useEffect } from 'react';
 import styles from './FilterBar.module.css';
 
-const functions = ['功能', '食品', '玩具', '家居'];
+const functions = ['乾糧', '副食','零食', '保健食品','玩具', '家居'];
 const brands    = ['AAAA', 'BBBB', 'CCCC'];
 const prices    = [
-  { value: '0-100',    label: '100以下' },
   { value: '101-300',  label: '101–300' },
   { value: '301-600',  label: '301–600' },
   { value: '601-999',  label: '601–999' },

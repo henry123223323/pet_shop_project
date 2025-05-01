@@ -5,7 +5,7 @@ import styles from './SortBar.module.css';
 export default function SortBar({ onSortChange }) {
   return (
     <div className={styles.row}>
-      <label className={styles.label}>排序</label>
+      <label className={styles.label}>排序:</label>
       <select
         className={styles.select}
         onChange={e => onSortChange(e.target.value)}
