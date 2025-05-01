@@ -1,0 +1,25 @@
+{
+  "name": "pet_shop_project",
+  "version": "1.0.0",
+  "main": "sql.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/henry123223323/pet_shop_project.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/henry123223323/pet_shop_project/issues"
+  },
+  "homepage": "https://github.com/henry123223323/pet_shop_project#readme",
+  "description": "",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "mysql": "^2.18.1"
+  }
+}

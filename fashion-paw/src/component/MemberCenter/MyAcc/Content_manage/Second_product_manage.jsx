@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import Market_modal from '../market_manage/Market_Modal';
+import Pagination from './Page_manage';
 class Second_product_manage extends Component {
     state = {
         showModal: false,
         ModalState: "Add",//Add ,Find ,Edit
         thisIndex: 0,
+        currentPage: 1,
         second_product: [
             {
                 "pid": "1",//db自動編號
@@ -31,26 +33,21 @@ class Second_product_manage extends Component {
                     "color": "米白色",
                     "weight": "7kg"
                 },
-                "images": {
-                    "point_area": {
+                "images": [
+                    {
                         "img_path": "/catfood.jpg",
-                        "img_value": "主打圖"
-                    },
-                    "content_area": [
-                        {
-                            "img_path": "/catfood.jpg",
-                            "img_value": "整體外觀"
-                        },
-                        {
-                            "img_path": "/catfood.jpg",
-                            "img_value": "底座細節"
-                        },
-                        {
-                            "img_path": "/catfood.jpg",
-                            "img_value": "貓咪使用中"
-                        }
-                    ]
-                }
+                        "img_value": "整體外觀"
+                    }, {
+                        "img_path": "/catfood.jpg",
+                        "img_value": "整體外觀"
+                    }, {
+                        "img_path": "/catfood.jpg",
+                        "img_value": "整體外觀"
+                    }, {
+                        "img_path": "/catfood.jpg",
+                        "img_value": "整體外觀"
+                    }
+                ]
             },
             {
                 "pid": "2",
@@ -78,26 +75,25 @@ class Second_product_manage extends Component {
                     "color": "深灰色",
                     "weight": "3kg"
                 },
-                "images": {
-                    "point_area": {
+                "images": [
+                    {
                         "img_path": "/cat.jpg",
                         "img_value": "主打圖"
                     },
-                    "content_area": [
-                        {
-                            "img_path": "/media/products/P002/img1.jpg",
-                            "img_value": "正面照片"
-                        },
-                        {
-                            "img_path": "/media/products/P002/img2.jpg",
-                            "img_value": "材質特寫"
-                        },
-                        {
-                            "img_path": "/media/products/P002/img3.jpg",
-                            "img_value": "狗狗實拍"
-                        }
-                    ]
-                }
+                    {
+                        "img_path": "/media/products/P002/img1.jpg",
+                        "img_value": "正面照片"
+                    },
+                    {
+                        "img_path": "/media/products/P002/img2.jpg",
+                        "img_value": "材質特寫"
+                    },
+                    {
+                        "img_path": "/media/products/P002/img3.jpg",
+                        "img_value": "狗狗實拍"
+                    }
+                ]
+
             }
         ]
 
@@ -106,11 +102,14 @@ class Second_product_manage extends Component {
     componentDidMount() {
         //這裡去抓資料庫的二手商品
     }
+    handlePageChange = (page) => {
+        this.setState({ currentPage: page });
+    }
     toggleModal = () => {
         this.setState({ showModal: !this.state.showModal });
     }
     findProduct = (index) => {
-        return this.state.second_product[index]
+        return this.state.second_product[index] || {}
     }
     renderStatus = (status) => {
         return status === 1
@@ -154,7 +153,10 @@ class Second_product_manage extends Component {
 
     }
     render() {
-        let { second_product, showModal, ModalState, thisIndex } = this.state
+        let { second_product, showModal, ModalState, thisIndex, currentPage } = this.state
+        let itemsPerPage = 1
+        let startIndex = (currentPage - 1) * itemsPerPage;
+        let currentSPD = second_product.slice(startIndex, startIndex + itemsPerPage);
         return (
             <>
                 <form action="">
@@ -177,9 +179,9 @@ class Second_product_manage extends Component {
                         </tr>
                     </thead>
                     <tbody>
-                        {second_product.map((product, index) => (
+                        {currentSPD.map((product, index) => (
                             <tr key={product.pid}>
-                                <td><img src={product.images.point_area.img_path} alt="主圖" width="80" /></td>
+                                <td><img src={product.images[0].img_path} alt="主圖" width="80" /></td>
                                 <td>{product.pd_name}</td>
                                 <td>{product.price}</td>
                                 <td>{this.renderCategory(product.categories)}</td>
@@ -195,7 +197,12 @@ class Second_product_manage extends Component {
 
                     </tbody>
                 </table>
-
+                <Pagination
+                    totalItems={second_product.length}
+                    itemsPerPage={itemsPerPage}
+                    currentPage={currentPage}
+                    onPageChange={this.handlePageChange}
+                />
                 {showModal && (
 
                     <Market_modal close={this.toggleModal} new={this.new} edit={this.edit} product={this.findProduct(thisIndex)} modalstate={ModalState} />

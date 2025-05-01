@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
+import Pagination from './Page_manage';
 class User_manage extends Component {
     state = {
         show: false,
         thisIndex: 0,
+        currentPage: 1,
         editinguser: {
             uid: "",
             username: "",
@@ -42,6 +44,9 @@ class User_manage extends Component {
             }
         ]
     }
+    handlePageChange = (page) => {
+        this.setState({ currentPage: page });
+    };
     Renderpower = (power) => {
         if (power === "developer") {
             return '開發者'
@@ -57,7 +62,10 @@ class User_manage extends Component {
         this.setState({ show: !this.state.show });
     }
     render() {
-        let { userinfo, show, editinguser } = this.state
+        let { userinfo, show, editinguser, currentPage } = this.state
+        let itemsPerPage = 1
+        let startIndex = (currentPage - 1) * itemsPerPage;
+        let currentuser = userinfo.slice(startIndex, startIndex + itemsPerPage);
         return (
             <>
                 <table className="table table-striped table-hover">
@@ -74,7 +82,7 @@ class User_manage extends Component {
                     </thead>
                     <tbody>
                         {
-                            userinfo.map((user, index) => {
+                            currentuser.map((user, index) => {
                                 return (
                                     <tr>
                                         <td>{user.uid}</td>
@@ -94,6 +102,12 @@ class User_manage extends Component {
 
 
                 </table>
+                <Pagination
+                    totalItems={userinfo.length}
+                    itemsPerPage={itemsPerPage}
+                    currentPage={currentPage}
+                    onPageChange={this.handlePageChange}
+                />
                 {
                     show && (
                         <div className="modal" style={{ display: "block", backgroundColor: "rgba(0,0,0,0.5)" }}>
