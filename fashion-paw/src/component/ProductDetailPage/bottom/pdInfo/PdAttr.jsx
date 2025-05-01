@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import styles from './PdAttr.module.css'
+import styles from './PdAttr.module.css';
+import PawDisplay from 'component/ProductDetailPage/PawDisplay';
 
 class PdAttr extends Component {
     render() {
@@ -30,7 +31,7 @@ class PdAttr extends Component {
                         {pdAttr.condition_level && (
                             <tr>
                                 <td>保存狀況</td>
-                                <td>{pdAttr.condition_level}</td>
+                                <td><PawDisplay rating={pdAttr.condition_level}/></td>
                             </tr>
                         )}
 

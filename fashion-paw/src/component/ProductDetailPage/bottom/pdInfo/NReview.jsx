@@ -1,4 +1,7 @@
 import React, { Component } from 'react';
+import PawDisplay from '../../PawDisplay';
+
+
 class NReview extends Component {
 
     render() { 
@@ -10,7 +13,7 @@ class NReview extends Component {
             <div key={index} className={`shadow-sm rounded ${index % 2 === 0 ? 'paw-bg-middlebrown' : 'paw-bg-pri-darkbrown'} p-3 m-4`}>
               <div>
                 <span className='ptxtb4'>{item.username}</span> 
-                <span className='mx-3'>{"❤️".repeat(item.rating)}</span>
+                <span className='mx-3'><PawDisplay rating={item.rating} /></span>
               </div>
               <div className='mb-2'>{item.create_time}</div>
               <div>

@@ -12,7 +12,8 @@ import SwitchPage from './bottom/SwitchPage.jsx';
 import PdInfo from './bottom/pdInfo/PdInfo.jsx';
 import SellerInfo from './bottom/sellerInfo/SellerInfo.jsx';
 import NReview from './bottom/pdInfo/NReview.jsx';
-import SideBar from '../ProductPage/SideBar/SideBar.jsx';
+import NewSideBar from '../ProductPage/SideBar/SideBar.jsx';
+import SeSideBar from '../SeProductPage/SideBar/SideBar.jsx';
 import HotRanking from '../ProductPage/HotRanking/HotRanking.jsx';
 
 class PdDetailPage extends Component {
@@ -36,7 +37,7 @@ class PdDetailPage extends Component {
           city: "台中市",
           district: "南屯區",
           uid: "1",
-          new_level: "3星",
+          new_level: "3",
           stock: "1",
           sale_count: "0",
           delivery_method: ["面交", "宅配", "超商取貨"],
@@ -45,7 +46,7 @@ class PdDetailPage extends Component {
             name: "灰色毛氈立方貓窩（可折疊）",
             model: "XA-123",
             purchase_date: "2024/03",
-            condition_level: "良好",
+            condition_level: "3",
             size: "約長38cm × 寬38cm × 高38cm（展開）",
             color: "灰色",
             weight: "約1kg（含墊子）"
@@ -112,7 +113,7 @@ class PdDetailPage extends Component {
             "weight": "約1.2kg"
           },
           "images": [
-            { "img_path": "/media/second_pd/dog/dog2_bed1_1.jpeg", "img_value": "整體正面照，展示睡墊外觀" },
+            { "img_path": "/media/second_pd/cat/cat2_home1_1.jpeg", "img_value": "整體正面照，展示睡墊外觀" },
             { "img_path": "/media/second_pd/dog/dog2_bed1_2.jpeg", "img_value": "睡墊布套拆卸展示" },
             { "img_path": "/media/second_pd/dog/dog2_bed1_3.jpeg", "img_value": "內部填充棉狀況良好" }
           ]
@@ -144,7 +145,7 @@ class PdDetailPage extends Component {
             "weight": "約900g"
           },
           "images": [
-            { "img_path": "/media/second_pd/cat/cat2_travel1_1.jpeg", "img_value": "背包正面展示，有透明罩" },
+            { "img_path": "/media/second_pd/cat/cat2_home1_1.jpeg", "img_value": "背包正面展示，有透明罩" },
             { "img_path": "/media/second_pd/cat/cat2_travel1_2.jpeg", "img_value": "側邊透氣孔設計展示" },
             { "img_path": "/media/second_pd/cat/cat2_travel1_3.jpeg", "img_value": "實際背負示意圖（未包含貓）" }
           ]
@@ -176,7 +177,7 @@ class PdDetailPage extends Component {
             "weight": "約300g"
           },
           "images": [
-            { "img_path": "/media/second_pd/small/small2_wheel1_1.jpeg", "img_value": "整體外觀展示" },
+            { "img_path": "/media/second_pd/cat/cat2_home1_1.jpeg", "img_value": "整體外觀展示" },
             { "img_path": "/media/second_pd/small/small2_wheel1_2.jpeg", "img_value": "實際組裝狀況" },
             { "img_path": "/media/second_pd/small/small2_wheel1_3.jpeg", "img_value": "滾輪軸心近照，展示無損耗" }
           ]
@@ -310,7 +311,7 @@ class PdDetailPage extends Component {
           "create_time": "2025-03-22 16:05:40"
         }
       ],
-      currentPdIdx: 1, // 目前要顯示第幾個商品
+      currentPdIdx: 0, // 目前要顯示第幾個商品
     };
   }
 
@@ -332,6 +333,16 @@ class PdDetailPage extends Component {
     const avgRating = sellerReview.length > 0 ? (totalRating / sellerReview.length).toFixed(2) : "還沒有評價";
     //評價數量
     const ratingCount=sellerReview.length
+
+
+    //新品的評價
+    const newPdReview = this.state.review.filter((review)=>review.pid === currentPd.pid )
+    //新品評價總分
+    const newTotalRating = newPdReview.reduce((sum,review)=>sum+review.rating,0)
+    //新品平均分數
+    const newAvgRating = newPdReview.length > 0 ? (newTotalRating / newPdReview.length).toFixed(2) : "還沒有評價";
+    //新品評價數量
+    const newRatingCount=newPdReview.length
     
     
     return (
@@ -341,7 +352,7 @@ class PdDetailPage extends Component {
             {/* 左 */}
             <div className='col-md-2 border border-primary d-none d-md-block'>
               {/* 導入動物+商品種類篩選 */}
-              {currentPd.condition === "new" ? <SideBar /> : "a"}
+              {currentPd.condition === "new" ? <NewSideBar /> : <SeSideBar /> }
 
             </div>
 
@@ -373,6 +384,8 @@ class PdDetailPage extends Component {
                         city={currentPd.city}
                         district={currentPd.district}
                         newLevel={currentPd.new_level}
+                        newAvgRating={newAvgRating}
+                        newRatingCount={newRatingCount}
                       />
                     </div>
                     {/* 數量調整 */}
@@ -411,7 +424,8 @@ class PdDetailPage extends Component {
                     description={currentPd.description}
                     images={currentPd.images}
                     pdAttr={currentPd.attribute} /> : (currentPd.condition === "new" ?
-                      <NReview review={this.state.review.filter(r => r.pid === currentPd.pid)} />
+                      <NReview 
+                      review={this.state.review.filter(r => r.pid === currentPd.pid)} />
                       :
                       <SellerInfo 
                       userProfile={userProfile}

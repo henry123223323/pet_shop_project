@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import PawDisplay from 'component/ProductDetailPage/PawDisplay';
+
 class SellerProfile extends Component {
 
     render() {
@@ -32,10 +34,13 @@ class SellerProfile extends Component {
                         </div>
 
                         {/* 總評價＋聯絡我（橫排） */}
-                        <div className="d-flex justify-content-center w-100">
-                            <div className="border border-primary text-center rounded  px-3">
-                                {avgRating === "還沒有評價" ? "還沒有評價" : `${avgRating}星`}
-                                <span className="ptxt5">({ratingCount})</span>
+                        <div className="d-flex justify-content-center align-items-center  w-100">
+                            <div className="text-center rounded  px-2">
+
+                                {avgRating === "還沒有評價" ? "還沒有評價" : <><div className=' mx-1'><PawDisplay rating={Math.floor(avgRating)} /></div>
+                                    <span className="ptxt5">
+                                        （<span title="平均分數">{avgRating} </span>｜<span title='評論數'>{ratingCount}</span>）
+                                    </span></>}
                             </div>
                             <div className="btn paw-btn-middlebrown" onClick={this.contact}>
                                 聯絡我

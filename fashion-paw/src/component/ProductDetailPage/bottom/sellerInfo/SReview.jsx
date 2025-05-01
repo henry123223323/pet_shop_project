@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import style from './SReview.module.css'
+import style from './SReview.module.css';
+import PawDisplay from '../../PawDisplay';
 class SReview extends Component {
     state = { 
         commentState : false,
@@ -9,7 +10,6 @@ class SReview extends Component {
         const {review}=this.props
         return (<>
         {/* <h1>賣家評論</h1> */}
- 
             {/* 按鈕-展開評論 */}
             <div className={`my-3 btn paw-btn-outline-pri-darkgreen d-flex flex-fill justify-content-between ${commentState === true ? style.btnClicking : ""}`}
             onClick={this.commentShow}>
@@ -28,10 +28,11 @@ class SReview extends Component {
               <div className='d-flex justify-content-between'>
                 <div>
                     <span className='ptxtb4'>{item.username}</span> 
-                    <span className='mx-3'>{"❤️".repeat(item.rating)}</span>
+                    <span className='mx-3'><PawDisplay rating={item.rating} /></span>
                 </div>
                 <div className='mb-2'>{item.create_time}</div>
               </div>
+
 
               <div className='mb-2'>
                 <span className='ptxtb4'>購買商品：</span>
