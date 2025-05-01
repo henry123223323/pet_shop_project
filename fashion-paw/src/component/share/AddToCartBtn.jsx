@@ -13,7 +13,8 @@ class AddToCartBtn extends Component {
 
                     <button className={`btn paw-btn-pink paw-text-lightorange rounded-pill mx-3 ${styles.textShadow} ${styles.cartBtn}`}
                     onClick={onClick}>
-                        {type === "text" ? "加入購物車" : <i className="bi bi-cart4"></i> }
+                        {type === "text" ? "加入購物車" : <i className="bi bi-cart"></i>
+ }
                     </button>
                 </div>
                 
