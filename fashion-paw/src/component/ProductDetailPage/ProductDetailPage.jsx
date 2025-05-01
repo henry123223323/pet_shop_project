@@ -310,7 +310,7 @@ class PdDetailPage extends Component {
           "create_time": "2025-03-22 16:05:40"
         }
       ],
-      currentPdIdx: 0, // 目前要顯示第幾個商品
+      currentPdIdx: 1, // 目前要顯示第幾個商品
     };
   }
 
@@ -379,6 +379,7 @@ class PdDetailPage extends Component {
                     <div className='d-flex align-items-center flex-md-row flex-wrap'>
                       <PdQuantity
                         quantity={this.state.count}
+                        max= {parseInt(currentPd.stock)}
                         onQuantityChange={(newQty) => this.setState({ count: newQty })} />
                       {/* 加入購物車、收藏、分享 */}
                       <div className='d-flex align-items-center'>
