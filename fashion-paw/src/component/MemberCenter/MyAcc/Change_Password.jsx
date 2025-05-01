@@ -3,7 +3,15 @@ class Change_Password extends Component {
     state = {}
     render() {
         return (
-            <h1>Change_Password</h1>
+            <>
+                <form action="">
+                    <label htmlFor="">密碼</label>
+                    <input type="text" name="" id="" />
+                    <label htmlFor="">確認密碼</label>
+                    <input type="text" />
+                    <input type="submit" value="確認更改" />
+                </form>
+            </>
 
         );
     }
