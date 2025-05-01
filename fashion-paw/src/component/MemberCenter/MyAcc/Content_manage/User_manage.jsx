@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Pagination from './Page_manage';
+import axios from 'axios';
 class User_manage extends Component {
     state = {
         show: false,
@@ -15,7 +16,7 @@ class User_manage extends Component {
             last_time_login: "",
             aboutme: "",
             device: "",
-            photo: ""
+            photo: {}
         },
         userinfo: [
             {
@@ -28,7 +29,7 @@ class User_manage extends Component {
                 last_time_login: "2025/04/28 上午10:12:08",
                 aboutme: "你好",
                 device: "/5SDDG6B",
-                photo: "./cat.jpg"
+                photo: {}
             },
             {
                 uid: "2",
@@ -40,10 +41,34 @@ class User_manage extends Component {
                 last_time_login: "2025/04/28 上午10:12:08",
                 aboutme: "你好嗎",
                 device: "/5SDWW6B",
-                photo: "./catfood.jpg"
+                photo: {}
             }
         ]
     }
+    async componentDidMount() {
+        let result = await axios.get('http://localhost:8000/get/userinfo')
+        result.data.forEach((user, idx) => {
+            user.birthday = new Date(user.birthday).toLocaleDateString()
+            user.last_time_login = new Date(user.last_time_login).toLocaleString()
+            if (user.photo != null) {
+                const byteArray = new Uint8Array(user.photo.data); // 這裡 user.photo 是陣列
+                const blob = new Blob([byteArray], { type: 'image/webp' }); // ← 注意這裡是 WebP 格式！
+                user.photo = URL.createObjectURL(blob)
+                console.log("photo data", user.photo);
+            }
+        })
+        this.setState({ userinfo: result.data })
+    }
+
+    componentWillUnmount() {
+        this.state.userinfo.forEach(user => {
+            if (typeof user.photo === 'string' && user.photo.startsWith('blob:')) {
+                URL.revokeObjectURL(user.photo);
+            }
+        });
+    }
+
+
     handlePageChange = (page) => {
         this.setState({ currentPage: page });
     };
@@ -63,7 +88,7 @@ class User_manage extends Component {
     }
     render() {
         let { userinfo, show, editinguser, currentPage } = this.state
-        let itemsPerPage = 1
+        let itemsPerPage = 5
         let startIndex = (currentPage - 1) * itemsPerPage;
         let currentuser = userinfo.slice(startIndex, startIndex + itemsPerPage);
         return (
@@ -169,7 +194,7 @@ class User_manage extends Component {
                                             <div className="mb-3">
                                                 <label className="form-label">大頭照:</label>
                                                 <input type="file" name="" id="" onChange={this.handlePhotoChange} />
-                                                <img src={this.state.editinguser.photo} width={100} alt="大頭照" />
+                                                <img src={editinguser.photo} width={100} alt="大頭照" />
                                             </div>
 
                                         </div>
@@ -187,10 +212,7 @@ class User_manage extends Component {
             </>
         );
     }
-    // componentDidUpdate() {
-    //     console.log(this.state.editinguser);
-
-    // }
+    //
     handleSubmit = (event) => {
         event.preventDefault()
         this.toggleModal()
