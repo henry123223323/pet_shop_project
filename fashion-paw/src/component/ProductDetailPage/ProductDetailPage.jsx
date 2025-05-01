@@ -13,6 +13,7 @@ import PdInfo from './bottom/pdInfo/PdInfo.jsx';
 import SellerInfo from './bottom/sellerInfo/SellerInfo.jsx';
 import NReview from './bottom/pdInfo/NReview.jsx';
 import SideBar from '../ProductPage/SideBar/SideBar.jsx';
+import HotRanking from '../ProductPage/HotRanking/HotRanking.jsx';
 
 class PdDetailPage extends Component {
   constructor(props) {
@@ -21,7 +22,7 @@ class PdDetailPage extends Component {
       currentPage: "description",
       isFavorite: false,
       isShare: false,
-      count:1,
+      count: 1,
       products: [
         {
           pid: "sc01",
@@ -34,7 +35,7 @@ class PdDetailPage extends Component {
           categories: "貓用品",
           city: "台中市",
           district: "南屯區",
-          uid: "user1234",
+          uid: "1",
           new_level: "3星",
           stock: "1",
           sale_count: "0",
@@ -85,12 +86,69 @@ class PdDetailPage extends Component {
           ]
         }
       ],
-      review:[
+      userinfo: [
+        {
+          "uid": "1",
+          "email": "user1234@gmail.com",
+          "username": "毛🐱主人",
+          "photo": "media/pet_know/pet_feeding/cat/petfeedingb_1.jpeg",
+          "last_time_login": "2025-04-09 03:33:20",
+          "AboutMe": "熱愛毛孩生活，分享家中用不到但保存良好的寵物用品，希望能讓更多小動物享受舒適生活。 商品皆細心清潔整理，誠信交易，歡迎喜歡的朋友來訊聊聊！",
+          "Device": "/F1234567"
+        },
+        {
+          "uid": "2",
+          "email": "doglover@example.com",
+          "username": "泡泡汪",
+          "photo": "/img/user2",
+          "last_time_login": "2025-03-29 03:33:20",
+          "AboutMe": "家中有多隻狗狗，經常分享閒置但仍堪用的用品，歡迎交流與詢問。",
+          "Device": "/A2345678"
+        },
+        {
+          "uid": "3",
+          "email": "rabbitmom@example.com",
+          "username": "奇奇兔",
+          "photo": "/img/user3",
+          "last_time_login": "2025-03-19 03:33:20",
+          "AboutMe": "家中有多隻兔兔，經常分享閒置但仍堪用的用品，歡迎交流與詢問。",
+          "Device": "/B3456789"
+        },
+        {
+          "uid": "4",
+          "email": "hamsterguy@example.com",
+          "username": "咪咪寶",
+          "photo": "/img/user4",
+          "last_time_login": "2025-03-21 03:33:20",
+          "AboutMe": "家中有多隻鼠鼠，經常分享閒置但仍堪用的用品，歡迎交流與詢問。",
+          "Device": "/C4567890"
+        },
+        {
+          "uid": "5",
+          "email": "birdfan@example.com",
+          "username": "胖虎喵",
+          "photo": "/img/user5",
+          "last_time_login": "2025-03-21 03:33:20",
+          "AboutMe": "家中有多隻鳥鳥，經常分享閒置但仍堪用的用品，歡迎交流與詢問。",
+          "Device": "/D5678901"
+        },
+        {
+          "uid": "6",
+          "email": "petowner@example.com",
+          "username": "多毛家庭",
+          "photo": "/img/user6",
+          "last_time_login": "2025-03-10 03:33:20",
+          "AboutMe": "家中有多隻多毛，經常分享閒置但仍堪用的用品，歡迎交流與詢問。",
+          "Device": "/E6789012"
+        }
+      ],
+      review: [
         {
           "pid": "sc01",
           "product_name": "貓咪雞肉點心",
           "condition": "second",
-          "uid": "小橘貓",
+          "uid": "0",
+          "username": "小橘貓",
           "rating": 5,
           "comment": "商品跟描述的一樣新，賣家回覆超快，包裝也很細心，非常推薦！",
           "create_time": "2025-04-27 10:15:23"
@@ -99,7 +157,8 @@ class PdDetailPage extends Component {
           "pid": "sc01",
           "product_name": "增高飼料架",
           "condition": "second",
-          "uid": "奇奇兔",
+          "uid": "3",
+          "username": "奇奇兔",
           "rating": 4,
           "comment": "收到商品速度很快，品質也不錯，唯一小小瑕疵是有些微使用痕跡。",
           "create_time": "2025-03-14 18:47:10"
@@ -108,16 +167,28 @@ class PdDetailPage extends Component {
           "pid": "sc01",
           "product_name": "狗狗玩具球",
           "condition": "second",
-          "uid": "泡泡汪",
+          "uid": "2",
+          "username": "泡泡汪",
           "rating": 5,
           "comment": "價格很合理，商品乾淨，感覺賣家很用心整理過，狗狗很喜歡！",
+          "create_time": "2025-02-06 22:03:45"
+        },
+        {
+          "pid": "sc01",
+          "product_name": "小鳥玩具球",
+          "condition": "second",
+          "uid": "9",
+          "username": "匡匡鳥",
+          "rating": 3,
+          "comment": "東西還好",
           "create_time": "2025-02-06 22:03:45"
         },
         {
           "pid": "np01",
           "product_name": "加厚耐抓雙面貓抓板",
           "condition": "new",
-          "uid": "咪咪寶",
+          "uid": "4",
+          "username": "咪咪寶",
           "rating": 5,
           "comment": "貓抓板很厚實，貓咪超愛，還會自己躺上去磨爪，非常滿意！",
           "create_time": "2025-04-15 12:30:55"
@@ -126,7 +197,8 @@ class PdDetailPage extends Component {
           "pid": "np01",
           "product_name": "加厚耐抓雙面貓抓板",
           "condition": "new",
-          "uid": "胖虎喵",
+          "uid": "5",
+          "username": "胖虎喵",
           "rating": 4,
           "comment": "質感不錯，雙面設計很實用，只是貓薄荷包有點小。",
           "create_time": "2025-04-10 09:20:18"
@@ -135,7 +207,8 @@ class PdDetailPage extends Component {
           "pid": "np02",
           "product_name": "迷你攀爬貓樹",
           "condition": "new",
-          "uid": "小花熊",
+          "uid": "6",
+          "username": "小花熊",
           "rating": 5,
           "comment": "超可愛的攀爬架，家裡小貓很快就學會爬上爬下，品質也很好！",
           "create_time": "2025-03-22 16:05:40"
@@ -143,38 +216,50 @@ class PdDetailPage extends Component {
       ],
       currentPdIdx: 0, // 目前要顯示第幾個商品
     };
-  }    
+  }
 
   render() {
     const currentPd = this.state.products[this.state.currentPdIdx]
+    const userProfile = this.state.userinfo.find(user => user.uid === currentPd.uid);
+    //屬於這個商品賣家的所有評論
+    const sellerReview = this.state.review.filter(review=>{
+      const product = this.state.products.find(p=>p.pid === review.pid)
+      return product && product.uid ===currentPd.uid
+    })
+    const totalRating = sellerReview.reduce((sum,review)=>sum+review.rating,0)
+    const avgRating = sellerReview.length > 0 ? (totalRating / sellerReview.length).toFixed(2) : "還沒有評價";
+    const ratingCount=sellerReview.length
+    
+    
     return (
       <>
         <div className="container-fluid">
           <div className="row">
             {/* 左 */}
             <div className='col-md-2 border border-primary d-none d-md-block'>
-              {currentPd.condition === "new" ? <SideBar/> : "a"}
-              
+              {/* 導入動物+商品種類篩選 */}
+              {currentPd.condition === "new" ? <SideBar /> : "a"}
+
             </div>
 
             {/* 中 */}
-            <div className={currentPd.condition === "new" ?"col-md-8":"col-md-10"}>
-
+            <div className={currentPd.condition === "new" ? "col-md-8" : "col-md-10"}>
+              {/* 上半部 */}
               <div className='paw-bg-lightenbrown p-2'>
                 <div className='mx-4'>
-                  <PdTitle 
-                    pdname={currentPd.pd_name}/>
+                  <PdTitle
+                    pdname={currentPd.pd_name} />
                 </div>
                 <div className='d-flex flex-column flex-md-row '>
                   <div className='d-flex align-items-center col-md-5'>
                     {/* 左邊圖片 */}
-                    <PdImageGallery 
-                      images={currentPd.images}/>
+                    <PdImageGallery
+                      images={currentPd.images} />
                   </div>
                   <div className='col-md-7 my-4'>
                     {/* 右邊說明 */}
                     <div>
-                      <PdTitleMessage 
+                      <PdTitleMessage
                         condition={currentPd.condition}
                         pid={currentPd.pid}
                         categories={currentPd.categories}
@@ -185,24 +270,24 @@ class PdDetailPage extends Component {
                         city={currentPd.city}
                         district={currentPd.district}
                         newLevel={currentPd.new_level}
-                        />
+                      />
                     </div>
-                  {/* 數量調整 */}
+                    {/* 數量調整 */}
                     <div className='d-flex align-items-center flex-md-row flex-wrap'>
-                      <PdQuantity 
-                      quantity={this.state.count}
-                      onQuantityChange={(newQty) => this.setState({ count: newQty })}/>
-                    {/* 加入購物車、收藏、分享 */}
+                      <PdQuantity
+                        quantity={this.state.count}
+                        onQuantityChange={(newQty) => this.setState({ count: newQty })} />
+                      {/* 加入購物車、收藏、分享 */}
                       <div className='d-flex align-items-center'>
                         <AddToCartBtn type="text" onClick={this.addToCart} />
-                        <AddToMyFavorite 
-                            onClick={this.favBtnClick} 
-                            isFavorite={this.state.isFavorite}
-                            size="24px"
-                            type="icon"/>
-                        <ShareProducts 
-                            onClick={this.shareOthers}
-                            isShare={this.state.isShare}/>
+                        <AddToMyFavorite
+                          onClick={this.favBtnClick}
+                          isFavorite={this.state.isFavorite}
+                          size="24px"
+                          type="icon" />
+                        <ShareProducts
+                          onClick={this.shareOthers}
+                          isShare={this.state.isShare} />
                       </div>
                     </div>
                   </div>
@@ -213,21 +298,28 @@ class PdDetailPage extends Component {
               <div>
                 <SwitchPage
                   currentPage={this.state.currentPage}
-                  changePage={(click) => { this.setState({ currentPage: click }) }} 
-                  condition={currentPd.condition}/>
+                  changePage={(click) => { this.setState({ currentPage: click }) }}
+                  condition={currentPd.condition} />
 
-                {this.state.currentPage === "description" ? 
-                  <PdInfo 
-                  condition={currentPd.condition}
-                  description={currentPd.description}
-                  images={currentPd.images}
-                  pdAttr={currentPd.attribute}/> : (currentPd.condition === "new" ? <NReview review={this.state.review.filter(r => r.pid === currentPd.pid)}/>:<SellerInfo review={this.state.review.filter(r => r.pid === currentPd.pid)}/>)}
+                {this.state.currentPage === "description" ?
+                  <PdInfo
+                    condition={currentPd.condition}
+                    description={currentPd.description}
+                    images={currentPd.images}
+                    pdAttr={currentPd.attribute} /> : (currentPd.condition === "new" ?
+                      <NReview review={this.state.review.filter(r => r.pid === currentPd.pid)} />
+                      :
+                      <SellerInfo 
+                      userProfile={userProfile}
+                      review={this.state.review.filter(r => r.pid === currentPd.pid)} 
+                      avgRating={avgRating}
+                      ratingCount={ratingCount}/>)}
               </div>
             </div>
 
-            {/* 右 */}
-            {currentPd.condition === "new" ? <><div className='border border-secondary col-md-2 d-none d-md-block'>c</div></>:""}
-            
+            {/* 右，商品是新品時顯示熱門排行 */}
+            {currentPd.condition === "new" ? <><div className='border border-secondary col-md-2 d-none d-md-block'><HotRanking /></div></> : ""}
+
           </div>
 
         </div>
@@ -245,8 +337,8 @@ class PdDetailPage extends Component {
   }
   shareOthers = async () => {
     try {
-    // 複製網址
-      await navigator.clipboard.writeText(window.location.href); 
+      // 複製網址
+      await navigator.clipboard.writeText(window.location.href);
       this.setState({ isShare: true });
 
       setTimeout(() => {

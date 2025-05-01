@@ -9,7 +9,7 @@ class NReview extends Component {
           {review.length > 0 ? review.map((item, index) => (
             <div key={index} className={`shadow-sm rounded ${index % 2 === 0 ? 'paw-bg-middlebrown' : 'paw-bg-pri-darkbrown'} p-3 m-4`}>
               <div>
-                <span className='ptxtb4'>{item.uid}</span> 
+                <span className='ptxtb4'>{item.username}</span> 
                 <span className='mx-3'>{"❤️".repeat(item.rating)}</span>
               </div>
               <div className='mb-2'>{item.create_time}</div>
