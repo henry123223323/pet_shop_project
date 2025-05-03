@@ -4,68 +4,20 @@ import SellerTitle from './SellerTitle';
 import Coupon from './Coupon';
 import CheckList from './CheckList';
 import ConfirmBtn from '../share/ConfirmBtn';
+import { CartContext } from './CartContext';
 
 class ShoppingCartPage extends Component {
+  static contextType = CartContext;
   state = {
     coupon: "discount88",
     discountAmount: 0,
-    cartList: [
-      {
-        cart_id: 1,
-        pid: 501,
-        uid: null,
-        condition: "new",
-        quantity: 2,
-        productName: "新品貓窩",
-        unit_price: 899,
-        image: "/media/second_pd/cat/cat2_home1_2.jpeg",
-        color: "灰色"
-      },
-      {
-        cart_id: 2,
-        pid: 502,
-        uid: 1001,
-        condition: "second",
-        quantity: 1,
-        productName: "二手貓窩-小橘貓",
-        unit_price: 499,
-        image: "/media/second_pd/cat/cat2_home1_1.jpeg",
-        color: "藍色"
-      },
-      {
-        cart_id: 3,
-        pid: 503,
-        uid: 1002,
-        condition: "second",
-        quantity: 1,
-        productName: "二手狗狗墊-阿柴",
-        unit_price: 299,
-        image: "/media/second_pd/cat/cat2_home1_3.jpeg",
-        color: "咖啡色"
-      },
-      {
-        cart_id: 4,
-        pid: 501,
-        uid: null,
-        condition: "new",
-        quantity: 1,
-        productName: "新品貓窩-2",
-        unit_price: 399,
-        image: "/media/second_pd/cat/cat2_home1_2.jpeg",
-        color: "灰色"
-      },
-    ],
-    sellers: {
-      1001: "小橘貓",
-      1002: "阿柴2",
-      1: "拾毛百貨"
-    },
     selectedItems: [], //有勾選的 cart_id
   };
-
+  
   render() {
-    const { cartList, sellers, selectedItems } = this.state;
-
+    const { selectedItems } = this.state
+    const { cartList } = this.context;
+    // console.log("🛒 購物車頁面收到的 cartList：", cartList);
     // 分類：新品 & 二手
     const newItems = cartList.filter(item => item.condition === "new");
     const secondItems = cartList.filter(item => item.condition === "second");
@@ -132,7 +84,7 @@ class ShoppingCartPage extends Component {
               {Object.keys(secondItemsBySeller).map(uid => (
                 <div key={uid} className='border rounded my-2'>
                   <div className='border-bottom px-3'>
-                    <SellerTitle sellerName={sellers[uid]} />
+                  <SellerTitle sellerName={this.context.getSellerName(uid)} />
                   </div>
                   <div className='d-flex align-items-center  p-2 border-bottom'
                   >
@@ -198,13 +150,15 @@ class ShoppingCartPage extends Component {
   }
   //新品全選
   allSelected = () => {
-    const { selectedItems, cartList } = this.state;
+    const { selectedItems } = this.state;
+    const { cartList } = this.context;
     const newItems = cartList.filter(item => item.condition === "new");
     return newItems.every(item => selectedItems.includes(item.cart_id));
   }
 
   toggleSelectAll = () => {
-    const { selectedItems, cartList } = this.state;
+    const { selectedItems } = this.state;
+    const { cartList } = this.context;
     const newItems = cartList.filter(item => item.condition === "new");
     const allIds = newItems.map(item => item.cart_id);
 
@@ -221,23 +175,24 @@ class ShoppingCartPage extends Component {
   //二手全選
   // 檢查是否該賣家的商品都有被選
   sellerAllSelected = (uid) => {
-    const { selectedItems, cartList } = this.state;
-    const sellerItems = cartList.filter(item => item.condition === 'second' && item.uid === parseInt(uid));
+    const { selectedItems } = this.state;
+    const { cartList } = this.context;
+    const sellerItems = cartList.filter(item => item.condition === 'second' && item.uid === String(uid));
     return sellerItems.every(item => selectedItems.includes(item.cart_id));
   };
+  
 
   // 切換賣家區域的全選 / 取消
   toggleSellerSelectAll = (uid) => {
-    const { selectedItems, cartList } = this.state;
-    const sellerItems = cartList.filter(item => item.condition === 'second' && item.uid === parseInt(uid));
+    const { selectedItems } = this.state;
+    const { cartList } = this.context;
+    const sellerItems = cartList.filter(item => item.condition === 'second' && item.uid === String(uid));
     const sellerIds = sellerItems.map(item => item.cart_id);
-
+  
     if (this.sellerAllSelected(uid)) {
-      // 取消全選
       const updated = selectedItems.filter(id => !sellerIds.includes(id));
       this.setState({ selectedItems: updated });
     } else {
-      // 全選
       const updated = Array.from(new Set([...selectedItems, ...sellerIds]));
       this.setState({ selectedItems: updated });
     }
@@ -254,62 +209,55 @@ class ShoppingCartPage extends Component {
     });
   }
   changeQuantity = (cartId, newQuantity) => {
+    const { updateQuantity, removeFromCart } = this.context;
     if (newQuantity < 1) {
       const deletePd = window.confirm("數量為 0，要將此商品從購物車移除嗎？");
       if (deletePd) {
-        this.deleteCartItem(cartId);
+        removeFromCart(cartId);
       }
       return;
     }
-    const updatedCartList = this.state.cartList.map(item => {
-      if (item.cart_id === cartId) {
-        return { ...item, quantity: newQuantity };
-      }
-      return item;
-    });
-    this.setState({ cartList: updatedCartList });
-  }
+    updateQuantity(cartId, newQuantity);
+  };
 
   applyDiscount = (discountAmount) => {
     this.setState({ discountAmount });
   }
 
   deleteCartItem = (cartId) => {
-    const updatedCartList = this.state.cartList.filter(item => item.cart_id !== cartId);
-    const updatedSelectedItems = this.state.selectedItems.filter(id => id !== cartId);
-    this.setState({
-      cartList: updatedCartList,
-      selectedItems: updatedSelectedItems
-    });
+    const { removeFromCart } = this.context;
+    this.setState((prev) => ({
+      selectedItems: prev.selectedItems.filter((id) => id !== cartId),
+    }));
+    removeFromCart(cartId);
   };
 
   goToCheckBillPage = () => {
-    const { selectedItems, discountAmount, cartList } = this.state;
+    const { selectedItems, discountAmount } = this.state;
+    const { cartList } = this.context;
+  
     const selectedCartItems = cartList.filter(item => selectedItems.includes(item.cart_id));
-
+  
     if (selectedItems.length === 0) {
       return alert("還沒有選擇商品");
     }
-
-    // 條件 1：不能同時結帳新品與二手
+  
     const selectedConditions = new Set(selectedCartItems.map(item => item.condition));
     if (selectedConditions.size > 1) {
       return alert("新品與二手商品不能同時結帳，請分開操作");
     }
-
-    // 條件 2：若是二手，賣家只能有一個
+  
     if (selectedConditions.has("second")) {
       const sellerUids = new Set(selectedCartItems.map(item => item.uid));
       if (sellerUids.size > 1) {
         return alert("二手商品每次只能結帳一位賣家的商品，請調整勾選內容");
       }
     }
-
-    // 通過條件，儲存資料並導向
+  
     localStorage.setItem('selectedItems', JSON.stringify(selectedCartItems));
     localStorage.setItem('discountAmount', discountAmount);
     window.location.href = '/CheckBillPage';
-  }
+  };
 }
 
 export default ShoppingCartPage;

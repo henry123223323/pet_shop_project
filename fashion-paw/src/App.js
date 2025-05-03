@@ -20,11 +20,13 @@ import Header from './component/Homepage/Header';
 import Footer from './component/Homepage/Footer';
 
 import Helpme from './component/Aboutus/helpme';
+import { CartProvider } from 'component/Cart/CartContext';
 
 
 function App() {
   return (
     <BrowserRouter>
+    <CartProvider>
         <Header />
       <main className={styles.mainContent}>
         <Switch>
@@ -44,6 +46,7 @@ function App() {
         </Switch>
       </main>
       <Footer />
+      </CartProvider>
     </BrowserRouter>
   );
 }

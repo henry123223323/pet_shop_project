@@ -15,8 +15,10 @@ import NReview from './bottom/pdInfo/NReview.jsx';
 import NewSideBar from '../ProductPage/SideBar/SideBar.jsx';
 import SeSideBar from '../SeProductPage/SideBar/SideBar.jsx';
 import HotRanking from '../ProductPage/HotRanking/HotRanking.jsx';
+import { CartContext } from 'component/Cart/CartContext.jsx';
 
 class PdDetailPage extends Component {
+  static contextType = CartContext;
   constructor(props) {
     super(props);
     this.state = {
@@ -129,7 +131,7 @@ class PdDetailPage extends Component {
           "categories": "外出用品",
           "city": "台中市",
           "district": "南屯區",
-          "uid": "1",
+          "uid": "5",
           "new_level": "4星",
           "stock": "1",
           "sale_count": "1",
@@ -445,9 +447,32 @@ class PdDetailPage extends Component {
       </>
     );
   }
-  addToCart = () => {
-    alert("要連購物車！")
+
+  componentDidMount() {
+    const { userinfo } = this.state;
+    const { setSellers } = this.context;
+    if (setSellers) {
+      setSellers(userinfo);
+    }
   }
+
+  addToCart = async () => {
+    const { addToCart } = this.context;
+    const currentPd = this.state.products[this.state.currentPdIdx];
+    const cartItem = {
+      ...currentPd,
+      quantity: this.state.count
+    };
+  
+    const result = await addToCart(cartItem); // ⬅️ 等待結果
+    if (result === 'new' || result === 'updated') {
+      const go = window.confirm("已加入購物車！是否前往查看？");
+      if (go) {
+        window.location.href = '/ShoppingCartPage';
+      }
+    }
+  };
+
   favBtnClick = (e) => {
     // alert('已收藏')
     this.setState((prevState) => ({

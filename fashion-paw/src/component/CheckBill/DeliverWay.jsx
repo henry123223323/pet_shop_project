@@ -133,7 +133,7 @@ class DeliverWay extends Component {
     //一進入畫面就帶入所有縣市
     async componentDidMount() {
         let city = await axios.get('/media/member_center/city.json')
-        console.log(city.data);
+        // console.log(city.data);
         let newState = { ...this.state }
         newState.city = city.data
         this.setState(newState)
@@ -146,7 +146,7 @@ class DeliverWay extends Component {
         let city_index = this.state.city.findIndex((cities, index) => {
             return cities.name === city
         })
-        console.log(city_index);
+        // console.log(city_index);
         let newState = { ...this.state }
         newState.district = this.state.city[city_index].districts
         this.setState(newState)
