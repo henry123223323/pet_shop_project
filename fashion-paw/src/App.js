@@ -7,6 +7,8 @@ import Homepage from './component/Homepage/Homepage';
 import SecondPdDetailPage from './component/ProductDetailPage/SecondPdDetailPage';
 import ShoppingCartPage from './component/Cart/ShoppingCartPage';
 import CheckBillPage from './component/CheckBill/CheckBillPage';
+import Breadcrumbs from "./component/share/BreadCrumbs";
+
 
 import ProductPage from './component/ProductPage/ProductPage';
 import Login from './component/MemberCenter/Login';
@@ -21,12 +23,12 @@ import Footer from './component/Homepage/Footer';
 
 import Helpme from './component/Aboutus/helpme';
 
-
 function App() {
   return (
     <BrowserRouter>
         <Header />
       <main className={styles.mainContent}>
+      <Breadcrumbs />
         <Switch>
           <Route path="/" component={Homepage} exact />
           <Route path="/MemberCenter" component={MemberCenter} />
