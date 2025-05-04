@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import hamster from './img/Gotte.jpg';
+import RecommendedProducts from './RecommendedProducts';
+
 
 class DogGuide extends Component {
     state = {}
@@ -42,29 +44,14 @@ class DogGuide extends Component {
                         下一篇》狗狗飼養環境
                     </div>
 
-                    {/* 推薦商品 */}
-                    <h6 className="text-xl font-semibold mt-10 mb-4">｜或許你適合...</h6>
-
-                    <div className="container mb-5">
-                        <div className="row g-4">
-                            {["點心罐", "純湯罐", "無膠肉罐"].map((name, index) => (
-                                <div key={index} className=" col">
-                                    <div className="border rounded-lg p-3 shadow-md mx-2">
-                                        <div className="text-center mb-2">
-                                            <img src={hamster} alt="測試 hamster" className="img-fluid" style={{ width: '100px', height: 'auto', objectFit: 'cover' }} />
-                                        </div>
-                                        <p className="text-sm">商品名稱: {name}</p>
-                                        <p className="text-sm">價格: 80元</p>
-                                        <a href="#!" className="btn btn-warning text-white rounded">加入購物車</a>
-                                    </div>
-                                </div>
-                            ))}
+                   {/* 推薦商品（動態從後端抓） */}
+                          <RecommendedProducts />
                         </div>
                     </div>
 
 
-                </div>
-            </div>
+                
+          
         );
     }
 }

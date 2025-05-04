@@ -1,33 +1,33 @@
-import React from "react";
-import { Link, useLocation } from "react-router-dom";
-import styles from './BreadCrumbs.module.css'
+import React from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import styles from './BreadCrumbs.module.css';
 
 export default function Breadcrumbs() {
   const { pathname } = useLocation();
-  // ["", "products", "shoes", "nike"]
-  const pathnames = pathname.split("/").filter(Boolean);
+  const pathnames = pathname.split('/').filter(Boolean);
 
   return (
-    <nav aria-label="breadcrumb" className="breadcrumb-container">
-      <ol className="breadcrumb">
-        <li className="breadcrumb-item">
-          <Link to="/">首頁</Link>
+    <nav aria-label="breadcrumb" className={styles.breadcrumbContainer}>
+      <ol className={styles.breadcrumb}>
+        <li className={styles.breadcrumbItem}>
+          <Link to="/" className={styles.link}>首頁</Link>
         </li>
-        {pathnames.map((segment, index) => {
-          const to = "/" + pathnames.slice(0, index + 1).join("/");
-          const isLast = index === pathnames.length - 1;
+        {pathnames.map((seg, i) => {
+          const to = '/' + pathnames.slice(0, i + 1).join('/');
+          const isLast = i === pathnames.length - 1;
           return (
-            <li
-              key={to}
-              className={`breadcrumb-item${isLast ? " active" : ""}`}
-              {...(isLast ? { "aria-current": "page" } : {})}
-            >
-              {isLast ? (
-                decodeURIComponent(segment)
-              ) : (
-                <Link to={to}>{decodeURIComponent(segment)}</Link>
-              )}
-            </li>
+            <React.Fragment key={to}>
+              <li className={styles.separator}></li>
+              <li
+                className={`${styles.breadcrumbItem} ${isLast ? styles.active : ''}`}
+                {...(isLast ? { 'aria-current': 'page' } : {})}
+              >
+                {isLast
+                  ? seg
+                  : <Link to={to} className={styles.link}>{seg}</Link>
+                }
+              </li>
+            </React.Fragment>
           );
         })}
       </ol>
