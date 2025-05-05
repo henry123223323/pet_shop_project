@@ -115,7 +115,7 @@ class manage_market extends Component {
             ? <span className="badge bg-success">上架</span>
             : <span className="badge bg-secondary">下架</span>;
     }
-    // 記得改掉
+
     renderNewLevel = (level) => {
         const stars = '★★★★★'.slice(0, parseInt(level));
         return (

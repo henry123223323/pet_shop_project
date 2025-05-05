@@ -1,4 +1,3 @@
-// src/component/SeProductPage/SeProductPage.jsx
 import React, { useState, useEffect, useCallback } from 'react';
 import styles from './SeProductPage.module.css';
 
