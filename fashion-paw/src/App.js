@@ -20,6 +20,7 @@ import Header from './component/Homepage/Header';
 import Footer from './component/Homepage/Footer';
 
 import Helpme from './component/Aboutus/helpme';
+import Needhelp from './component/Aboutus/needhelp';
 
 
 function App() {
@@ -41,6 +42,7 @@ function App() {
           <Route path="/ShoppingCartPage" component={ShoppingCartPage} exact />
           <Route path="/CheckBillPage" component={CheckBillPage} exact />
           <Route path="/Aboutus" component={Helpme} exact />
+          <Route path="/Help" component={Needhelp} exact />
         </Switch>
       </main>
       <Footer />
