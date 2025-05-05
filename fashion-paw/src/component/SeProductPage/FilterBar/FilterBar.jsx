@@ -1,7 +1,8 @@
 // src/component/ProductPage/FilterBar/FilterBar.jsx
 import React, { useState, useEffect } from 'react';
 import styles from './FilterBar.module.css';
-
+import TaiwanMap from '../Map/TaiwanMap';
+// import axios from 'axios';
 // 一定要有這個 prices 陣列
 const prices = [
   { value: '100以下', label: '100以下' },
@@ -13,15 +14,21 @@ const prices = [
 const depreciates = [1, 2, 3, 4, 5];
 
 export default function FilterBar({
+  city_town = [],
   locations = [],
-  onFilterChange = () => {}
+  onFilterChange = () => { },
+  SortProductbyTown = () => { }
 }) {
   const [activeTab, setActiveTab] = useState('product');
   const [showModal, setShowModal] = useState(false);
 
   const [selPrice, setSelPrice] = useState('');
-  const [selDep, setSelDep]     = useState(0);
-  const [selLocs, setSelLocs]   = useState([]);
+  const [selDep, setSelDep] = useState(0);
+  const [selLocs, setSelLocs] = useState([]);
+  useEffect(() => {
+    console.log(city_town);
+  }, [city_town]);
+
 
   useEffect(() => {
     onFilterChange({
@@ -29,7 +36,7 @@ export default function FilterBar({
       depreciation: selDep,
       locations: selLocs
     });
-  }, [selPrice, selDep, selLocs]);
+  }, [selPrice, selDep, selLocs, onFilterChange]);
 
   const toggleArray = (arr, setFn, val) =>
     setFn(prev => prev.includes(val) ? prev.filter(x => x !== val) : [...prev, val]);
@@ -126,8 +133,7 @@ export default function FilterBar({
         <div className={styles.modalOverlay}>
           <div className={styles.modalContent}>
             <button className={styles.modalClose} onClick={closeModal}>&times;</button>
-            <h3>地圖搜尋 (待串接)</h3>
-            <div className={styles.mapPlaceholder}>地圖元件 Placeholder</div>
+            <TaiwanMap city={locations} town={city_town} SortProductbyTown={SortProductbyTown} close={closeModal} />
           </div>
         </div>
       )}
