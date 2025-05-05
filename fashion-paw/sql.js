@@ -114,10 +114,8 @@ app.get("/get/hot-ranking", (req, res) => {
   });
 });
 
-// 假設你在 sql.js 已經有 app, conn, express.static, cors 等設定
 
 // 取得新品列表
-// 在其他 middleware / 路由之後，但在 app.listen 之前
 app.get("/get/new-products", (req, res) => {
   const hostUrl = `${req.protocol}://${req.get("host")}`; // e.g. http://localhost:8000
   const sql = `
@@ -239,6 +237,41 @@ app.post("/get/new-products", async (req, res) => {
     });
   });
 });
+
+// 新增新品
+app.post('/get/new-products', (req, res) => {
+  const data = req.body;
+  const pid = nextPid++;
+  const newProduct = { pid, ...data };
+  products.unshift(newProduct);
+  console.log(`Created product ${pid}`);
+  res.status(201).json(newProduct);
+});
+// 更改商品資訊
+app.put('/get/new-products/:pid', (req, res) => {
+  const pid = parseInt(req.params.pid, 10);
+  const index = products.findIndex(p => p.pid === pid);
+  if (index === -1) {
+    return res.status(404).json({ error: `Product ${pid} not found` });
+  }
+  const updated = { ...products[index], ...req.body, pid };
+  products[index] = updated;
+  console.log(`Updated product ${pid}`);
+  res.json(updated);
+});
+
+// 刪除商品
+app.delete('/get/new-products/:pid', (req, res) => {
+  const pid = parseInt(req.params.pid, 10);
+  const initialLength = products.length;
+  products = products.filter(p => p.pid !== pid);
+  if (products.length === initialLength) {
+    return res.status(404).json({ error: `Product ${pid} not found` });
+  }
+  console.log(`Deleted product ${pid}`);
+  res.sendStatus(204);
+});
+
 
 
 // 假設推薦商品存在 productslist 表裡，用某種邏輯挑 3 筆
