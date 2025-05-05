@@ -1,0 +1,36 @@
+/* src/component/Homepage/Banner.module.css */
+
+.bannerWrapper {
+    position: relative;
+    width: 100%;
+    /* 這裡不用寫 height，因為用 <img> 的寬度決定高度 */
+    overflow: hidden;  /* 只是保險，不讓多餘跑版 */
+  }
+  
+  .bannerImage {
+    display: block;    /* 去掉底下預設的 inline 空隙 */
+    width: 100%;       /* 縱使視窗縮小，寬度永遠佔滿 */
+    height: auto;      /* 高度自動，保持原始比例 */
+  }
+  
+  .bannerContent {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: white;
+    /* 下面只是一個示範，可以再自己調字大小、陰影等 */
+    text-shadow: 0 0 8px rgba(0,0,0,0.5);
+  }
+  
+  .bannerContent h1 {
+    margin: 0;
+    font-size: 3rem;
+  }
+  
+  .bannerContent p {
+    margin: .5rem 0 0;
+    font-size: 1.25rem;
+  }
+  

@@ -6,12 +6,16 @@ import SReview from './SReview';
 class SellerInfo extends Component {
     state = {  } 
     render() { 
+        const {review, userProfile, avgRating, ratingCount,sellerOtherPd}=this.props
         return (<>
         {/* <h1>賣家合併頁</h1> */}
         <div className='paw-bg-lightenbrown my-3 py-3'>
-        <SellerProfile />
-        <SellerOtherPd />
-        <SReview />
+        <SellerProfile 
+            userProfile={userProfile}
+            avgRating={avgRating}
+            ratingCount={ratingCount}/>
+        <SellerOtherPd sellerOtherPd={sellerOtherPd}/>
+        <SReview review={review} />
         </div>
         </>);
     }

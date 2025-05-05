@@ -2,98 +2,108 @@ import React, { Component } from 'react';
 import styles from './SellerOtherPd.module.css'
 import AddToMyFavorite from '../../../share/AddToMyFavorite';
 import AddToCartBtn from '../../../share/AddToCartBtn';
-class PdInfo extends Component {
-    state = {}
-    render() {
-        return (<>
+class SellerOtherPd extends Component {
+  constructor(props) {
+    super(props);
+    this.scrollRef = React.createRef();
+    this.state = {
+      showArrows: false,
+    };
+  }
+  render() {
+    const { sellerOtherPd } = this.props
+    const { showArrows } = this.state
+    return (<>
+      {/* 商品區 */}
+      <div className="paw-bg-pri-darkbrown py-1">
+        <p className="px-3 py-2 ptxtb2">賣家的其他商品</p>
 
-            {/* 商品區 */}
-            <div className='paw-bg-pri-darkbrown py-1'>
+        {/* 改這一層：用 flex 排列箭頭 + 商品 */}
+        <div className={`d-flex align-items-center ${styles.main}`}>
 
-            <p className=' px-3 py-2 ptxtb2'>賣家的其他商品</p>
-                <div className={`position-relative ${styles.main}`}>
-                    {/* 左鍵 */}
-                    <div className="d-flex justify-content-center align-items-center">
-                        <i
-                            className="paw-btn-outline-middlegreen bi bi-caret-left-fill ptxt2"
-                            onClick={this.leftArrowClick}
-                        ></i>
-                    </div>
-
-                    {/* 商品區 */}
-                    <div className='overflow-hidden d-flex flex-nowrap'>
-                        {/* 1 */}
-                        <div className="card rounded mx-1" style={{ minWidth: '150px' }}>
-                            {/* 按圖要可以連結到商品 */}
-                            <img src="/media/second_pd/cat/cat2_home1_1.jpeg" className="card-img-top p-2" alt="二手商品圖" />
-                            <div className="px-3">
-                                {/* 要變連結 */}
-                                <span className="ptxtb4">灰色毛氈立方貓窩（可折疊）</span>
-                                <div className='d-flex justify-content-center'>
-                                    <AddToCartBtn type="icon" />
-                                    <AddToMyFavorite />
-                                </div>
-                            </div>
-                        </div>
-                        {/* 2 */}
-                        <div className="card rounded mx-1" style={{ minWidth: '150px' }}>
-                            {/* 按圖要可以連結到商品 */}
-                            <img src="/media/second_pd/cat/cat2_home1_1.jpeg" className="card-img-top p-2" alt="二手商品圖" />
-                            <div className="px-3">
-                                {/* 要變連結 */}
-                                <span className="ptxtb4">灰色毛氈立方貓窩（可折疊）</span>
-                                <div className='d-flex justify-content-center'>
-                                    <AddToCartBtn type="icon" />
-                                    <AddToMyFavorite />
-                                </div>
-                            </div>
-                        </div>
-                        {/* 3 */}
-                        <div className="card rounded mx-1" style={{ minWidth: '150px' }}>
-                            {/* 按圖要可以連結到商品 */}
-                            <img src="/media/second_pd/cat/cat2_home1_1.jpeg" className="card-img-top p-2" alt="二手商品圖" />
-                            <div className="px-3">
-                                {/* 要變連結 */}
-                                <span className="ptxtb4">灰色毛氈立方貓窩（可折疊）</span>
-                                <div className='d-flex justify-content-center'>
-                                    <AddToCartBtn type="icon" />
-                                    <AddToMyFavorite />
-                                </div>
-                            </div>
-                        </div>
-                        {/* 4 */}
-                        <div className="card rounded mx-1" style={{ minWidth: '150px' }}>
-                            {/* 按圖要可以連結到商品 */}
-                            <img src="/media/second_pd/cat/cat2_home1_1.jpeg" className="card-img-top p-2" alt="二手商品圖" />
-                            <div className="px-3">
-                                {/* 要變連結 */}
-                                <span className="ptxtb4">灰色毛氈立方貓窩（可折疊）</span>
-                                <div className='d-flex justify-content-center'>
-                                    <AddToCartBtn type="icon" />
-                                    <AddToMyFavorite />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* 右鍵 */}
-                    <div className="d-flex justify-content-center align-items-center ">
-                        <i
-                            className="paw-btn-outline-middlegreen bi bi-caret-right-fill ptxt2"
-                            onClick={this.rightArrowClick}
-                        ></i>
-                    </div>
-                </div>
+          {/* 左鍵 */}
+          {showArrows && (
+            <div className="d-flex justify-content-center align-items-center px-2">
+              <i
+                className="paw-btn-outline-middlegreen bi bi-caret-left-fill ptxt2"
+                onClick={this.leftArrowClick}
+                style={{ cursor: 'pointer', fontSize: '24px' }}
+              ></i>
             </div>
-        </>);
-    }
-    leftArrowClick = () => {
-        alert("左：還沒做移動鍵")
-      };
-    
-      rightArrowClick = () => {
-       alert("右：還沒做移動鍵");
-      }
+          )}
+
+          {/* 商品區 */}
+          <div
+            className="d-flex flex-grow-1 overflow-hidden"
+            ref={this.scrollRef}
+            style={{ scrollBehavior: 'smooth', flexWrap: 'nowrap' }}
+          >
+            {sellerOtherPd.map((pd) => (
+              <div key={pd.pid} className="card rounded mx-1 " style={{ maxWidth: '200px', minWidth: '150px' }}>
+                <div className='d-flex flex-column justify-content-between' style={{ height: '100%' }}>
+                  <div className="px-3">
+                    <a href={`/product/${pd.pid}`}>
+                      <img
+                        src={pd.images[0]?.img_path}
+                        className="card-img-top p-2"
+                        alt="二手商品圖"
+                      />
+                    </a>
+                    <a href={`/product/${pd.pid}`} className="ptxtb4 d-block">
+                      {pd.pd_name}
+                    </a>
+                  </div>
+
+                  <div className="d-flex justify-content-center">
+                    <AddToMyFavorite />
+                    <AddToCartBtn type="icon" />
+                  </div>
+                </div>
+
+              </div>
+            ))}
+          </div>
+
+          {/* 右鍵 */}
+          {showArrows && (
+            <div className="d-flex justify-content-center align-items-center px-2">
+              <i
+                className="paw-btn-outline-middlegreen bi bi-caret-right-fill ptxt2"
+                onClick={this.rightArrowClick}
+                style={{ cursor: 'pointer', fontSize: '24px' }}
+              ></i>
+            </div>
+          )}
+        </div>
+      </div>
+    </>);
+  }
+  //商品不用滑動時箭頭消失
+  componentDidMount() {
+    this.updateScrollBtn();
+    this.scrollRef.current.addEventListener('scroll', this.updateScrollBtn);
+    window.addEventListener('resize', this.updateScrollBtn);
+  }
+
+  componentWillUnmount() {
+    this.scrollRef.current.removeEventListener('scroll', this.updateScrollBtn);
+    window.removeEventListener('resize', this.updateScrollBtn);
+  }
+
+  updateScrollBtn = () => {
+    const container = this.scrollRef.current;
+    if (!container) return;
+    const { scrollWidth, clientWidth } = container;
+    this.setState({ showArrows: scrollWidth > clientWidth + 1 });
+  };
+
+  leftArrowClick = () => {
+    this.scrollRef.current.scrollBy({ left: -200, behavior: 'smooth' });
+  };
+
+  rightArrowClick = () => {
+    this.scrollRef.current.scrollBy({ left: 200, behavior: 'smooth' });
+  }
 }
 
-export default PdInfo;
+export default SellerOtherPd;

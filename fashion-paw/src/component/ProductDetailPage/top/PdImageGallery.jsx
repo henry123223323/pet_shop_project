@@ -4,14 +4,11 @@ import styles from './PdImageGallery.module.css';
 class PdImageGallery extends Component {
   constructor(props) {
     super(props);
+    const images = props.images || [];
+    const firstImage = images[0]?.img_path || '';
     this.state = {
-      image: [
-        '/media/second_pd/cat/cat2_home1_1.jpeg',
-        '/media/second_pd/cat/cat2_home1_2.jpeg',
-        '/media/second_pd/cat/cat2_home1_3.jpeg',
-        '/media/second_pd/cat/cat2_home1_4.jpeg',
-      ],
-      currentImage: '/media/second_pd/cat/cat2_home1_1.jpeg',
+      image: images,
+      currentImage: firstImage,
       isZoomVisible: false,
       zoomPosition: { x: 0, y: 0 },
     };
@@ -44,14 +41,15 @@ class PdImageGallery extends Component {
                 onMouseLeave={this.handleMouseLeave}
                 onMouseMove={this.handleMouseMove}
               />
-             {isZoomVisible && (
+              
+              {isZoomVisible && (
                 <div
                   className={styles.zoomBox}
                   style={{
                     top: `${zoomPosition.y}px`,
                     left: `${zoomPosition.x}px`,
                     backgroundImage: `url(${currentImage})`,
-                    backgroundPosition: `${-zoomPosition.x *2 +75}px ${-zoomPosition.y *2 +75}px`,
+                    backgroundPosition: `${-zoomPosition.x * 2 + 75}px ${-zoomPosition.y * 2 + 75}px`,
                   }}
                 ></div>
               )}
@@ -71,10 +69,10 @@ class PdImageGallery extends Component {
               <div
                 key={index}
                 className={styles.smallGallery}
-                onClick={() => this.handleImageClick(img)}
+                onClick={() => this.handleImageClick(img.img_path)}
                 style={{ cursor: 'pointer' }}
               >
-                <img src={img} alt='商品圖
+                <img src={img.img_path} alt='商品圖
                 '/>
               </div>
             ))}
@@ -89,16 +87,17 @@ class PdImageGallery extends Component {
 
   leftArrowClick = () => {
     const { image, currentImage } = this.state;
-    const currentIndex = image.indexOf(currentImage);
+    const currentIndex = image.findIndex(img => img.img_path === currentImage);
     const preIndex = (currentIndex - 1 + image.length) % image.length;
-    this.setState({ currentImage: image[preIndex] });
+    // console.log(preIndex)
+    this.setState({ currentImage: image[preIndex].img_path });
   };
 
   rightArrowClick = () => {
     const { image, currentImage } = this.state;
-    const currentIndex = image.indexOf(currentImage);
+    const currentIndex = image.findIndex(img => img.img_path === currentImage);
     const nextIndex = (currentIndex + 1 + image.length) % image.length;
-    this.setState({ currentImage: image[nextIndex] });
+    this.setState({ currentImage: image[nextIndex].img_path });
   };
 
   handleMouseEnter = () => {
