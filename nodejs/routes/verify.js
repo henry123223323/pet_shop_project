@@ -78,6 +78,7 @@ router.post('/verify-code', async (req, res) => {
         );
 
         if (rows.length > 0) {
+            await conn.query('DELETE FROM email_verification WHERE email = ?', [email]);
             res.json({ success: true, message: '驗證成功' });
         } else {
             res.json({ success: false, message: '驗證碼錯誤或已過期' });

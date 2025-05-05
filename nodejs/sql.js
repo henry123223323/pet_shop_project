@@ -10,7 +10,8 @@ app.use(express.static("public"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
-
+const resetPasswordRoutes = require('./routes/resetPassword');
+app.use('/password', resetPasswordRoutes);
 var mysql = require("mysql");
 const { log } = require("console");
 var conn = mysql.createConnection({
