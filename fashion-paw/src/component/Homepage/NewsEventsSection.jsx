@@ -1,46 +1,44 @@
-// NewsEventsSection.jsx
-import React from 'react';
+// src/component/PetKnowledge/NewsEventsSection.jsx
+import React, { useState, useEffect } from 'react';
 import styles from './NewsEventsSection.module.css';
 import pawicon from './images/pawicon.svg'
+import ttt from'./images/Dog7.jpg'
 
-// 範例資料
-const events = [
-  { id: 1, title: '我是測試快訊', date: '', img: '/images/event1.jpg', link: '#' },
-  { id: 2, title: '我是測試快訊', date: '5/1 - 5/20', img: '/images/event2.jpg', link: '#' },
-  { id: 3, title: '我是測試快訊', date: '2025/6/11', img: '/images/event3.jpg', link: '#' },
-  { id: 4, title: '我是測試快訊', date: '4/12 - 6/28', img: '/images/event4.jpg', link: '#' },
-  { id: 5, title: '我是測試快訊', date: '5/15', img: '/images/event5.jpg', link: '#' },
-  { id: 6, title: '我是測試快訊', date: '6/01', img: '/images/event6.jpg', link: '#' }
+const mockEvents= [
+  { id: 1, title: '🐶 寵物健康講座報名開放中', date:'2025/05/19', img:ttt },
+  { id: 2, title: '🐱 貓咪美容工作坊',       date:'2025/06/02', img:ttt },
+  { id: 3, title: '🐰 兔兔訓練小教室',       date:'2025/06/15', img:ttt }
 ];
 
-function NewsEventsSection() {
+
+export default function NewsEventsSection() {
+  const [events, setEvents] = useState([]);
+  useEffect(() => {
+    setEvents(mockEvents);
+  }, []);
+
   return (
-    <div className='container-lg'>
-    <section id="newsEvents">      
+    <section className="container-lg" id='newsEvents'>
       <div className={styles.headerWrapper}>
-        <h2 className={styles.title}>活動快報
-          <img src={pawicon} className={styles.icon} /></h2>
+        <h2 className={styles.title}>
+          活動快報 <img src={pawicon} className={styles.icon}/>
+        </h2>
       </div>
       <div className="row">
-        {events.map(event => (
-          <div key={event.id} className="col-6 col-md-6 col-lg-4 mb-4">
+        {events.map(e => (
+          <div key={e.id} className="col-6 col-md-4 mb-4">
             <div className={styles.card}>
-              <a href={event.link} className={styles.cardLink}>
-                <div className={styles.imageWrapper}>
-                  <img src={event.img} alt={event.title} className={styles.image} />                
+              <div className={styles.imageWrapper}>
+                <img src={e.img} alt={e.title} className={styles.image}/>
+                <div className={styles.overlay}>
+                  <h3>{e.title}</h3>
+                  <p>{e.date}</p>
                 </div>
-                <div className={styles.cardBody}>
-                  <h3 className={styles.cardTitle}>{event.title}</h3>
-                  {event.date && <p className={styles.cardDate}>{event.date}</p>}
-                </div>
-              </a>
+              </div>
             </div>
           </div>
         ))}
       </div>
     </section>
-    </div>
   );
 }
-
-export default NewsEventsSection;

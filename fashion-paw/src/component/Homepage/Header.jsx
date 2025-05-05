@@ -43,8 +43,7 @@ function Header() {
             {/* ----Header----- */}
             <header className={[
                 styles.header,
-                hideHeader ? styles.hiddenHeader : "",
-                'container-xxl'
+                hideHeader ? styles.hiddenHeader : ""
             ].join(' ')}
             >
 

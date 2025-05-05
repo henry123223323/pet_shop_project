@@ -37,7 +37,6 @@ function Homepage() {
   return (
     <>
       <NewsBar />
-      <Banner />
       <SectionLinks />
       <CategoryIcons />
       <BestsellerTabs />
