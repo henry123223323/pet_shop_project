@@ -1,5 +1,5 @@
 // src/component/SeProductPage/SeProductPage.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import styles from './SeProductPage.module.css';
 
 import SideBar from './SideBar/SideBar';
@@ -134,7 +134,7 @@ export default function SeProductPage() {
     mapselecttown
   ]);
 
-  const handleFilterChange = nf => setFilters(nf);
+  const handleFilterChange = useCallback(nf => setFilters(nf), []);
   const handleSortChange = sk => setSortBy(sk);
   const handleToggleFavorite = id => {
     setFavoriteIds(prev =>
