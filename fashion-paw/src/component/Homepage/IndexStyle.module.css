@@ -1,8 +1,7 @@
 /* 涵蓋homepage的module.css */
-/* 調整導覽列的大小 */
+/* 調整整個header的高度大小，一次定義，全局可用 */
 :root {
-  --header-height: 200px;
-  /* 一次定義，全局可用 */
+  --header-height: 250px;
 }
 
 /* header樣式 */
@@ -32,6 +31,7 @@
   display: flex;
   justify-content: flex-end;
   align-items: center;
+  /* 左右間隔 */
   column-gap: 0.5rem;
 }
 
@@ -63,206 +63,51 @@
   align-items: center;
 }
 
+/* 確保內容都從這個高度之後才開始 */
 .mainContent {
   padding-top: var(--header-height);
 }
 
-/* ----------------------------------------- */
-
-/* 向下滑動後的一列導覽列版型 */
-.stickyHeader {
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.5rem 1rem;
-  background: rgb(255, 255, 255, 0.9);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-}
-
-/* 切到一列時 Logo 縮小 */
-.logoSmall {
-  height: 100px;
-}
-
-/* 滑動後圖示+連結群組 */
-.iconGroup {
-  display: flex;
-  align-items: center;
-  column-gap: 0.5rem;
-}
-
-.iconGroup a {
-  color: #333;
-  text-decoration: none;
-}
-
-
-
-/* ----------------footer--------------- */
-
-.footer {
-  color: white;
-  background-color: #70823C;
-  display: flex;
-  margin-top: 2rem;
-  padding: 1rem 1rem;
-}
-
-/* ------------響應式------------------ */
-/* 漢堡按鈕 */
-/* .hamburger {
-  display: none;
-  font-size: 1.5rem;
-  background: none;
-  border: none;
-} */
-
-.mainNavWrapper {
-  display: block;
-}
-
-@media (max-width: 1200px) {
-  .header {
-    height: 200px;
-    padding: 0.5rem;
-  }
-
-  .headerLogo img {
-    height: 80px;
-    /* Logo 縮小 */
-  }
-
-  .menu {
-    overflow-x: auto;
-    gap: 1.5rem;
-  }
-
-  .megaPanel {
-    width: 90%;
-    max-width: 800px;
-    left: 50%;
-    transform: translateX(-50%);
+/* ----------------hambuger------------- */
+@media (min-width: 769px) {
+  .hamburger {
+    display: none;
   }
 }
 
 @media (max-width: 768px) {
-  .hamburger {
-    display: block;
-    /* 手機才顯示漢堡鍵 */
+  .mainContent {
+    padding-top: 0;
+    /* 手機版不要留空白 */
   }
 
   .header {
     height: auto;
-    /* 高度隨內容撐開 */
-    flex-direction: row;
     /* 改成左右排列 */
+    flex-direction: row;
     align-items: center;
+    justify-content: center;
+    position: relative;
   }
 
-  .headerTop {
-    order: 2;
-    /* 將圖示群組移到底部或隱藏 */
+  .headerTop,
+  .mainNav {
     display: none;
-    /* 小螢幕可考慮隱藏搜尋/購物圖示 */
   }
 
-  .headerLogo {
-    order: 1;
-    flex: 1;
-    /* Logo 置中 */
-  }
-
-  .mainNavWrapper {
-    display: none;
-    position: absolute;
-    top: var(--header-height);
-    left: 0;
-    right: 0;
-    background: white;
-    transform: translateY(-100%);
-    /* 預設隱藏 */
-    transition: transform .3s;
-  }
-
-  .mainNavWrapper.open {
+  .hamburger {
     display: block;
-    transform: translateY(0);
-    /* 點開後往下推 */
+    font-size: 2rem;
+    background: none;
+    border: none;
+    /* 從父層 .header 移出來 */
+    position: absolute;
+    /* 距離左邊 1rem */
+    left: 1rem;
+    /* 垂直置中 header */
+    top: 50%;
+    transform: translateY(-50%);
+    /* 確保在 overlay 之上 */
+    z-index: 1000;
   }
-
-  .menu {
-    flex-direction: column;
-    gap: 0;
-  }
-
-  .menu li a {
-    padding: 1rem;
-    border-bottom: 1px solid #eee;
-  }
-
-  .megaPanel {
-    position: static;
-    /* 不要絕對定位 */
-    transform: none;
-    width: 100%;
-    flex-direction: column;
-  }
-
-  .sidebar {
-    display: none;
-    /* 只顯示 Tabs + 內容 */
-  }
-
-  .tabs {
-    overflow-x: auto;
-    gap: 1rem;
-  }
-
-  .tabPane {
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-  }
-
-}
-
-/* ---------------- */
-/* 側邊抽屜初始：藏到畫面左側 */
-.drawer {
-  position: fixed;
-  top: var(--header-height);
-  left: 0;
-  height: calc(100vh - var(--header-height));
-  width: 80%;
-  /* 手機版 80%，你也可以 max-width: 300px */
-  max-width: 300px;
-  background: white;
-  transform: translateX(-100%);
-  transition: transform 0.3s ease;
-  z-index: 1001;
-  /* 蓋在遮罩之上 */
-}
-
-/* 打開 drawer */
-.drawer.open {
-  transform: translateX(0);
-}
-
-/* 半透明遮罩 */
-.navOverlay {
-  display: none;
-  position: fixed;
-  top: var(--header-height);
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.4);
-  z-index: 1000;
-  /* 在遮罩之下，drawer 之上 */
-}
-
-/* 遮罩打開 */
-.navOverlay.open {
-  display: block;
 }

@@ -48,13 +48,53 @@ const megaData = {
 function MainNav() {
   const [openKey, setOpenKey] = useState(null);
   const [activeTab, setActiveTab] = useState(null);
-  
+  // 用一個 state 儲存目前展開的 index，沒展開就是 null
+  const [openIndex, setOpenIndex] = useState(null);
+
+  const items = [
+    { label: '關於我們', to: '/Aboutus', submenu: null },
+    {
+      label: '拾毛百貨', to: '/#',
+      submenu: [
+        { label: '狗狗', to: '/Novicefeeding/dog' },
+        { label: '貓咪', to: '/HealthCheck/dog' },
+        { label: '倉鼠', to: '/PartTouch/Touch' },
+        { label: '鳥', to: '/PetQuiz/Quiz' }
+      ]
+    },
+    {
+      label: '拾毛市場', to: '/#',
+      submenu: [
+        { label: '狗狗', to: '/Novicefeeding/dog' },
+        { label: '貓咪', to: '/HealthCheck/dog' },
+        { label: '倉鼠', to: '/PartTouch/Touch' },
+        { label: '鳥', to: '/PetQuiz/Quiz' }
+      ]
+    },
+    {
+      label: '寵物小知識', to: '/#',
+      submenu: [
+        { label: '小文章' },
+        { label: '新手飼養指南', to: '/Novicefeeding/dog' },
+        { label: '健康檢查篇', to: '/HealthCheck/dog' },
+        { label: '互動小專區' },
+        { label: '部位有話說', to: '/PartTouch/Touch' },
+        { label: '寵物知多少', to: '/PetQuiz/Quiz' }
+      ]
+    }
+  ];
+
+  const handleClick = (i) => {
+    // 點同一個又關一次，不同就展開新的一個
+    setOpenIndex(openIndex === i ? null : i);
+  };
 
   return (
     <nav className={navstyles.mainNav}>
       <ul className={navstyles.menu}>
+
         <li><NavLink to="/Aboutus">關於我們</NavLink></li>
-        {/* --------------------------------------------------- */}
+        {/* ---------------新品+二手下拉選單div區塊-------------------- */}
         {['/ProductPage', '/SeProductPage'].map(path => (
           <li key={path}
             className={navstyles.menuItem}
@@ -62,13 +102,13 @@ function MainNav() {
               setOpenKey(path);
               setActiveTab(megaData[path].tabs[0]);
             }}
-            
+
             // onMouseEnter={() => setOpenKey(path)}
             onMouseLeave={() => setOpenKey(null)}>
             <NavLink to={path}>
               {{
-                '/ProductPage': '新品專區',
-                '/SeProductPage': '二手專區'
+                '/ProductPage': '拾毛百貨',
+                '/SeProductPage': '拾毛市場'
               }[path]}
             </NavLink>
             {megaData[path] && openKey === path && (
@@ -76,10 +116,10 @@ function MainNav() {
                 {/* 左側子分類 */}
                 <aside className={navstyles.sidebar}>
                   <ul>
-                    {megaData[path].sidebar.map(item => (
-                      <li key={item.to}>
+                    {megaData[path].sidebar.map((item, idx) => (
+                      <li key={`${item.to}-${idx}`}>
                         <NavLink to={item.to}>
-                          <img src={item.icon} alt="" />
+                          <img src={item.icon} alt={item.label} />
                           <span>{item.label}</span>
                         </NavLink>
                       </li>
@@ -115,44 +155,52 @@ function MainNav() {
             )}
           </li>
         ))}
-        {/* ------------------------------------------------------------------------ */}
-        <li className={navstyles.dropdown}><NavLink to="/knowledge">寵物小知識</NavLink>
+        {/* ---------------寵物小知識下拉選單div區塊------------------------------ */}
+        <li className={navstyles.dropdown}><NavLink to="#">寵物小知識</NavLink>
           <ul className={navstyles.dropdownMenu}>
             <li>知識小文章</li>
-            <li><NavLink to="/second/food">新手飼養指南</NavLink></li>
-            <li><NavLink to="/second/food">健康檢查篇</NavLink></li>
+            <li><NavLink to="/Novicefeeding/dog">新手飼養指南</NavLink></li>
+            <li><NavLink to="/HealthCheck/dog">健康檢查篇</NavLink></li>
             <li>互動小專區</li>
-            <li><NavLink to="/second/food">部位有話說</NavLink></li>
-            <li><NavLink to="/second/food">問答知多少</NavLink></li>
+            <li><NavLink to="/PartTouch/Touch">部位有話說</NavLink></li>
+            <li><NavLink to="/PetQuiz/Quiz">問答知多少</NavLink></li>
           </ul></li>
-
-        {/* <li className={navstyles.dropdown}>
-          <NavLink to="/new">新品專區</NavLink>
-          <ul className={navstyles.dropdownMenu}>
-            <li><NavLink to="/second/food">狗狗</NavLink></li>
-            <li><NavLink to="/second/food">貓咪</NavLink></li>
-            <li><NavLink to="/second/food">倉鼠</NavLink></li>
-            <li><NavLink to="/second/food">鳥</NavLink></li>
-          </ul>
-        </li>
-
-        <li><NavLink to="/second">二手專區</NavLink></li>
-
-        <li className={navstyles.dropdown}><NavLink to="/knowledge">寵物小知識</NavLink>
-          <ul className={styles.dropdownMenu}>
-            <li>知識小文章</li>
-            <li><NavLink to="/second/food">新手飼養指南</NavLink></li>
-            <li><NavLink to="/second/food">健康檢查篇</NavLink></li>
-            <li>互動小專區</li>
-            <li><NavLink to="/second/food">部位有話說</NavLink></li>
-            <li><NavLink to="/second/food">問答知多少</NavLink></li>
-          </ul></li> */}
       </ul>
-
-
-
-
+      {/* 手風琴的下拉式選單 */}
+      <ul className={navstyles.accordionMenu}>
+        {items.map((item, i) => (
+          <li key={i}>
+            <div
+              className={navstyles.header}
+              onClick={() => item.submenu && handleClick(i)}
+            >
+              {item.submenu
+                ? <span className={navstyles.headerText}>{item.label}</span>
+                : <NavLink to={item.to}>{item.label}</NavLink>
+              }
+              {item.submenu && (
+                <span className={navstyles.arrow}>
+                  {openIndex === i ? '▾' : '▸'}
+                </span>
+              )}
+            </div>
+            {item.submenu && openIndex === i && (
+              <ul className={navstyles.submenu}>
+                {item.submenu.map((sub, j) => (
+                  <li key={j}>
+                    {sub.to
+                      ? <NavLink to={sub.to}>{sub.label}</NavLink>
+                      : <span className={navstyles.noLink}>{sub.label}</span>
+                    }
+                  </li>
+                ))}
+              </ul>
+            )}
+          </li>
+        ))}
+      </ul>
     </nav>
+
   );
 }
 export default MainNav;

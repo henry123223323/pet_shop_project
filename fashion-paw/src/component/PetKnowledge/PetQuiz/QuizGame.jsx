@@ -17,7 +17,7 @@ function ProgressBar({ current, total }) {
     )
 }
 
-function QuizGame({ pet, questions }) {
+function QuizGame({ pet, questions, onRestart }) {
     // 1. 管理「第幾題」
     const [currentQuestion, setCurrentQuestion] = useState(0)
     // 2. 管理「答對幾題」
@@ -76,9 +76,11 @@ function QuizGame({ pet, questions }) {
                     <button
                         className="btn btn-outline-primary"
                         onClick={() => {
+                            // 如果同時想在 QuizGame 裡也重置題目進度：
                             setCurrentQuestion(0);
                             setScore(0);
                             setFinished(false);
+                            onRestart();    // ← 這行把畫面 reset 回選擇模式
                         }}
                     >
                         重新遊戲
@@ -91,7 +93,7 @@ function QuizGame({ pet, questions }) {
                         回首頁
                     </button>
                 </div>
-            </div>
+            </div >
         )
     }
 

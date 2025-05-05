@@ -1,14 +1,20 @@
-import React from 'react';
-import banner from '../PetKnowledge/images/selectbirdv2.png'
-// import slider component (e.g. react-slick or swiper) 這裡先用 div 佔位
-function Banner() {
+// src/component/Homepage/Banner.jsx
+import React from 'react'
+import banner from './images/Dog9.jpg'     // 改成你自己的路徑
+import styles from './Banner.module.css'
+
+export default function Banner() {
   return (
-    <div className="banner-carousel">
-      {/* TODO: 用輪播套件取代下面三張圖 */}
-      <div className="slide"><img src={banner} alt="" style={{width:500}} /></div>
-      <div className="slide">Banner 2</div>
-      <div className="slide">Banner 3</div>
+    <div className={styles.bannerWrapper}>
+      <img
+        src={banner}
+        alt="Banner 圖片"
+        className={styles.bannerImage}
+      />
+      <div className={styles.bannerContent}>
+        <h2>與　毛　相　遇　|　拾　獲　美　好 </h2>
+        <p>Good to meet HowSmoat, pick up the beauty.</p>
+      </div>
     </div>
-  );
+  )
 }
-export default Banner;
