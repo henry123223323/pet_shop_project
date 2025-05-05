@@ -4,7 +4,8 @@ var axios = require('axios');
 var cors = require("cors");
 var app = express();
 app.listen(8000);
-app.use(express.static("public"));
+const path = require('path');
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
@@ -39,7 +40,7 @@ conn.connect(function (err) {
 //           'Accept': '*/*'
 //         }
 //       });
-  
+
 //       res.setHeader('Content-Type', 'application/json');
 //       response.data.pipe(res);
 //     } catch (err) {
@@ -47,7 +48,7 @@ conn.connect(function (err) {
 //       res.status(500).send('讀取檔案失敗');
 //     }
 // });
-  
+
 // app.get('/api/taiwan_town', async (req, res) => {
 //     try {
 //       const url = 'https://github.com/henry123223323/Lab_A/releases/download/v1.0.1/taiwan_townships.json';
@@ -58,7 +59,7 @@ conn.connect(function (err) {
 //           'Accept': '*/*'
 //         }
 //       });
-  
+
 //       res.setHeader('Content-Type', 'application/json');
 //       response.data.pipe(res);
 //     } catch (err) {
@@ -66,8 +67,8 @@ conn.connect(function (err) {
 //       res.status(500).send('讀取檔案失敗');
 //     }
 //   });
-  
-  
+
+
 app.get("/get/article", function (req, res) {
     conn.query("SELECT * FROM article", function (err, results) {
         if (err) {
@@ -168,3 +169,53 @@ GROUP BY p.pid;`
 });
 
 
+app.get("/get/hot-ranking", (req, res) => {
+    const hostUrl = `${req.protocol}://${req.get("host")}`; // e.g. http://localhost:8000
+  
+    const sql = `
+      SELECT
+        p.pid,
+        p.pd_name,
+        p.price,
+        p.sale_count,
+        (
+          SELECT img_path
+          FROM product_image
+          WHERE pid = p.pid
+          ORDER BY pd_img_id ASC
+          LIMIT 1
+        ) AS img_path
+      FROM productslist p
+      ORDER BY p.sale_count DESC
+      LIMIT 3;
+    `;
+  
+    conn.query(sql, (err, results) => {
+      if (err) {
+        console.error("❌ /get/hot-ranking 查詢錯誤：", err);
+        return res.status(500).send("伺服器錯誤，無法取得熱銷排行");
+      }
+  
+      // 把每筆 row 處理成帶 imageUrl 的物件陣列
+      const data = results.map(row => {
+        let imgPath = (row.img_path || "")
+          .replace(/\\/g, "/")
+          .replace(/^(\.\.\/|public\/)+/, "")  // 去掉 ../ 或 public/
+          .replace(/^\/+/, "");
+  
+        return {
+          pid:        row.pid,
+          pd_name:   row.pd_name,
+          price:     row.price,
+          sale_count: row.sale_count,
+          imageUrl:  imgPath ? `${hostUrl}/${imgPath}` : null,
+        };
+      });
+  
+      // 檢查產生的 URL 是否正確
+      console.log("🔥 /get/hot-ranking 最終 imageUrl：", data.map(d => d.imageUrl));
+  
+      res.json(data);
+    });
+  });
+  

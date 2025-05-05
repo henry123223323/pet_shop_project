@@ -1,9 +1,11 @@
-// src/component/ProductPage/HotRanking/HotRanking.jsx
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import styles from './HotRanking.module.css';
 import AddToCartBtn from '../../share/AddToCartBtn';
 import AddToMyFavorite from '../../share/AddToMyFavorite';
+
+// axios 根網址，可透過 REACT_APP_API_URL 設定或採用相對路徑
+axios.defaults.baseURL = process.env.REACT_APP_API_URL || '';
 
 export default function HotRanking() {
   const [ranking, setRanking] = useState([]);
@@ -13,7 +15,7 @@ export default function HotRanking() {
 
   useEffect(() => {
     axios
-      .get('http://localhost:8000/get/hot-ranking')
+      .get('/get/hot-ranking')
       .then(res => setRanking(res.data))
       .catch(err => {
         console.error('取得熱銷排行失敗', err);
@@ -34,7 +36,10 @@ export default function HotRanking() {
   };
 
   if (loading) return <div className={styles.container}>載入中…</div>;
-  if (error) return <div className={styles.container}>{error}</div>;
+  if (error)   return <div className={styles.container}>{error}</div>;
+
+  // public 資料夾根路徑中的預設圖
+  const placeholderUrl = `${process.env.PUBLIC_URL}/placeholder.png`;
 
   return (
     <div className={styles.container}>
@@ -43,13 +48,22 @@ export default function HotRanking() {
         {ranking.map(item => {
           const { pid, pd_name, price, imageUrl } = item;
           const isFav = favoriteIds.includes(pid);
-          // 直接使用後端的完整 imageUrl，否則顯示預設圖
-          const imgSrc = imageUrl || '/placeholder.png';
+          // 處理 imageUrl：若含 http|https|// 則直接用；否則以 baseURL 拼接
+          const imgSrc = imageUrl
+            ? /^(https?:)?\/\//.test(imageUrl)
+              ? imageUrl
+              : `${axios.defaults.baseURL}/${imageUrl}`
+            : placeholderUrl;
 
           return (
             <div key={pid} className={styles.card}>
               <div className={styles.imageWrapper}>
-                <img src={imgSrc} alt={pd_name} className={styles.image} />
+                <img
+                  src={imgSrc}
+                  alt={pd_name}
+                  className={styles.image}
+                  onError={e => { e.currentTarget.src = placeholderUrl; }}
+                />
               </div>
               <p className={styles.name}>{pd_name}</p>
               <p className={styles.price}>

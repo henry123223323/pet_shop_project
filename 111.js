@@ -58,66 +58,10 @@ app.get("/get/userinfo", function (req, res) {
   });
 });
 
-app.get("/get/hot-ranking", (req, res) => {
-  const hostUrl = `${req.protocol}://${req.get("host")}`; // e.g. http://localhost:8000
-  const sql = `
-      SELECT
-        p.pid        AS pid,
-        p.pd_name    AS pd_name,
-        p.price      AS price,
-        p.sale_count AS sale_count,
-        pi.img_path  AS img_path
-      FROM productslist p
-      LEFT JOIN (
-        SELECT pi1.pid, pi1.img_path
-        FROM product_image pi1
-        INNER JOIN (
-          SELECT pid, MIN(pd_img_id) AS min_id
-          FROM product_image
-          GROUP BY pid
-        ) pm
-        ON pi1.pid = pm.pid
-           AND pi1.pd_img_id = pm.min_id
-      ) AS pi
-        ON pi.pid = p.pid
-      ORDER BY p.sale_count DESC
-      LIMIT 3
-    `;
-  conn.query(sql, (err, results) => {
-    if (err) {
-      console.error("❌ /get/hot-ranking 查詢錯誤：", err);
-      return res.status(500).send("伺服器錯誤，無法取得熱銷排行");
-    }
 
-    const data = results.map(row => {
-      // 1) 把反斜線換正斜線  2) 去掉開頭的 "../"  3) 去掉開頭的 "/public/"
-      let imgPath = (row.img_path || "")
-        .replace(/\\/g, "/")
-        .replace(/^(\.\.\/)+/, "")
-        .replace(/^\/+/, "")
-        .replace(/^public\//, "");
-      const imageUrl = imgPath
-        ? `${hostUrl}/${imgPath}`
-        : null;
-      return {
-        pid: row.pid,
-        pd_name: row.pd_name,
-        price: row.price,
-        sale_count: row.sale_count,
-        imageUrl,
-      };
-    });
 
-    // **請注意看這裡印出的最後 imageUrl 是否正確**
-    console.log("🔥 最終 imageUrl：", data.map(d => d.imageUrl));
-    res.json(data);
-  });
-});
-
-// 假設你在 sql.js 已經有 app, conn, express.static, cors 等設定
 
 // 取得新品列表
-// 在其他 middleware / 路由之後，但在 app.listen 之前
 app.get("/get/new-products", (req, res) => {
   const hostUrl = `${req.protocol}://${req.get("host")}`; // e.g. http://localhost:8000
   const sql = `
@@ -239,6 +183,41 @@ app.post("/get/new-products", async (req, res) => {
     });
   });
 });
+
+// 新增新品
+app.post('/get/new-products', (req, res) => {
+  const data = req.body;
+  const pid = nextPid++;
+  const newProduct = { pid, ...data };
+  products.unshift(newProduct);
+  console.log(`Created product ${pid}`);
+  res.status(201).json(newProduct);
+});
+// 更改商品資訊
+app.put('/get/new-products/:pid', (req, res) => {
+  const pid = parseInt(req.params.pid, 10);
+  const index = products.findIndex(p => p.pid === pid);
+  if (index === -1) {
+    return res.status(404).json({ error: `Product ${pid} not found` });
+  }
+  const updated = { ...products[index], ...req.body, pid };
+  products[index] = updated;
+  console.log(`Updated product ${pid}`);
+  res.json(updated);
+});
+
+// 刪除商品
+app.delete('/get/new-products/:pid', (req, res) => {
+  const pid = parseInt(req.params.pid, 10);
+  const initialLength = products.length;
+  products = products.filter(p => p.pid !== pid);
+  if (products.length === initialLength) {
+    return res.status(404).json({ error: `Product ${pid} not found` });
+  }
+  console.log(`Deleted product ${pid}`);
+  res.sendStatus(204);
+});
+
 
 
 // 假設推薦商品存在 productslist 表裡，用某種邏輯挑 3 筆

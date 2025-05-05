@@ -6,6 +6,7 @@
   display: flex;
   list-style: none;
   padding: 0;
+  margin-left: 1.5rem
 }
 .separator::before {
   content: "›";

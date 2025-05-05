@@ -128,15 +128,15 @@ export default class SecondProductManage extends Component {
                     <td>
                       {product.imageUrl ? (
                         <img
-                        src={product.imageUrl}
-                        alt={product.pd_name}
-                        style={{
-                          width: '50px',
-                          height: '50px',
-                          objectFit: 'cover',
-                          borderRadius: '4px'
-                        }}
-                      />
+                          src={product.imageUrl}
+                          alt={product.pd_name}
+                          style={{
+                            width: '50px',
+                            height: '50px',
+                            objectFit: 'cover',
+                            borderRadius: '4px'
+                          }}
+                        />
                       ) : (
                         <span className="text-muted">無圖</span>
                       )}
@@ -179,12 +179,13 @@ export default class SecondProductManage extends Component {
         {/* 模態框 */}
         {showModal && (
           <Market_modal
-            key={`${ModalState}-${thisIndex}`}
-            close={this.toggleModal}
+            key={`second-${ModalState}-${thisIndex}`}
+            mode="second"
+            modalstate={ModalState}
+            product={this.findProduct(thisIndex)}
             new={this.new}
             edit={this.edit}
-            product={this.findProduct(thisIndex)}
-            modalstate={ModalState}
+            close={this.toggleModal}
           />
         )}
       </>
