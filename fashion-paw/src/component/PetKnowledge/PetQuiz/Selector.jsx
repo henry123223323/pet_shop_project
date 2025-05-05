@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import styles from './Quiz.module.css';
 
 export default function PetSelector({ options, onChange }) {
   // options: 一維字串陣列，裡面放所有寵物名稱
@@ -19,10 +20,22 @@ export default function PetSelector({ options, onChange }) {
 
   return (
     <div className="p-4 text-center" style={{ width: 300, margin: '0 auto' }}>
-      <h5 className="mb-3">請選擇動物</h5>
-      <button onClick={prev} className="btn btn-outline-secondary me-2">◀️</button>
-      <span style={{ minWidth: 80, display: 'inline-block' }}>{options[current]}</span>
-      <button onClick={next} className="btn btn-outline-secondary ms-2">▶️</button>
+      <h5 className="mb-5">請選擇動物</h5>
+      <div className={styles.selectorControls}>
+      <button
+        onClick={prev}
+        className={`${styles.triangleBtn} ${styles.triangleLeft}`}
+        aria-label="上一隻"
+      />
+      <span className={styles.selectorLabel}>
+        {options[current]}
+      </span>
+      <button
+        onClick={next}
+        className={`${styles.triangleBtn} ${styles.triangleRight}`}
+        aria-label="下一隻"
+      />
+    </div>
       {/* <div className="mt-3">
         <button className="btn btn-warning">開始遊戲</button>
       </div> */}

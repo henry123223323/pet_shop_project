@@ -1,25 +1,120 @@
-import React, { useState } from 'react';
+import React, { useState } from 'react'
+import styles from './BestsellerTabs.module.css'
+import pawicon from './images/pawicon.svg'
+import Dog7 from './images/Dog7.jpg'
+import Dog9 from './images/Dog9.jpg'
 
-function BestsellerTabs() {
-  const tabs = ['飼料','副食','保健食品','生活家居','玩具'];
-  const [active, setActive] = useState(tabs[0]);
-  return (
-    <section className="bestseller">
-      <h4>熱銷排行</h4>
-      <div className="tabs">
-        {tabs.map(t => (
-          <button
-            key={t}
-            className={t===active?'active':''}
-            onClick={()=>setActive(t)}
-          >{t}</button>
-        ))}
-      </div>
-      <div className="tab-content">
-        {/* TODO: 根據 active 顯示對應商品列表 */}
-        <p>顯示「{active}」類別的熱銷商品</p>
-      </div>
-    </section>
-  );
+
+const categories = [
+  {
+    key: 'feed',
+    label: '飼料',
+    images: [Dog7, Dog9, Dog7, Dog9, Dog7, Dog9],
+  },
+  {
+    key: 'ComplementaryFood',
+    label: '副食',
+    images: [Dog9, Dog7, Dog9],
+  },
+  {
+    key: 'snack',
+    label: '零食',
+    images: [Dog7, Dog9, Dog7],
+  },
+  {
+    key: 'health',
+    label: '保健食品',
+    images: [Dog9, Dog7, Dog9],
+  },
+  {
+    key: 'home',
+    label: '生活家居',
+    images: [Dog7, Dog9, Dog7],
+  },
+  {
+    key: 'toy',
+    label: '玩具',
+    images: [Dog9, Dog7, Dog9],
+  },
+]
+
+
+function chunkArray(arr, size) {
+  const chunks = []
+  for (let i = 0; i < arr.length; i += size) {
+    chunks.push(arr.slice(i, i + size))
+  }
+  return chunks
 }
-export default BestsellerTabs;
+
+export default function BestsellerTabs() {
+
+  const [activeKey, setActiveKey] = useState(categories[0].key)
+  const activeCategory = categories.find((c) => c.key === activeKey)
+
+  const slides = chunkArray(activeCategory.images, 3)
+
+  const [page, setPage] = useState(0)
+
+  const prev = () => setPage((page + slides.length - 1) % slides.length)
+  const next = () => setPage((page + 1) % slides.length)
+
+
+  const switchCategory = (key) => {
+    setActiveKey(key)
+    setPage(0)
+  }
+
+  return (
+    <div className="container-lg">
+      <div className={styles.titleWrapper}>
+        <h2 className={styles.title}>
+          熱銷排行榜
+          <img src={pawicon} className={styles.icon} />
+        </h2>
+
+      </div>
+
+      <nav className={styles.tabNav}>
+        {categories.map((cat) => (
+          <button
+            key={cat.key}
+            className={`${styles.tab} ${cat.key === activeKey ? styles.active : ''
+              }`}
+            onClick={() => switchCategory(cat.key)}
+          >
+            {cat.label}
+          </button>
+        ))}
+      </nav>
+
+
+      <div className={styles.slider}>
+        <button onClick={prev} className={styles.arrow}>
+          ‹
+        </button>
+
+        <div className={styles.viewport}>
+          <div
+            className={styles.track}
+            style={{ transform: `translateX(-${page * 100}%)` }}
+          >
+            {slides.map((group, gi) => (
+              <div key={gi} className={styles.slide}>
+                {group.map((src, idx) => (
+                  <div key={idx} className={styles.card}>
+                    <img src={src} className={styles.img} alt="" />
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <button onClick={next} className={styles.arrow}>
+          ›
+        </button>
+      </div>
+    </div>
+  )
+}
