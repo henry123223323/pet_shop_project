@@ -6,13 +6,14 @@ class mycollect extends Component {
         this.state = {
             favorites: [
                 { id: 1, img: '/logo512.png', pd_name: '貓飼料', price: 350 },
-                { id: 1, img: '/logo512.png', pd_name: '貓飼料', price: 350 },
-                { id: 1, img: '/logo512.png', pd_name: '貓飼料', price: 350 },
-                { id: 1, img: '/logo512.png', pd_name: '貓飼料', price: 350 },
-                { id: 1, img: '/logo512.png', pd_name: '貓飼料', price: 350 },
-                { id: 1, img: '/logo512.png', pd_name: '貓飼料', price: 350 },
-                { id: 2, img: '/logo192.png', pd_name: '狗狗玩具', price: 250 }
+                { id: 2, img: '/logo512.png', pd_name: '貓飼料', price: 350 },
+                { id: 3, img: '/logo512.png', pd_name: '貓飼料', price: 350 },
+                { id: 4, img: '/logo512.png', pd_name: '貓飼料', price: 350 },
+                { id: 5, img: '/logo512.png', pd_name: '貓飼料', price: 350 },
+                { id: 6, img: '/logo512.png', pd_name: '貓飼料', price: 350 },
+                { id: 7, img: '/logo192.png', pd_name: '狗狗玩具', price: 250 }
             ]
+
         };
     }
 

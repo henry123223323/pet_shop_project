@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
-import NewPD_modal from './Newpd_modal';
+import Market_modal from '../market_manage/Market_Modal';
+import Pagination from './Page_manage';
 class New_Products_Manage extends Component {
     state = {
         showModal: false,
         ModalState: "Add",//Add ,Find ,Edit
         thisIndex: 0,
+        currentPage: 1,
         new_product: [
             {
                 "pid": "1",//db自動編號
@@ -14,8 +16,13 @@ class New_Products_Manage extends Component {
                 "price": 1200,
                 "description": "堅固耐用，讓貓咪盡情玩耍的跳台。",
                 "categories": "pet_food",
+                "city": "台中市",
+                "district": "北屯區",
+                "uid": "1",
+                "new_level": "5",
                 "stock": 5,
                 "sale_count": 12,
+                "delivery_method": "宅配",
                 "attribute": {
                     "brand": "喵星人樂園",
                     "name": "抓抓樂",
@@ -26,26 +33,21 @@ class New_Products_Manage extends Component {
                     "color": "米白色",
                     "weight": "7kg"
                 },
-                "images": {
-                    "point_area": {
+                "images": [
+                    {
                         "img_path": "/catfood.jpg",
-                        "img_value": "主打圖"
-                    },
-                    "content_area": [
-                        {
-                            "img_path": "/catfood.jpg",
-                            "img_value": "整體外觀"
-                        },
-                        {
-                            "img_path": "/catfood.jpg",
-                            "img_value": "底座細節"
-                        },
-                        {
-                            "img_path": "/catfood.jpg",
-                            "img_value": "貓咪使用中"
-                        }
-                    ]
-                }
+                        "img_value": "整體外觀"
+                    }, {
+                        "img_path": "/catfood.jpg",
+                        "img_value": "整體外觀"
+                    }, {
+                        "img_path": "/catfood.jpg",
+                        "img_value": "整體外觀"
+                    }, {
+                        "img_path": "/catfood.jpg",
+                        "img_value": "整體外觀"
+                    }
+                ]
             },
             {
                 "pid": "2",
@@ -56,8 +58,13 @@ class New_Products_Manage extends Component {
                 "price": 800,
                 "description": "適合大型犬使用的厚實睡墊，舒適又耐咬。",
                 "categories": "Living_Essentials",
+                "city": "新北市",
+                "district": "板橋區",
+                "uid": "2",
+                "new_level": "1",
                 "stock": 3,
                 "sale_count": 5,
+                "delivery_method": "面交",
                 "attribute": {
                     "brand": "汪汪屋",
                     "name": "厚睡墊",
@@ -68,26 +75,25 @@ class New_Products_Manage extends Component {
                     "color": "深灰色",
                     "weight": "3kg"
                 },
-                "images": {
-                    "point_area": {
+                "images": [
+                    {
                         "img_path": "/cat.jpg",
                         "img_value": "主打圖"
                     },
-                    "content_area": [
-                        {
-                            "img_path": "/media/products/P002/img1.jpg",
-                            "img_value": "正面照片"
-                        },
-                        {
-                            "img_path": "/media/products/P002/img2.jpg",
-                            "img_value": "材質特寫"
-                        },
-                        {
-                            "img_path": "/media/products/P002/img3.jpg",
-                            "img_value": "狗狗實拍"
-                        }
-                    ]
-                }
+                    {
+                        "img_path": "/media/products/P002/img1.jpg",
+                        "img_value": "正面照片"
+                    },
+                    {
+                        "img_path": "/media/products/P002/img2.jpg",
+                        "img_value": "材質特寫"
+                    },
+                    {
+                        "img_path": "/media/products/P002/img3.jpg",
+                        "img_value": "狗狗實拍"
+                    }
+                ]
+
             }
         ]
 
@@ -96,11 +102,14 @@ class New_Products_Manage extends Component {
     componentDidMount() {
         //這裡去抓資料庫的二手商品
     }
+    handlePageChange = (page) => {
+        this.setState({ currentPage: page });
+    }
     toggleModal = () => {
         this.setState({ showModal: !this.state.showModal });
     }
     findProduct = (index) => {
-        return this.state.new_product[index]
+        return this.state.new_product[index] || {}
     }
     renderStatus = (status) => {
         return status === 1
@@ -108,7 +117,14 @@ class New_Products_Manage extends Component {
             : <span className="badge bg-secondary">下架</span>;
     }
 
-
+    renderNewLevel = (level) => {
+        const stars = '★★★★★'.slice(0, parseInt(level));
+        return (
+            <span style={{ color: '#FFD700' }}>
+                {stars.padEnd(5, '☆')}
+            </span>
+        );
+    }
     renderCategory = (category) => {
         const map = {
             pet_food: "寵物食品",
@@ -137,7 +153,10 @@ class New_Products_Manage extends Component {
 
     }
     render() {
-        let { new_product, showModal, ModalState, thisIndex } = this.state
+        let { new_product, showModal, ModalState, thisIndex, currentPage } = this.state
+        let itemsPerPage = 1
+        let startIndex = (currentPage - 1) * itemsPerPage;
+        let currentSPD = new_product.slice(startIndex, startIndex + itemsPerPage);
         return (
             <>
                 <form action="">
@@ -159,9 +178,9 @@ class New_Products_Manage extends Component {
                         </tr>
                     </thead>
                     <tbody>
-                        {new_product.map((product, index) => (
+                        {currentSPD.map((product, index) => (
                             <tr key={product.pid}>
-                                <td><img src={product.images.point_area.img_path} alt="主圖" width="80" /></td>
+                                <td><img src={product.images[0].img_path} alt="主圖" width="80" /></td>
                                 <td>{product.pd_name}</td>
                                 <td>{product.price}</td>
                                 <td>{this.renderCategory(product.categories)}</td>
@@ -176,10 +195,15 @@ class New_Products_Manage extends Component {
 
                     </tbody>
                 </table>
-
+                <Pagination
+                    totalItems={new_product.length}
+                    itemsPerPage={itemsPerPage}
+                    currentPage={currentPage}
+                    onPageChange={this.handlePageChange}
+                />
                 {showModal && (
 
-                    <NewPD_modal close={this.toggleModal} new={this.new} edit={this.edit} product={this.findProduct(thisIndex)} modalstate={ModalState} />
+                    <Market_modal close={this.toggleModal} new={this.new} edit={this.edit} product={this.findProduct(thisIndex)} modalstate={ModalState} />
 
                 )}
 

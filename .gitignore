@@ -20,8 +20,13 @@ yarn-error.log
 # === Mac 系統產生的 ===
 .DS_Store
 
-# === 資料庫備份 or 匯入檔 ===
-*.sql
+
 
 # === VSCode 設定檔（依團隊而定是否要加）===
 .vscode/
+#sql.js的module
+nodejs/node_modules
+#地圖的geojson
+fashion-paw/public/taiwan_counties.geojson
+
+fashion-paw/public/taiwan_townships.geojson
