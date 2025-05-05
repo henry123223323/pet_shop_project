@@ -23,7 +23,7 @@ import ArticleDetail from './component/PetKnowledge/ArticleDetail';
 import Header from './component/Homepage/Header';
 import Footer from './component/Homepage/Footer';
 
-import SeProductPage from './component/SeproductPage/SeProductPage';
+import SeProductPage from './component/SeProductPage/SeProductPage';
 import Helpme from './component/Aboutus/helpme';
 import { CartProvider } from 'component/Cart/CartContext';
 
