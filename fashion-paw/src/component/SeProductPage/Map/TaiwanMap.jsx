@@ -295,7 +295,7 @@ class TaiwanMap extends Component {
 
         return (<>
             <p id="selectedArea">目前選擇：無</p>
-            <button onClick={this.resetMap}>🔄 回到全台視角</button>
+            <button className='map-button btn btn-primary' onClick={this.resetMap}>🔄 回到全台視角</button>
             <div id="map">
                 {loading && <div id="mapLoadingOverlay">
                     <div className="spinner" id="load">{this.getLoadingText()}</div>
