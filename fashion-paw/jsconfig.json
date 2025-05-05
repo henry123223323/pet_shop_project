@@ -3,5 +3,5 @@
       "baseUrl": "./src",
       "checkJs": false
     },
-    "include": ["src"]
+    "include": ["src", "src/component/SeProductPage/SeProductPage.jsx"]
   }

@@ -1,16 +1,28 @@
-import React, { useState } from 'react';
+// src/component/ProductPage/HotRanking/HotRanking.jsx
+import React, { useState, useEffect } from 'react';
 import styles from './HotRanking.module.css';
 import mockRanking from './mockRanking';
 
-export default function HotRanking() {
+// 引入共用按鈕元件
+import AddToCartBtn from '../../share/AddToCartBtn';
+import AddToMyFavorite from '../../share/AddToMyFavorite';
+
+export default function HotRanking({ value = '', onChange = () => {} }) {
   const [favoriteIds, setFavoriteIds] = useState([]);
+
+  useEffect(() => {
+    setFavoriteIds([]);
+  }, [value]);
 
   const handleToggleFavorite = id => {
     setFavoriteIds(prev =>
-      prev.includes(id)
-        ? prev.filter(favId => favId !== id)
-        : [...prev, id]
+      prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
     );
+  };
+
+  const handleAddToCart = id => {
+    alert('已加入購物車');
+    console.log('HotRanking add to cart:', id);
   };
 
   return (
@@ -18,7 +30,7 @@ export default function HotRanking() {
       <h3 className={styles.header}>熱銷排行</h3>
       <div className={styles.list}>
         {mockRanking.map(item => {
-          const isFavorite = favoriteIds.includes(item.id);
+          const isFav = favoriteIds.includes(item.id);
           return (
             <div key={item.id} className={styles.card}>
               <div className={styles.imageWrapper}>
@@ -30,40 +42,23 @@ export default function HotRanking() {
               </div>
               <p className={styles.name}>{item.name}</p>
               <div className={styles.actions}>
-                <button
-                  className={`${styles.btn} ${isFavorite ? styles.favorited : ''}`}
-                  aria-label="收藏"
+                {/* 使用 AddToMyFavorite，傳入 isFavorite 及 onClick */}
+                <AddToMyFavorite
+                  isFavorite={isFav}
                   onClick={() => handleToggleFavorite(item.id)}
-                >
-                  {isFavorite ? '❤️' : '🤍'}
-                </button>
-                <button
-                  className={styles.btn}
+                  size="24px"
+                  aria-label="收藏"
+                />
+
+                {/* 使用 AddToCartBtn */}
+                <AddToCartBtn
+                  onClick={() => handleAddToCart(item.id)}
                   aria-label="加入購物車"
-                  onClick={() => {
-                    alert('已加入購物車');
-                  }}
-                >
-                  🛒
-                </button>
+                />
               </div>
             </div>
-<<<<<<< HEAD
-            <p className={styles.name}>{item.name}</p>
-            <div className={styles.actions}>
-              <button className={styles.btn} aria-label="收藏">
-                🤍
-              </button>
-              <button className={styles.btn} aria-label="上鎖">
-                🔒
-              </button>
-            </div>
-          </div>
-        ))}
-=======
           );
         })}
->>>>>>> test
       </div>
     </div>
   );

@@ -6,7 +6,7 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import styles from './component/Homepage/IndexStyle.module.css'
 import MemberCenter from './component/MemberCenter/MyAccount'
 import Homepage from './component/Homepage/Homepage';
-import SecondPdDetailPage from './component/ProductDetailPage/SecondPdDetailPage';
+import ProductDetailPage from './component/ProductDetailPage/ProductDetailPage';
 import ShoppingCartPage from './component/Cart/ShoppingCartPage';
 import CheckBillPage from './component/CheckBill/CheckBillPage';
 import ProductPage from './component/ProductPage/ProductPage';
@@ -22,11 +22,13 @@ import Footer from './component/Homepage/Footer';
 
 import SeProductPage from './component/SeproductPage/SeProductPage';
 import Helpme from './component/Aboutus/helpme';
+import { CartProvider } from 'component/Cart/CartContext';
 
 
 function App() {
   return (
     <BrowserRouter>
+    <CartProvider>
         <Header />
       <main className={styles.mainContent}>
         <Switch>
@@ -79,13 +81,14 @@ function App() {
           <Route path="/PetKnowledge" component={KnowledgeLayout} exact />
           <Route path="/PartTouch/Touch" component={Touch} exact />
           <Route path="/PetQuiz/Quiz" component={Quiz} exact />
-          <Route path="/SecondPdDetailPage" component={SecondPdDetailPage} exact />
+          <Route path="/ProductDetailPage" component={ProductDetailPage} exact />
           <Route path="/ShoppingCartPage" component={ShoppingCartPage} exact />
           <Route path="/CheckBillPage" component={CheckBillPage} exact />
           <Route path="/Aboutus" component={Helpme} exact />
         </Switch>
       </main>
       <Footer />
+      </CartProvider>
     </BrowserRouter>
   );
 }

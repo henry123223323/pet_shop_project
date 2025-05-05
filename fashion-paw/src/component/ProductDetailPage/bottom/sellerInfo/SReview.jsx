@@ -1,14 +1,15 @@
 import React, { Component } from 'react';
-import style from './SReview.module.css'
-class PdInfo extends Component {
+import style from './SReview.module.css';
+import PawDisplay from '../../PawDisplay';
+class SReview extends Component {
     state = { 
         commentState : false,
      } 
     render() { 
         const {commentState} = this.state
+        const {review}=this.props
         return (<>
         {/* <h1>賣家評論</h1> */}
- 
             {/* 按鈕-展開評論 */}
             <div className={`my-3 btn paw-btn-outline-pri-darkgreen d-flex flex-fill justify-content-between ${commentState === true ? style.btnClicking : ""}`}
             onClick={this.commentShow}>
@@ -19,53 +20,32 @@ class PdInfo extends Component {
                 </div>
             </div>
             {/* 評論區 */}
-            <div 
-            style={commentState ? {display:"inline"} :{display:"none"}}>
-                {/* 1 */}
-                <div className='shadow-sm rounded paw-bg-middlebrown p-3 m-4'>
-                    <div>
-                        <span className='ptxtb4'>小橘貓</span> <span className='mx-3'>❤️❤️❤️❤️❤️</span>
-                    </div>
-                    <div className=' mb-2'>2025-04-02 09:33:20</div>
-                    <div className='mb-2'>
-                        <span className='ptxtb4'>購買產品：</span>
-                        <span>柔軟絨布狗狗墊</span></div>
-                    <div>
-                        <div className='ptxtb4 pb-1'>評論：</div>
-                        <span>商品跟描述的一樣新，賣家回覆超快，包裝也很細心，非常推薦！</span></div>
-
+            <>
+        {/* 評論區 */}
+        {commentState && <div>
+          {review.length > 0 ? review.map((item, index) => (
+            <div key={index} className={`shadow-sm rounded ${index % 2 === 0 ? 'paw-bg-middlebrown' : 'paw-bg-pri-darkbrown'} p-3 m-4`}>
+              <div className='d-flex justify-content-between'>
+                <div>
+                    <span className='ptxtb4'>{item.username}</span> 
+                    <span className='mx-3'><PawDisplay rating={item.rating} /></span>
                 </div>
+                <div className='mb-2'>{item.create_time}</div>
+              </div>
 
-                {/* 2 */}
-                <div className='shadow-sm rounded paw-bg-pri-darkbrown p-3 m-4'>
-                    <div>
-                        <span className='ptxtb4'>小橘貓</span> <span className='mx-3'>❤️❤️❤️❤️❤️</span>
-                    </div>
-                    <div className=' mb-2'>2025-04-02 09:33:20</div>
-                    <div className='mb-2'>
-                        <span className='ptxtb4'>購買產品：</span>
-                        <span>柔軟絨布狗狗墊</span></div>
-                    <div>
-                        <div className='ptxtb4 pb-1'>評論：</div>
-                        <span>商品跟描述的一樣新，賣家回覆超快，包裝也很細心，非常推薦！</span></div>
 
-                </div>
-
-                {/* 3 */}
-                <div className='shadow-sm rounded paw-bg-middlebrown p-3 m-4'>
-                    <div className='mb-2'>
-                        <span className='ptxtb4'>小橘貓</span> <span className='mx-3'>❤️❤️❤️❤️❤️</span>
-                    </div>
-                    <div className=' mb-2'>2025-04-02 09:33:20</div>
-                    <div className='mb-2'>
-                        <span className='ptxtb4'>購買產品：</span>
-                        <span>柔軟絨布狗狗墊</span></div>
-                    <div>
-                        <div className='ptxtb4 pb-1'>評論：</div>
-                        <span>商品跟描述的一樣新，賣家回覆超快，包裝也很細心，非常推薦！</span></div>
-
-                </div>
+              <div className='mb-2'>
+                <span className='ptxtb4'>購買商品：</span>
+                <span>{item.product_name}</span>
+              </div>
+              <div>
+                <div className='ptxtb4 pb-1'>評論：</div>
+                <span>{item.comment}</span>
+              </div>
             </div>
+          )) : <div className="p-4">尚無評論</div>}
+        </div>}
+      </>
 
         </>);
     }
@@ -75,4 +55,4 @@ class PdInfo extends Component {
     }
 }
  
-export default PdInfo;
+export default SReview;

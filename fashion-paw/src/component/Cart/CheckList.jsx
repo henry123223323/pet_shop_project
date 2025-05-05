@@ -5,17 +5,12 @@ class CheckList extends Component {
   render() {
     const { selectedItems, discountAmount } = this.props;
 
-    // 1. 計算勾選的商品總金額 A
     const totalOriginal = selectedItems.reduce((sum, item) => {
       return sum + item.unit_price * item.quantity;
     }, 0);
-
-    // 2. 折扣金額 B 已經存在 state.discountAmount
-    // 3. 判斷運費 C
-    const afterDiscount = totalOriginal - discountAmount;
-    const shippingFee = afterDiscount < 399 && afterDiscount > 0 ? 70 : 0;
-
-    // 4. 結帳金額 = A - B + C
+    const validDiscount = discountAmount > 0 && discountAmount < 1 ? discountAmount : 1;
+    const afterDiscount = totalOriginal * validDiscount;
+    const shippingFee = afterDiscount < 599 && afterDiscount > 0 ? 70 : 0;
     const finalAmount = afterDiscount + shippingFee;
 
 
@@ -31,12 +26,19 @@ class CheckList extends Component {
             <span>運費：</span> <span> {shippingFee.toLocaleString()}</span>
           </div>
           <div className='my-2'>
-            <span>折扣：</span> <span>- {discountAmount.toLocaleString()}</span>
+            <span>折扣：</span>
+            <span>
+              {
+                validDiscount < 1
+                  ? ` ${(validDiscount * 100).toFixed(0)} 折`
+                  : "未使用折價券"
+              }
+            </span>
           </div>
           <hr />
           <div>
-            <span className='ptxtb3'>結帳金額：</span> 
-            <span> {finalAmount.toLocaleString()} 元</span>
+            <span className='ptxtb3'>結帳金額：</span>
+            <span>{Math.round(finalAmount).toLocaleString()} 元</span>
             <p></p>
           </div>
         </div>

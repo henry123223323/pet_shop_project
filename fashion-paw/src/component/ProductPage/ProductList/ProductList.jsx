@@ -1,26 +1,29 @@
-// src/component/ProductList/ProductList.jsx
 import React from 'react';
 import ProductCard from '../ProductCard/ProductCard';
 import styles from './ProductList.module.css';
 
 export default function ProductList({
-  products = [],
-  favoriteIds = [],
+  products       = [],
+  favoriteIds    = [],
   onToggleFavorite,
   onAddToCart,
+  viewMode       = 'grid',           // 先接收 viewMode
 }) {
+  // 根據 viewMode 動態套用 .grid 或 .list
+  const containerCls = `${styles.container} ${
+    viewMode === 'grid' ? styles.grid : styles.list
+  }`;
+
   return (
-    <ul className={styles.list}>
+    <ul className={containerCls}>
       {products.map(p => (
-        <li key={p.id}>
+        <li key={p.id} className={styles.item}>
           <ProductCard
-            id={p.id}
-            name={p.name}
-            price={p.price}
-            imageUrl={p.imageUrl}
+            {...p}
             isFavorite={favoriteIds.includes(p.id)}
-            onToggleFavorite={onToggleFavorite}
-            onAddToCart={onAddToCart}
+            onToggleFavorite={() => onToggleFavorite(p.id)}
+            onAddToCart={() => onAddToCart(p.id)}
+            viewMode={viewMode}       // 再把 viewMode 傳給卡片
           />
         </li>
       ))}

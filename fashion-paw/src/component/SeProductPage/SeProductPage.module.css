@@ -1,0 +1,44 @@
+/* src/component/SeProductPage/SeProductPage.module.css */
+
+.container {
+  display: flex;
+  gap: 16px;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.sidebar {
+  width: 220px;
+  flex-shrink: 0;
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* FilterBar 保持左對齊 */
+.filterBar {
+  margin-bottom: 16px;
+}
+
+/* SortBar + SwitchBtn 同列往右 */
+.topBar {
+  display: flex;
+  justify-content: flex-end; /* 全部靠右 */
+  align-items: center;
+  gap: 8px;                  /* 按鈕與下拉選單間距 */
+  margin-bottom: 16px;
+}
+
+/* 可選：響應式 */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
+  .sidebar {
+    width: 100%;
+    margin-bottom: 16px;
+  }
+}
