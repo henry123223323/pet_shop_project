@@ -1,0 +1,42 @@
+/* 更大的容器 */
+.bigerdiv {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: aliceblue;
+    height: 600px;
+    width: 1000px;
+}
+
+/* 導覽列容器 */
+.nivdiv {
+    height: auto;
+    background-color: black;
+    color: aliceblue;
+    text-align: center;
+    justify-content: center;
+    display: flex;
+    font-size: xx-large;
+}
+
+/* 導覽列項目 */
+.nivspan {
+    flex: 1;
+    text-align: center;
+    color: white;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+/* 題目容器 */
+.quest {
+    height: auto;
+    background-color: red;
+    color: black;
+    text-align: center;
+    justify-content: center;
+    display: flex;
+    font-size: xx-large;
+    margin-top: 10px;
+}
