@@ -10,6 +10,8 @@ import dogQuestions from './DogQuestions.json'
 import catQuestions from './CatQuestions.json'
 import hamsterQuestions from './HamsterQuestions.json'
 import birdQuestions from './BirdQuestions.json'
+import titleIcon from '../images/pawicon.svg';
+import styles from './Quiz.module.css';
 
 function Quiz() {
     // 可改成你的 JSON 或資料來源
@@ -45,41 +47,27 @@ function Quiz() {
     };
 
     return (
-        <div className="container-xl py-5">
-            <h3 className="text-center mb-4">寵物知多少</h3>
-
+        <div className={`${styles.quizContainer} container-xl py-5`}>
             {petIndex === null ? (
                 // 尚未開始，顯示選擇器 + 開始按鈕
                 // Selector.jsx
-                <div className="selector-box"
-                    style={{
-                        position: 'relative',
-                        display: 'inline-block',
-                        padding: '1rem',
-                        border: '1px solid #ddd',
-                        borderRadius: '8px',
-                    }}
-                >
+                <div className={styles.selectorBox}>
+                    <h2 className="border paw-bg-pri-darkbrown text-center rounded d-block mx-auto" style={{ width: 200 }}>寵物知多少</h2>
+                    <img src={titleIcon} className={styles.titleIcon} alt="icon" />
                     {/* 這就是「請選擇寵物」的區塊、呼叫你的切換元件、這裡放Selector */}
-                    <Selector options={petList.map(p => p.name)} onChange={idx => setSelectedIndex(idx)} />
+                    <Selector
+                        options={petList.map(p => p.name)}
+                        onChange={idx => setSelectedIndex(idx)} />
                     {/* 在右下角放一張小圖 */}
                     <img
                         src={petList[selectedIndex].img}
                         alt={petList[selectedIndex].name}
-                        style={{
-                            position: 'absolute',
-                            bottom: '0.5rem',    // 距離底部 8px
-                            right: '0.5rem',     // 距離右側 8px
-                            width: '80px',       // 圖片寬 80px
-                            height: '80px',      // 圖片高 80px
-                            objectFit: 'contain',// 保持比例
-                            pointerEvents: 'none'// 讓滑鼠事件打到下方的按鈕而不是圖片
-                        }}
+                        className={styles.footerIcon}
                     />
                     {/* 開始遊戲按鈕 */}
                     <div className="text-center mt-3">
                         <button
-                            className="btn btn-warning"
+                            className={`btn btn-warning ${styles.startBtn}`}
                             onClick={startGame}
                         >
                             開始遊戲
@@ -90,7 +78,8 @@ function Quiz() {
                 // 已經按了開始，顯示 QuizGame 元件
                 <QuizGame
                     pet={petList[petIndex]}
-                    questions={gameQuestions} />
+                    questions={gameQuestions}
+                    onRestart={() => setPetIndex(null)} />
             )}
         </div >
     );

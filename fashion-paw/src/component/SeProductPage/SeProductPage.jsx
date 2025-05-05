@@ -1,56 +1,95 @@
 // src/component/SeProductPage/SeProductPage.jsx
-import React, { useState, useEffect } from 'react';
-// import axios from 'axios'; 先不用 axios，先註解掉
+import React, { useState, useEffect, useCallback } from 'react';
 import styles from './SeProductPage.module.css';
 
-// Components
 import SideBar from './SideBar/SideBar';
 import FilterBar from './FilterBar/FilterBar';
 import SortBar from './SortBar/SortBar';
+import SwitchBtn from './SwitchBtn/SwitchBtn';
 import ProductList from './ProductList/ProductList';
 
-// Mock Data
-import mockSeProducts from './mockSepProducts';
+import axios from 'axios';
 
 export default function SeProductPage() {
-  // ---------------------------------------------
-  //  State 區塊
-  // ---------------------------------------------
-  const [products, setProducts]               = useState([]);
-  const [filtered, setFiltered]               = useState([]);
-  const [filters, setFilters]                 = useState({
-    functions: [],
-    price: '',
-    locations: [],
-    depreciation: 0
+  const [viewMode, setViewMode] = useState('grid');
+  const [products, setProducts] = useState([]);
+  const [filtered, setFiltered] = useState([]);
+  const [filters, setFilters] = useState({
+    functions: [], price: '', locations: [], depreciation: 0
   });
-
-  const [sortBy, setSortBy]                   = useState('');
-  const [favoriteIds, setFavoriteIds]         = useState([]);
-  const [selectedType, setSelectedType]       = useState(null);
+  const [sortBy, setSortBy] = useState('');
+  const [favoriteIds, setFavoriteIds] = useState([]);
+  const [selectedType, setSelectedType] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [citytownarray, setcitytownarray] = useState([]);
+  const [mapselecttown, setmapselecttown] = useState(null);
 
-  // ---------------------------------------------
-  //  第一次掛載：載入假資料
-  // ---------------------------------------------
+  // 載入 mock 資料
   useEffect(() => {
-    setProducts(mockSeProducts);
-  }, []);
+    const fetchData = async () => {
+      try {
+        const res = await axios.get('http://localhost:8000/get/second_product/home');
+        res.data.forEach((product, idx) => {
+          product.images = JSON.parse(product.images);
+          product.attributes_object = JSON.parse(product.attributes_object);
+          product.new_level = parseInt(product.new_level)
+          product.created_at = new Date(product.created_at)
+          product.city = product.city.replace(/台/g, "臺")
+          product.city_town = product.city + product.district
+          switch (product.categories) {
+            case 'pet_food':
+              product.categories = '乾糧'; break
+            case 'complementary_food':
+              product.categories = '副食'; break
+            case 'snacks':
+              product.categories = '零食'; break
+            case 'Health_Supplements':
+              product.categories = '保健食品'; break
+            case 'Living_Essentials':
+              product.categories = '家居'; break
+            case 'toys':
+              product.categories = '玩具'; break
+            default:
+              product.categories = '其他'; break
+          }
+          console.log(product);
 
-  // ---------------------------------------------
-  // 根據 filters、sortBy、類型分類做商品過濾 + 排序
-  // ---------------------------------------------
+
+        })
+        setProducts(res.data);
+        let array = []
+
+        array = res.data.map(pd => pd.city_town); // 用剛抓到的資料
+        setcitytownarray(array);
+        console.log(array);
+
+
+      } catch (err) {
+        console.error('抓資料失敗:', err);
+      }
+    };
+
+    fetchData();
+
+  }
+    , []);
+
+
+  // 過濾 + 排序
   useEffect(() => {
     let result = [...products];
-    const { functions, price, locations, depreciation } = filters;
+
+    // 解構並給預設值，避免未定義
+    const {
+      functions = [],
+      price = '',
+      locations = [],
+      depreciation = 0
+    } = filters;
 
     // 類型＆分類
-    if (selectedType) {
-      result = result.filter(p => p.pet_type === selectedType);
-    }
-    if (selectedCategory) {
-      result = result.filter(p => p.category === selectedCategory);
-    }
+    if (selectedType) result = result.filter(p => p.pet_type === selectedType);
+    if (selectedCategory) result = result.filter(p => p.category === selectedCategory);
 
     // 價格篩選
     if (price) {
@@ -59,72 +98,61 @@ export default function SeProductPage() {
         : price.split('-').map(Number);
       result = result.filter(p => p.price >= min && p.price <= max);
     }
-
+    if (mapselecttown) {
+      result = result.filter(p => p.city_town === mapselecttown)
+    }
     // 功能篩選
-    if (functions.length) {
+    if (functions.length > 0) {
       result = result.filter(p => functions.includes(p.function));
     }
 
-    // 折舊程度篩選
+    // 地點篩選
+    if (locations.length > 0) {
+      result = result.filter(p => locations.includes(p.city));
+    }
+
+    // 折舊程度
     if (depreciation) {
-      result = result.filter(p => p.depreciation === depreciation);
+      result = result.filter(p => p.new_level === depreciation);
     }
 
     // 排序
-    if (sortBy === 'price_asc') {
-      result.sort((a, b) => a.price - b.price);
-    } else if (sortBy === 'price_desc') {
-      result.sort((a, b) => b.price - a.price);
-    } else if (sortBy === 'createdAt') {
-      result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-    } else if (sortBy === 'hotranking') {
-      result.sort((a, b) => b.hotranking - a.hotranking);
-    }
+    if (sortBy === 'price_asc') result.sort((a, b) => a.price - b.price);
+    else if (sortBy === 'price_desc') result.sort((a, b) => b.price - a.price);
+    else if (sortBy === 'createdAt') result.sort((a, b) =>
+      b.created_at - a.created_at
+    );
+    else if (sortBy === 'hotranking') result.sort((a, b) => b.hotranking - a.hotranking);
 
     setFiltered(result);
   }, [
     products,
-    filters.functions,
-    filters.price,
-    filters.locations,
-    filters.depreciation,
+    filters,            // 監聽整個 filters 物件
     sortBy,
     selectedType,
-    selectedCategory
+    selectedCategory,
+    mapselecttown
   ]);
 
-  // ---------------------------------------------
-  // 🔁 處理 filter 與 sort 傳回的 callback
-  // ---------------------------------------------
-  const handleFilterChange = newFilters => setFilters(newFilters);
-  const handleSortChange   = sortKey    => setSortBy(sortKey);
-
-  // ---------------------------------------------
-  // 收藏 / 加入購物車
-  // ---------------------------------------------
+  const handleFilterChange = useCallback(nf => setFilters(nf), []);
+  const handleSortChange = sk => setSortBy(sk);
   const handleToggleFavorite = id => {
     setFavoriteIds(prev =>
-      prev.includes(id)
-        ? prev.filter(favId => favId !== id)
-        : [...prev, id]
+      prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
     );
   };
-  const handleAddToCart = id => {
-    console.log(`加入購物車 id=${id}`);
-    // 可以接後端購物車 API
+  const handleAddToCart = id => console.log('Add to cart', id);
+  const handleSelectCategory = (t, c) => {
+    setSelectedType(t);
+    setSelectedCategory(c);
   };
 
-  // ---------------------------------------------
-  // 處理 Sidebar 點選分類
-  // ---------------------------------------------
-  const handleSelectCategory = (type, category) => {
-    setSelectedType(type);
-    setSelectedCategory(category);
-  };
+  const uniqueLocations = Array.from(new Set(products.map(p => p.city)));
+  let SortProductbyTown = (town) => {
+    console.log(town);
+    setmapselecttown(town);
 
-  // ---------------------------------------------
-  // 畫面輸出
-  // ---------------------------------------------
+  }
   return (
     <div className={styles.container}>
       <aside className={styles.sidebar}>
@@ -132,14 +160,29 @@ export default function SeProductPage() {
       </aside>
 
       <main className={styles.main}>
-        <FilterBar onFilterChange={handleFilterChange} />
-        <SortBar onSortChange={handleSortChange} />
+        {/* 1. FilterBar */}
+        <div className={styles.filterBar}>
+          <FilterBar
+            city_town={citytownarray}
+            locations={uniqueLocations}
+            onFilterChange={handleFilterChange}
+            SortProductbyTown={SortProductbyTown}
+          />
+        </div>
 
+        {/* 2. SortBar + SwitchBtn 同列靠右 */}
+        <div className={styles.topBar}>
+          <SortBar onSortChange={handleSortChange} />
+          <SwitchBtn viewMode={viewMode} onViewChange={setViewMode} />
+        </div>
+
+        {/* 3. ProductList，傳入 viewMode */}
         <ProductList
           products={filtered}
           favoriteIds={favoriteIds}
           onToggleFavorite={handleToggleFavorite}
           onAddToCart={handleAddToCart}
+          viewMode={viewMode}
         />
       </main>
     </div>

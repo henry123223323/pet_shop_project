@@ -1,0 +1,93 @@
+.titleWrapper {
+    display: flex;   
+    justify-content: center;
+  }
+
+.title {
+    display: inline-flex; 
+    align-items: center;
+    gap: 0.5rem; 
+    color: #E1C599; 
+    margin-top: 5rem;
+    margin-bottom: 1rem;
+  }
+
+  .icon {
+    width: 2rem;            
+    height: auto;
+    flex-shrink: 0;            
+  }
+  
+
+.tabNav {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1.5rem;
+    background-color: #E1C599;
+    border-bottom: 5px solid #70823C;
+    border-radius: 5px;
+}
+
+.tab {
+    background: none;
+    border: none;
+    padding: 0.5rem 1rem;
+    font-size: 18px;
+    cursor: pointer;
+    color: black;
+}
+
+.tab.active {
+    background: #99b88c;
+    border-radius: 5px;
+    color: #F7F6EE;
+}
+
+.slider {
+    display: flex;
+    align-items: center;
+}
+
+.arrow {
+    background: none;
+    border: none;
+    font-size: 5rem;
+    padding: 0 1rem;
+    cursor: pointer;
+    color: #5a4f3a;
+    user-select: none;
+}
+
+.viewport {
+    overflow: hidden;
+    flex: 1;
+}
+
+/* 切換下一列 */
+.track {
+    display: flex;
+    transition: transform 0.8s ease;
+}
+
+.slide {
+    display: flex;
+    min-width: 100%;
+    gap: 1rem;
+}
+
+.card {
+    flex: 1;
+    background: white;
+    border-radius: 5px;
+    overflow: hidden;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+}

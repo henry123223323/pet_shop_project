@@ -1,9 +1,10 @@
 /* 涵蓋homepage的module.css */
+/* 調整整個header的高度大小，一次定義，全局可用 */
 :root {
-  --header-height: 200px;
-  /* 一次定義，全局可用 */
+  --header-height: 250px;
 }
 
+/* header樣式 */
 .header {
   width: 100%;
   display: flex;
@@ -17,7 +18,12 @@
   height: var(--header-height);
   box-shadow: 0 2px 0 rgba(0, 0, 0, 0.1);
   background: rgba(255, 255, 255, 0.9);
+  transition: transform 0.3s ease-in-out;
   z-index: 999;
+}
+
+.hiddenHeader {
+  transform: translateY(-100%);
 }
 
 /* 第一列：搜尋 + 購物 + 登入註冊 */
@@ -25,6 +31,7 @@
   display: flex;
   justify-content: flex-end;
   align-items: center;
+  /* 左右間隔 */
   column-gap: 0.5rem;
 }
 
@@ -56,69 +63,51 @@
   align-items: center;
 }
 
-/* 第三列：主選單 */
-.mainNav {
-  display: flex;
-  justify-content: center;
-  column-gap: 2rem;
-  font-weight: 500;
-  /* background-color: #F8A07F; */
-  z-index: 999;
-}
-
-.mainNav a {
-  color: #333;
-  text-decoration: none;
-  padding: 0.25rem;
-}
-
-.mainNav a:hover {
-  color: #70823C;
-}
-
+/* 確保內容都從這個高度之後才開始 */
 .mainContent {
   padding-top: var(--header-height);
 }
 
-/* ----------------------------------------- */
-/* 滑動後的一列版型 */
-.stickyHeader {
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.5rem 1rem;
-  background: rgb(255, 255, 255, 0.9);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+/* ----------------hambuger------------- */
+@media (min-width: 769px) {
+  .hamburger {
+    display: none;
+  }
 }
 
-/* 切到一列時 Logo 縮小 */
-.logoSmall {
-  height: 40px;
-}
+@media (max-width: 768px) {
+  .mainContent {
+    padding-top: 0;
+    /* 手機版不要留空白 */
+  }
 
-/* 滑動後圖示+連結群組 */
-.iconGroup {
-  display: flex;
-  align-items: center;
-  column-gap: 0.5rem;
-}
+  .header {
+    height: auto;
+    /* 改成左右排列 */
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
 
-.iconGroup a {
-  color: #333;
-  text-decoration: none;
-}
+  .headerTop,
+  .mainNav {
+    display: none;
+  }
 
-
-
-/* ----------------footer--------------- */
-
-.footer {
-  color: white;
-  background-color: #70823C;
-  display: flex;
-  margin-top: 2rem;
-  padding: 1rem 1rem;
+  .hamburger {
+    display: block;
+    font-size: 2rem;
+    background: none;
+    border: none;
+    /* 從父層 .header 移出來 */
+    position: absolute;
+    /* 距離左邊 1rem */
+    left: 1rem;
+    /* 垂直置中 header */
+    top: 50%;
+    transform: translateY(-50%);
+    /* 確保在 overlay 之上 */
+    z-index: 1000;
+  }
 }

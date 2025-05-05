@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
+import Pagination from './Page_manage';
+import axios from 'axios';
 class Article_manage extends Component {
     state = {
         show: false,
         thisIndex: 0,
+        currentPage: 1,
         emptyAOBJ: {
-            ArticleId: 1,
+            ArticleID: 1,
             title: "",
             banner_URL: "",
             intro: "",
@@ -15,7 +18,7 @@ class Article_manage extends Component {
         },
         article: [
             {
-                ArticleId: 1,
+                ArticleID: 1,
                 title: "標題一",
                 banner_URL: "/cat.jpg",
                 intro: "介紹一",
@@ -46,8 +49,37 @@ class Article_manage extends Component {
             }
         ]
     }
+    async componentDidMount() {
+        let result = await axios.get('http://localhost:8000/get/article')
+        result.data.forEach((article) => {
+            article.create_at = new Date(article.create_at).toLocaleString()
+            article.sections = JSON.parse(article.sections)
+            if (article.product_category === "Health Supplements") {
+                article.banner_URL = '/media/pet_know/health_check' + article.banner_URL
+                article.sections.forEach((sec, idx) => {
+                    sec.image_url = '/media/pet_know/health_check' + sec.image_url
+                })
+            }
+            else {
+                article.banner_URL = '/media/pet_know/pet_feeding' + article.banner_URL
+                article.sections.forEach((sec, idx) => {
+                    sec.image_url = '/media/pet_know/pet_feeding' + sec.image_url
+                })
+            }
+        })
+        let newState = { ...this.state }
+        newState.article = result.data
+        this.setState(newState)
+    }
+    handlePageChange = (page) => {
+        this.setState({ currentPage: page });
+    };
     render() {
-        let { article, show, emptyAOBJ } = this.state
+        let { article, show, emptyAOBJ, currentPage } = this.state;
+        let itemsPerPage = 10;
+        let startIndex = (currentPage - 1) * itemsPerPage;
+        let currentArticles = article.slice(startIndex, startIndex + itemsPerPage);
+
         return (
             <>
                 <table className="table table-striped table-hover">
@@ -62,120 +94,126 @@ class Article_manage extends Component {
                     </thead>
                     <tbody>
                         {
-                            article.map((arti, index) => {
+                            currentArticles.map((arti, index) => {
                                 return (
-                                    <tr>
-                                        <td>{arti.ArticleId}</td>
+                                    <tr key={arti.ArticleID}>
+                                        <td>{arti.ArticleID}</td>
                                         <td>{arti.title}</td>
                                         <td>{arti.intro}</td>
                                         <td>{arti.create_at}</td>
                                         <td>
-                                            <button className='btn btn-outline-primary' onClick={() => this.LookArticle(index)}>查看文章</button>
-                                            <button className='btn btn-outline-warning' onClick={() => this.EditArticle(index)}>編輯文章</button>
-                                            <button className='btn btn-outline-danger' onClick={() => this.DeleteArticle(index)}>刪除文章</button>
+                                            <button className='btn btn-outline-primary' onClick={() => this.LookArticle(startIndex + index)}>查看文章</button>
+                                            <button className='btn btn-outline-warning' onClick={() => this.EditArticle(startIndex + index)}>編輯文章</button>
+                                            <button className='btn btn-outline-danger' onClick={() => this.DeleteArticle(startIndex + index)}>刪除文章</button>
                                         </td>
                                     </tr>
                                 )
                             })
                         }
-
                     </tbody>
+
                 </table>
-                {
-                    show && (
-                        <div className="modal show fade d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
-                            <div className="modal-dialog modal-dialog-scrollable" style={{ maxHeight: '80vh' }}>
-                                <div className="modal-content">
-                                    <div className="modal-header">
-                                        <h5 className="modal-title">編輯文章</h5>
-                                    </div>
+                <Pagination
+                    totalItems={article.length}
+                    itemsPerPage={itemsPerPage}
+                    currentPage={currentPage}
+                    onPageChange={this.handlePageChange}
+                />
+                {show && (
+                    <div className="modal show fade d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+                        <div className="modal-dialog modal-dialog-scrollable" style={{ maxHeight: '80vh' }}>
+                            <div className="modal-content">
+                                <div className="modal-header">
+                                    <h5 className="modal-title">編輯文章</h5>
+                                </div>
 
-                                    <div className="modal-body" style={{ overflowY: 'auto' }}>
-                                        <form>
-                                            <label htmlFor="ArticleId">ArticleId:</label>
-                                            <input type="text" id='ArticleId' name='ArticleId' value={emptyAOBJ.ArticleId} onChange={this.Handlechange} />
-                                            <p></p>
-                                            <label htmlFor="title">title:</label>
-                                            <input type="text" id='title' name='title' value={emptyAOBJ.title} onChange={this.Handlechange} />
-                                            <p></p>
-                                            <label htmlFor="banner_URL">banner_URL:</label>
-                                            <input type="file" name='banner_URL' onChange={this.PhotoChange} />
-                                            <img src={this.state.photo} width={100} alt="" />
-                                            <p></p>
-                                            <label htmlFor="intro">intro:</label>
-                                            <textarea name="intro" id="intro" value={emptyAOBJ.intro} onChange={this.Handlechange}></textarea>
-                                            <p></p>
-                                            <label htmlFor="pet_type">pet_type:</label>
-                                            <select name="pet_type" id="pet_type" value={emptyAOBJ.pet_type} onChange={this.Handlechange}>
-                                                <option value="dog">狗</option>
-                                                <option value="cat">貓</option>
-                                                <option value="mouse">鼠</option>
-                                                <option value="bird">鳥</option>
-                                            </select>
-                                            <p></p>
-                                            <label htmlFor="product_category">product_category:</label>
-                                            <select
-                                                name="product_category"
-                                                id="product_category"
-                                                className="form-select"
-                                                value={emptyAOBJ.product_category}
-                                                onChange={this.Handlechange}
-                                            >
-                                                <option value="">-- 請選擇分類 --</option>
-                                                <option value="pet food">寵物主食</option>
-                                                <option value="complementary food">副食品</option>
-                                                <option value="snacks">零食</option>
-                                                <option value="Health Supplements">健康保健品</option>
-                                                <option value="Living Essentials">生活用品</option>
-                                                <option value="toys">玩具</option>
-                                            </select>
-                                            <p></p>
-                                            {
-                                                emptyAOBJ.sections.map((sec, index) => {
-                                                    return (<>
-                                                        <legend htmlFor="">{`section${index + 1}`}</legend>
-                                                        <p></p>
-                                                        <label htmlFor="">{`heading${index + 1}`}</label>
-                                                        <input type="text" name={`heading.${index}`} value={sec.heading} onChange={this.Handlechange} />
-                                                        <p></p>
-                                                        <label htmlFor="">{`image_url${index + 1}`}</label>
-                                                        <input type="file" name={`image_url.${index}`} onChange={this.PhotoChange} />
-                                                        <img width={100} src={sec.image_url} alt="" />
-                                                        <p></p>
-                                                        <label htmlFor="">{`body${index + 1}`}</label>
-                                                        <input type="text" name={`body.${index}`} value={sec.body} onChange={this.Handlechange} />
-                                                        <p></p>
+                                <div className="modal-body" style={{ overflowY: 'auto' }}>
+                                    <form>
+                                        <label htmlFor="ArticleID">ArticleID:</label>
+                                        <input type="text" id='ArticleID' name='ArticleID' disabled value={emptyAOBJ.ArticleID} onChange={this.Handlechange} />
+                                        <p></p>
+                                        <label htmlFor="title">title:</label>
+                                        <input type="text" id='title' name='title' value={emptyAOBJ.title} onChange={this.Handlechange} />
+                                        <p></p>
+                                        <label htmlFor="banner_URL">banner_URL:</label>
+                                        <input type="file" name='banner_URL' onChange={this.PhotoChange} />
+                                        <img width={50} src={emptyAOBJ.banner_URL} alt="" />
+                                        <img src={this.state.photo} width={100} alt="" />
+                                        <p></p>
+                                        <label htmlFor="intro">intro:</label>
+                                        <textarea name="intro" id="intro" value={emptyAOBJ.intro} onChange={this.Handlechange}></textarea>
+                                        <p></p>
+                                        <label htmlFor="pet_type">pet_type:</label>
+                                        <select name="pet_type" id="pet_type" value={emptyAOBJ.pet_type} onChange={this.Handlechange}>
+                                            <option value="dog">狗</option>
+                                            <option value="cat">貓</option>
+                                            <option value="mouse">鼠</option>
+                                            <option value="bird">鳥</option>
+                                        </select>
+                                        <p></p>
+                                        <label htmlFor="product_category">product_category:</label>
+                                        <select
+                                            name="product_category"
+                                            id="product_category"
+                                            className="form-select"
+                                            value={emptyAOBJ.product_category}
+                                            onChange={this.Handlechange}
+                                        >
+                                            <option value="">-- 請選擇分類 --</option>
+                                            <option value="pet food">寵物主食</option>
+                                            <option value="complementary food">副食品</option>
+                                            <option value="snacks">零食</option>
+                                            <option value="Health Supplements">健康保健品</option>
+                                            <option value="Living Essentials">生活用品</option>
+                                            <option value="toys">玩具</option>
+                                        </select>
+                                        <p></p>
+                                        {
+                                            emptyAOBJ.sections.map((sec, index) => {
+                                                return (<>
+                                                    <legend htmlFor="">{`section${index + 1}`}</legend>
+                                                    <p></p>
+                                                    <label htmlFor="">{`heading${index + 1}`}</label>
+                                                    <input type="text" name={`heading.${index}`} value={sec.heading} onChange={this.Handlechange} />
+                                                    <p></p>
+                                                    <label htmlFor="">{`image_url${index + 1}`}</label>
+                                                    <input type="file" name={`image_url.${index}`} onChange={this.PhotoChange} />
+                                                    <img width={50} src={sec.image_url} alt='' />
+                                                    <p></p>
+                                                    <label htmlFor="">{`body${index + 1}`}</label>
+                                                    <input type="text" name={`body.${index}`} value={sec.body} onChange={this.Handlechange} />
+                                                    <p></p>
 
-                                                    </>
-                                                    )
-                                                })
-                                            }
-
-                                        </form>
-                                    </div>
-
-                                    <div className="modal-footer">
-                                        <button type="button" className="btn btn-secondary" onClick={() => {
-                                            this.toggleModal(); this.setState({
-                                                emptyAOBJ: {
-                                                    ArticleId: 1,
-                                                    title: "",
-                                                    banner_URL: "",
-                                                    intro: "",
-                                                    pet_type: "",
-                                                    product_category: "",
-                                                    sections: [],
-                                                    create_at: ""
-                                                }
+                                                </>
+                                                )
                                             })
-                                        }}>取消</button>
-                                        <button type="submit" className="btn btn-primary" onClick={() => { this.toggleModal(); }}>儲存</button>
-                                    </div>
+                                        }
+
+                                    </form>
+                                </div>
+
+                                <div className="modal-footer">
+                                    <button type="button" className="btn btn-secondary" onClick={() => {
+                                        this.toggleModal(); this.setState({
+                                            emptyAOBJ: {
+                                                ArticleID: 1,
+                                                title: "",
+                                                banner_URL: "",
+                                                intro: "",
+                                                pet_type: "",
+                                                product_category: "",
+                                                sections: [],
+                                                create_at: ""
+                                            }
+                                        })
+                                    }}>取消</button>
+                                    <button type="submit" className="btn btn-primary" onClick={() => { this.toggleModal(); }}>儲存</button>
                                 </div>
                             </div>
                         </div>
-                    )
-                }
+                    </div>
+                )}
+
             </>
         );
     }
@@ -189,7 +227,21 @@ class Article_manage extends Component {
             if (file) {
                 let photoURL = URL.createObjectURL(file);
                 let newAOBJ = { ...emptyAOBJ }
+                console.log(typeof (newAOBJ.sections[index]));
+
                 newAOBJ.sections[index].image_url = photoURL
+                this.setState({ emptyAOBJ: newAOBJ }, () => {
+                    console.log(newAOBJ);
+                })
+            }
+        }
+        else if (name === 'banner_URL') {
+            const file = event.target.files[0];
+            if (file) {
+                let photoURL = URL.createObjectURL(file);
+                let newAOBJ = { ...emptyAOBJ }
+
+                newAOBJ.banner_URL = photoURL
                 this.setState({ emptyAOBJ: newAOBJ }, () => {
                     console.log(newAOBJ);
                 })

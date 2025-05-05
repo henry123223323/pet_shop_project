@@ -32,7 +32,7 @@ class Coupon extends Component {
 
         {applied && (
           <div className="text-success mt-2">
-            ✅ 成功套用折扣碼！折扣金額：- {discountAmount} 元
+            ✅ 成功套用折扣碼～{discountAmount*100} 折
           </div>
         )}
       </div>
@@ -47,8 +47,8 @@ class Coupon extends Component {
     const { coupon } = this.state;
     let discountAmount = 0;
 
-    if (coupon.trim().toLowerCase() === 'discount99') {
-      discountAmount = 99;
+    if (coupon.trim().toLowerCase() === 'discount88') {
+      discountAmount = 0.88;
       this.setState({ applied: true, discountAmount: discountAmount });
     } else {
       this.setState({ applied: false, discountAmount: 0 });

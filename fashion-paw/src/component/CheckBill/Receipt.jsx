@@ -8,19 +8,24 @@ class Receipt extends Component {
     }
     render() {
         const { selectedReceiptWay } = this.state
+        const hasNewItem = this.props.selectedItems?.some(item => item.condition === "new");
         return (<>
 
-            <div className='px-4 py-2'>
+            {hasNewItem && <div className='px-4 py-2'>
                 <input name="receiptWay" type="radio" id="memberReceipt" onChange={this.payWayChange} />
                 <label className='px-2' htmlFor="memberReceipt"
                 > 會員載具</label><br />
 
                 <input name="receiptWay" type="radio" id="phoneReceipt" onChange={this.payWayChange} />
                 <label className='px-2' htmlFor="phoneReceipt"> 手機載具</label><br />
-                 {selectedReceiptWay === "phoneReceipt" && (
+                 {selectedReceiptWay === "phoneReceipt" && (<>
                     <div className="px-3">
                         <input name="installmentOption" type="text" id="phoneReceipt" />
                     </div>
+                    <div className='mx-3'>
+                    <input type="checkbox" name="remember_phonereceive" id="remember_phonereceive" className='mx-2'/><label htmlFor="remember_phonereceive">記住我的載具</label>
+                    </div>
+                 </>
                 )}
 
                 <input name="receiptWay" type="radio" id="companyReceipt" onChange={this.payWayChange} />
@@ -37,7 +42,7 @@ class Receipt extends Component {
                 <input name="receiptWay" type="radio" id="Cash" onChange={this.payWayChange} />
                 <label className='px-2' htmlFor="Cash"
                 > 捐贈發票</label>
-            </div>
+            </div>}
         </>);
     }
     payWayChange = (e) => {
