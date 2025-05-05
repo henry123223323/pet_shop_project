@@ -3,14 +3,15 @@ import React from 'react';
 import styles from './ProductCard.module.css';
 
 // 引入 Share 底下的通用按鈕元件
-import AddToCartBtn    from '../../share/AddToCartBtn';
+import AddToCartBtn from '../../share/AddToCartBtn';
 import AddToMyFavorite from '../../share/AddToMyFavorite';
 
 export default function ProductCard({
   id,
   name,
   price,
-  imageUrl,
+  images,
+
   isFavorite,
   onToggleFavorite,
   onAddToCart,
@@ -29,7 +30,7 @@ export default function ProductCard({
   return (
     <div className={cls}>
       <div className={styles.imageWrapper}>
-        <img src={imageUrl} alt={name} />
+        <img src={images[0].img_path} alt={name} />
       </div>
       <div className={styles.content}>
         <h3 className={styles.name}>{name}</h3>
