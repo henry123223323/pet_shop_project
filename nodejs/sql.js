@@ -1,6 +1,8 @@
+require('dotenv').config();
 var express = require("express");
 var axios = require('axios');
 
+const verifyRoutes = require('./routes/verify');
 var cors = require("cors");
 var app = express();
 app.listen(8000);
@@ -23,48 +25,50 @@ conn.connect(function (err) {
     console.log(err);
 })
 // app.get('/', function (req, res) {
-//     res.sendFile(__dirname+'/test.html');
+    //     res.sendFile(__dirname+'/test.html');
+    
+    // })
+    // app.get('/api/taiwan_counties', async (req, res) => {
+        //     try {
+            //       const url = 'https://github.com/henry123223323/Lab_A/releases/download/v1.0.1/taiwan_counties.json';
+            //       const response = await axios.get(url, {
+                //         responseType: 'stream',
+                //         headers: {
+                    //           'User-Agent': 'Mozilla/5.0', // 用瀏覽器的 UA 模擬
+                    //           'Accept': '*/*'
+                    //         }
+                    //       });
+                    
+                    //       res.setHeader('Content-Type', 'application/json');
+                    //       response.data.pipe(res);
+                    //     } catch (err) {
+                        //       console.error('下載失敗：', err.message);
+                        //       res.status(500).send('讀取檔案失敗');
+                        //     }
+                        // });
+                        
+                        // app.get('/api/taiwan_town', async (req, res) => {
+                            //     try {
+                                //       const url = 'https://github.com/henry123223323/Lab_A/releases/download/v1.0.1/taiwan_townships.json';
+                                //       const response = await axios.get(url, {
+                                    //         responseType: 'stream',
+                                    //         headers: {
+                                        //           'User-Agent': 'Mozilla/5.0', // 用瀏覽器的 UA 模擬
+                                        //           'Accept': '*/*'
+                                        //         }
+                                        //       });
+                                        
+                                        //       res.setHeader('Content-Type', 'application/json');
+                                        //       response.data.pipe(res);
+                                        //     } catch (err) {
+                                            //       console.error('下載失敗：', err.message);
+                                            //       res.status(500).send('讀取檔案失敗');
+                                            //     }
+                                            //   });
+                                            
+                                            
+app.use('/verify', verifyRoutes);
 
-// })
-// app.get('/api/taiwan_counties', async (req, res) => {
-//     try {
-//       const url = 'https://github.com/henry123223323/Lab_A/releases/download/v1.0.1/taiwan_counties.json';
-//       const response = await axios.get(url, {
-//         responseType: 'stream',
-//         headers: {
-//           'User-Agent': 'Mozilla/5.0', // 用瀏覽器的 UA 模擬
-//           'Accept': '*/*'
-//         }
-//       });
-  
-//       res.setHeader('Content-Type', 'application/json');
-//       response.data.pipe(res);
-//     } catch (err) {
-//       console.error('下載失敗：', err.message);
-//       res.status(500).send('讀取檔案失敗');
-//     }
-// });
-  
-// app.get('/api/taiwan_town', async (req, res) => {
-//     try {
-//       const url = 'https://github.com/henry123223323/Lab_A/releases/download/v1.0.1/taiwan_townships.json';
-//       const response = await axios.get(url, {
-//         responseType: 'stream',
-//         headers: {
-//           'User-Agent': 'Mozilla/5.0', // 用瀏覽器的 UA 模擬
-//           'Accept': '*/*'
-//         }
-//       });
-  
-//       res.setHeader('Content-Type', 'application/json');
-//       response.data.pipe(res);
-//     } catch (err) {
-//       console.error('下載失敗：', err.message);
-//       res.status(500).send('讀取檔案失敗');
-//     }
-//   });
-  
-  
 app.get("/get/article", function (req, res) {
     conn.query("SELECT * FROM article", function (err, results) {
         if (err) {
