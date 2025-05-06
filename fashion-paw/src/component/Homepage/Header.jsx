@@ -19,7 +19,7 @@ function Header() {
     useEffect(() => {
         const handleScroll = () => {
             const currentY = window.scrollY;
-            if (currentY > lastScrollY && currentY > 100) {
+            if (currentY > lastScrollY && currentY > 10) {
                 // 往下滾超過 100px，就隱藏
                 setHideHeader(true);
             } else {
