@@ -7,8 +7,8 @@ import newImg from './images/newpd.png';
 import usedImg from './images/newpd2.png';
 
 const sections = [
-  { key: 'new',   label: '新品', to: '/new',   src: newImg  },
-  { key: 'used',  label: '二手', to: '/second',src: usedImg },
+  { key: 'new',   label: '新品', to: '/ProductPage',   src: newImg  },
+  { key: 'used',  label: '二手', to: '/SeProductPage',src: usedImg },
 ];
 
 export default function SectionLinks() {

@@ -3,6 +3,11 @@ import styles from './BestsellerTabs.module.css'
 import pawicon from './images/pawicon.svg'
 import Dog7 from './images/Dog7.jpg'
 import Dog9 from './images/Dog9.jpg'
+import Dog from './images/5-3littlemonster_chicken.png'
+import Dog2 from './images/3-2Rrannk_beef.png'
+import Cat from './images/4-2kitcat_tunacrab.png'
+import Cat2 from './images/5-1Instinct_duck.png'
+import Cat3 from './images/6-2sheba_tunachicken.png'
 
 
 const categories = [
@@ -14,7 +19,7 @@ const categories = [
   {
     key: 'ComplementaryFood',
     label: '副食',
-    images: [Dog9, Dog7, Dog9],
+    images: [Dog, Dog2, Cat, Cat2, Cat3],
   },
   {
     key: 'snack',
@@ -66,55 +71,58 @@ export default function BestsellerTabs() {
   }
 
   return (
-    <div className="container-lg">
-      <div className={styles.titleWrapper}>
-        <h2 className={styles.title}>
-          熱銷排行榜
-          <img src={pawicon} className={styles.icon} />
-        </h2>
-
-      </div>
-
-      <nav className={styles.tabNav}>
-        {categories.map((cat) => (
-          <button
-            key={cat.key}
-            className={`${styles.tab} ${cat.key === activeKey ? styles.active : ''
-              }`}
-            onClick={() => switchCategory(cat.key)}
-          >
-            {cat.label}
-          </button>
-        ))}
-      </nav>
-
-
-      <div className={styles.slider}>
-        <button onClick={prev} className={styles.arrow}>
-          ‹
-        </button>
-
-        <div className={styles.viewport}>
-          <div
-            className={styles.track}
-            style={{ transform: `translateX(-${page * 100}%)` }}
-          >
-            {slides.map((group, gi) => (
-              <div key={gi} className={styles.slide}>
-                {group.map((src, idx) => (
-                  <div key={idx} className={styles.card}>
-                    <img src={src} className={styles.img} alt="" />
-                  </div>
-                ))}
-              </div>
-            ))}
-          </div>
+    <section className={styles.section}>
+      <div className="container-lg">
+        <div className={styles.titleWrapper}>
+          <h2 className={styles.title}>
+            熱銷排行榜
+            <img src={pawicon} className={styles.icon} />
+          </h2>
         </div>
 
-        <button onClick={next} className={styles.arrow}>
-          ›
-        </button>
+
+        <nav className={styles.tabNav}>
+          {categories.map((cat) => (
+            <button
+              key={cat.key}
+              className={`${styles.tab} ${cat.key === activeKey ? styles.active : ''
+                }`}
+              onClick={() => switchCategory(cat.key)}
+            >
+              {cat.label}
+            </button>
+          ))}
+        </nav>
       </div>
-    </div>
+
+      <div className="container-lg">
+        <div className={styles.slider}>
+          <button onClick={prev} className={styles.arrow}>
+            ‹
+          </button>
+
+          <div className={styles.viewport}>
+            <div
+              className={styles.track}
+              style={{ transform: `translateX(-${page * 100}%)` }}
+            >
+              {slides.map((group, gi) => (
+                <div key={gi} className={styles.slide}>
+                  {group.map((src, idx) => (
+                    <div key={idx} className={styles.card}>
+                      <img src={src} className={styles.img} alt="" />
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <button onClick={next} className={styles.arrow}>
+            ›
+          </button>
+        </div>
+      </div>
+    </section>
   )
 }

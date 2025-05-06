@@ -4,9 +4,11 @@ import styles from './NewsBar.module.css';
 
 // 範例多筆訊息
 const messages = [
-  { text: '新品上市！春季限量開賣', link: '#newsEvents' },
-  { text: '會員專屬優惠即將結束', link: '#newsEvents' },
-  { text: '寵物健康講座報名開放中', link: '#newsEvents' }
+  { text: '結帳金額滿399免運費', link: '#newsEvents' },
+  { text: '貓砂買二送一', link: '#newsEvents' },
+  { text: '全館玩具8折', link: '#newsEvents' },
+  { text: '新會員註冊送100元折價券', link: '#newsEvents' },
+  { text: '保健食品買三送一', link: '#newsEvents' },
 ];
 
 function NewsBar() {

@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import MainNav from './MainNav'
 import { Link } from "react-router-dom";
-import { BiMenu, BiX } from 'react-icons/bi'; // 安裝 react-icons
-import Logo from "./images/Logo.png"
+import { BiMenu, BiX } from 'react-icons/bi';
+import Logo from "./images/Logoblack.png"
 import styles from './IndexStyle.module.css'
 import navstyles from './MainNav.module.css'
+import SearchBar from './SearchBar';
 
 function Header() {
     // 設隱藏導覽列的初始值
@@ -60,7 +61,7 @@ function Header() {
 
                 {/* header第一列 */}
                 <div className={styles.headerTop}>
-                    <button className={styles.iconBtn}><i className="bi bi-search"></i></button>
+                <SearchBar />
                     <button className={styles.iconBtn}><i className="bi bi-cart"></i></button>
                     <Link to="/Login" className={styles.link}>登入</Link>
                     <span>|</span>
@@ -68,7 +69,7 @@ function Header() {
                 </div>
                 {/* header第二列Logo */}
                 <div className={styles.headerLogo}>
-                    <Link to="/"><img src={Logo} alt="Logo" style={{ height: 100 }} /></Link>
+                    <Link to="/"><img src={Logo} alt="Logo" style={{ height: 80 }} /></Link>
                 </div>
                 {/* header第三列nav */}
                 <div className={styles.mainNav}><MainNav /></div>

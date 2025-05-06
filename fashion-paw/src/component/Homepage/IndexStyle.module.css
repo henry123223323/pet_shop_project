@@ -1,4 +1,3 @@
-/* 涵蓋homepage的module.css */
 /* 調整整個header的高度大小，一次定義，全局可用 */
 :root {
   --header-height: 250px;
@@ -10,11 +9,10 @@
   display: flex;
   flex-direction: column;
   row-gap: 0.5rem;
-  padding: 0.5rem 1rem;
+  padding: 1.5rem 2rem;
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
   height: var(--header-height);
   box-shadow: 0 2px 0 rgba(0, 0, 0, 0.1);
   background: rgba(255, 255, 255, 0.9);
@@ -61,6 +59,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-bottom: 1.5rem;
 }
 
 /* 確保內容都從這個高度之後才開始 */

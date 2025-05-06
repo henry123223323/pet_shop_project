@@ -1,13 +1,11 @@
 .footer {
   position: relative;
   background-color: #70823C;
-  padding-top: 4rem; /* 波浪高度 */
-  padding-bottom: 1rem;
+  /* padding-top: 4rem;  */
+  /* 波浪高度 */
+  /* padding-bottom: 1rem; */
+  padding:4rem 1rem 1rem 1rem;
   color: white;
-  /* width: 100vw;
-  left: 50%;
-  margin-left: -50vw;
-  margin-bottom: -50vw; */
 }
 
 /* ::before 放在 footer 之上，畫一串小半圓 */
