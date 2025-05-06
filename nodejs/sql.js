@@ -5,9 +5,9 @@ var axios = require('axios');
 const verifyRoutes = require('./routes/verify');
 var cors = require("cors");
 var app = express();
-app.listen(8000,  function () {
+app.listen(8000, function () {
     console.log("好拾毛" + new Date().toLocaleTimeString());
-  });
+});
 app.use(express.static("public"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -28,48 +28,48 @@ conn.connect(function (err) {
     console.log(err);
 })
 // app.get('/', function (req, res) {
-    //     res.sendFile(__dirname+'/test.html');
-    
-    // })
-    // app.get('/api/taiwan_counties', async (req, res) => {
-        //     try {
-            //       const url = 'https://github.com/henry123223323/Lab_A/releases/download/v1.0.1/taiwan_counties.json';
-            //       const response = await axios.get(url, {
-                //         responseType: 'stream',
-                //         headers: {
-                    //           'User-Agent': 'Mozilla/5.0', // 用瀏覽器的 UA 模擬
-                    //           'Accept': '*/*'
-                    //         }
-                    //       });
-                    
-                    //       res.setHeader('Content-Type', 'application/json');
-                    //       response.data.pipe(res);
-                    //     } catch (err) {
-                        //       console.error('下載失敗：', err.message);
-                        //       res.status(500).send('讀取檔案失敗');
-                        //     }
-                        // });
-                        
-                        // app.get('/api/taiwan_town', async (req, res) => {
-                            //     try {
-                                //       const url = 'https://github.com/henry123223323/Lab_A/releases/download/v1.0.1/taiwan_townships.json';
-                                //       const response = await axios.get(url, {
-                                    //         responseType: 'stream',
-                                    //         headers: {
-                                        //           'User-Agent': 'Mozilla/5.0', // 用瀏覽器的 UA 模擬
-                                        //           'Accept': '*/*'
-                                        //         }
-                                        //       });
-                                        
-                                        //       res.setHeader('Content-Type', 'application/json');
-                                        //       response.data.pipe(res);
-                                        //     } catch (err) {
-                                            //       console.error('下載失敗：', err.message);
-                                            //       res.status(500).send('讀取檔案失敗');
-                                            //     }
-                                            //   });
-                                            
-                                            
+//     res.sendFile(__dirname+'/test.html');
+
+// })
+// app.get('/api/taiwan_counties', async (req, res) => {
+//     try {
+//       const url = 'https://github.com/henry123223323/Lab_A/releases/download/v1.0.1/taiwan_counties.json';
+//       const response = await axios.get(url, {
+//         responseType: 'stream',
+//         headers: {
+//           'User-Agent': 'Mozilla/5.0', // 用瀏覽器的 UA 模擬
+//           'Accept': '*/*'
+//         }
+//       });
+
+//       res.setHeader('Content-Type', 'application/json');
+//       response.data.pipe(res);
+//     } catch (err) {
+//       console.error('下載失敗：', err.message);
+//       res.status(500).send('讀取檔案失敗');
+//     }
+// });
+
+// app.get('/api/taiwan_town', async (req, res) => {
+//     try {
+//       const url = 'https://github.com/henry123223323/Lab_A/releases/download/v1.0.1/taiwan_townships.json';
+//       const response = await axios.get(url, {
+//         responseType: 'stream',
+//         headers: {
+//           'User-Agent': 'Mozilla/5.0', // 用瀏覽器的 UA 模擬
+//           'Accept': '*/*'
+//         }
+//       });
+
+//       res.setHeader('Content-Type', 'application/json');
+//       response.data.pipe(res);
+//     } catch (err) {
+//       console.error('下載失敗：', err.message);
+//       res.status(500).send('讀取檔案失敗');
+//     }
+//   });
+
+
 app.use('/verify', verifyRoutes);
 
 app.get("/get/article", function (req, res) {
@@ -242,31 +242,64 @@ app.get("/productslist/:pid", function (req, res) {
 
 //評論
 
-app.get("/review", function (req, res) {
-    const sql = `
-    SELECT 
-      r.review_id,
-      r.pid,
-      r.uid,
-      r.rating,
-      r.comment,
-      r.create_time,
-      u.username,
-      p.pd_name AS product_name
-    FROM review r
-    LEFT JOIN userinfo u ON r.uid = u.uid
-    LEFT JOIN productslist p ON r.pid = p.pid
-    `;
+// app.get("/review", function (req, res) {
+//     const sql = `
+//     SELECT 
+//       r.review_id,
+//       r.pid,
+//       r.uid,
+//       r.rating,
+//       r.comment,
+//       r.create_time,
+//       u.username,
+//       p.pd_name AS product_name
+//     FROM review r
+//     LEFT JOIN userinfo u ON r.uid = u.uid
+//     LEFT JOIN productslist p ON r.pid = p.pid
+//     `;
 
-    conn.query(sql, function (err, results) {
-        if (err) {
-            console.error("查詢 review 資料失敗：", err);
-            return res.status(500).send("伺服器錯誤");
-        }
-        console.log("review 連線");
-        res.json(results);
+//     conn.query(sql, function (err, results) {
+//         if (err) {
+//             console.error("查詢 review 資料失敗：", err);
+//             return res.status(500).send("伺服器錯誤");
+//         }
+//         console.log("review 連線");
+//         res.json(results);
+//     });
+// });
+
+//新品評論
+app.get("/review/newproduct/:pid", (req, res) => {
+    const { pid } = req.params;
+    const sql = `
+      SELECT r.*, u.username, p.pd_name 
+      FROM review r 
+      LEFT JOIN userinfo u ON r.uid = u.uid 
+      LEFT JOIN productslist p ON r.pid = p.pid 
+      WHERE r.pid = ?`;
+    conn.query(sql, [pid], (err, results) => {
+      if (err) return res.status(500).send("伺服器錯誤");
+      res.json(results);
     });
-});
+  });
+
+  //二手評論
+app.get("/review/seller/:uid", (req, res) => {
+    const { uid } = req.params;
+    const sql = `
+      SELECT r.*, u.username, p.pd_name 
+      FROM review r 
+      LEFT JOIN userinfo u ON r.uid = u.uid 
+      LEFT JOIN productslist p ON r.pid = p.pid 
+      WHERE p.uid = ?`;
+    conn.query(sql, [uid], (err, results) => {
+      if (err) return res.status(500).send("伺服器錯誤");
+      res.json(results);
+    });
+  });
+
+
+
 
 // 賣家其他商品（簡化欄位）
 app.get("/sellerOtherPd/:uid/:excludePid", function (req, res) {
@@ -277,6 +310,8 @@ app.get("/sellerOtherPd/:uid/:excludePid", function (req, res) {
         p.pid, 
         p.pd_name, 
         p.price, 
+        p.condition,
+        p.uid,
         MIN(pi.img_path) AS img_path
     FROM 
         productslist p

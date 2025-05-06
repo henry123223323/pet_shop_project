@@ -34,6 +34,7 @@ class PdDetailPage extends Component {
       error: null,
     }
   }
+  
 
   render() {
     //目前商品
@@ -48,25 +49,17 @@ class PdDetailPage extends Component {
       photo: ''
     };
 
-    //屬於這個商品賣家的所有評論
-    const sellerReview = this.state.review.filter(review => review.pid === currentPd.pid);
-    //評價總分
-    const totalRating = sellerReview.reduce((sum, review) => sum + review.rating, 0)
-    //平均分數
-    const avgRating = sellerReview.length > 0 ? (totalRating / sellerReview.length).toFixed(2) : "還沒有評價";
-    //評價數量
-    const ratingCount = sellerReview.length
+    // 根據商品類型取得相應的評論
+    const isNew = currentPd.condition === "new";
+    const relevantReviews = isNew
+    ? this.state.review.filter((review) => String(review.pid) === String(currentPd.pid))
+    : this.state.review;
 
-
-    //新品的評價
-    const newPdReview = this.state.review.filter((review) => review.pid === currentPd.pid)
-    //新品評價總分
-    const newTotalRating = newPdReview.reduce((sum, review) => sum + review.rating, 0)
-    //新品平均分數
-    const newAvgRating = newPdReview.length > 0 ? (newTotalRating / newPdReview.length).toFixed(2) : "還沒有評價";
-    //新品評價數量
-    const newRatingCount = newPdReview.length
-
+    // 評價總分與數量
+    const ratingCount = relevantReviews.length;
+    const totalRating = relevantReviews.reduce((sum, review) => sum + Number(review.rating), 0);    
+    const avgRating = ratingCount > 0 ? (totalRating / ratingCount).toFixed(2) : "還沒有評價";
+    
     return (
       <>
         <div className="container-fluid">
@@ -90,7 +83,8 @@ class PdDetailPage extends Component {
                   <div className='d-flex align-items-center col-md-5'>
                     {/* 左邊圖片 */}
                     <PdImageGallery
-                      images={currentPd.images} />
+                      images={currentPd.images}
+                      condition={currentPd.condition} />
                   </div>
                   <div className='col-md-7 my-4'>
                     {/* 右邊說明 */}
@@ -105,8 +99,8 @@ class PdDetailPage extends Component {
                         city={currentPd.city}
                         district={currentPd.district}
                         newLevel={currentPd.new_level}
-                        newAvgRating={newAvgRating}
-                        newRatingCount={newRatingCount}
+                        avgRating={avgRating}
+                        ratingCount={ratingCount}
                       />
                     </div>
                     {/* 數量調整 */}
@@ -146,11 +140,11 @@ class PdDetailPage extends Component {
                     images={currentPd.images}
                     pdAttr={currentPd.attribute} /> : (currentPd.condition === "new" ?
                       <NReview
-                        review={this.state.review.filter(r => r.pid === currentPd.pid)} />
+                        review={this.state.review} />
                       :
                       <SellerInfo
                         userProfile={userProfile}
-                        review={this.state.review.filter(r => r.pid === currentPd.pid)}
+                        review={this.state.review}
                         avgRating={avgRating}
                         ratingCount={ratingCount}
                         sellerOtherPd={this.state.sellerOtherPd} />)}
@@ -170,24 +164,36 @@ class PdDetailPage extends Component {
   componentDidMount() {
     const { pid } = this.props;
     const { setSellers } = this.context;
-  
     let product = null;
     let sellerInfo = null;
   
-    // 撈商品
     axios.get(`http://localhost:8000/productslist/${pid}`)
       .then(res => {
         product = res.data;
         this.setState({ product });
+  
+        // 如果是新品，直接撈該商品的評論
+        if (product.condition === "new") {
+          return axios.get(`http://localhost:8000/review/newproduct/${product.pid}`);
+        }
+  
+        // 否則（二手商品）先撈賣家資訊
         return axios.get(`http://localhost:8000/get/userinfo`);
       })
       .then(res => {
-        const allUsers = res.data;
-        // console.log("商品 UID：", product.uid);
+        if (product.condition === "new") {
+          // 這是評論資料（新品）
+          this.setState({
+            review: res.data,
+            sellerOtherPd: [], // 新品沒賣家其他商品
+            loading: false
+          });
+          return;
+        }
   
-        // 找出對應的使用者
+        // 找出賣家
+        const allUsers = res.data;
         sellerInfo = allUsers.find(user => String(user.uid) === String(product.uid));
-        // console.log("賣家資訊：", sellerInfo);
   
         if (sellerInfo) {
           this.setState({
@@ -197,28 +203,32 @@ class PdDetailPage extends Component {
             }
           });
         } else {
-          console.warn("找不到對應的賣家資訊");
-          this.setState({
-            sellerInfo: {},
-          });
+          this.setState({ sellerInfo: {} });
         }
   
         // 撈賣家其他商品
         return axios.get(`http://localhost:8000/sellerOtherPd/${product.uid}/${product.pid}`);
       })
       .then(res => {
-        this.setState({
-          sellerOtherPd: res.data,
-          loading: false
-        });
-        // console.log(res.data)
+        if (product.condition === "second") {
+          this.setState({ sellerOtherPd: res.data || [] });
+          // 撈賣家評論
+          return axios.get(`http://localhost:8000/review/seller/${product.uid}`);
+        }
+      })
+      .then(res => {
+        if (product.condition === "second") {
+          this.setState({
+            review: res.data,
+            loading: false
+          });
+        }
       })
       .catch(err => {
         console.error("載入資料失敗", err);
         this.setState({ error: "找不到商品或賣家", loading: false });
       })
       .finally(() => {
-        // ✅ 給 context
         if (setSellers && sellerInfo) {
           setSellers([{
             uid: sellerInfo?.uid,
