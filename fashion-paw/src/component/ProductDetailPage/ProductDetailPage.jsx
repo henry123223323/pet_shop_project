@@ -38,8 +38,8 @@ class PdDetailPage extends Component {
   render() {
     //目前商品
     const currentPd = this.state.product;
-if (this.state.loading) return <div>載入中...</div>;
-if (this.state.error || !currentPd) return <div>{this.state.error || "找不到商品"}</div>;
+    if (this.state.loading) return <div>載入中...</div>;
+    if (this.state.error || !currentPd) return <div>{this.state.error || "找不到商品"}</div>;
     //目前商品的賣家資訊
     // const userProfile = this.state.userinfo.find(user => user.uid === currentPd.uid);
     const userProfile = this.state.sellerInfo || {
@@ -47,28 +47,26 @@ if (this.state.error || !currentPd) return <div>{this.state.error || "找不到�
       username: '賣家',
       photo: ''
     };
-    //賣家的其他商品
-    const sellerOtherPd = []
+
     //屬於這個商品賣家的所有評論
     const sellerReview = this.state.review.filter(review => review.pid === currentPd.pid);
     //評價總分
-    const totalRating = sellerReview.reduce((sum,review)=>sum+review.rating,0)
+    const totalRating = sellerReview.reduce((sum, review) => sum + review.rating, 0)
     //平均分數
     const avgRating = sellerReview.length > 0 ? (totalRating / sellerReview.length).toFixed(2) : "還沒有評價";
     //評價數量
-    const ratingCount=sellerReview.length
+    const ratingCount = sellerReview.length
 
 
     //新品的評價
-    const newPdReview = this.state.review.filter((review)=>review.pid === currentPd.pid )
+    const newPdReview = this.state.review.filter((review) => review.pid === currentPd.pid)
     //新品評價總分
-    const newTotalRating = newPdReview.reduce((sum,review)=>sum+review.rating,0)
+    const newTotalRating = newPdReview.reduce((sum, review) => sum + review.rating, 0)
     //新品平均分數
     const newAvgRating = newPdReview.length > 0 ? (newTotalRating / newPdReview.length).toFixed(2) : "還沒有評價";
     //新品評價數量
-    const newRatingCount=newPdReview.length
-    
-    
+    const newRatingCount = newPdReview.length
+
     return (
       <>
         <div className="container-fluid">
@@ -76,7 +74,7 @@ if (this.state.error || !currentPd) return <div>{this.state.error || "找不到�
             {/* 左 */}
             <div className='col-md-2 border border-primary d-none d-md-block'>
               {/* 導入動物+商品種類篩選 */}
-              {currentPd.condition === "new" ? <NewSideBar /> : <SeSideBar /> }
+              {currentPd.condition === "new" ? <NewSideBar /> : <SeSideBar />}
 
             </div>
 
@@ -115,7 +113,7 @@ if (this.state.error || !currentPd) return <div>{this.state.error || "找不到�
                     <div className='d-flex align-items-center flex-md-row flex-wrap'>
                       <PdQuantity
                         quantity={this.state.count}
-                        max= {parseInt(currentPd.stock)}
+                        max={parseInt(currentPd.stock)}
                         onQuantityChange={(newQty) => this.setState({ count: newQty })} />
                       {/* 加入購物車、收藏、分享 */}
                       <div className='d-flex align-items-center'>
@@ -147,15 +145,15 @@ if (this.state.error || !currentPd) return <div>{this.state.error || "找不到�
                     description={currentPd.description}
                     images={currentPd.images}
                     pdAttr={currentPd.attribute} /> : (currentPd.condition === "new" ?
-                      <NReview 
-                      review={this.state.review.filter(r => r.pid === currentPd.pid)} />
+                      <NReview
+                        review={this.state.review.filter(r => r.pid === currentPd.pid)} />
                       :
-                      <SellerInfo 
-                      userProfile={userProfile}
-                      review={this.state.review.filter(r => r.pid === currentPd.pid)} 
-                      avgRating={avgRating}
-                      ratingCount={ratingCount}
-                      sellerOtherPd={sellerOtherPd}/>)}
+                      <SellerInfo
+                        userProfile={userProfile}
+                        review={this.state.review.filter(r => r.pid === currentPd.pid)}
+                        avgRating={avgRating}
+                        ratingCount={ratingCount}
+                        sellerOtherPd={this.state.sellerOtherPd} />)}
               </div>
             </div>
 
@@ -173,39 +171,61 @@ if (this.state.error || !currentPd) return <div>{this.state.error || "找不到�
     const { pid } = this.props;
     const { setSellers } = this.context;
   
+    let product = null;
+    let sellerInfo = null;
+  
     // 撈商品
     axios.get(`http://localhost:8000/productslist/${pid}`)
       .then(res => {
-        const product = res.data;
+        product = res.data;
         this.setState({ product });
-  
-        // 接著撈所有使用者資料
         return axios.get(`http://localhost:8000/get/userinfo`);
       })
       .then(res => {
         const allUsers = res.data;
-        const product = this.state.product;
+        // console.log("商品 UID：", product.uid);
   
         // 找出對應的使用者
-        const sellerInfo = allUsers.find(user => user.uid === product.uid); 
-        
+        sellerInfo = allUsers.find(user => String(user.uid) === String(product.uid));
+        // console.log("賣家資訊：", sellerInfo);
+  
+        if (sellerInfo) {
+          this.setState({
+            sellerInfo: {
+              ...sellerInfo,
+              photoUrl: `http://localhost:8000/userphoto/${sellerInfo.uid}`
+            }
+          });
+        } else {
+          console.warn("找不到對應的賣家資訊");
+          this.setState({
+            sellerInfo: {},
+          });
+        }
+  
+        // 撈賣家其他商品
+        return axios.get(`http://localhost:8000/sellerOtherPd/${product.uid}/${product.pid}`);
+      })
+      .then(res => {
         this.setState({
-          sellerInfo: sellerInfo || {},  // 預設空物件避免 null 錯誤
+          sellerOtherPd: res.data,
           loading: false
         });
-  
-        // 給 context（如果需要）
-        if (setSellers) {
+        // console.log(res.data)
+      })
+      .catch(err => {
+        console.error("載入資料失敗", err);
+        this.setState({ error: "找不到商品或賣家", loading: false });
+      })
+      .finally(() => {
+        // ✅ 給 context
+        if (setSellers && sellerInfo) {
           setSellers([{
             uid: sellerInfo?.uid,
             username: sellerInfo?.username || "未命名賣家",
-            photo: sellerInfo?.photo || ""
+            photo: `http://localhost:8000/userphoto/${sellerInfo?.uid || ''}`
           }]);
         }
-      })
-      .catch(err => {
-        console.error('載入資料失敗', err);
-        this.setState({ error: "找不到商品或賣家", loading: false });
       });
   }
 
@@ -216,7 +236,7 @@ if (this.state.error || !currentPd) return <div>{this.state.error || "找不到�
       ...currentPd,
       quantity: this.state.count
     };
-  
+
     const result = await addToCart(cartItem); // ⬅️ 等待結果
     if (result === 'new' || result === 'updated') {
       const go = window.confirm("已加入購物車！是否前往查看？");

@@ -5,7 +5,9 @@ var axios = require('axios');
 const verifyRoutes = require('./routes/verify');
 var cors = require("cors");
 var app = express();
-app.listen(8000);
+app.listen(8000,  function () {
+    console.log("好拾毛" + new Date().toLocaleTimeString());
+  });
 app.use(express.static("public"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -266,8 +268,8 @@ app.get("/review", function (req, res) {
     });
 });
 
-// 取得同賣家其他商品（簡化欄位）
-app.get("/seller-products/:uid/:excludePid", function (req, res) {
+// 賣家其他商品（簡化欄位）
+app.get("/sellerOtherPd/:uid/:excludePid", function (req, res) {
     const { uid, excludePid } = req.params;
 
     const sql = `
@@ -290,11 +292,40 @@ app.get("/seller-products/:uid/:excludePid", function (req, res) {
     `;
 
     conn.query(sql, [uid, excludePid], function (err, results) {
+
         if (err) {
             console.error("查詢賣家其他商品失敗：", err);
             return res.status(500).send("伺服器錯誤");
         }
 
         res.json(results);
+    });
+});
+
+//大頭貼
+app.get("/userphoto/:uid", function (req, res) {
+    const uid = req.params.uid;
+
+    conn.query("SELECT photo FROM userinfo WHERE uid = ?", [uid], function (err, results) {
+        if (err || results.length === 0 || !results[0].photo) {
+            return res.status(404).send("找不到照片");
+        }
+
+        const photoBlob = results[0].photo;
+
+        // 不同格式的圖片判斷
+        function getMimeType(buffer) {
+            const hex = buffer.toString('hex', 0, 4).toLowerCase();
+            if (hex.startsWith('ffd8')) return 'image/jpeg';
+            if (hex.startsWith('8950')) return 'image/png';
+            if (hex.startsWith('4749')) return 'image/gif';
+            if (hex.startsWith('5249')) return 'image/webp';
+            return 'application/octet-stream';
+        }
+
+        const mimeType = getMimeType(photoBlob);
+
+        res.setHeader("Content-Type", mimeType);
+        res.send(photoBlob);
     });
 });

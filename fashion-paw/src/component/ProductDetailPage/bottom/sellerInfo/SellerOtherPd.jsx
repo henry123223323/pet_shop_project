@@ -13,12 +13,20 @@ class SellerOtherPd extends Component {
   render() {
     const { sellerOtherPd } = this.props
     const { showArrows } = this.state
+    // console.log("👀 傳入 SellerOtherPd 的資料：", sellerOtherPd);
+    if (!sellerOtherPd || sellerOtherPd.length === 0) {
+      return (
+        <div className="paw-bg-pri-darkbrown py-1">
+          <p className="px-3 py-2 ptxtb2">此賣家沒有其他商品</p>
+        </div>
+      );
+    }  
     return (<>
       {/* 商品區 */}
       <div className="paw-bg-pri-darkbrown py-1">
         <p className="px-3 py-2 ptxtb2">賣家的其他商品</p>
-
-        {/* 改這一層：用 flex 排列箭頭 + 商品 */}
+        
+        {/* 卡片區 */}
         <div className={`d-flex align-items-center ${styles.main}`}>
 
           {/* 左鍵 */}
@@ -39,27 +47,27 @@ class SellerOtherPd extends Component {
             style={{ scrollBehavior: 'smooth', flexWrap: 'nowrap' }}
           >
             {sellerOtherPd.map((pd) => (
-              <div key={pd.pid} className="card rounded mx-1 " style={{ maxWidth: '200px', minWidth: '150px' }}>
+              <div key={pd.pid} className="card rounded mx-1" style={{ maxWidth: '200px', minWidth: '150px' }}>
                 <div className='d-flex flex-column justify-content-between' style={{ height: '100%' }}>
                   <div className="px-3">
                     <a href={`/product/${pd.pid}`}>
                       <img
-                        src={pd.images[0]?.img_path}
+                        src={pd.img_path ? `/media/second_pd/${pd.img_path}` : "/media/default/no-image.png"}
                         className="card-img-top p-2"
-                        alt="二手商品圖"
+                        alt="商品圖"
                       />
                     </a>
-                    <a href={`/product/${pd.pid}`} className="ptxtb4 d-block">
+                    <a href={`/product/${pd.pid}`} className="ptxtb4 d-block text-truncate">
                       {pd.pd_name}
                     </a>
+                    <div className="ptxt5 mt-1 text-center">NT$ {pd.price}</div>
                   </div>
 
-                  <div className="d-flex justify-content-center">
-                    <AddToMyFavorite />
-                    <AddToCartBtn type="icon" />
+                  <div className="d-flex justify-content-center mb-2">
+                    <AddToMyFavorite pid={pd.pid} />
+                    <AddToCartBtn product={pd} type="icon" />
                   </div>
                 </div>
-
               </div>
             ))}
           </div>
@@ -80,14 +88,18 @@ class SellerOtherPd extends Component {
   }
   //商品不用滑動時箭頭消失
   componentDidMount() {
-    this.updateScrollBtn();
-    this.scrollRef.current.addEventListener('scroll', this.updateScrollBtn);
-    window.addEventListener('resize', this.updateScrollBtn);
+    if (this.scrollRef.current) {
+      this.updateScrollBtn();
+      this.scrollRef.current.addEventListener('scroll', this.updateScrollBtn);
+      window.addEventListener('resize', this.updateScrollBtn);
+    }
   }
-
+  
   componentWillUnmount() {
-    this.scrollRef.current.removeEventListener('scroll', this.updateScrollBtn);
-    window.removeEventListener('resize', this.updateScrollBtn);
+    if (this.scrollRef.current) {
+      this.scrollRef.current.removeEventListener('scroll', this.updateScrollBtn);
+      window.removeEventListener('resize', this.updateScrollBtn);
+    }
   }
 
   updateScrollBtn = () => {

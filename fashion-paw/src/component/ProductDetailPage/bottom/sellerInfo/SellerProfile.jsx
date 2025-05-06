@@ -21,7 +21,7 @@ class SellerProfile extends Component {
                         <div className="mb-3">
                             <img
                                 className="rounded img-fluid"
-                                src={userProfile.photo}
+                                src={userProfile.photoUrl} 
                                 alt="大頭貼"
                                 style={{
                                     maxWidth: '250px', // 最大寬度限制
