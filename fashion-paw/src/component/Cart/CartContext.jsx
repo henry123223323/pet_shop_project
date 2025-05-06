@@ -6,7 +6,7 @@ export const CartContext = createContext();
 export class CartProvider extends Component {
     state = {
         cartList: [],
-        sellers: [], // 從 PdDetailPage 設定
+        sellers: [], 
     };
 
     render() {
@@ -30,33 +30,54 @@ export class CartProvider extends Component {
     // 設定 seller 名單（從 PdDetailPage 傳入）
     setSellers = (userList) => {
         if (Array.isArray(userList)) {
-            // console.log("🧾 設定 sellers：", userList); 
-            this.setState({ sellers: userList });
+            const merged = [...this.state.sellers, ...userList];
+            const uniqueSellers = Array.from(
+                new Map(merged.map(user => [String(user.uid), user])).values()
+            );
+            this.setState({ sellers: uniqueSellers });
         }
     };
 
     // 透過 uid 找 seller username
     getSellerName = (uid) => {
-        const seller = this.state.sellers.find(user => user.uid === String(uid));
-        // console.log("🔍 查詢賣家名稱：", uid, "=>", seller?.username);
-        return seller ? seller.username : `UID: ${uid}`;
-    };
+        if (!uid) return '未知賣家';
+      
+        const seller = this.state.sellers.find(user => String(user.uid) === String(uid));
+      
+        // 避免 seller 為 undefined 時就嘗試存取 .username
+        if (seller) {
+        //   console.log("🔍 找到 seller =", seller.username);
+          return seller.username;
+        } else {
+        //   console.log("⚠️ 沒有找到 seller：uid =", uid);
+          return `UID: ${uid}（未找到賣家）`;
+        }
+      };
 
-    normalizeCartItem = (item) => {
-        return {
-            cart_id: item.cart_id || `${item.pid}`, // 假資料已設定就保留，接資料庫由後端回傳
-            pid: item.pid,
-            uid: item.uid || null,
-            condition: item.condition || "new",
-            quantity: item.quantity || 1,
-            productName: item.pd_name || item.productName,
-            unit_price: parseInt(item.price || item.unit_price || 0),
-            image: Array.isArray(item.images)
-                ? item.images[0]?.img_path
-                : item.image || "/media/default/no-image.png",
-            color: item.attribute?.color || item.color || "無",
-        };
-    };
+   normalizeCartItem = (item) => {
+  const imagePath = item.condition === "new" ? "/media/new_pd/" : "/media/second_pd/";
+  const rawImage = Array.isArray(item.images)
+    ? item.images[0]?.img_path
+    : item.image;
+
+  const isFullPath = rawImage?.startsWith("/media");
+
+  return {
+    cart_id: item.cart_id || `${item.pid}`,
+    pid: item.pid,
+    uid: item.uid || null,
+    condition: item.condition || "new",
+    quantity: item.quantity || 1,
+    productName: item.pd_name || item.productName,
+    unit_price: parseInt(item.price || item.unit_price || 0),
+    image: isFullPath
+      ? rawImage
+      : rawImage
+        ? `${imagePath}${rawImage}`
+        : "/media/default/no-image.png",
+    color: item.attribute?.color || item.color || "無",
+  };
+};
 
     componentDidMount() {
         const savedCart = localStorage.getItem('cartList');

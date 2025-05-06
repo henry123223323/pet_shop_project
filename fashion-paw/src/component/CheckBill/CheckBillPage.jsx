@@ -20,7 +20,7 @@ class CheckBillPage extends Component {
     render() {
 
         const selectedItems = JSON.parse(localStorage.getItem('selectedItems') || '[]');
-
+        const hasNewItem = selectedItems?.some(item => item.condition === "new");
         const { showDetails } = this.state;
 
         return (
@@ -47,7 +47,11 @@ class CheckBillPage extends Component {
                                 <div key={item.cart_id} className='mb-3'>
                                     <div className='d-flex align-items-center'>
                                         <img
-                                            src={item.image}
+                                            src={
+                                                item.image
+                                                  ? `${item.condition === "new" ? "/media/new_pd/" : "/media/second_pd/"}${item.image}`
+                                                  : "/media/default/no-image.png"
+                                              }
                                             alt={item.productName}
                                             style={{ width: '80px', height: '80px', objectFit: 'cover', marginRight: '10px' }}
                                         />
@@ -87,6 +91,7 @@ class CheckBillPage extends Component {
                         </div>
 
                         {/* 發票資訊 */}
+                        {hasNewItem && 
                         <div className='p-4'>
                             <div className='paw-bg-middleorange'>
                                 <h3 className='p-2'>發票資訊</h3>
@@ -94,7 +99,7 @@ class CheckBillPage extends Component {
                             <div className='border rounded px-1'>
                                 <Receipt selectedItems={selectedItems} />
                             </div>
-                        </div>
+                        </div>}
 
                     </div>
 

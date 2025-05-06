@@ -164,78 +164,56 @@ class PdDetailPage extends Component {
   componentDidMount() {
     const { pid } = this.props;
     const { setSellers } = this.context;
-    let product = null;
-    let sellerInfo = null;
+  
+    this.setState({ loading: true });
   
     axios.get(`http://localhost:8000/productslist/${pid}`)
       .then(res => {
-        product = res.data;
+        const product = res.data;
         this.setState({ product });
   
-        // 如果是新品，直接撈該商品的評論
         if (product.condition === "new") {
-          return axios.get(`http://localhost:8000/review/newproduct/${product.pid}`);
+          return axios.get(`http://localhost:8000/review/newproduct/${product.pid}`)
+            .then(reviewRes => {
+              this.setState({
+                review: reviewRes.data,
+                sellerOtherPd: [],
+                loading: false
+              });
+            });
         }
   
-        // 否則（二手商品）先撈賣家資訊
-        return axios.get(`http://localhost:8000/get/userinfo`);
-      })
-      .then(res => {
-        if (product.condition === "new") {
-          // 這是評論資料（新品）
-          this.setState({
-            review: res.data,
-            sellerOtherPd: [], // 新品沒賣家其他商品
-            loading: false
-          });
-          return;
-        }
+        return axios.get(`http://localhost:8000/get/userinfo`)
+          .then(userRes => {
+            const sellerInfo = userRes.data.find(user => String(user.uid) === String(product.uid));
   
-        // 找出賣家
-        const allUsers = res.data;
-        sellerInfo = allUsers.find(user => String(user.uid) === String(product.uid));
-  
-        if (sellerInfo) {
-          this.setState({
-            sellerInfo: {
-              ...sellerInfo,
-              photoUrl: `http://localhost:8000/userphoto/${sellerInfo.uid}`
+            if (sellerInfo) {
+              setSellers([{ uid: sellerInfo.uid, username: sellerInfo.username || "未命名賣家" }]);
+              this.setState({
+                sellerInfo: {
+                  ...sellerInfo,
+                  photoUrl: `http://localhost:8000/userphoto/${sellerInfo.uid}`
+                }
+              });
             }
-          });
-        } else {
-          this.setState({ sellerInfo: {} });
-        }
   
-        // 撈賣家其他商品
-        return axios.get(`http://localhost:8000/sellerOtherPd/${product.uid}/${product.pid}`);
-      })
-      .then(res => {
-        if (product.condition === "second") {
-          this.setState({ sellerOtherPd: res.data || [] });
-          // 撈賣家評論
-          return axios.get(`http://localhost:8000/review/seller/${product.uid}`);
-        }
-      })
-      .then(res => {
-        if (product.condition === "second") {
-          this.setState({
-            review: res.data,
-            loading: false
+            return axios.get(`http://localhost:8000/sellerOtherPd/${product.uid}/${product.pid}`);
+          })
+          .then(otherPdRes => {
+            this.setState({ sellerOtherPd: otherPdRes.data || [] });
+  
+            return axios.get(`http://localhost:8000/review/seller/${product.uid}`);
+          })
+          .then(reviewRes => {
+            this.setState({
+              review: reviewRes.data,
+              loading: false
+            });
           });
-        }
       })
       .catch(err => {
         console.error("載入資料失敗", err);
         this.setState({ error: "找不到商品或賣家", loading: false });
-      })
-      .finally(() => {
-        if (setSellers && sellerInfo) {
-          setSellers([{
-            uid: sellerInfo?.uid,
-            username: sellerInfo?.username || "未命名賣家",
-            photo: `http://localhost:8000/userphoto/${sellerInfo?.uid || ''}`
-          }]);
-        }
       });
   }
 

@@ -1,8 +1,14 @@
 import React, { Component } from 'react';
+import { CartContext } from './CartContext';
 
 class SellerTitle extends Component {
+  static contextType = CartContext;
+
   render() {
-    const { sellerName } = this.props;
+    const { uid } = this.props;
+    if (!uid) return null;
+
+    const sellerName = this.context.getSellerName(uid);
 
     return (
       <div className="mt-3 mb-2">
