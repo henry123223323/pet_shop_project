@@ -34,30 +34,32 @@ export default class SecondProductManage extends Component {
   }
 
   OpenFound = idx => this.setState({ ModalState: 'Find', thisIndex: idx }, this.toggleModal)
-  OpenEdit  = idx => this.setState({ ModalState: 'Edit', thisIndex: idx }, this.toggleModal)
-  OpenAdd   = ()  => this.setState({ ModalState: 'Add', thisIndex: -1 }, this.toggleModal)
+  OpenEdit = idx => this.setState({ ModalState: 'Edit', thisIndex: idx }, this.toggleModal)
+  OpenAdd = () => this.setState({ ModalState: 'Add', thisIndex: -1 }, this.toggleModal)
 
-  // 刪除後重抓列表
   Delete = async index => {
     const { pid } = this.state.second_product[index] || {};
     if (!pid) return;
+
     try {
       await axios.delete(`http://localhost:8000/get/second-products/${pid}`);
-      await this.loadData();
-      this.setState({ showModal: false });
+      // 刪除成功提示
+      alert('刪除成功！');
+      // 刷新一次頁面
+      window.location.reload();
     } catch (err) {
       console.error('刪除失敗：', err);
+      alert('刪除失敗，請稍後再試');
     }
   }
 
+
+
   new = async pd => {
     try {
-      const res = await axios.post('http://localhost:8000/get/second-products', pd);
-      this.setState(s => ({
-        second_product: [res.data, ...s.second_product],
-        showModal: false,
-        currentPage: 1
-      }));
+      await axios.post('http://localhost:8000/get/second-products', pd);
+      await this.loadData();
+      this.setState({ showModal: false, currentPage: 1 });
     } catch (err) {
       console.error('新增失敗：', err);
     }
@@ -91,7 +93,7 @@ export default class SecondProductManage extends Component {
 
   renderNewLevel = lvl => {
     const stars = '★★★★★'.slice(0, parseInt(lvl, 10));
-    return <span style={{ color:'#FFD700' }}>{stars.padEnd(5,'☆')}</span>;
+    return <span style={{ color: '#FFD700' }}>{stars.padEnd(5, '☆')}</span>;
   }
 
   renderCategory = cat => ({
@@ -101,7 +103,7 @@ export default class SecondProductManage extends Component {
     Health_Supplements: '寵物保健品',
     Living_Essentials: '生活用品',
     toys: '寵物玩具'
-  }[cat]||cat);
+  }[cat] || cat);
 
   findProduct = idx => this.state.second_product[idx] || {}
 
@@ -141,7 +143,7 @@ export default class SecondProductManage extends Component {
                   <tr key={p.pid}>
                     <td>
                       {p.imageUrl
-                        ? <img src={p.imageUrl} alt="" style={{ width:50, height:50, objectFit:'cover' }} />
+                        ? <img src={p.imageUrl} alt="" style={{ width: 50, height: 50, objectFit: 'cover' }} />
                         : <span className="text-muted">無圖</span>
                       }
                     </td>
