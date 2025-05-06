@@ -1,3 +1,5 @@
+
+
 #map {
     width: 600px;
     height: 600px;
@@ -46,7 +48,7 @@
     margin-bottom: 8px;
 }
 
-button {
+.map-button {
     padding: 6px 12px;
     font-size: 16px;
     cursor: pointer;

@@ -8,6 +8,9 @@ app.use(express.static("public"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
+app.use('/media', express.static('media'))
+const uploadRoute = require('./upload');
+app.use('/api', uploadRoute);
 
 var mysql = require("mysql");
 const { log } = require("console");
