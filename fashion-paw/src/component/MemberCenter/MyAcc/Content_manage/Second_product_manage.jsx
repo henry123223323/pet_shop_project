@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import Market_modal from '../market_manage/Market_Modal';
+import MarketModal from '../market_manage/Market_Modal';
 import Pagination from './Page_manage';
 
 export default class SecondProductManage extends Component {
@@ -9,8 +9,8 @@ export default class SecondProductManage extends Component {
     loading: true,
     error: null,
     showModal: false,
-    ModalState: 'Add',  // 'Add' | 'Find' | 'Edit'
-    thisIndex: -1,
+    ModalState: 'Add',   // 'Add' | 'Find' | 'Edit'
+    currentProduct: null,
     currentPage: 1
   };
 
@@ -27,64 +27,77 @@ export default class SecondProductManage extends Component {
       console.error('取得二手商品失敗：', err);
       this.setState({ error: '無法取得二手商品', loading: false });
     }
-  }
+  };
 
   toggleModal = () => {
     this.setState(s => ({ showModal: !s.showModal }));
-  }
+  };
 
-  OpenFound = idx => this.setState({ ModalState: 'Find', thisIndex: idx }, this.toggleModal)
-  OpenEdit = idx => this.setState({ ModalState: 'Edit', thisIndex: idx }, this.toggleModal)
-  OpenAdd = () => this.setState({ ModalState: 'Add', thisIndex: -1 }, this.toggleModal)
+  OpenAdd = () => this.setState({ ModalState: 'Add', currentProduct: null, showModal: true });
+
+  OpenFound = async index => {
+    const { pid } = this.state.second_product[index];
+    try {
+      const res = await axios.get(`http://localhost:8000/get/second-products/${pid}`);
+      this.setState({ ModalState: 'Find', currentProduct: res.data, showModal: true });
+    } catch (err) {
+      console.error('讀取商品詳情失敗：', err);
+      alert('無法取得商品詳情');
+    }
+  };
+
+  OpenEdit = async index => {
+    const { pid } = this.state.second_product[index];
+    try {
+      const res = await axios.get(`http://localhost:8000/get/second-products/${pid}`);
+      this.setState({ ModalState: 'Edit', currentProduct: res.data, showModal: true });
+    } catch (err) {
+      console.error('讀取商品詳情失敗：', err);
+      alert('無法取得商品詳情');
+    }
+  };
 
   Delete = async index => {
     const { pid } = this.state.second_product[index] || {};
     if (!pid) return;
-
     try {
       await axios.delete(`http://localhost:8000/get/second-products/${pid}`);
-      // 刪除成功提示
       alert('刪除成功！');
-      // 刷新一次頁面
-      window.location.reload();
+      await this.loadData();
+      this.setState({ currentPage: 1 });
     } catch (err) {
       console.error('刪除失敗：', err);
       alert('刪除失敗，請稍後再試');
     }
-  }
-
-
+  };
 
   new = async pd => {
     try {
       await axios.post('http://localhost:8000/get/second-products', pd);
+      alert('新增成功！');
       await this.loadData();
       this.setState({ showModal: false, currentPage: 1 });
     } catch (err) {
       console.error('新增失敗：', err);
+      alert('新增失敗，請稍後再試');
     }
-  }
+  };
 
   edit = async pd => {
     try {
-      const res = await axios.put(
-        `http://localhost:8000/get/second-products/${pd.pid}`,
-        pd
-      );
-      this.setState(s => {
-        const list = [...s.second_product];
-        const i = list.findIndex(x => x.pid === pd.pid);
-        if (i >= 0) list[i] = res.data;
-        return { second_product: list, showModal: false };
-      });
+      await axios.put(`http://localhost:8000/get/second-products/${pd.pid}`, pd);
+      alert('修改成功！');
+      await this.loadData();
+      this.setState({ showModal: false });
     } catch (err) {
       console.error('更新失敗：', err);
+      alert('更新失敗，請稍後再試');
     }
-  }
+  };
 
   handlePageChange = page => {
     this.setState({ currentPage: page });
-  }
+  };
 
   renderStatus = st =>
     st === 1
@@ -94,7 +107,7 @@ export default class SecondProductManage extends Component {
   renderNewLevel = lvl => {
     const stars = '★★★★★'.slice(0, parseInt(lvl, 10));
     return <span style={{ color: '#FFD700' }}>{stars.padEnd(5, '☆')}</span>;
-  }
+  };
 
   renderCategory = cat => ({
     pet_food: '寵物食品',
@@ -105,10 +118,8 @@ export default class SecondProductManage extends Component {
     toys: '寵物玩具'
   }[cat] || cat);
 
-  findProduct = idx => this.state.second_product[idx] || {}
-
   render() {
-    const { second_product, loading, error, showModal, ModalState, thisIndex, currentPage } = this.state;
+    const { second_product, loading, error, showModal, ModalState, currentProduct, currentPage } = this.state;
     const itemsPerPage = 5;
     const startIndex = (currentPage - 1) * itemsPerPage;
     const pageItems = second_product.slice(startIndex, startIndex + itemsPerPage);
@@ -129,13 +140,7 @@ export default class SecondProductManage extends Component {
             <table className="table table-striped table-hover">
               <thead className="table-primary">
                 <tr>
-                  <th>主圖</th>
-                  <th>名稱</th>
-                  <th>價格</th>
-                  <th>類型</th>
-                  <th>新舊程度</th>
-                  <th>狀態</th>
-                  <th>操作</th>
+                  <th>主圖</th><th>名稱</th><th>價格</th><th>類型</th><th>新舊程度</th><th>狀態</th><th>操作</th>
                 </tr>
               </thead>
               <tbody>
@@ -155,9 +160,7 @@ export default class SecondProductManage extends Component {
                     <td>
                       <button className="btn btn-primary btn-sm me-1" onClick={() => this.OpenFound(startIndex + i)}>查看</button>
                       <button className="btn btn-warning btn-sm me-1" onClick={() => this.OpenEdit(startIndex + i)}>編輯</button>
-                      <button className="btn btn-danger btn-sm" onClick={() => {
-                        if (window.confirm('確定刪除？')) this.Delete(startIndex + i);
-                      }}>刪除</button>
+                      <button className="btn btn-danger btn-sm" onClick={() => { if (window.confirm('確定刪除？')) this.Delete(startIndex + i); }}>刪除</button>
                     </td>
                   </tr>
                 ))}
@@ -174,10 +177,10 @@ export default class SecondProductManage extends Component {
         )}
 
         {showModal && (
-          <Market_modal
+          <MarketModal
             mode="second"
             modalstate={ModalState}
-            product={this.findProduct(thisIndex)}
+            product={currentProduct}
             new={this.new}
             edit={this.edit}
             close={this.toggleModal}

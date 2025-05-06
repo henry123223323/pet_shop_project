@@ -138,7 +138,7 @@ export default class New_Products_Manage extends Component {
             />
           </form>
           <button className="btn btn-outline-primary" onClick={this.OpenAdd}>
-            新增新品
+            上架新品
           </button>
         </div>
 
