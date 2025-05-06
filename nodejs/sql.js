@@ -242,12 +242,41 @@ app.get("/get/article", function (req, res) {
       }
   });
 });
+//新增文章
+app.post('/api/create/article', async (req, res) => {
+  try {
+    const {
+      title,
+      banner_URL,            // 一定要從 req.body 拿到這個值
+      intro,
+      pet_type,
+      product_category,
+      sections
+    } = req.body;
 
-
-
-
+    const sql = `
+  INSERT INTO article
+    (title, banner_URL, intro, pet_type, product_category, sections, create_at)
+  VALUES (?, ?, ?, ?, ?, ?, NOW())
+`;
+const params = [
+  title,
+  banner_URL || '',                      // 若沒上傳，預設空字串
+  intro,
+  pet_type,
+  product_category,
+  JSON.stringify(sections)
+];
+const result = await q(sql, params);
+    console.log(sql, params);  // ※ 建議先印出來檢查
+    res.status(201).json({ insertId: result.insertId });
+  } catch (err) {
+    console.error('新增文章失敗：', err);
+    res.status(500).json({ error: err.message });
+  }
+});
 // 4. 刪除文章
-app.delete('/get/article/:id', async (req, res) => {
+app.delete('/api/article/:id', async (req, res) => {
   const id = +req.params.id;
   try {
     const result = await q('DELETE FROM article WHERE ArticleID = ?', [id]);
