@@ -1,13 +1,9 @@
-// Article_modal.jsx
-
 import React, { Component } from 'react';
 
 export default class Article_modal extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      form: { ...(props.article || {}) }
-    };
+    this.state = { form: { ...(props.article || {}) } };
   }
 
   componentDidUpdate(prev) {
@@ -27,11 +23,7 @@ export default class Article_modal extends Component {
     const file = files[0];
     const url = URL.createObjectURL(file);
     this.setState(s => ({
-      form: {
-        ...s.form,
-        [name]: file,
-        [`${name}_preview`]: url
-      }
+      form: { ...s.form, [name]: file, [`${name}_preview`]: url }
     }));
   };
 
@@ -53,8 +45,6 @@ export default class Article_modal extends Component {
     const { mode, close } = this.props;
     const { form } = this.state;
     const readOnly = mode === 'Find';
-
-    // 这里做一层合并：优先用 preview，没有就用后端传来的 URL
     const bannerSrc = form.banner_URL_preview || form.banner_URL;
 
     return (
@@ -68,7 +58,6 @@ export default class Article_modal extends Component {
               <button type="button" className="btn-close" onClick={close}></button>
             </div>
             <div className="modal-body">
-              
               {/* Banner 圖片上傳 */}
               <div className="mb-3">
                 <label>Banner 圖片</label>
@@ -79,16 +68,8 @@ export default class Article_modal extends Component {
                   onChange={this.handleFileChange}
                   disabled={readOnly}
                 />
-                {/* 显示已有的 或 新上传的 预览 */}
-                {bannerSrc && (
-                  <img
-                    src={bannerSrc}
-                    alt="banner preview"
-                    style={{ width: '100%', marginTop: '8px' }}
-                  />
-                )}
+                {bannerSrc && <img src={bannerSrc} alt="banner preview" style={{ width: '100%', marginTop: '8px' }} />}
               </div>
-
               {/* 標題 */}
               <div className="mb-3">
                 <label>標題</label>
@@ -101,7 +82,6 @@ export default class Article_modal extends Component {
                   readOnly={readOnly}
                 />
               </div>
-
               {/* 摘要 */}
               <div className="mb-3">
                 <label>摘要</label>
@@ -113,11 +93,45 @@ export default class Article_modal extends Component {
                   readOnly={readOnly}
                 />
               </div>
-
+              {/* 寵物類型 */}
+              <div className="mb-3">
+                <label>寵物類型</label>
+                <select
+                  className="form-select"
+                  name="pet_type"
+                  value={form.pet_type || ''}
+                  onChange={this.handleChange}
+                  disabled={readOnly}
+                >
+                  <option value="">-- 請選擇 --</option>
+                  <option value="dog">狗</option>
+                  <option value="cat">貓</option>
+                  <option value="bird">鳥</option>
+                  <option value="mouse">鼠</option>
+                </select>
+              </div>
+              {/* 文章分類 */}
+              <div className="mb-3">
+                <label>文章分類</label>
+                <select
+                  className="form-select"
+                  name="product_category"
+                  value={form.product_category || ''}
+                  onChange={this.handleChange}
+                  disabled={readOnly}
+                >
+                  <option value="">-- 請選擇 --</option>
+                  <option value="pet food">寵物主食</option>
+                  <option value="complementary food">副食品</option>
+                  <option value="snacks">零食</option>
+                  <option value="Health Supplements">健康保健品</option>
+                  <option value="Living Essentials">生活用品</option>
+                  <option value="toys">玩具</option>
+                </select>
+              </div>
               <hr />
               <h6>Sections</h6>
               {(form.sections || []).map((sec, i) => {
-                // 同样处理 Section 的图片： preview 或 现有 URL
                 const secImgSrc = sec.image_url_preview || sec.image_url;
                 return (
                   <div key={i} className="mb-3 border p-2">
@@ -153,18 +167,11 @@ export default class Article_modal extends Component {
                         }}
                         disabled={readOnly}
                       />
-                      {secImgSrc && (
-                        <img
-                          src={secImgSrc}
-                          alt="sec preview"
-                          style={{ width: '100%', marginTop: '4px' }}
-                        />
-                      )}
+                      {secImgSrc && <img src={secImgSrc} alt="sec preview" style={{ width: '100%', marginTop: '4px' }} />}
                     </div>
                   </div>
                 );
               })}
-
               {!readOnly && (
                 <button
                   className="btn btn-sm btn-outline-secondary"
@@ -179,11 +186,7 @@ export default class Article_modal extends Component {
             </div>
             <div className="modal-footer">
               <button className="btn btn-secondary" onClick={close}>取消</button>
-              {!readOnly && (
-                <button className="btn btn-primary" onClick={this.handleSubmit}>
-                  {mode === 'Add' ? '新增' : '儲存'}
-                </button>
-              )}
+              {!readOnly && <button className="btn btn-primary" onClick={this.handleSubmit}>{mode === 'Add' ? '新增' : '儲存'}</button>}
             </div>
           </div>
         </div>
