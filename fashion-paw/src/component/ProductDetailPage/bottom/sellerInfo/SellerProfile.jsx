@@ -54,7 +54,7 @@ class SellerProfile extends Component {
                             <div>
                                 <p className='ptxtb4'>關於{userProfile.username}</p>
                                 <p className='px-3 '>
-                                    {userProfile.AboutMe}
+                                    {userProfile.aboutme}
                                 </p>
                             </div>
                             <p>

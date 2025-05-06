@@ -169,4 +169,132 @@ GROUP BY p.pid;`
     });
 });
 
+//商品詳細頁
+app.get("/productslist/:pid", function (req, res) {
+    const pid = req.params.pid;
+    const sql = `
+    SELECT 
+        p.pid,p.condition,p.status,p.pet_type,p.pd_name,p.price,p.description,p.categories,p.city,p.district,p.uid,p.new_level,p.created_at,p.stock,p.sale_count,
+        CONCAT('{', GROUP_CONCAT(DISTINCT CONCAT('"', pa.attr, '":"', pa.attr_value, '"')), '}') AS attributes,
+        CONCAT('[', GROUP_CONCAT(DISTINCT CONCAT(
+            '{\"img_path\":\"', pi.img_path, '\",\"img_value\":\"', pi.img_value, '\"}'
+        )), ']') AS images
+    FROM 
+        productslist p
+    LEFT JOIN 
+        product_attribute pa ON p.pid = pa.pid
+    LEFT JOIN 
+        product_image pi ON p.pid = pi.pid
+    WHERE 
+        p.status = 1 AND p.pid = ?
+    GROUP BY 
+        p.pid;
+    `;
 
+    conn.query(sql, [pid], function (err, results) {
+        if (err) {
+            console.error("查詢商品失敗：", err);
+            return res.status(500).send("伺服器錯誤");
+        }
+
+        if (results.length === 0) {
+            return res.status(404).json({ success: false, message: "找不到商品" });
+        }
+
+        const p = results[0];
+        let attributes = {};
+        let images = [];
+
+        try {
+            attributes = JSON.parse(p.attributes || '{}');
+        } catch (e) {
+            console.error("屬性解析失敗：", e);
+        }
+
+        try {
+            images = JSON.parse(p.images || '[]');
+        } catch (e) {
+            console.error("圖片解析失敗：", e);
+        }
+
+        res.json({
+            pid: String(p.pid),
+            condition: p.condition,
+            status: p.status,
+            pet_type: p.pet_type,
+            pd_name: p.pd_name,
+            price: String(p.price),
+            description: p.description,
+            categories: p.categories,
+            city: p.city || "",
+            district: p.district || "",
+            uid: p.uid ? String(p.uid) : "",
+            new_level: p.new_level || attributes.new_level || "",
+            stock: String(p.stock),
+            sale_count: String(p.sale_count || "0"),
+            attribute: attributes,
+            images: images
+        });
+    });
+});
+
+//評論
+
+app.get("/review", function (req, res) {
+    const sql = `
+    SELECT 
+      r.review_id,
+      r.pid,
+      r.uid,
+      r.rating,
+      r.comment,
+      r.create_time,
+      u.username,
+      p.pd_name AS product_name
+    FROM review r
+    LEFT JOIN userinfo u ON r.uid = u.uid
+    LEFT JOIN productslist p ON r.pid = p.pid
+    `;
+
+    conn.query(sql, function (err, results) {
+        if (err) {
+            console.error("查詢 review 資料失敗：", err);
+            return res.status(500).send("伺服器錯誤");
+        }
+        console.log("review 連線");
+        res.json(results);
+    });
+});
+
+// 取得同賣家其他商品（簡化欄位）
+app.get("/seller-products/:uid/:excludePid", function (req, res) {
+    const { uid, excludePid } = req.params;
+
+    const sql = `
+    SELECT 
+        p.pid, 
+        p.pd_name, 
+        p.price, 
+        MIN(pi.img_path) AS img_path
+    FROM 
+        productslist p
+    LEFT JOIN 
+        product_image pi ON p.pid = pi.pid
+    WHERE 
+        p.uid = ? 
+        AND p.status = 1
+        AND p.pid != ?
+    GROUP BY 
+        p.pid
+    LIMIT 6;
+    `;
+
+    conn.query(sql, [uid, excludePid], function (err, results) {
+        if (err) {
+            console.error("查詢賣家其他商品失敗：", err);
+            return res.status(500).send("伺服器錯誤");
+        }
+
+        res.json(results);
+    });
+});

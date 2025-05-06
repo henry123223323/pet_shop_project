@@ -24,6 +24,7 @@ import SeProductPage from './component/SeProductPage/SeProductPage';
 import Helpme from './component/Aboutus/helpme';
 import Needhelp from './component/Aboutus/needhelp';
 import { CartProvider } from 'component/Cart/CartContext';
+import PdDetailPageWrapper from './component/ProductDetailPage/PdDetailPageWrapper';
 
 
 function App() {
@@ -87,6 +88,7 @@ function App() {
           <Route path="/CheckBillPage" component={CheckBillPage} exact />
           <Route path="/Aboutus" component={Helpme} exact />
           <Route path="/Help" component={Needhelp} exact />
+          <Route path="/product/:pid" component={PdDetailPageWrapper} exact />
         </Switch>
       </main>
       <Footer />
