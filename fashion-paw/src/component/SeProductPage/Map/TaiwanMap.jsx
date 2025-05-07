@@ -87,12 +87,17 @@ class TaiwanMap extends Component {
                         layer.on('mouseover', () => {
                             layer.bindTooltip(`鄉鎮：${town}`)
                         })
-                        layer.on('click', () => {
-                            // this.townshipLayer.resetStyle();
-                            this.props.SortProductbyTown(town)
-                            // layer.setStyle({ fillColor: "orange", fillOpacity: 0.8 });
-                            // layer.bringToFront();
-                            this.props.close()
+                        layer.on('click', (event) => {
+                            let Click_Town = event.target.feature.properties.town
+                            console.log(Click_Town);
+                            if (this.state.highlighTown.includes(Click_Town)) {
+
+                                this.props.SortProductbyTown(town)
+                                this.props.close()
+
+                            }
+
+
                         });
                     },
                     style: {
@@ -295,7 +300,7 @@ class TaiwanMap extends Component {
 
         return (<>
             <p id="selectedArea">目前選擇：無</p>
-            <button onClick={this.resetMap}>🔄 回到全台視角</button>
+            <button className='map-button btn btn-primary' onClick={this.resetMap}>🔄 回到全台視角</button>
             <div id="map">
                 {loading && <div id="mapLoadingOverlay">
                     <div className="spinner" id="load">{this.getLoadingText()}</div>

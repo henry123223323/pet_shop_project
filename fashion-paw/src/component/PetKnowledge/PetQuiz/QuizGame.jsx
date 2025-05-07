@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { useHistory } from 'react-router-dom';
+import styles from './QuizGame.module.css'
 
 // 先宣告 ProgressBar 在上面
 function ProgressBar({ current, total }) {
@@ -8,7 +9,7 @@ function ProgressBar({ current, total }) {
             <div
                 className="progress-bar"
                 role="progressbar"
-                style={{ width: `${((current + 1) / total) * 100}%` }}
+                style={{ width: `${((current + 1) / total) * 100}%`, backgroundColor:'#F8A07F' }}
                 aria-valuenow={current + 1}
                 aria-valuemin={1}
                 aria-valuemax={total}
@@ -68,13 +69,14 @@ function QuizGame({ pet, questions, onRestart }) {
     // 已經答完
     if (finished) {
         return (
-            <div className="quiz-game p-4 border rounded text-center">
+            <div className={`quiz-game ${styles.quiz}`}>
                 <h2>完成了！</h2>
                 <p>總分：{score} / {questions.length}</p>
-                <div className="mt-4 flex justify-center gap-4">
+                <div className="mt-2 flex justify-center">
                     {/* 重新遊戲：把本元件的 state 重置回初始 */}
                     <button
                         className="btn btn-outline-primary"
+                        
                         onClick={() => {
                             // 如果同時想在 QuizGame 裡也重置題目進度：
                             setCurrentQuestion(0);
@@ -87,7 +89,7 @@ function QuizGame({ pet, questions, onRestart }) {
                     </button>
                     {/* 回首頁 */}
                     <button
-                        className="btn btn-outline-secondary"
+                        className="btn btn-outline-secondary ml-2"
                         onClick={() => history.push('/')}
                     >
                         回首頁
@@ -100,24 +102,25 @@ function QuizGame({ pet, questions, onRestart }) {
     const q = questions[currentQuestion]
 
     return (
-        <div className="quiz-game p-4 border rounded" style={{ maxWidth: 600, margin: '0 auto' }}>
-            <img
-                src={pet.img}
-                alt={pet.name}
-                className="quiz-pet-img"
-                style={{
-                    width: 100,
-                    height: 100
-                }}
-            />
+        <div className="quiz-game container-lg">
+            <div className={styles.quiz}>
+                <img
+                    src={pet.img}
+                    alt={pet.name}
+                    className="quiz-pet-img"
+                    style={{
+                        width: 100,
+                        height: 100
+                    }}
+                />
 
-            <p className="question-text">{q.text}</p>
+                <p className="question-text">{q.text}</p>
 
-            <div className="btn-group">
-                <button onClick={() => answer(true)}>可以</button>
-                <button onClick={() => answer(false)}>不可以</button>
+                <div className="btn-group">
+                    <button className={styles.btn} onClick={() => answer(true)}>可以</button>
+                    <button className={styles.btn} onClick={() => answer(false)}>不可以</button>
+                </div>
             </div>
-
             {/* 這裡放進度文字 */}
             <div className="text-center mb-2">
                 目前第 <strong>{currentQuestion + 1}</strong> 題 / 共 <strong>{questions.length}</strong> 題
@@ -142,17 +145,24 @@ function QuizGame({ pet, questions, onRestart }) {
                     <div
                         className="feedback-content"
                         style={{
-                            background: '#fff',
+                            background: '#F7F6EE',
                             borderRadius: 8,
                             padding: '1.5rem',
-                            width: 300,
+                            width: 400,
                             textAlign: 'center',
                         }}
                     >
                         <h3>{feedback.title}</h3>
                         <p style={{ margin: '1rem 0' }}>{feedback.message}</p>
                         <p style={{ margin: '1rem 0' }}>{feedback.detail}</p>
-                        <button onClick={nextQuestion}>下一題</button>
+                        <button 
+                        style={{
+                            background: '#E1C599',
+                            borderRadius: 5,
+                            padding: '10px',
+                            textAlign: 'center',
+                        }}
+                        onClick={nextQuestion}>下一題</button>
                     </div>
                 </div>
             )}

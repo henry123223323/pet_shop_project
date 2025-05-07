@@ -19,18 +19,21 @@ import KnowledgeLayout from './component/PetKnowledge/KnowledgeLayout';
 import ArticleDetail from './component/PetKnowledge/ArticleDetail';
 import Header from './component/Homepage/Header';
 import Footer from './component/Homepage/Footer';
+import Icon from './component/Homepage/Icon';
+
 
 import SeProductPage from './component/SeProductPage/SeProductPage';
 import Helpme from './component/Aboutus/helpme';
+import { CartProvider } from './component/Cart/CartContext';
 import Needhelp from './component/Aboutus/needhelp';
-import { CartProvider } from 'component/Cart/CartContext';
+import { CartProvider } from './component/Cart/CartContext';
 import PdDetailPageWrapper from './component/ProductDetailPage/PdDetailPageWrapper';
 
 
 function App() {
   return (
     <BrowserRouter>
-    <CartProvider>
+      <CartProvider>
         <Header />
       <main className={styles.mainContent}>
         <Switch>
@@ -93,6 +96,7 @@ function App() {
       </main>
       <Footer />
       </CartProvider>
+      <Icon />
     </BrowserRouter>
   );
 }

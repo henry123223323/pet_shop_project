@@ -7,16 +7,16 @@ import newImg from './images/newpd.png';
 import usedImg from './images/newpd2.png';
 
 const sections = [
-  { key: 'new',   label: '新品', to: '/new',   src: newImg  },
-  { key: 'used',  label: '二手', to: '/second',src: usedImg },
+  { key: 'new',   label: '新品', to: '/ProductPage',   src: newImg  },
+  { key: 'used',  label: '二手', to: '/SeProductPage',src: usedImg },
 ];
 
 export default function SectionLinks() {
   return (
-    <div className="container-lg mt-5">
-      <div className="row gx-4">
+    <div className="container-lg mt-5 d-flex justify-content-center">
+      <div className="row gx-4"style={{width:600}}>
         {sections.map(sec => (
-          <div key={sec.key} className="col-6 col-md-6 mb-4">
+          <div key={sec.key} className="col-6 col-md-6 ">
             <Link to={sec.to} className={styles.link}>
               <div className={styles.card}>
                 <img

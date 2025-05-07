@@ -1,10 +1,11 @@
-// src/component/PetKnowledge/ArticleDetail.jsx
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import mockData from './data/mockArticles.json';
 import DetailStyles from './ArticleDetail.module.css';
 import recommendProducts from './RecommendProducts.js';
 import { Link } from 'react-router-dom';
+import AddToCartBtn from '../share/AddToCartBtn';
+import AddToMyFavorite from '../share/AddToMyFavorite';
 
 export default function ArticleDetail({ topic }) {
     const { pet, id } = useParams();
@@ -32,49 +33,52 @@ export default function ArticleDetail({ topic }) {
     if (!article) return <p className="text-center my-5">找不到這篇文章</p>;
 
     return (
-        <div className="container-lg mt-5">
-            {/* --- 文章區 --- */}
+        <div className={`container-lg mt-2 ${DetailStyles.articlewrapper}`}>
+            {/* 文章區 */}
             <div className="row">
                 <div className="col-12">
-                    <h1>{article.title}</h1>
+                    <h1 className={DetailStyles.title}>{article.title}</h1>
                     <p className="text-muted">
                         {new Date(article.date).toLocaleDateString()}
                     </p>
                     <img
                         src={article.imageUrl}
                         alt={article.title}
-                        className="img-fluid rounded mb-4"
+                        className={`img-fluid rounded mb-4 ${DetailStyles.imgFluid}`}
                     />
                     <div className={DetailStyles.content}>
-                        {/* 假如你要顯示更長的 content 可以是 article.content */}
                         <p>{article.summary}</p>
                     </div>
                 </div>
             </div>
 
-            {/* --- 推薦商品區 --- */}
-            <div className="row mt-5">
-                <div className="col-12">
-                    <h3>為您推薦</h3>
-                </div>
-                {recommendProducts.map(prod => (
-                    <div key={prod.id} className="col-6 col-md-4 col-lg-3 mb-4">
-                        <div className="card h-100">
-                            <img
-                                src={prod.image}
-                                className="card-img-top"
-                                alt={prod.name}
-                            />
-                            <div className="card-body text-center">
-                                <h5 className="card-title">{prod.name}</h5>
-                                <p className="card-text">{prod.price}</p>
-                                <Link to={`/ProductPage/${prod.id}`} className="btn btn-sm btn-success">
-                                    查看商品
-                                </Link>
+            {/* 推薦商品區 */}
+            <div className={DetailStyles.recommendWrapper}>
+                <h3 className={DetailStyles.recommendTitle}>為您推薦</h3>
+                <div className="row mt-3">
+                    {recommendProducts.map(prod => (
+                        <div key={prod.id} className="col-6 col-md-4 col-lg-4 mb-5">
+                            <div className="card h-100 p-5">
+                                <img
+                                    src={prod.image}
+                                    className="card-img-top"
+                                    alt={prod.name}
+                                />
+                                <div className="card-body text-center">
+                                    <Link to={`/ProductPage/${prod.id}`}>
+                                        <h5 className="card-title">{prod.name}</h5>
+                                        <p className="card-text">{prod.price}</p>
+                                    </Link>
+                                    <div className='d-flex justify-content-center'>
+                                        <AddToMyFavorite />
+                                        <AddToCartBtn />
+                                    </div>
+
+                                </div>
                             </div>
                         </div>
-                    </div>
-                ))}
+                    ))}
+                </div>
             </div>
         </div>
     );

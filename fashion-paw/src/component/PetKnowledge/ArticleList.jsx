@@ -9,18 +9,23 @@ export default function ArticleList({ topic, pet }) {
   const [page, setPage] = useState(1);
   const PAGE_SIZE = 5;
 
+  // 先取出該 topic＋pet 的完整清單，並算總頁
+  const fullList = mockData[topic]?.[pet] || []
+  const totalPages = Math.ceil(fullList.length / PAGE_SIZE)
+
   useEffect(() => {
-    // 1. 先從 mockData 拿所有該 topic, pet 的文章
-    const list = mockData[topic]?.[pet] || [];
-    // 2. 依「日期」最新在前排序
-    const sorted = [...list].sort(
+    // 排序＋分頁
+    const sorted = [...fullList].sort(
       (a, b) => new Date(b.date) - new Date(a.date)
-    );
-    // 3. 分頁切片
-    const start = (page - 1) * PAGE_SIZE;
-    const slice = sorted.slice(start, start + PAGE_SIZE);
-    setArticles(slice);
-  }, [topic, pet, page]);
+    )
+    const start = (page - 1) * PAGE_SIZE
+    setArticles(sorted.slice(start, start + PAGE_SIZE))
+  }, [topic, pet, page])
+
+  const toFirst = () => setPage(1)
+  const toPrev  = () => setPage(p => Math.max(1, p - 1))
+  const toNext  = () => setPage(p => Math.min(totalPages, p + 1))
+  const toLast  = () => setPage(totalPages)
 
 
   return (
@@ -36,19 +41,26 @@ export default function ArticleList({ topic, pet }) {
         ))}
       </div>
       <div className={styles.pagination}>
-        <button
-          disabled={page === 1}
-          onClick={() => setPage((p) => p - 1)}
-        >
-          上一頁
-        </button>
-        <span>第 {page} 頁</span>
-        <button
-          disabled={articles.length < PAGE_SIZE}
-          onClick={() => setPage((p) => p + 1)}
-        >
-          下一頁
-        </button>
+      <div className={styles.buttons}>
+          <button onClick={toFirst} disabled={page === 1}>«</button>
+          <button onClick={toPrev}  disabled={page === 1}>‹</button>
+  
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map(n => (
+            <button
+              key={n}
+              className={n === page ? styles.active : ''}
+              onClick={() => setPage(n)}
+            >
+              {n}
+            </button>
+          ))}
+  
+          <button onClick={toNext} disabled={page === totalPages}>›</button>
+          <button onClick={toLast} disabled={page === totalPages}>»</button>
+        </div>
+        <div className={styles.pageInfo}>
+          第 {page} 頁 ｜ 共 {totalPages} 頁
+        </div>
       </div>
     </div>
   );

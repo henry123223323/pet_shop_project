@@ -31,10 +31,10 @@ class Market_modal extends Component {
                 weight: ""
             },
             images: [
-                { img_path: "", img_value: "" },
-                { img_path: "", img_value: "" },
-                { img_path: "", img_value: "" },
-                { img_path: "", img_value: "" }
+                { img_path: null, img_value: "" },
+                { img_path: null, img_value: "" },
+                { img_path: null, img_value: "" },
+                { img_path: null, img_value: "" }
             ]
         }
     };
@@ -55,16 +55,18 @@ class Market_modal extends Component {
         });
     };
 
-    handleArrayChange = (index, field, value) => {
-        this.setState(prevState => {
-            const key = prevState.modalstate === "Add" ? "add_pd" : "product";
+    uploadImages = (e) => {
+        const file = e.target.files[0];
+        const index = parseInt(e.target.getAttribute("data-index"));
+
+        const key = this.state.modalstate === "Add" ? "add_pd" : "product";
+        this.setState((prevState) => {
             const updated = { ...prevState[key] };
-            if (Array.isArray(updated.images)) {
-                updated.images[index][field] = value;
-            }
+            updated.images[index].img_path = file; // ✅ 是 File 物件
             return { [key]: updated };
         });
     };
+
 
     renderImageFields = (images, disabled = false) => {
         return (
@@ -73,10 +75,10 @@ class Market_modal extends Component {
                     <div className="form-group mb-2">
                         <label>圖片路徑 {index + 1}</label>
                         <input
-                            type="text"
+                            type="file"
+                            data-index={index}         // ✅ 一定要加這行
                             className="form-control"
-                            value={img.img_path}
-                            onChange={(e) => this.handleArrayChange(index, 'img_path', e.target.value)}
+                            onChange={this.uploadImages}
                             disabled={disabled}
                         />
                     </div>
@@ -183,6 +185,8 @@ class Market_modal extends Component {
         const { close } = this.props;
         const currentProduct = modalstate === "Add" ? add_pd : product;
         const isReadOnly = modalstate === "Find";
+        console.log("modalstate:", modalstate);
+        console.log("currentProduct:", currentProduct);
 
         return (
             <div className="modal show fade d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
