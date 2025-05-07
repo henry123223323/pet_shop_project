@@ -40,6 +40,8 @@ export default function RecommendedProducts() {
           </div>
         ))}
       </div>
+      
     </div>
+    
   );
 }
