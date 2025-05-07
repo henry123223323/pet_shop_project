@@ -1,46 +1,50 @@
-// NewsEventsSection.jsx
-import React from 'react';
+// src/component/PetKnowledge/NewsEventsSection.jsx
+import React, { useState, useEffect } from 'react';
 import styles from './NewsEventsSection.module.css';
 import pawicon from './images/pawicon.svg'
+import newsimg from './images/newsimg.png'
+import newsimg2 from './images/newsimg2.png'
+import newsimg3 from './images/newsimg3.png'
+import newsimg4 from './images/newsimg4.png'
+import newsimg5 from './images/newsimg5.png'
 
-// 範例資料
-const events = [
-  { id: 1, title: '我是測試快訊', date: '', img: '/images/event1.jpg', link: '#' },
-  { id: 2, title: '我是測試快訊', date: '5/1 - 5/20', img: '/images/event2.jpg', link: '#' },
-  { id: 3, title: '我是測試快訊', date: '2025/6/11', img: '/images/event3.jpg', link: '#' },
-  { id: 4, title: '我是測試快訊', date: '4/12 - 6/28', img: '/images/event4.jpg', link: '#' },
-  { id: 5, title: '我是測試快訊', date: '5/15', img: '/images/event5.jpg', link: '#' },
-  { id: 6, title: '我是測試快訊', date: '6/01', img: '/images/event6.jpg', link: '#' }
+const mockEvents = [
+  { id: 1, title: '結帳金額滿399免運費', date: '2025/5/10-5/13', img: newsimg },
+  { id: 2, title: '貓砂買二送一', date: '2025/6/10-6/15', img: newsimg2 },
+  { id: 3, title: '全館玩具8折', date: '2025/7/1-7/5', img: newsimg3 },
+  { id: 4, title: '新會員註冊送100元折價券', date: '2025/5/1-12/31', img: newsimg4 },
+  { id: 5, title: '保健食品買三送一', date: '2025/5/22-5/30', img: newsimg5 }
 ];
 
-function NewsEventsSection() {
+
+export default function NewsEventsSection() {
+  const [events, setEvents] = useState([]);
+  useEffect(() => {
+    setEvents(mockEvents);
+  }, []);
+
   return (
-    <div className='container-lg'>
-    <section id="newsEvents">      
+    <section className="container-lg" id='newsEvents'>
       <div className={styles.headerWrapper}>
-        <h2 className={styles.title}>活動快報
-          <img src={pawicon} className={styles.icon} /></h2>
+        <h2 className={styles.title}>
+          活動快報 <img src={pawicon} className={styles.icon} />
+        </h2>
       </div>
       <div className="row">
-        {events.map(event => (
-          <div key={event.id} className="col-6 col-md-6 col-lg-4 mb-4">
+        {events.map(e => (
+          <div key={e.id} className="col-6 col-md-4 mb-4">
             <div className={styles.card}>
-              <a href={event.link} className={styles.cardLink}>
-                <div className={styles.imageWrapper}>
-                  <img src={event.img} alt={event.title} className={styles.image} />                
+              <div className={styles.imageWrapper}>
+                <img src={e.img} alt={e.title} className={styles.image} />
+                <div className={styles.overlay}>
+                  <h4>{e.title}</h4>
+                  <p>{e.date}</p>
                 </div>
-                <div className={styles.cardBody}>
-                  <h3 className={styles.cardTitle}>{event.title}</h3>
-                  {event.date && <p className={styles.cardDate}>{event.date}</p>}
-                </div>
-              </a>
+              </div>
             </div>
           </div>
         ))}
       </div>
     </section>
-    </div>
   );
 }
-
-export default NewsEventsSection;

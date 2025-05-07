@@ -1,27 +1,28 @@
 .titleWrapper {
-    display: flex;   
+    display: flex;
     justify-content: center;
-  }
+}
 
 .title {
-    display: inline-flex; 
+    display: inline-flex;
     align-items: center;
-    gap: 0.5rem; 
-    color: #E1C599; 
+    gap: 0.5rem;
+    color: #E1C599;
     margin-top: 5rem;
     margin-bottom: 1rem;
-  }
+}
 
-  .icon {
-    width: 2rem;            
+.icon {
+    width: 2rem;
     height: auto;
-    flex-shrink: 0;            
-  }
-  
+    flex-shrink: 0;
+}
+
 
 .tabNav {
     display: flex;
     justify-content: center;
+    align-items: center;
     gap: 2rem;
     padding: 0.75rem 1rem;
     margin-bottom: 1.5rem;
@@ -43,6 +44,10 @@
     background: #99b88c;
     border-radius: 5px;
     color: #F7F6EE;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.5rem;
 }
 
 .slider {
@@ -68,19 +73,23 @@
 /* 切換下一列 */
 .track {
     display: flex;
+    gap: 1rem;
     transition: transform 0.8s ease;
+    justify-content: center;
 }
 
 .slide {
     display: flex;
-    min-width: 100%;
+    flex: 0 0 100%;
     gap: 1rem;
 }
 
 .card {
-    flex: 1;
+    flex: 0 0 calc((100% - 2rem) / 3);
+    /* 3 張扣掉左右 gap */
     background: white;
     border-radius: 5px;
+    border: 1px solid rgba(0, 0, 0,0.1);
     overflow: hidden;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
@@ -90,4 +99,18 @@
     height: 100%;
     display: block;
     object-fit: cover;
+}
+
+@media (max-width: 576px) {
+    .tabNav {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        /* 換行後 gap 縮一下 */
+        justify-content: space-around;
+    }
+
+    .tab {
+        flex: 1 1 120px;
+        /* 每顆按鈕最小寬度 120px，可依需求調整 */
+    }
 }

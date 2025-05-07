@@ -13,7 +13,7 @@ export default function KnowledgeLayout({ topic }) {
     console.log("路由參數 pet =", pet);
 
     return (
-        <div className={KnowStyles.wrapper}>
+        <div className={`${KnowStyles.wrapper} container-lg`}>
             <h2 className={KnowStyles.header}>
                 {topic === 'Novicefeeding' ? '新手飼養指南' : '健康檢查篇'}
             </h2>
