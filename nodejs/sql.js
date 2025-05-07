@@ -1,4 +1,4 @@
-require('dotenv').config();               // ← 一定要最前面就載入
+require('dotenv').config();               
 
 var express = require("express");
 var axios = require('axios');
