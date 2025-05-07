@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import axios from 'axios';
+// import axios from 'axios';
 import CheckList from '../Cart/CheckList';
 import PayWay from './PayWay'
 import DeliverWay from './DeliverWay'
@@ -49,7 +49,7 @@ class CheckBillPage extends Component {
                                         <img
                                             src={
                                                 item.image
-                                                  ? `${item.condition === "new" ? "/media/new_pd/" : "/media/second_pd/"}${item.image}`
+                                                  ? `${item.image}`
                                                   : "/media/default/no-image.png"
                                               }
                                             alt={item.productName}

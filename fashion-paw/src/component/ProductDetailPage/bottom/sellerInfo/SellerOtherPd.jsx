@@ -52,7 +52,7 @@ class SellerOtherPd extends Component {
                   <div className="px-3">
                     <a href={`/product/${pd.pid}`}>
                       <img
-                        src={pd.img_path ? `/media/second_pd/${pd.img_path}` : "/media/default/no-image.png"}
+                        src={pd.img_path ? `${pd.img_path}` : "/media/default/no-image.png"}
                         className="card-img-top p-2"
                         alt="商品圖"
                       />

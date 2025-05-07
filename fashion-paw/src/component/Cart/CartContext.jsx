@@ -54,30 +54,21 @@ export class CartProvider extends Component {
         }
       };
 
-   normalizeCartItem = (item) => {
-  const imagePath = item.condition === "new" ? "/media/new_pd/" : "/media/second_pd/";
-  const rawImage = Array.isArray(item.images)
-    ? item.images[0]?.img_path
-    : item.image;
-
-  const isFullPath = rawImage?.startsWith("/media");
-
-  return {
-    cart_id: item.cart_id || `${item.pid}`,
-    pid: item.pid,
-    uid: item.uid || null,
-    condition: item.condition || "new",
-    quantity: item.quantity || 1,
-    productName: item.pd_name || item.productName,
-    unit_price: parseInt(item.price || item.unit_price || 0),
-    image: isFullPath
-      ? rawImage
-      : rawImage
-        ? `${imagePath}${rawImage}`
-        : "/media/default/no-image.png",
-    color: item.attribute?.color || item.color || "無",
-  };
-};
+      normalizeCartItem = (item) => {
+        return {
+          cart_id: item.cart_id || `${item.pid}`,
+          pid: item.pid,
+          uid: item.uid || null,
+          condition: item.condition || "new",
+          quantity: item.quantity || 1,
+          productName: item.pd_name || item.productName,
+          unit_price: parseInt(item.price || item.unit_price || 0),
+          image: Array.isArray(item.images)
+            ? item.images[0]?.img_path || "/media/default/no-image.png"
+            : item.image || "/media/default/no-image.png",
+          color: item.attribute?.color || item.color || "無",
+        };
+      };
 
     componentDidMount() {
         const savedCart = localStorage.getItem('cartList');
