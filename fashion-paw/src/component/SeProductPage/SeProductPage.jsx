@@ -1,6 +1,6 @@
-// src/component/SeProductPage/SeProductPage.jsx
 import React, { useState, useEffect, useCallback } from 'react';
 import styles from './SeProductPage.module.css';
+import { useLocation } from 'react-router-dom';
 
 import SideBar from './SideBar/SideBar';
 import FilterBar from './FilterBar/FilterBar';
@@ -11,6 +11,10 @@ import ProductList from './ProductList/ProductList';
 import axios from 'axios';
 
 export default function SeProductPage() {
+  const location = useLocation();                       // ← 新增
+  const searchState = location.state || {};
+  const SearchProducts = searchState.products;
+
   const [viewMode, setViewMode] = useState('grid');
   const [products, setProducts] = useState([]);
   const [filtered, setFiltered] = useState([]);
@@ -27,52 +31,46 @@ export default function SeProductPage() {
   // 載入 mock 資料
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const res = await axios.get('http://localhost:8000/get/second_product/home');
-        res.data.forEach((product, idx) => {
-          product.images = JSON.parse(product.images);
-          product.attributes_object = JSON.parse(product.attributes_object);
-          product.new_level = parseInt(product.new_level)
-          product.created_at = new Date(product.created_at)
-          product.city = product.city.replace(/台/g, "臺")
-          product.city_town = product.city + product.district
-          switch (product.categories) {
-            case 'pet_food':
-              product.categories = '乾糧'; break
-            case 'complementary_food':
-              product.categories = '副食'; break
-            case 'snacks':
-              product.categories = '零食'; break
-            case 'Health_Supplements':
-              product.categories = '保健食品'; break
-            case 'Living_Essentials':
-              product.categories = '家居'; break
-            case 'toys':
-              product.categories = '玩具'; break
-            default:
-              product.categories = '其他'; break
-          }
-          console.log(product);
-
-
-        })
-        setProducts(res.data);
-        let array = []
-
-        array = res.data.map(pd => pd.city_town); // 用剛抓到的資料
-        setcitytownarray(array);
-        console.log(array);
-
-
-      } catch (err) {
-        console.error('抓資料失敗:', err);
+      if (SearchProducts) {
+        // 1. 有搜尋結果：直接塞入
+        setProducts(SearchProducts);
+        setcitytownarray(
+          SearchProducts.map(pd => pd.city + pd.district)
+        );
+      } else {
+        // 2. 沒搜尋：去後端抓資料
+        try {
+          const res = await axios.get('http://localhost:8000/get/second_product/home');
+          const data = res.data.map(prod => {
+            prod.images = JSON.parse(prod.images);
+            prod.attributes_object = JSON.parse(prod.attributes_object);
+            prod.new_level = parseInt(prod.new_level);
+            prod.created_at = new Date(prod.created_at);
+            prod.city = prod.city.replace(/台/g, "臺");
+            prod.city_town = prod.city + prod.district;
+            switch (prod.categories) {
+              case 'pet_food': prod.categories = '乾糧'; break;
+              case 'complementary_food': prod.categories = '副食'; break;
+              case 'snacks': prod.categories = '零食'; break;
+              case 'Health_Supplements': prod.categories = '保健食品'; break;
+              case 'Living_Essentials': prod.categories = '家居'; break;
+              case 'toys': prod.categories = '玩具'; break;
+              default: prod.categories = '其他'; break;
+            }
+            return prod;
+          });
+          setProducts(data);
+          setcitytownarray(data.map(pd => pd.city_town));
+        } catch (err) {
+          console.error('抓資料失敗:', err);
+        }
       }
     };
 
+    // **⚠️ 這裡要在外層呼叫一次**，才會每次 SearchProducts 變動就執行
     fetchData();
+  }, [SearchProducts]);
 
-  }
-    , []);
 
 
   // 過濾 + 排序
