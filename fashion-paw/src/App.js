@@ -26,7 +26,6 @@ import SeProductPage from './component/SeProductPage/SeProductPage';
 import Helpme from './component/Aboutus/helpme';
 import { CartProvider } from './component/Cart/CartContext';
 import Needhelp from './component/Aboutus/needhelp';
-import { CartProvider } from './component/Cart/CartContext';
 import PdDetailPageWrapper from './component/ProductDetailPage/PdDetailPageWrapper';
 
 
