@@ -11,11 +11,11 @@ app.listen(8000, () => console.log('API listening on port 8000'));
 // 靜態檔案
 app.use(express.static('public'));
 app.use(express.static(path.resolve(__dirname, '../fashion-paw/public')));
-app.use('/media',express.static(path.resolve(__dirname, '../fashion-paw/public/media')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 app.use('/api', require('./upload'));
+app.use('/media', express.static(path.resolve(__dirname, '../public/media')));
 
 // MySQL 連線
 const conn = mysql.createConnection({
@@ -215,8 +215,6 @@ app.get('/get/hot-ranking', (req, res) => {
            SELECT MIN(pd_img_id) FROM product_image GROUP BY pid
          )
       ) pi ON pi.pid = p.pid
-     ORDER BY p.sale_count DESC
-     LIMIT 3
   `;
   conn.query(sql, (err, results) => {
     if (err) return res.status(500).send('伺服器錯誤');
@@ -226,14 +224,11 @@ app.get('/get/hot-ranking', (req, res) => {
         pd_name: row.pd_name,
         price: row.price,
         sale_count: row.sale_count,
-        imageUrl: row.img_path
-          ? `${hostUrl}/${row.img_path.replace(/^\.\.\//, '')}`
-          : null
+        imageUrl: row.img_path ? `${hostUrl}/${row.img_path.replace(/^\.\.\//, '')}` : null
       }))
     );
   });
 });
-
 
 //文章相關//
 //文章管理頁面取得文章//
@@ -294,26 +289,118 @@ app.delete('/api/article/:id', async (req, res) => {
   }
 });
 //寵物小知識取得文章//
-// 在 app.js 裡加／改成這段
-app.get('/api/articles', async (req, res) => {
-  conn.query("SELECT * FROM article", function (err, results) {
-    if (err) {
-        console.error("資料庫查詢錯誤:", err);
-        res.status(500).send("伺服器錯誤");
-    } else {
-        console.log("/api/articles被連線");
-        res.json(results); // 正確回傳結果給前端
-    }
-});
+app.get('/get/petknowarticles', async (req, res) => {
+  try {
+    const rows = await q('SELECT * FROM article');
+    res.json({ list: rows });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: '伺服器錯誤' });
+  }
 });
 
+// 單篇文章
+app.get('/api/petknowarticle/:id', async (req, res) => {
+  const id = +req.params.id;
+  try {
+    const rows = await q(
+      `SELECT
+         ArticleID      AS id,
+         title          AS title,
+         banner_URL     AS bannerFile,    -- 可能是 "dog/dogcare.png" 或 "/dog/dogcare.png"
+         intro          AS summary,
+         pet_type       AS pet,           -- "dog"
+         article_type   AS articleType,   -- "health_check" 或 "pet_feeding"
+         sections       AS sections,
+         create_at      AS date
+       FROM article
+       WHERE ArticleID = ?`,
+      [id]
+    );
+    if (!rows.length) return res.status(404).json({ error: 'Not Found' });
 
+    const row = rows[0];
+    const host = `${req.protocol}://${req.get('host')}`; // e.g. http://localhost:8000
 
+    // 用 path.basename 只留下最末端檔名 ("dogcare.png")
+    const fileName = require('path').basename(row.bannerFile || '');
 
+    // 再手動拼出正確路徑
+    // public/media/pet_know/{articleType}/{pet}/{fileName}
+    const bannerUrl = fileName
+      ? `${host}/media/pet_know/${row.articleType}/${row.pet}/${fileName}`
+      : null;
 
+    res.json({
+      id:          row.id,
+      title:       row.title,
+      summary:     row.summary,
+      pet:         row.pet,
+      topic:       row.topic,
+      articleType: row.articleType,
+      sections:    row.sections,
+      date:        row.date,
+      bannerUrl
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: '伺服器錯誤' });
+  }
+});
+// 列表分頁（同樣拼 bannerUrl）
+app.get('/api/petknowarticle', async (req, res) => {
+  const { type, pet, page = 1, size = 5 } = req.query;
+  const pageNum  = +page,
+        pageSize = +size,
+        offset   = (pageNum - 1) * pageSize;
 
+  try {
+    // 1. 總筆數
+    const countRows = await q(
+      'SELECT COUNT(*) AS cnt FROM article WHERE article_type=? AND pet_type=?',
+      [type, pet]
+    );
+    const cnt        = countRows[0]?.cnt || 0;
+    const totalPages = Math.ceil(cnt / pageSize);
+    const host       = `${req.protocol}://${req.get('host')}`;
 
+    // 2. 分頁資料
+    const rows = await q(
+      `SELECT
+         ArticleID        AS id,
+         title            AS title,
+         banner_URL       AS bannerFile,
+         intro            AS summary,
+         pet_type         AS pet,
+         product_category AS topic,
+         article_type     AS articleType,
+         create_at        AS date
+       FROM article
+       WHERE article_type=? AND pet_type=?
+       ORDER BY create_at DESC
+       LIMIT ?, ?`,
+      [type, pet, offset, pageSize]
+    );
 
+    // 3. 用 path.basename 只留檔名，再拼出正確路徑
+    const list = rows.map(r => {
+      // r.bannerFile 可能帶了 "dog/dogcare.png" 或 "/dog/dogcare.png"
+      const fileName = path.basename(r.bannerFile || '');
+      return {
+        ...r,
+        bannerUrl: fileName
+          ? `${host}/media/pet_know/${r.articleType}/${r.pet}/${fileName}`
+          : null
+      };
+    });
+
+    // 4. 回傳
+    res.json({ list, totalPages });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: '伺服器錯誤' });
+  }
+});
 
 app.get("/get/userinfo", function (req, res) {
   conn.query("SELECT uid,email,username,photo,fullname,birthday,power,last_time_login,AboutMe as aboutme,Device as device FROM userinfo", function (err, results) {
@@ -324,5 +411,29 @@ app.get("/get/userinfo", function (req, res) {
       console.log("http://localhost:8000/get/userinfo 被連線");
       res.json(results); // 正確回傳結果給前端
     }
+  });
+});
+// 假設推薦商品存在 productslist 表裡，用某種邏輯挑 3 筆
+app.get('/get/recommend-products', (req, res) => {
+  const sql = `
+    SELECT p.pid, p.pd_name, p.price,
+           (SELECT img_path FROM product_image WHERE pid = p.pid ORDER BY pd_img_id LIMIT 1) AS img_path
+    FROM productslist p
+    WHERE p.status = 1
+    ORDER BY RAND()
+    LIMIT 3
+  `;
+  conn.query(sql, (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
+    const host = `${req.protocol}://${req.get('host')}`;
+    const data = results.map(r => ({
+      pid: r.pid,
+      name: r.pd_name,
+      price: r.price,
+      imageUrl: r.img_path
+        ? host + '/' + r.img_path.replace(/^public\//, '')
+        : null
+    }));
+    res.json(data);
   });
 });
