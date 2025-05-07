@@ -85,12 +85,47 @@ class Login_Compute extends Component {
 
 
                                 <div className="modal-body" style={{ overflowY: 'auto' }}>
-                                    <form action="">
-                                        <label htmlFor="">電子郵件</label>
-                                        <input type="text" />
-                                        <p></p>
-                                        <input type="submit" className='btn btn-primary' value="傳送連結" />
-                                    </form>
+                                    <label htmlFor="resetEmail">電子郵件</label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        id="resetEmail"
+                                        value={this.state.resetEmail}
+                                        onChange={(e) => this.setState({ resetEmail: e.target.value })}
+                                    />
+                                    <p className="text-secondary mt-2">{this.state.resetStatus}</p>
+
+                                    <button
+                                        className='btn btn-primary mt-2'
+                                        onClick={async () => {
+                                            const { resetEmail } = this.state;
+                                            if (!resetEmail) {
+                                                this.setState({ resetStatus: '請輸入 email' });
+                                                return;
+                                            }
+
+                                            try {
+                                                const res = await fetch('http://localhost:8000/password/request-reset', {
+                                                    method: 'POST',
+                                                    headers: {
+                                                        'Content-Type': 'application/json'
+                                                    },
+                                                    body: JSON.stringify({ email: resetEmail })
+                                                });
+
+                                                const result = await res.json();
+                                                if (result.success) {
+                                                    this.setState({ resetStatus: '✅ 重設連結已寄出，請查看信箱' });
+                                                } else {
+                                                    this.setState({ resetStatus: '❌ ' + result.message });
+                                                }
+                                            } catch (err) {
+                                                this.setState({ resetStatus: '❌ 發送失敗（伺服器錯誤）' });
+                                            }
+                                        }}
+                                    >
+                                        傳送連結
+                                    </button>
                                 </div>
 
                                 <div className="modal-footer">

@@ -8,10 +8,10 @@ class Receipt extends Component {
     }
     render() {
         const { selectedReceiptWay } = this.state
-        const hasNewItem = this.props.selectedItems?.some(item => item.condition === "new");
+        
         return (<>
 
-            {hasNewItem && <div className='px-4 py-2'>
+           <div className='px-4 py-2'>
                 <input name="receiptWay" type="radio" id="memberReceipt" onChange={this.payWayChange} />
                 <label className='px-2' htmlFor="memberReceipt"
                 > 會員載具</label><br />
@@ -42,7 +42,7 @@ class Receipt extends Component {
                 <input name="receiptWay" type="radio" id="Cash" onChange={this.payWayChange} />
                 <label className='px-2' htmlFor="Cash"
                 > 捐贈發票</label>
-            </div>}
+            </div>
         </>);
     }
     payWayChange = (e) => {

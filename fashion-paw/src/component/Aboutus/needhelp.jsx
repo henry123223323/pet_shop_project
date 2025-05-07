@@ -22,21 +22,21 @@ class Needhelp extends Component {
             answer7: '',
             answer8: '',
             answer9: '',
-            quest1: '你喜歡吃蘋果嗎？',
-            quest2: '還是香蕉？',
-            quest3: '還是鳳梨？',
-            quest4: '你口袋有錢嗎?',
-            quest5: '一千?',
-            quest6: '一百?',
-            quest7: '你體重是不是很重',
-            quest8: '五十公斤?',
-            quest9: '一百公斤?',
+            quest1: 'Q：可以指定配送時間嗎？',
+            quest2: 'Q：有哪些付款方式可以選擇？',
+            quest3: 'Q：如果收到商品有問題，該怎麼處理？',
+            quest4: 'Q：我有七天鑑賞期嗎？',
+            quest5: 'Q：商品退回需要負擔運費嗎？',
+            quest6: 'Q：收到的商品與網站描述不符，怎麼辦？',
+            quest7: 'Q：接到自稱「好拾毛客服」來電，說我訂單異常，是真的嗎？',
+            quest8: 'Q：我接到簡訊說我購買了高額商品，但我沒買，是怎麼回事？',
+            quest9: 'Q：我收到一封 email，要我點進連結重新登入帳號？',
         }
     }
 
     apple = () => {
         this.setState({
-            answer1: '我是蘋果',
+            answer1: 'A： 目前無法指定配送時段，但您可於備註欄註明偏好時段，物流將盡量配合安排。',
             answer2: '',
             answer3: '',
         });
@@ -45,7 +45,7 @@ class Needhelp extends Component {
     banana = () => {
         this.setState({
             answer1: '',
-            answer2: '我是香蕉',
+            answer2: 'A： 本店提供信用卡、LINE Pay與貨到付款等多種方式，請於結帳時選擇。',
             answer3: '',
         });
     };
@@ -55,13 +55,13 @@ class Needhelp extends Component {
         this.setState({
             answer1: '',
             answer2: '',
-            answer3: '我是鳳梨',
+            answer3: 'A： 若商品有破損、品項錯誤或其他問題，請於 7 日內拍照並聯絡客服，我們將儘速協助處理。',
         });
     };
     
     cat = () => {
         this.setState({
-            answer4: '別問了沒錢',
+            answer4: 'A： 根據《消費者保護法》，您享有商品到貨後七天鑑賞期，鑑賞期非試用期，退貨商品須為全新未拆封狀態。',
             answer5: '',
             answer6: '',
         });
@@ -70,7 +70,7 @@ class Needhelp extends Component {
     dog = () => {
         this.setState({
             answer4: '',
-            answer5: '都說沒錢了怎麼有一千',
+            answer5: 'A： 若是個人因素退貨（如不喜歡、買錯），需自行負擔運費；若因瑕疵或出錯，則由我們全額負擔。',
             answer6: '',
         });
     };
@@ -79,13 +79,13 @@ class Needhelp extends Component {
         this.setState({
             answer4: '',
             answer5: '',
-            answer6: '一百也沒有啦你到底想怎樣',
+            answer6: 'A： 若商品與描述不符，請於七天內拍照並聯繫客服，我們將提供換貨或退款服務。',
         });
     };
     
     eleven = () => {
         this.setState({
-            answer7: '你在公三小',
+            answer7: 'A： 小心詐騙！我們不會主動打電話要求您操作 ATM 或提供信用卡資訊。有任何疑問，請直接聯繫官方客服。',
             answer8: '',
             answer9: '',
         });
@@ -94,7 +94,7 @@ class Needhelp extends Component {
     killer13 = () => {
         this.setState({
             answer7: '',
-            answer8: '欸不是不要自顧自往上加',
+            answer8: 'A： 詐騙集團常利用假簡訊騙您點擊連結。請勿點擊不明網址，也勿回傳個資。',
             answer9: '',
         });
     };
@@ -103,7 +103,7 @@ class Needhelp extends Component {
         this.setState({
             answer7: '',
             answer8: '',
-            answer9: '我要殺了妳',
+            answer9: 'A： 這可能是釣魚網站！請確認寄件者信箱是否為官方信箱，並從我們官網登入，勿從不明連結操作。',
         });
     };
 
@@ -129,11 +129,11 @@ class Needhelp extends Component {
 
     render() {
         return (
-            <div className={style.bigerdiv}>
+            <div className={`container-lg ${style.bigerdiv}`}>
                 <div className={style.nivdiv}>
-                    <span className={style.nivspan} ref={this.g1} onClick={this.newapple}>123</span>
-                    <span className={style.nivspan} ref={this.g2} onClick={this.newbanana}>456</span>
-                    <span className={style.nivspan} ref={this.g3} onClick={this.newcat}>789</span>
+                    <span className={style.nivspan} ref={this.g1} onClick={this.newapple}>購物須知</span>
+                    <span className={style.nivspan} ref={this.g2} onClick={this.newbanana}>消費者權益</span>
+                    <span className={style.nivspan} ref={this.g3} onClick={this.newcat}>防詐騙宣導</span>
                 </div>
                 <div ref={this.koufu}>
                     {this.state.showAppleBlock && (

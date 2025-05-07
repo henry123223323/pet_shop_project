@@ -17,7 +17,9 @@ class PdImageGallery extends Component {
 
   render() {
     const { image, currentImage, isZoomVisible, zoomPosition } = this.state;
-
+    const {condition} = this.props
+    // console.log(currentImage)
+    const imagePath = condition ==="new" ? "/media/new_pd/" : "/media/second_pd/";
     return (
       <>
         {/* <h1>這是商品圖片窗</h1> */}
@@ -33,7 +35,7 @@ class PdImageGallery extends Component {
 
             <div className={`m-2 ${styles.mainImageWrapper}`} >
               <img
-                src={currentImage}
+                src={currentImage ? `${imagePath}${currentImage}` : "/media/default/no-image.png"}
                 alt="商品瀏覽圖"
                 className={styles.mainImage}
                 ref={this.imageRef}
@@ -48,7 +50,7 @@ class PdImageGallery extends Component {
                   style={{
                     top: `${zoomPosition.y}px`,
                     left: `${zoomPosition.x}px`,
-                    backgroundImage: `url(${currentImage})`,
+                    backgroundImage:  `url(${imagePath}${currentImage})`,
                     backgroundPosition: `${-zoomPosition.x * 2 + 75}px ${-zoomPosition.y * 2 + 75}px`,
                   }}
                 ></div>
@@ -72,7 +74,7 @@ class PdImageGallery extends Component {
                 onClick={() => this.handleImageClick(img.img_path)}
                 style={{ cursor: 'pointer' }}
               >
-                <img src={img.img_path} alt='商品圖
+                <img src={img.img_path ? `${imagePath}${img.img_path}` : "/media/default/no-image.png"} alt='商品圖
                 '/>
               </div>
             ))}

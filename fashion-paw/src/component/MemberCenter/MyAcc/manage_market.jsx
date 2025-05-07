@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Market_modal from './market_manage/Market_Modal';
+import axios from 'axios';
 class manage_market extends Component {
     state = {
         showModal: false,
@@ -31,26 +32,24 @@ class manage_market extends Component {
                     "color": "米白色",
                     "weight": "7kg"
                 },
-                "images": {
-                    "point_area": {
-                        "img_path": "/catfood.jpg",
+                "images": [
+                    {
+                        "img_path": "/cat.jpg",
                         "img_value": "主打圖"
                     },
-                    "content_area": [
-                        {
-                            "img_path": "/catfood.jpg",
-                            "img_value": "整體外觀"
-                        },
-                        {
-                            "img_path": "/catfood.jpg",
-                            "img_value": "底座細節"
-                        },
-                        {
-                            "img_path": "/catfood.jpg",
-                            "img_value": "貓咪使用中"
-                        }
-                    ]
-                }
+                    {
+                        "img_path": "/media/products/P002/img1.jpg",
+                        "img_value": "正面照片"
+                    },
+                    {
+                        "img_path": "/media/products/P002/img2.jpg",
+                        "img_value": "材質特寫"
+                    },
+                    {
+                        "img_path": "/media/products/P002/img3.jpg",
+                        "img_value": "狗狗實拍"
+                    }
+                ]
             },
             {
                 "pid": "2",
@@ -78,26 +77,25 @@ class manage_market extends Component {
                     "color": "深灰色",
                     "weight": "3kg"
                 },
-                "images": {
-                    "point_area": {
-                        "img_path": "/cat.jpg",
+                "images": [
+                    {
+                        "img_path": "1746431755892-HinanoOkoshi.jpg",
                         "img_value": "主打圖"
                     },
-                    "content_area": [
-                        {
-                            "img_path": "/media/products/P002/img1.jpg",
-                            "img_value": "正面照片"
-                        },
-                        {
-                            "img_path": "/media/products/P002/img2.jpg",
-                            "img_value": "材質特寫"
-                        },
-                        {
-                            "img_path": "/media/products/P002/img3.jpg",
-                            "img_value": "狗狗實拍"
-                        }
-                    ]
-                }
+                    {
+                        "img_path": "1746431755892-HinanoOkoshi.jpg",
+                        "img_value": "正面照片"
+                    },
+                    {
+                        "img_path": "/media/products/P002/img2.jpg",
+                        "img_value": "材質特寫"
+                    },
+                    {
+                        "img_path": "/media/products/P002/img3.jpg",
+                        "img_value": "狗狗實拍"
+                    }
+                ]
+
             }
         ]
 
@@ -179,7 +177,7 @@ class manage_market extends Component {
                     <tbody>
                         {second_product.map((product, index) => (
                             <tr key={product.pid}>
-                                <td><img src={product.images.point_area.img_path} alt="主圖" width="80" /></td>
+                                <td><img src={product.images[0].img_path} alt="主圖" width="80" /></td>
                                 <td>{product.pd_name}</td>
                                 <td>{product.price}</td>
                                 <td>{this.renderCategory(product.categories)}</td>
@@ -213,14 +211,43 @@ class manage_market extends Component {
         console.log(this.state.second_product[index].pd_name);
 
     }
-    new = (product) => {//這裡是新增商品儲存後的新商品物件
+    new = async (product) => {//這裡是新增商品儲存後的新商品物件
         console.log(product);
+        for (let i = 0; i < product.images.length; i++) {
+            if (product.images[i].img_path instanceof File) {
+                let formData = new FormData();
+                formData.append(`image`, product.images[i].img_path);
+                console.log('我進來了');
+
+                try {
+                    const result = await axios.post('http://localhost:8000/api/uploadimg', formData);
+                    console.log(`✅ 圖片 ${i + 1} 上傳成功`, result.data);
+                } catch (err) {
+                    console.error(`❌ 圖片 ${i + 1} 上傳失敗`, err);
+                }
+            }
+
+        }
         //這裡去資料庫修改資料(INSERT INTO)
     }
-    edit = (product) => {//這裡是修改商品後的商品物件
+    edit = async (product) => {//這裡是修改商品後的商品物件
         console.log(product);
         //這裡去資料庫修改資料(UPDATE)
+        for (let i = 0; i < product.images.length; i++) {
+            if (product.images[i].img_path instanceof File) {
+                let formData = new FormData();
+                formData.append(`image`, product.images[i].img_path);
+                console.log('我進來了');
 
+                try {
+                    const result = await axios.post('http://localhost:8000/api/uploadimg', formData);
+                    console.log(`圖片 ${i + 1} 上傳成功`, result.data);
+                } catch (err) {
+                    console.error(` 圖片 ${i + 1} 上傳失敗`, err);
+                }
+            }
+
+        }
     }
 
 
