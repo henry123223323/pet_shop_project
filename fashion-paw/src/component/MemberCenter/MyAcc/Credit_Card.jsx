@@ -1,48 +1,128 @@
 import React, { Component } from 'react';
 // import 'bootstrap/dist/css/bootstrap.min.css';
 import Credit_Card_item from './credit_card/Credit_card_item';
+import cookie from "js-cookie";
+import axios from 'axios';
+
+
+
+
+
 class Credit_Card extends Component {
-    state = {
-        showModal: false,
-        card: [
-            {
-                card_num: "5500 0000 0000 0000",
-                holder: "HENRY KOO",
-                expiry: "05/33"
-            },
-            {
-                card_num: "4000 0000 0000 0001",
-                holder: "HENRY KO",
-                expiry: "05/33"
-            },
-            {
-                card_num: "5500 0000 0000 0000",
-                holder: "HENRY K",
-                expiry: "05/43"
-            }
-        ]
+    constructor(props) {
+        super(props)
+        this.cardnumber = React.createRef();
+        this.yuukou = React.createRef();
+        this.state = {
+            creditCards: [],
+            showModal: false,
+            card: [
+                {
+                    card_num: "5500 0000 0000 0000",
+                    holder: "HENRY KOO",
+                    expiry: "05/33"
+                },
+                {
+                    card_num: "4000 0000 0000 0001",
+                    holder: "HENRY KO",
+                    expiry: "05/33"
+                },
+                {
+                    card_num: "5500 0000 0000 0000",
+                    holder: "HENRY K",
+                    expiry: "05/43"
+                }
+            ]
+        }
     }
+
+    fetchCards = () => {
+        const uid = cookie.get("user_uid");
+        axios.get(`http://localhost:8000/get/creditcard/${uid}`)
+        .then(response => {
+            const newCards = response.data;
+            console.log(response.data);
+            
+            this.setState({ card: response.data });
+        }).catch(error => {
+            console.error("發送請求錯誤:", error);
+        });
+    }
+
+
+
+
+
+
+
+
+
     componentDidMount() {
-        //去資料庫抓資料
+        this.fetchCards();
     }
+    //去資料庫抓資料
     toggleModal = () => {
         this.setState({ showModal: !this.state.showModal });
+        console.log(this.state.creditCards);
+        
     }
 
     deletecard = (index) => {//連接資料庫刪除
-        const newCards = [...this.state.card];
-        newCards.splice(index, 1); // 刪除指定位置的卡
-        this.setState({ card: newCards });
+
+        console.log(index);
+        axios.post(`http://localhost:8000/post/deletecard/${index}`)
+        .then((response) => {
+            console.log("刪除成功:", response.data);
+            
+            // 刪除成功後重新獲取資料
+            this.fetchCards();
+        })
+        .catch((error) => {
+            console.error("刪除失敗:", error);
+        });
+        
+        
     }
+    // const newCards = [...this.state.card];
+    // newCards.splice(index, 1); // 刪除指定位置的卡
+    // this.setState({ card: newCards });
+
+    addnewcard = () => {
+        const uid = encodeURIComponent(cookie.get("user_uid"));
+        console.log(this.yuukou.current.value);
+        console.log(this.cardnumber.current.value);
+        const newcardnumber = encodeURIComponent(this.yuukou.current.value)
+        const moon = encodeURIComponent(this.cardnumber.current.value)
+        axios.post(`http://localhost:8000/post/newcard/${newcardnumber}/${moon}/${uid}`)
+        .then((response) => {
+            console.log("建立成功:");
+            
+            // 刪除成功後重新獲取資料
+            this.fetchCards();
+        })
+        .catch((error) => {
+            console.error("建立失敗:", error);
+        });
+    }
+
+ 
+
+
     render() {
         const { showModal, card } = this.state;
+        
 
         return (
             <>
-                <h2>我的信用卡</h2>
-                <button className="btn btn-primary" onClick={this.toggleModal}>編輯</button>
+                <h2>我的信用卡{this.state.creditCards && this.state.creditCards[0] && this.state.creditCards[0].credit_num}</h2>
+                <div key={card.cid}>
+                    <p >{card.cid}</p>
+                </div>
+                <button className="btn btn-primary" onClick={this.toggleModal}>新增</button>
                 {card.map((card_item, index) => {
-                    return <Credit_Card_item delete={() => this.deletecard(index)} key={index} card={card_item} />
+                    console.log(card_item.id);
+                    
+                    return <Credit_Card_item delete={() => this.deletecard(card_item.id)} key={index} card={card_item} />
                 })}
 
                 {/* 下面是編輯信用卡 */}
@@ -58,24 +138,26 @@ class Credit_Card extends Component {
                                         </button>
                                     </div>
                                     <div className="modal-body">
-                                        <div className="form-group">
+                                        {/* <div className="form-group">
                                             <label>持卡人:</label>
                                             <input type="text" className="form-control" required />
-                                        </div>
+                                        </div> */}
 
                                         <div className="form-group">
                                             <label>信用卡卡號:</label>
-                                            <input type="text" pattern='\d{4}\s\d{4}\s\d{4}\s\d{4}' className="form-control" required />
+                                            <input type="text"  className="form-control" required 
+                                            ref={this.cardnumber}/>
                                         </div>
                                         <div className="form-group">
                                             <label>有效日期:</label>
-                                            <input type="text" placeholder='MM/YY' pattern='(0[1-9]|1[0-2])\/\d{2}' className="form-control" required />
+                                            <input type="text" placeholder='MM/YY'  className="form-control" required 
+                                            ref={this.yuukou}/>
                                         </div>
 
                                     </div>
                                     <div className="modal-footer">
                                         <button type="button" className="btn btn-secondary" onClick={this.toggleModal}>取消</button>
-                                        <input type="submit" className="btn btn-primary" value="確認" />
+                                        <input type="submit" className="btn btn-primary" value="確認" onClick={this.addnewcard} />
                                     </div>
                                 </form>
                             </div>

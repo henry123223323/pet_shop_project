@@ -5,6 +5,8 @@ class SellerProfile extends Component {
 
     render() {
         const { userProfile, avgRating, ratingCount } = this.props
+        // console.log(avgRating)
+        // console.log(ratingCount)
         return (<>
 
             {/* 賣家基本資料 */}
@@ -21,7 +23,7 @@ class SellerProfile extends Component {
                         <div className="mb-3">
                             <img
                                 className="rounded img-fluid"
-                                src={userProfile.photo}
+                                src={userProfile.photoUrl} 
                                 alt="大頭貼"
                                 style={{
                                     maxWidth: '250px', // 最大寬度限制
@@ -54,11 +56,11 @@ class SellerProfile extends Component {
                             <div>
                                 <p className='ptxtb4'>關於{userProfile.username}</p>
                                 <p className='px-3 '>
-                                    {userProfile.AboutMe}
+                                    {userProfile.aboutme}
                                 </p>
                             </div>
                             <p>
-                                <span className='ptxtb4'>上次登錄時間：</span> <span>{userProfile.last_time_login}</span>
+                                <span className='ptxtb4'>上次登錄時間：</span> <span>{formatDate(userProfile.last_time_login)}</span>
                             </p>
                         </div>
                     </div>
@@ -71,4 +73,17 @@ class SellerProfile extends Component {
     }
 }
 
+const formatDate = (isoString) => {
+    const date = new Date(isoString);
+    const pad = (n) => n.toString().padStart(2, '0');
+  
+    const y = date.getFullYear();
+    const m = pad(date.getMonth() + 1);
+    const d = pad(date.getDate());
+    const h = pad(date.getHours());
+    const min = pad(date.getMinutes());
+    const s = pad(date.getSeconds());
+  
+    return `${y}-${m}-${d} ${h}:${min}:${s}`;
+  };
 export default SellerProfile;

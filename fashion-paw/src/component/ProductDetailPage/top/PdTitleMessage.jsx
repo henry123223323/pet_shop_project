@@ -3,7 +3,8 @@ import PawDisplay from '../PawDisplay';
 class PdTitleMessage extends Component {
     state = {}
     render() {
-        const { condition, pid, price, stock, deliveryMethod, brand, city, district, newLevel, newAvgRating, newRatingCount} = this.props  
+        const { condition, pid, price, stock, brand, city, district, newLevel, avgRating, ratingCount} = this.props  
+  
         return (<>
             {/* <h1>商品重點區</h1> */}
             <div>
@@ -29,14 +30,14 @@ class PdTitleMessage extends Component {
                 </>: <>
                 <div className='d-flex my-2 '>
                 <span> 商品評價：</span>
-                <PawDisplay rating={Math.floor(newAvgRating)} />
-                <div className="ptxt5 d-flex align-items-end">（<span title="平均分數">{newAvgRating} </span>｜<span title='評論數'>{newRatingCount}</span>）</div>
+                <PawDisplay rating={Math.floor(avgRating)} />
+                <div className="ptxt5 d-flex align-items-end">（<span title="平均分數">{avgRating} </span>｜<span title='評論數'>{ratingCount}</span>）</div>
                 </div>
                 </>}
                 
                 <div className='d-flex my-2'>
                     <div> 配送方式：</div>
-                    <div>{deliveryMethod.join(' / ')}</div>
+                    <div>{condition === "second" ? "宅配 / 超商取貨 / 面交":"宅配 / 超商取貨"}</div>
                 </div>
 
                 <div className={`d-flex align-items-end my-3`}>

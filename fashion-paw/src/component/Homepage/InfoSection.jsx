@@ -9,9 +9,9 @@ const knowledgeArticles = [
   { date: '2025-03-18', title: '我是假文章', link: '/knowledge/3' },
 ];
 const regulationArticles = [
-  { date: '2025-03-05', title: '我是假相關法規', link: '/regulations/1' },
-  { date: '2025-02-26', title: '我是假相關法規', link: '/regulations/2' },
-  { date: '2025-02-19', title: '我是假相關法規', link: '/regulations/3' },
+  { date: '2025-03-05', title: '我是假相關法規', link: '/Help' },
+  { date: '2025-02-26', title: '我是假相關法規', link: '/Help' },
+  { date: '2025-02-19', title: '我是假相關法規', link: '/Help' },
 ];
 
 function InfoSection() {
@@ -43,7 +43,7 @@ function InfoSection() {
               {sortedRegulations.map((item, idx) => (
                 <li key={idx} className={styles.item}>
                   <a href={item.link} className={styles.link}>
-                    <span className={styles.date}>{item.date}</span>
+                    {/* <span className={styles.date}>{item.date}</span> */}
                     <span className={styles.separator}>|</span>
                     <span className={styles.title}>{item.title}</span>
                   </a>

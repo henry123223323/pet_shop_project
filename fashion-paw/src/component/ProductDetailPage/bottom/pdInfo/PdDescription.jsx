@@ -3,6 +3,8 @@ class PdDescription extends Component {
 
     render() {
         const { condition, description, images } = this.props
+
+        const imagePath = condition ==="new" ? "/media/new_pd/" : "/media/second_pd/";
         return (<>
             {/* <h1>我是商品說明</h1> */}
 
@@ -17,7 +19,7 @@ class PdDescription extends Component {
                     <div className="row">
                         {images.map((img, index) => (
                             <div className="col-12 col-md-6 mb-4 text-center" key={index}>
-                                <img src={img.img_path} alt={`商品圖片 ${index + 1}`} className="img-fluid mb-2" />
+                                <img src={img.img_path ? `${imagePath}${img.img_path}` : "/media/default/no-image.png"} alt={`商品圖片 ${index + 1}`} className="img-fluid mb-2" />
                                 <p>{img.img_value}</p>
                             </div>
                         ))}

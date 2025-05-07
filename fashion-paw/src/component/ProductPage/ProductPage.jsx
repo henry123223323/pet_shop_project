@@ -1,5 +1,6 @@
 // src/component/ProductPage/ProductPage.jsx
 import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import styles from './ProductPage.module.css';
 
@@ -11,12 +12,15 @@ import ProductList from './ProductList/ProductList';
 import HotRanking  from './HotRanking/HotRanking';
 
 export default function ProductPage() {
-  // 既有 state
-  const [filters, setFilters]       = useState({ functions: [], brands: [], price: '', hotRanking: '' });
-  const [sortBy, setSortBy]         = useState('');
-  const [viewMode, setViewMode]     = useState('grid');
-  const [products, setProducts]     = useState([]);
-  const [displayItems, setDisplay]  = useState([]);
+  const location = useLocation();                     // ← 拿到 location
+  const searchState = location.state || {};
+  const searchProducts = searchState.products;
+  // 篩選、排序、顯示模式、資料、收藏
+  const [filters, setFilters] = useState({ functions: [], brands: [], price: '', hotRanking: '' });
+  const [sortBy, setSortBy] = useState('');
+  const [viewMode, setViewMode] = useState('grid');
+  const [products, setProducts] = useState([]);
+  const [displayItems, setDisplay] = useState([]);
   const [favoriteIds, setFavoriteIds] = useState([]);
 
   // 1. 新增 Sidebar 篩選用 state
@@ -25,30 +29,34 @@ export default function ProductPage() {
 
   // 初始載入
   useEffect(() => {
-    (async () => {
-      try {
-        const res = await axios.get('http://localhost:8000/get/new_product/home');
-        res.data.forEach(p => {
-          p.images = JSON.parse(p.images);
-          p.attributes_object = JSON.parse(p.attributes_object);
-          p.created_at = new Date(p.created_at);
-          // 中文化 categories...
-          switch (p.categories) {
-            case 'pet_food':            p.categories = '乾糧'; break;
-            case 'complementary_food':  p.categories = '副食'; break;
-            case 'snacks':             p.categories = '零食'; break;
-            case 'Health_Supplements': p.categories = '保健食品'; break;
-            case 'Living_Essentials':  p.categories = '家居'; break;
-            case 'toys':               p.categories = '玩具'; break;
-            default:                   p.categories = '其他'; break;
-          }
-        });
-        setProducts(res.data);
-      } catch (err) {
-        console.error('抓資料失敗:', err);
-      }
-    })();
-  }, []);
+    if (searchProducts) {
+      // 有搜尋結果就直接用
+      setProducts(searchProducts);
+    } else {
+      // 否則才呼叫後端撈「最新商品」
+      axios.get('http://localhost:8000/get/new_product/home')
+        .then(res => {
+          const data = res.data.map(prod => {
+            prod.images = JSON.parse(prod.images);
+            prod.attributes_object = JSON.parse(prod.attributes_object);
+            prod.created_at = new Date(prod.created_at);
+            // categories 中文化
+            switch (prod.categories) {
+              case 'pet_food': prod.categories = '乾糧'; break;
+              case 'complementary_food': prod.categories = '副食'; break;
+              case 'snacks': prod.categories = '零食'; break;
+              case 'Health_Supplements': prod.categories = '保健食品'; break;
+              case 'Living_Essentials': prod.categories = '家居'; break;
+              case 'toys': prod.categories = '玩具'; break;
+              default: prod.categories = '其他'; break;
+            }
+            return prod;
+          });
+          setProducts(data);
+        })
+        .catch(err => console.error('抓資料失敗:', err));
+    }
+  }, [searchProducts]);
 
   // 2. 過濾＋排序＋Sidebar 篩選
   useEffect(() => {

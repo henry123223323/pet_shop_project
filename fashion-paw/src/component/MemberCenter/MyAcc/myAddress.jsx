@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import MyAddressItem from './myAddress/myAddress_item';
 import axios from 'axios';
+import cookie from "js-cookie";
 
 class MyAddress extends Component {
     state = {
@@ -30,6 +31,10 @@ class MyAddress extends Component {
         },
         editingIndex: null  // 🔥 記錄現在是編輯第幾個
     };
+
+    componentDidMount(){
+        // axios.get(`http://localhost:8000/get/creditcard/${uid}`)
+    }
 
     toggleModal = () => {
         this.setState({

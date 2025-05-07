@@ -20,6 +20,7 @@ import ShoppingCartPage   from './component/Cart/ShoppingCartPage';
 import CheckBillPage      from './component/CheckBill/CheckBillPage';
 import Helpme             from './component/Aboutus/helpme';
 import Needhelp           from './component/Aboutus/needhelp';
+import PdDetailPageWrapper from './component/ProductDetailPage/PdDetailPageWrapper';
 
 import KnowledgeLayout    from './component/PetKnowledge/KnowledgeLayout';
 import ArticleDetail      from './component/PetKnowledge/ArticleDetail';

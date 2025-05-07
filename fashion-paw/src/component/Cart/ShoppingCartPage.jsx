@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import axios from 'axios';
 import CartList from './CartList';
 import SellerTitle from './SellerTitle';
 import Coupon from './Coupon';
@@ -13,10 +14,11 @@ class ShoppingCartPage extends Component {
     discountAmount: 0,
     selectedItems: [], //有勾選的 cart_id
   };
-  
+
   render() {
     const { selectedItems } = this.state
     const { cartList } = this.context;
+    
     // console.log("🛒 購物車頁面收到的 cartList：", cartList);
     // 分類：新品 & 二手
     const newItems = cartList.filter(item => item.condition === "new");
@@ -37,7 +39,17 @@ class ShoppingCartPage extends Component {
         <div className='my-2 p-3'>
           <h3>購物車</h3>
         </div>
-
+        {/* 開發用：清空 localStorage 按鈕 */}
+        <div className="text-end my-3 px-4">
+          <button
+            className="btn btn-outline-danger btn-sm"
+            onClick={() => {
+              this.context.clearCart();
+            }}
+          >
+            🧹 清空購物車（Context + localStorage）
+          </button>
+        </div>
         <div className='row g-5'>
           {/* 左邊 */}
           <div className="col-12 col-md-8">
@@ -84,7 +96,7 @@ class ShoppingCartPage extends Component {
               {Object.keys(secondItemsBySeller).map(uid => (
                 <div key={uid} className='border rounded my-2'>
                   <div className='border-bottom px-3'>
-                  <SellerTitle sellerName={this.context.getSellerName(uid)} />
+                    <SellerTitle  uid={uid} />
                   </div>
                   <div className='d-flex align-items-center  p-2 border-bottom'
                   >
@@ -145,9 +157,25 @@ class ShoppingCartPage extends Component {
 
           </div>
         </div>
+
       </>
     );
   }
+  componentDidMount() {
+    const { cartList, setSellers } = this.context;
+    const secondUids = [...new Set(cartList
+      .filter(item => item.condition === "second" && item.uid)
+      .map(item => String(item.uid)))];
+  
+    if (secondUids.length > 0) {
+      axios.get(`http://localhost:8000/get/userinfo`) // or /get/users/by-uids?ids=102,205
+        .then(res => {
+          const matchedUsers = res.data.filter(user => secondUids.includes(String(user.uid)));
+          setSellers(matchedUsers);
+        });
+    }
+  }
+
   //新品全選
   allSelected = () => {
     const { selectedItems } = this.state;
@@ -180,7 +208,7 @@ class ShoppingCartPage extends Component {
     const sellerItems = cartList.filter(item => item.condition === 'second' && item.uid === String(uid));
     return sellerItems.every(item => selectedItems.includes(item.cart_id));
   };
-  
+
 
   // 切換賣家區域的全選 / 取消
   toggleSellerSelectAll = (uid) => {
@@ -188,7 +216,7 @@ class ShoppingCartPage extends Component {
     const { cartList } = this.context;
     const sellerItems = cartList.filter(item => item.condition === 'second' && item.uid === String(uid));
     const sellerIds = sellerItems.map(item => item.cart_id);
-  
+
     if (this.sellerAllSelected(uid)) {
       const updated = selectedItems.filter(id => !sellerIds.includes(id));
       this.setState({ selectedItems: updated });
@@ -235,25 +263,25 @@ class ShoppingCartPage extends Component {
   goToCheckBillPage = () => {
     const { selectedItems, discountAmount } = this.state;
     const { cartList } = this.context;
-  
+
     const selectedCartItems = cartList.filter(item => selectedItems.includes(item.cart_id));
-  
+
     if (selectedItems.length === 0) {
       return alert("還沒有選擇商品");
     }
-  
+
     const selectedConditions = new Set(selectedCartItems.map(item => item.condition));
     if (selectedConditions.size > 1) {
       return alert("新品與二手商品不能同時結帳，請分開操作");
     }
-  
+
     if (selectedConditions.has("second")) {
       const sellerUids = new Set(selectedCartItems.map(item => item.uid));
       if (sellerUids.size > 1) {
         return alert("二手商品每次只能結帳一位賣家的商品，請調整勾選內容");
       }
     }
-  
+
     localStorage.setItem('selectedItems', JSON.stringify(selectedCartItems));
     localStorage.setItem('discountAmount', discountAmount);
     window.location.href = '/CheckBillPage';
