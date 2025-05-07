@@ -21,7 +21,7 @@ yarn-error.log
 .DS_Store
 
 
-
+nodejs\aiRobot\node_modules
 # === VSCode 設定檔（依團隊而定是否要加）===
 .vscode/
 #sql.js的module
