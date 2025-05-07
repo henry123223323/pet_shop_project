@@ -996,3 +996,71 @@ app.get('/get/recommend-products', (req, res) => {
     res.json(data);
   }); 
 }); 
+
+//建立訂單
+
+// ✅ 新增一筆訂單（主 + 明細）
+app.post('/orders/create', async (req, res) => {
+  const { order, items } = req.body;
+
+  if (!order || !items || !Array.isArray(items) || items.length === 0) {
+    return res.status(400).json({ error: '缺少訂單資料或明細' });
+  }
+
+  const conn2 = await q.getConnection ? await q.getConnection() : conn; // 確保可 transaction（若使用 pool）
+  try {
+    await q('START TRANSACTION');
+
+    // 1. 插入主訂單
+    const insertOrderSQL = `
+      INSERT INTO orders (
+        uid, order_type, display_order_num, total_price, pay_way, card_last4,
+        delivery_method, receiver_name, receiver_phone, receiver_address, receipt
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+
+    const orderParams = [
+      order.uid,
+      order.order_type,
+      order.display_order_num,
+      order.total_price,
+      order.pay_way,
+      order.card_last4,
+      order.delivery_method,
+      order.receiver_name,
+      order.receiver_phone,
+      order.receiver_address,
+      order.receipt
+    ];
+
+    const result = await q(insertOrderSQL, orderParams);
+    const order_id = result.insertId;
+
+    // 2. 插入明細
+    const itemValues = items.map(item => [
+      order_id,
+      item.pid,
+      item.pd_name,
+      item.spec,
+      item.quantity,
+      item.unit_price,
+      item.total_price,
+      item.img_path
+    ]);
+
+    await q(
+      `INSERT INTO orderitem
+      (order_id, pid, pd_name, spec, quantity, unit_price, total_price, img_path)
+      VALUES ?`,
+      [itemValues]
+    );
+
+    await q('COMMIT');
+    res.status(200).json({ success: true, order_id });
+
+  } catch (err) {
+    await q('ROLLBACK');
+    console.error('新增訂單失敗:', err);
+    res.status(500).json({ error: '訂單建立失敗' });
+  }
+});
