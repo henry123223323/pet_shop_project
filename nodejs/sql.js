@@ -1,7 +1,7 @@
 var express = require("express");
 var axios = require('axios');
 const imageType = require('image-type');
-// 香蕉
+// 夏威夷披薩
 
 
 var cors = require("cors");
@@ -160,6 +160,52 @@ app.get("/get/userinfo/:uid", function (req, res) {
 
 
 
+app.post("/post/deletecard/:cid",function(req,res){
+    const cid = req.params.cid
+    console.log("cid from request:", cid)
+    conn.query("DELETE FROM creditcard WHERE cid =?",[cid],function(err,results){
+        if (err) {
+            console.error("資料庫查詢錯誤:", err);
+            res.status(500).send("伺服器錯誤");
+        } else {
+            console.log("信用卡已刪除");
+            res.json(results); // 正確回傳結果給前端
+        }
+    })
+})
+
+
+app.post("/post/newcard/:credit_num/:expiry_date/:uid",function(req,res){
+    const credit_num = req.params.credit_num
+    const expiry_date = req.params.expiry_date
+    const uid = req.params.uid
+    console.log(credit_num);
+    console.log(expiry_date);
+    console.log(uid);
+    conn.query("INSERT INTO `creditcard` (`cid`, `uid`, `credit_num`, `expiry_date`) VALUES (NULL, ?, ?, ?)",[uid,expiry_date,credit_num],function(err,results){
+        if (err) {
+            console.error("資料庫建立錯誤:", err);
+            res.status(500).send("伺服器錯誤");
+        } else {
+            console.log("成功建立信用卡");
+            res.json(results); // 正確回傳結果給前端
+        }
+    })
+})
+
+
+// app.get("/get/address/:uid", function (req, res) {
+//     conn.query("SELECT Aid,uid,City,District,address,birthday,power,last_time_login,AboutMe as aboutme,Device as device FROM userinfo", function (err, results) {
+//         if (err) {
+//             console.error("資料庫查詢錯誤:", err);
+//             res.status(500).send("伺服器錯誤");
+//         } else {
+//             console.log("http://localhost:8000/get/userinfo 被連線");
+//             res.json(results); // 正確回傳結果給前端
+//         }
+//     });
+// });
+
 
 
 
@@ -181,12 +227,12 @@ app.get("/get/userinfo", function (req, res) {
 
 app.get("/get/creditcard/:uid", function (req, res) {
     const uid = req.params.uid;
-    conn.query("SELECT cid, uid, credit_num, expiry_date FROM creditcard WHERE uid = ?",[uid], function (err, results) {
+    conn.query("SELECT cid as id, uid, credit_num as card_num, expiry_date as expiry FROM creditcard WHERE uid = ?",[uid], function (err, results) {
         if (err) {
             console.error("資料庫查詢錯誤:", err);
             res.status(500).send("伺服器錯誤");
         } else {
-            console.log("http://localhost:8000/get/creditcard/:uid 被連線");
+            console.log("正確抓到資料庫信用卡資訊");
             res.json(results); // 正確回傳結果給前端
         }
     });
