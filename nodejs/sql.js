@@ -203,6 +203,7 @@ app.get('/get/second_product/home', (req, res) => {
   conn.query(sql, (err, results) => err ? res.status(500).send('伺服器錯誤') : res.json(results));
 });
 
+// 熱銷排行
 app.get('/get/hot-ranking', (req, res) => {
   const hostUrl = `${req.protocol}://${req.get('host')}`;
   const sql = `
