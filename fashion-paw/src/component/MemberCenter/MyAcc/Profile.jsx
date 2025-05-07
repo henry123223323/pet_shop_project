@@ -48,7 +48,7 @@ class Profile extends Component {
                         birthday: response.data.birthday,
                         photo: photoBase64
                     })
-                    console.log(response.data.results[0]);
+                    // console.log(response.data.results[0]);
                 })
                 .catch(error => {
                     console.error("發送請求錯誤:", error);
