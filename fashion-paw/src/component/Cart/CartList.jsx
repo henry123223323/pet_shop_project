@@ -6,7 +6,15 @@ import AddToMyFavorite from '../share/AddToMyFavorite';
 class CartList extends Component {
   render() {
     const { item, selected } = this.props;
-    const { productName, image, color, unit_price } = item;
+    const { productName, image, color, unit_price, condition } = item;
+
+    const imagePath = item.condition === "new" ? "/media/new_pd/" : "/media/second_pd/";
+    const imgSrc = item.images?.[0]?.img_path
+      ? `${imagePath}${item.images[0].img_path}`
+      : item.image
+        ? `${imagePath}${item.image}`
+        : "/media/default/no-image.png";
+    // console.log(imgSrc)
 
     return (
       <div className='p-3 m-3'>
@@ -23,7 +31,7 @@ class CartList extends Component {
 
             <Link to={`/product/${item.pid}`}>
               <img
-                src={image}
+                src={imgSrc}
                 alt="商品圖片"
                 style={{
                   width: '100px',
@@ -52,8 +60,8 @@ class CartList extends Component {
               <div className="d-flex justify-content-center">
                 <PdQuantity
                   quantity={item.quantity}
-                  onQuantityChange={(newQty) => this.props.onQuantityChange(item.cart_id, newQty)} 
-                  allowZero/>
+                  onQuantityChange={(newQty) => this.props.onQuantityChange(item.cart_id, newQty)}
+                  allowZero />
               </div>
 
               {/* 收藏刪除按鈕 */}
@@ -62,13 +70,15 @@ class CartList extends Component {
                   <AddToMyFavorite />
                 </div>
                 <button className="btn btn-sm rounded ptxt2"
-                style={{outline: "none",
-                  boxShadow: "none"}}
-                onClick={() => {
-                  if (window.confirm("確定要從購物車刪除這項商品嗎？")) {
-                    this.props.onDelete(this.props.item.cart_id);
-                  }
-                }}>
+                  style={{
+                    outline: "none",
+                    boxShadow: "none"
+                  }}
+                  onClick={() => {
+                    if (window.confirm("確定要從購物車刪除這項商品嗎？")) {
+                      this.props.onDelete(this.props.item.cart_id);
+                    }
+                  }}>
                   <i className="bi bi-trash mx-2 paw-text-darkgreen"></i>
                 </button>
               </div>

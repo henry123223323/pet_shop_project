@@ -26,6 +26,7 @@ import SeProductPage from './component/SeProductPage/SeProductPage';
 import Helpme from './component/Aboutus/helpme';
 import { CartProvider } from './component/Cart/CartContext';
 import Needhelp from './component/Aboutus/needhelp';
+import PdDetailPageWrapper from './component/ProductDetailPage/PdDetailPageWrapper';
 
 
 function App() {
@@ -33,65 +34,66 @@ function App() {
     <BrowserRouter>
       <CartProvider>
         <Header />
-        <main className={styles.mainContent}>
-          <Switch>
-            <Route path="/" component={Homepage} exact />
-            <Route path="/MemberCenter" component={MemberCenter} />
-            <Route path="/ProductPage" component={ProductPage} exact />
-            <Route path="/SeProductPage" component={SeProductPage} exact />
-            <Route path="/Login" component={Login} />
-            <Route path="/Register" component={Register} />
-            <Route
-              path="/Novicefeeding/:pet/:id"
-              exact
-              render={props => (
-                <ArticleDetail
-                  {...props}
-                  topic="Novicefeeding"
-                />
-              )}
-            />
-            <Route
-              path="/HealthCheck/:pet/:id"
-              exact
-              render={props => (
-                <ArticleDetail
-                  {...props}
-                  topic="HealthCheck"
-                />
-              )}
-            />
-            <Route
-              path="/Novicefeeding/:pet"
-              exact
-              render={props => (
-                <KnowledgeLayout
-                  {...props}
-                  topic="Novicefeeding"
-                />
-              )}
-            />
-            <Route
-              path="/HealthCheck/:pet"
-              exact
-              render={props => (
-                <KnowledgeLayout
-                  {...props}
-                  topic="HealthCheck"
-                />
-              )}
-            />
-            <Route path="/PetKnowledge" component={KnowledgeLayout} exact />
-            <Route path="/PartTouch/Touch" component={Touch} exact />
-            <Route path="/PetQuiz/Quiz" component={Quiz} exact />
-            <Route path="/ProductDetailPage" component={ProductDetailPage} exact />
-            <Route path="/ShoppingCartPage" component={ShoppingCartPage} exact />
-            <Route path="/CheckBillPage" component={CheckBillPage} exact />
-            <Route path="/Aboutus" component={Helpme} exact />
-            <Route path="/Help" component={Needhelp} exact />
-          </Switch>
-        </main>
-        <Footer />
+      <main className={styles.mainContent}>
+        <Switch>
+          <Route path="/" component={Homepage} exact />
+          <Route path="/MemberCenter" component={MemberCenter} />
+          <Route path="/ProductPage" component={ProductPage} exact />
+          <Route path="/SeProductPage" component={ SeProductPage } exact/>
+          <Route path="/Login" component={Login} />
+          <Route path="/Register" component={Register} />
+          <Route
+            path="/Novicefeeding/:pet/:id"
+            exact
+            render={props => (
+              <ArticleDetail 
+                {...props}
+                topic="Novicefeeding"
+              />
+            )}
+          />
+          <Route
+            path="/HealthCheck/:pet/:id"
+            exact
+            render={props => (
+              <ArticleDetail 
+                {...props}
+                topic="HealthCheck"
+              />
+            )}
+          />
+          <Route
+            path="/Novicefeeding/:pet"
+            exact
+            render={props => (
+              <KnowledgeLayout  
+                {...props}
+                topic="Novicefeeding"
+              />
+            )}
+          />
+          <Route
+            path="/HealthCheck/:pet"
+            exact
+            render={props => (
+              <KnowledgeLayout  
+                {...props}
+                topic="HealthCheck"
+              />
+            )}
+          />
+          <Route path="/PetKnowledge" component={KnowledgeLayout} exact />
+          <Route path="/PartTouch/Touch" component={Touch} exact />
+          <Route path="/PetQuiz/Quiz" component={Quiz} exact />
+          <Route path="/ProductDetailPage" component={ProductDetailPage} exact />
+          <Route path="/ShoppingCartPage" component={ShoppingCartPage} exact />
+          <Route path="/CheckBillPage" component={CheckBillPage} exact />
+          <Route path="/Aboutus" component={Helpme} exact />
+          <Route path="/Help" component={Needhelp} exact />
+          <Route path="/product/:pid" component={PdDetailPageWrapper} exact />
+        </Switch>
+      </main>
+      <Footer />
       </CartProvider>
       <Icon />
     </BrowserRouter>
