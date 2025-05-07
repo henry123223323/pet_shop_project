@@ -13,7 +13,6 @@ export default function SortBar({ onSortChange }) {
         <option value="price_asc"> 依價格排序：低至高</option>
         <option value="price_desc">依價格排序：高至低</option>
         <option value="createdAt">依最新項目排序</option>
-        <option value="hotranking">依熱銷度</option>
       </select>
     </div>
   );

@@ -2,7 +2,7 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import SideStyles from './Sidebar.module.css';
 
-const PETS = ['dog','cat','hamster','bird'];
+const PETS = ['dog','cat','mouse','bird'];
 
 export default function Sidebar({ topic, selected }) {
   return (
@@ -17,7 +17,7 @@ export default function Sidebar({ topic, selected }) {
               {({
                 dog: '狗狗篇',
                 cat: '貓咪篇',
-                hamster: '倉鼠篇',
+                mouse: '倉鼠篇',
                 bird: '鳥類篇'
               })[p]}
             </NavLink>
