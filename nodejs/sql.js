@@ -29,6 +29,7 @@ var conn = mysql.createConnection({
     port: 3306,
     database: "howsmoat"
 });
+app.use('/verify', verifyRoutes);
 
 conn.connect(function (err) {
     console.log(err);
