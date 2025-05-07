@@ -1,32 +1,58 @@
 import React, { Component } from 'react';
 // import 'bootstrap/dist/css/bootstrap.min.css';
 import Credit_Card_item from './credit_card/Credit_card_item';
+import cookie from "js-cookie";
+import axios from 'axios';
+
+
+
+
+
 class Credit_Card extends Component {
-    state = {
-        showModal: false,
-        card: [
-            {
-                card_num: "5500 0000 0000 0000",
-                holder: "HENRY KOO",
-                expiry: "05/33"
-            },
-            {
-                card_num: "4000 0000 0000 0001",
-                holder: "HENRY KO",
-                expiry: "05/33"
-            },
-            {
-                card_num: "5500 0000 0000 0000",
-                holder: "HENRY K",
-                expiry: "05/43"
-            }
-        ]
+    constructor(props) {
+        super(props)
+        this.state = {
+            creditCards: [],
+            showModal: false,
+            card: [
+                {
+                    card_num: "5500 0000 0000 0000",
+                    holder: "HENRY KOO",
+                    expiry: "05/33"
+                },
+                {
+                    card_num: "4000 0000 0000 0001",
+                    holder: "HENRY KO",
+                    expiry: "05/33"
+                },
+                {
+                    card_num: "5500 0000 0000 0000",
+                    holder: "HENRY K",
+                    expiry: "05/43"
+                }
+            ]
+        }
     }
     componentDidMount() {
-        //去資料庫抓資料
+        const uid = cookie.get("user_uid");
+        axios.get(`http://localhost:8000/get/creditcard/${uid}`)
+        .then(response => {
+            const newCards = response.data;
+            console.log(response.data);
+            
+            this.setState(prevState => ({
+                creditCards: [...prevState.creditCards, ...newCards],  // 把舊的 creditCards 和新的資料合併
+                
+            }));
+        }).catch(error => {
+            console.error("發送請求錯誤:", error);
+        });
     }
+    //去資料庫抓資料
     toggleModal = () => {
         this.setState({ showModal: !this.state.showModal });
+        console.log(this.state.creditCards);
+        
     }
 
     deletecard = (index) => {//連接資料庫刪除
@@ -36,10 +62,14 @@ class Credit_Card extends Component {
     }
     render() {
         const { showModal, card } = this.state;
+        
 
         return (
             <>
                 <h2>我的信用卡</h2>
+                <div key={card.cid}>
+                    <p >{card.cid}</p>
+                </div>
                 <button className="btn btn-primary" onClick={this.toggleModal}>編輯</button>
                 {card.map((card_item, index) => {
                     return <Credit_Card_item delete={() => this.deletecard(index)} key={index} card={card_item} />
@@ -75,7 +105,7 @@ class Credit_Card extends Component {
                                     </div>
                                     <div className="modal-footer">
                                         <button type="button" className="btn btn-secondary" onClick={this.toggleModal}>取消</button>
-                                        <input type="submit" className="btn btn-primary" value="確認" />
+                                        <input type="submit" className="btn btn-primary" value="確認" onClick={this.addnewcard} />
                                     </div>
                                 </form>
                             </div>
