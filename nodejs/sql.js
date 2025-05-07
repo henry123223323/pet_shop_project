@@ -240,33 +240,6 @@ app.get("/productslist/:pid", function (req, res) {
     });
 });
 
-//評論
-
-// app.get("/review", function (req, res) {
-//     const sql = `
-//     SELECT 
-//       r.review_id,
-//       r.pid,
-//       r.uid,
-//       r.rating,
-//       r.comment,
-//       r.create_time,
-//       u.username,
-//       p.pd_name AS product_name
-//     FROM review r
-//     LEFT JOIN userinfo u ON r.uid = u.uid
-//     LEFT JOIN productslist p ON r.pid = p.pid
-//     `;
-
-//     conn.query(sql, function (err, results) {
-//         if (err) {
-//             console.error("查詢 review 資料失敗：", err);
-//             return res.status(500).send("伺服器錯誤");
-//         }
-//         console.log("review 連線");
-//         res.json(results);
-//     });
-// });
 
 //新品評論
 app.get("/review/newproduct/:pid", (req, res) => {
