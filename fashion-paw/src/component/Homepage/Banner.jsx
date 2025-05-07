@@ -1,7 +1,13 @@
-// src/component/Homepage/Banner.jsx
 import React from 'react'
-import banner from './images/Dog9.jpg'     // 改成你自己的路徑
+import banner from './images/Dog9.jpg'
 import styles from './Banner.module.css'
+
+
+// const banners = [
+//   require('./images/Dog7.jpg'),
+//   require('./images/Dog9.jpg'),
+//   require('./images/newsimg3.png'),
+// ]
 
 export default function Banner() {
   return (
