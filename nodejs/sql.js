@@ -215,6 +215,8 @@ app.get('/get/hot-ranking', (req, res) => {
            SELECT MIN(pd_img_id) FROM product_image GROUP BY pid
          )
       ) pi ON pi.pid = p.pid
+     ORDER BY p.sale_count DESC
+     LIMIT 3
   `;
   conn.query(sql, (err, results) => {
     if (err) return res.status(500).send('伺服器錯誤');
@@ -224,13 +226,17 @@ app.get('/get/hot-ranking', (req, res) => {
         pd_name: row.pd_name,
         price: row.price,
         sale_count: row.sale_count,
-        imageUrl: row.img_path ? `${hostUrl}/${row.img_path.replace(/^\.\.\//, '')}` : null
+        imageUrl: row.img_path
+          ? `${hostUrl}/${row.img_path.replace(/^\.\.\//, '')}`
+          : null
       }))
     );
   });
 });
 
+
 //文章相關//
+//文章管理頁面取得文章//
 app.get("/get/article", function (req, res) {
   conn.query("SELECT * FROM article", function (err, results) {
       if (err) {
@@ -287,9 +293,19 @@ app.delete('/api/article/:id', async (req, res) => {
     res.status(500).send('Server Error');
   }
 });
-
-
-
+//寵物小知識取得文章//
+// 在 app.js 裡加／改成這段
+app.get('/api/articles', async (req, res) => {
+  conn.query("SELECT * FROM article", function (err, results) {
+    if (err) {
+        console.error("資料庫查詢錯誤:", err);
+        res.status(500).send("伺服器錯誤");
+    } else {
+        console.log("/api/articles被連線");
+        res.json(results); // 正確回傳結果給前端
+    }
+});
+});
 
 
 
