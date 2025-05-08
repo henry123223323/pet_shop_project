@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 
-class MarketModal extends Component {
+export default class MarketModal extends Component {
   constructor(props) {
     super(props);
     const { modalState, condition } = props;
@@ -31,23 +31,10 @@ class MarketModal extends Component {
   componentDidMount() {
     const { modalState, product } = this.props;
     let pd = { ...this.state.productData };
-    if (modalState === 'Edit' || modalState === 'Find') {
+    if ((modalState === 'Edit' || modalState === 'Find') && product) {
       pd = {
         ...pd,
-        pid: product.pid,
-        condition: product.condition,
-        status: product.status,
-        pet_type: product.pet_type,
-        categories: product.categories,
-        pd_name: product.pd_name,
-        price: product.price,
-        description: product.description,
-        city: product.city,
-        district: product.district,
-        uid: product.uid,
-        new_level: product.new_level,
-        stock: product.stock,
-        sale_count: product.sale_count,
+        ...product,
         attribute: { ...product.attribute },
         images: pd.images.map((_, i) => ({
           file: null,
@@ -81,7 +68,7 @@ class MarketModal extends Component {
     const file = e.target.files[0] || null;
     this.setState(({ productData }) => {
       const images = [...productData.images];
-      images[idx].file = file;
+      images[idx] = { ...images[idx], file };
       return { productData: { ...productData, images } };
     });
   };
@@ -90,7 +77,7 @@ class MarketModal extends Component {
     const img_value = e.target.value;
     this.setState(({ productData }) => {
       const images = [...productData.images];
-      images[idx].img_value = img_value;
+      images[idx] = { ...images[idx], img_value };
       return { productData: { ...productData, images } };
     });
   };
@@ -105,13 +92,16 @@ class MarketModal extends Component {
     const fd = new FormData();
     ['pd_name','price','description','pet_type','categories','city','district','new_level','stock','condition','status']
       .forEach(key => fd.append(key, productData[key]));
-    Object.entries(productData.attribute).forEach(([k,v]) => fd.append(`attribute.${k}`, v));
+    Object.entries(productData.attribute)
+      .forEach(([k, v]) => fd.append(`attribute.${k}`, v));
+
     productData.images.forEach(img => {
       if (img.file) {
         fd.append('images', img.file);
         fd.append('img_value', img.img_value);
       }
     });
+
     try {
       const base = 'http://localhost:8000';
       const url = modalState === 'Edit'
@@ -119,12 +109,13 @@ class MarketModal extends Component {
         : `${base}/get/${condition}-products`;
       const method = modalState === 'Edit' ? 'put' : 'post';
       const res = await axios[method](url, fd, { headers: { 'Content-Type': 'multipart/form-data' } });
+      console.log('上傳結果', res.data);
       alert(modalState === 'Add' ? '新增成功' : '修改成功');
       if (modalState === 'Edit') onEdit && onEdit(res.data);
       else window.location.reload();
       close();
     } catch (err) {
-      console.error('上傳失敗:', err);
+      console.error('上傳失敗:', err.response || err);
       alert('上傳失敗，請稍後再試');
     }
   };
@@ -134,6 +125,12 @@ class MarketModal extends Component {
     const { close } = this.props;
     const readOnly = modalState === 'Find';
     const attrs = Object.keys(productData.attribute);
+
+    const optionLabels = {
+      dog:'狗狗',cat:'貓咪',bird:'鳥類',mouse:'鼠類',
+      pet_food:'寵物食品',complementary_food:'副食品',snacks:'寵物零食',
+      Health_Supplements:'寵物保健品',Living_Essentials:'生活用品',toys:'玩具'
+    };
 
     return (
       <div className="modal show d-block" style={{ backgroundColor:'rgba(0,0,0,0.5)' }}>
@@ -157,8 +154,8 @@ class MarketModal extends Component {
                 { key:'district', label:'區域', type:'text' },
                 { key:'new_level', label:'新舊程度', type:'select', options:['5','4','3','2','1'] },
                 { key:'stock', label:'庫存數量', type:'number' }
-              ].map(cfg=>{
-                const val=productData[cfg.key];
+              ].map(cfg => {
+                const val = productData[cfg.key];
                 return (
                   <div className="form-group mb-2" key={cfg.key}>
                     <label>{cfg.label}</label>
@@ -167,10 +164,7 @@ class MarketModal extends Component {
                     ) : cfg.type==='select' ? (
                       <select name={cfg.key} className="form-control" value={val} onChange={this.handleChange} disabled={readOnly}>
                         <option value="">請選擇</option>
-                        {cfg.options.map(opt=><option key={opt} value={opt}>{{
-                          dog:'狗狗',cat:'貓咪',bird:'鳥類',mouse:'鼠類',
-                          pet_food:'寵物食品',complementary_food:'副食品',snacks:'寵物零食',
-                          Health_Supplements:'寵物保健品',Living_Essentials:'生活用品',toys:'寵物玩具'}[opt]||opt}</option>)}
+                        {cfg.options.map(opt => <option key={opt} value={opt}>{optionLabels[opt]}</option>)}
                       </select>
                     ) : (
                       <input type={cfg.type} name={cfg.key} className="form-control" value={val} onChange={this.handleChange} disabled={readOnly}/>
@@ -181,7 +175,7 @@ class MarketModal extends Component {
 
               <hr />
               <h5>商品屬性</h5>
-              {attrs.map(attr=>(
+              {attrs.map(attr => (
                 <div className="form-group mb-2" key={attr}>
                   <label>{attr}</label>
                   <input type="text" name={`attribute.${attr}`} className="form-control" value={productData.attribute[attr]} onChange={this.handleAttrChange} disabled={readOnly}/>
@@ -190,17 +184,20 @@ class MarketModal extends Component {
 
               <hr />
               <h5>商品圖片與描述</h5>
-              {productData.images.map((img,idx)=>(
-                <div className="form-group mb-3 d-flex align-items-start" key={idx}>
-                  <div style={{width:'80px',height:'80px',marginRight:'8px'}}>
-                    {(img.file||img.img_path) && <img src={img.file?URL.createObjectURL(img.file):img.img_path} alt="" style={{width:'100%',height:'100%',objectFit:'cover'}}/>}
+              {productData.images.map((img, idx) => {
+                const src = img.file ? URL.createObjectURL(img.file) : img.img_path;
+                return (
+                  <div className="d-flex mb-3" key={idx}>
+                    <div style={{ width: 80, height: 80, marginRight: 8 }}>
+                      {src && <img src={src} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }}/>} 
+                    </div>
+                    <div className="flex-grow-1">
+                      <input type="file" accept="image/*" className="form-control form-control-sm mb-1" onChange={e => this.uploadImageAtIndex(idx, e)} disabled={readOnly}/>
+                      <input type="text" placeholder="輸入圖片描述" className="form-control form-control-sm" value={img.img_value} onChange={e => this.handleValueChange(idx, e)} disabled={readOnly}/>
+                    </div>
                   </div>
-                  <div className="flex-grow-1">
-                    <input type="file" accept="image/*" className="form-control form-control-sm mb-1" onChange={e=>this.uploadImageAtIndex(idx,e)} disabled={readOnly}/>
-                    <input type="text" placeholder="輸入圖片描述" className="form-control form-control-sm" value={img.img_value} onChange={e=>this.handleValueChange(idx,e)} disabled={readOnly}/>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
             <div className="modal-footer">
               <button className="btn btn-secondary" onClick={close}>取消</button>
@@ -212,5 +209,3 @@ class MarketModal extends Component {
     );
   }
 }
-
-export default MarketModal;

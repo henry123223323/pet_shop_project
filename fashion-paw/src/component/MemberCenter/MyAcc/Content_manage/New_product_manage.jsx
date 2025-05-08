@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import Market_modal from '../market_manage/Market_Modal';
+import MarketModal from '../market_manage/Market_Modal';
 import Pagination from './Page_manage';
 
 export default class New_Products_Manage extends Component {
@@ -196,7 +196,7 @@ export default class New_Products_Manage extends Component {
         />
 
         {showModal && (
-          <Market_modal
+          <MarketModal
             key={`${ModalState}-${currentProduct?.pid || 'new'}`}
             close={this.toggleModal}
             new={this.new}

@@ -1,10 +1,8 @@
-// uploadProductImg.js
 const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
+const path  = require('path');
+const fs    = require('fs');
 
 const BASE_DIR = path.join(__dirname, 'public', 'media', 'new_pd');
-
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     const { pet_type, categories } = req.body;
