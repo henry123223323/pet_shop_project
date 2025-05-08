@@ -10,9 +10,11 @@ const imageType = require('image-type');
 // 夏威夷披薩
 const verifyRoutes = require('./routes/verify');
 
+const paymentRouter = require('./routes/payment');
+
 var app = express();
 app.listen(8000, function () {
-    console.log("好拾毛" + new Date().toLocaleTimeString());
+  console.log("好拾毛" + new Date().toLocaleTimeString());
 });
 app.use(express.static("public"));
 app.use(express.static(path.resolve(__dirname, '../fashion-paw/public')));
@@ -30,15 +32,18 @@ app.use('/robot',ai_robot)
 const resetPasswordRoutes = require('./routes/resetPassword');
 app.use('/password', resetPasswordRoutes);
 var conn = mysql.createConnection({
-    user: "root",
-    password: "",
-    host: "localhost",
-    port: 3306,
-    database: "howsmoat"
+  user: "root",
+  password: "",
+  host: "localhost",
+  port: 3306,
+  database: "howsmoat"
 });
 conn.connect(err => console.log(err || 'DB connected'));
 const q = util.promisify(conn.query).bind(conn);
 app.use('/verify', verifyRoutes);
+
+//付款綠界API
+app.use('/payment', paymentRouter);
 
 
 app.get("/get/article", function (req, res) {//用於開發者後臺管理
