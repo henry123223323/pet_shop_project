@@ -1,6 +1,7 @@
 const express = require('express');
 const moment = require('moment');
-const ecpay_payment = require('../utils/ecpay-sdk/lib/ecpay_payment.js');
+// const ecpay_payment = require('../utils/ecpay-sdk/lib/ecpay_payment.js');
+const ecpay_payment = require('ecpay_aio_nodejs'); //原引用 lib/ecpay_payment.js，改用套件比較容易管理版本
 const {options, HOST} = require('../utils/ecpay-sdk/conf/config.js')
 
 const router = express.Router();
