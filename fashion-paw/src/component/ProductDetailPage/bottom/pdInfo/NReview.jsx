@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import PawDisplay from '../../PawDisplay';
+import StarDisplay from '../../StarDisplay';
 
 
 class NReview extends Component {
@@ -15,7 +15,7 @@ class NReview extends Component {
 
            <div>
               <span className='ptxtb4'>{item.username}</span>
-              <span className='mx-3'><PawDisplay rating={item.rating} /></span>
+              <span className='mx-3'><StarDisplay rating={item.rating} /></span>
             </div>
             <div className='mb-2'>{formatDate(item.create_time)}</div>
 

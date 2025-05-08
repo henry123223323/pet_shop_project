@@ -30,7 +30,16 @@ const functions = [
 
 async function searchProducts(keyword) {
   let result = await axios.post('http://localhost:8000/post/productsreach/second', { 'keyword': keyword })
-  return `http://localhost:3000/product/detail/${result.data[0].id}`
+  if (result.data.length !== 0) {
+    res_json = {
+      url: `http://localhost:3000/product/detail/${result.data[0].id}`,
+      pd_name:result.data[0].name
+    }
+    return res_json
+  }
+  else {
+    return'查無商品'
+  }
 
 }
 

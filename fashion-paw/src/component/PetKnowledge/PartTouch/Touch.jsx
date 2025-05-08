@@ -105,7 +105,7 @@ function Touch() {
 
     // 網頁框架，放便回調函式的變數們
     return (
-        <div className="container-xl paw-bg-lightenbrown pb-3">
+        <div className="container-lg paw-bg-lightenbrown pb-3 mb-5">
             {/* 飄浮腳印 */}
             <img src={pawSvg} className={styles.floatingPaw} alt="" />
             <img src={pawSvg} className={styles.floatingPaw} alt="" />
@@ -121,38 +121,36 @@ function Touch() {
                 將滑鼠移到寵物身上想點擊的部位，點擊查看說明唷!
             </p>
 
-            <div className={styles.imageSwitcher}>
-                {/* 上一個按鈕 */}
-                <div onClick={prevPet} className={styles.triangleLeft} />
-                {/* 點擊部位觸發訊息框並連動說明區塊 */}
-                <div className={styles.imgWrapper}>
-                    {/* 1. 圖片點擊區 */}
-                    <img
-                        src={imgModule}
-                        alt={touchPet.name}
-                        style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-                        onClick={handleImageClick}
-                    />
-
-                    {/* 2. map 出所有熱區，繪製紅框、設定 onClick---看熱點除錯區域 */}
-                    {touchPet.hotspots.map((h, i) => (
-                        <div
-                            key={i}
-                            className={styles.hotspot}
-                            data-label={h.label}
-                            style={{ top: h.y, left: h.x, width: h.width, height: h.height }}
-                            onClick={() => setTooltip({ label: h.label, paragraph: h.paragraph })}
+            {/* 2. 圖片區塊 + 說明區塊 同列顯示 */}
+            <div className={styles.contentRow}>
+                <div className={styles.imageSwitcher}>
+                    <div onClick={prevPet} className={styles.triangleLeft} />
+                    <div className={styles.imgWrapper}>
+                        {/* 1. 圖片點擊區 & hotspots */}
+                        <img
+                            src={imgModule}
+                            alt={touchPet.name}
+                            style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                            onClick={handleImageClick}
                         />
-                    ))}
+                        {touchPet.hotspots.map((h, i) => (
+                            <div
+                                key={i}
+                                className={styles.hotspot}
+                                data-label={h.label}
+                                style={{ top: h.y, left: h.x, width: h.width, height: h.height }}
+                                onClick={() => setTooltip({ label: h.label, paragraph: h.paragraph })}
+                            />
+                        ))}
+                    </div>
+                    <div onClick={nextPet} className={styles.triangleRight} />
                 </div>
-                {/* 上一個按鈕 */}
-                <div onClick={nextPet} className={styles.triangleRight} />
-            </div>
 
-            {/* 3. 觸碰後說明區塊 */}
-            {
-                tooltip && <PartData label={tooltip.label} paragraph={tooltip.paragraph} />
-            }
+                {/* 如果有 tooltip，就顯示右邊說明 */}
+                {tooltip && (
+                    <PartData label={tooltip.label} paragraph={tooltip.paragraph} />
+                )}
+            </div>
         </div >
 
     )

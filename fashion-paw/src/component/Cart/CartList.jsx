@@ -6,15 +6,9 @@ import AddToMyFavorite from '../share/AddToMyFavorite';
 class CartList extends Component {
   render() {
     const { item, selected } = this.props;
-    const { productName, image, color, unit_price, condition } = item;
+    const { productName, color, unit_price } = item;
 
-    const imagePath = item.condition === "new" ? "/media/new_pd/" : "/media/second_pd/";
-    const imgSrc = item.images?.[0]?.img_path
-      ? `${imagePath}${item.images[0].img_path}`
-      : item.image
-        ? `${imagePath}${item.image}`
-        : "/media/default/no-image.png";
-    // console.log(imgSrc)
+    // console.log(item)
 
     return (
       <div className='p-3 m-3'>
@@ -31,7 +25,7 @@ class CartList extends Component {
 
             <Link to={`/product/${item.pid}`}>
               <img
-                src={imgSrc}
+                src={item.image}
                 alt="商品圖片"
                 style={{
                   width: '100px',
