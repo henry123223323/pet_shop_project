@@ -1,5 +1,5 @@
-require('dotenv').config();               
-
+require('dotenv').config();
+const fs = require('fs');
 var express = require("express");
 const path = require('path');
 var cors = require("cors");
@@ -9,10 +9,10 @@ var mysql = require("mysql");
 const imageType = require('image-type');
 // 夏威夷披薩
 const verifyRoutes = require('./routes/verify');
-
+const upload = require('../fashion-paw/uploadProductImg');
 var app = express();
 app.listen(8000, function () {
-    console.log("好拾毛" + new Date().toLocaleTimeString());
+  console.log("好拾毛" + new Date().toLocaleTimeString());
 });
 app.use(express.static("public"));
 app.use(express.static(path.resolve(__dirname, '../fashion-paw/public')));
@@ -23,18 +23,18 @@ app.use(cors());
 app.use('/media', express.static('media'))
 const uploadRoute = require('./upload');
 
-const ai_robot=require('./aiRobot/chat')
+const ai_robot = require('./aiRobot/chat')
 app.use('/api', uploadRoute);//用於上傳圖片
-app.use('/robot',ai_robot)
+app.use('/robot', ai_robot)
 
 const resetPasswordRoutes = require('./routes/resetPassword');
 app.use('/password', resetPasswordRoutes);
 var conn = mysql.createConnection({
-    user: "root",
-    password: "",
-    host: "localhost",
-    port: 3306,
-    database: "howsmoat"
+  user: "root",
+  password: "",
+  host: "localhost",
+  port: 3306,
+  database: "howsmoat"
 });
 conn.connect(err => console.log(err || 'DB connected'));
 const q = util.promisify(conn.query).bind(conn);
@@ -42,15 +42,15 @@ app.use('/verify', verifyRoutes);
 
 
 app.get("/get/article", function (req, res) {//用於開發者後臺管理
-    conn.query("SELECT * FROM article", function (err, results) {
-        if (err) {
-            console.error("資料庫查詢錯誤:", err);
-            res.status(500).send("伺服器錯誤");
-        } else {
-            console.log("/get/article被連線");
-            res.json(results); // 正確回傳結果給前端
-        }
-    });
+  conn.query("SELECT * FROM article", function (err, results) {
+    if (err) {
+      console.error("資料庫查詢錯誤:", err);
+      res.status(500).send("伺服器錯誤");
+    } else {
+      console.log("/get/article被連線");
+      res.json(results); // 正確回傳結果給前端
+    }
+  });
 });
 
 //後台區新增文章
@@ -58,7 +58,7 @@ app.post('/api/create/article', async (req, res) => {
   try {
     const {
       title,
-      banner_URL,     
+      banner_URL,
       intro,
       pet_type,
       product_category,
@@ -70,16 +70,16 @@ app.post('/api/create/article', async (req, res) => {
     (title, banner_URL, intro, pet_type, product_category, sections, create_at)
   VALUES (?, ?, ?, ?, ?, ?, NOW())
 `;
-const params = [
-  title,
-  banner_URL || '',                      // 若沒上傳，預設空字串
-  intro,
-  pet_type,
-  product_category,
-  JSON.stringify(sections)
-];
-const result = await q(sql, params);
-    console.log(sql, params);  
+    const params = [
+      title,
+      banner_URL || '',                      // 若沒上傳，預設空字串
+      intro,
+      pet_type,
+      product_category,
+      JSON.stringify(sections)
+    ];
+    const result = await q(sql, params);
+    console.log(sql, params);
     res.status(201).json({ insertId: result.insertId });
   } catch (err) {
     console.error('新增文章失敗：', err);
@@ -140,14 +140,14 @@ app.get('/api/petknowarticle/:id', async (req, res) => {
       : null;
 
     res.json({
-      id:          row.id,
-      title:       row.title,
-      summary:     row.summary,
-      pet:         row.pet,
-      topic:       row.topic,
+      id: row.id,
+      title: row.title,
+      summary: row.summary,
+      pet: row.pet,
+      topic: row.topic,
       articleType: row.articleType,
-      sections:    row.sections,
-      date:        row.date,
+      sections: row.sections,
+      date: row.date,
       bannerUrl
     });
   } catch (err) {
@@ -158,9 +158,9 @@ app.get('/api/petknowarticle/:id', async (req, res) => {
 // 列表分頁（同樣拼 bannerUrl）
 app.get('/api/petknowarticle', async (req, res) => {
   const { type, pet, page = 1, size = 5 } = req.query;
-  const pageNum  = +page,
-        pageSize = +size,
-        offset   = (pageNum - 1) * pageSize;
+  const pageNum = +page,
+    pageSize = +size,
+    offset = (pageNum - 1) * pageSize;
 
   try {
     // 1. 總筆數
@@ -168,9 +168,9 @@ app.get('/api/petknowarticle', async (req, res) => {
       'SELECT COUNT(*) AS cnt FROM article WHERE article_type=? AND pet_type=?',
       [type, pet]
     );
-    const cnt        = countRows[0]?.cnt || 0;
+    const cnt = countRows[0]?.cnt || 0;
     const totalPages = Math.ceil(cnt / pageSize);
-    const host       = `${req.protocol}://${req.get('host')}`;
+    const host = `${req.protocol}://${req.get('host')}`;
 
     // 2. 分頁資料
     const rows = await q(
@@ -214,7 +214,7 @@ app.get('/api/petknowarticle', async (req, res) => {
 // app.get("/get/userinfo/:uid", function (req, res) {
 //     const uid = req.params.uid;  // 從 URL 中獲取 uid
 //     console.log("UID from request:", uid);  // 輸出 uid 確認是否正確
-    
+
 //     conn.query("SELECT uid,email,username,photo,fullname,birthday,power,last_time_login,AboutMe as aboutme,Device as device FROM userinfo WHERE uid = ?", [uid], function (err, results) {
 //         if (err) {
 //             console.error("資料庫查詢錯誤:", err);
@@ -223,7 +223,7 @@ app.get('/api/petknowarticle', async (req, res) => {
 //             if (results.length > 0) {
 //                 console.log("查詢結果:", results);  // 輸出查詢結果
 //                   // 正確回傳結果給前端
-                   
+
 //                 const photoBase64 = `data:image/png;base64,${photoBuffer.toString('base64')}`;
 //                 // console.log("Base64 圖片資料:", photoBase64);
 //                 res.json({
@@ -249,78 +249,78 @@ app.get('/api/petknowarticle', async (req, res) => {
 // });
 
 app.get("/get/userinfo/:uid", function (req, res) {
-    const uid = req.params.uid;  // 從 URL 中獲取 uid
-    console.log("UID from request:", uid);  // 輸出 uid 確認是否正確
-    
-    conn.query("SELECT uid,email,username,photo,fullname,birthday,power,last_time_login,AboutMe as aboutme,Device as device FROM userinfo WHERE uid = ?", [uid], function (err, results) {
-        if (err) {
-            console.error("資料庫查詢錯誤:", err);
-            res.status(500).send("伺服器錯誤");
-        } else {
-            if (results.length > 0) {
-                console.log("查詢結果:", results);  // 輸出查詢結果
-                  // 正確回傳結果給前端
-                  const user = results[0];
-                  const photoBuffer = user.photo; // 假設 `photo` 是二進位資料 (Buffer)
-                  
-                  // 將 Buffer 轉換為 Base64
-                  const base64Image = `data:image/png;base64,${photoBuffer.toString('base64')}`;
-                // console.log("Base64 圖片資料:", photoBase64);
-                res.json({
-                    uid: results[0].uid,
-                    email: results[0].email,
-                    username: results[0].username,
-                    photo: base64Image,
-                    firstname: results[0].firstname,
-                    lastname: results[0].lastname,
-                    fullname: results[0].fullname,
-                    birthday: results[0].birthday,
-                    lastname_time_login: results[0].lastname_time_login,
-                    aboutme: results[0].aboutme,
-                    device: results[0].device,
-                    power: results[0].power
-                });
-            } else {
-                console.log("沒有找到該 uid 的使用者資料");
-                res.status(404).send("沒有找到資料");
-            }
-        }
-    });
+  const uid = req.params.uid;  // 從 URL 中獲取 uid
+  console.log("UID from request:", uid);  // 輸出 uid 確認是否正確
+
+  conn.query("SELECT uid,email,username,photo,fullname,birthday,power,last_time_login,AboutMe as aboutme,Device as device FROM userinfo WHERE uid = ?", [uid], function (err, results) {
+    if (err) {
+      console.error("資料庫查詢錯誤:", err);
+      res.status(500).send("伺服器錯誤");
+    } else {
+      if (results.length > 0) {
+        console.log("查詢結果:", results);  // 輸出查詢結果
+        // 正確回傳結果給前端
+        const user = results[0];
+        const photoBuffer = user.photo; // 假設 `photo` 是二進位資料 (Buffer)
+
+        // 將 Buffer 轉換為 Base64
+        const base64Image = `data:image/png;base64,${photoBuffer.toString('base64')}`;
+        // console.log("Base64 圖片資料:", photoBase64);
+        res.json({
+          uid: results[0].uid,
+          email: results[0].email,
+          username: results[0].username,
+          photo: base64Image,
+          firstname: results[0].firstname,
+          lastname: results[0].lastname,
+          fullname: results[0].fullname,
+          birthday: results[0].birthday,
+          lastname_time_login: results[0].lastname_time_login,
+          aboutme: results[0].aboutme,
+          device: results[0].device,
+          power: results[0].power
+        });
+      } else {
+        console.log("沒有找到該 uid 的使用者資料");
+        res.status(404).send("沒有找到資料");
+      }
+    }
+  });
 });
 
 
 
-app.post("/post/deletecard/:cid",function(req,res){
-    const cid = req.params.cid
-    console.log("cid from request:", cid)
-    conn.query("DELETE FROM creditcard WHERE cid =?",[cid],function(err,results){
-        if (err) {
-            console.error("資料庫查詢錯誤:", err);
-            res.status(500).send("伺服器錯誤");
-        } else {
-            console.log("信用卡已刪除");
-            res.json(results); // 正確回傳結果給前端
-        }
-    })
+app.post("/post/deletecard/:cid", function (req, res) {
+  const cid = req.params.cid
+  console.log("cid from request:", cid)
+  conn.query("DELETE FROM creditcard WHERE cid =?", [cid], function (err, results) {
+    if (err) {
+      console.error("資料庫查詢錯誤:", err);
+      res.status(500).send("伺服器錯誤");
+    } else {
+      console.log("信用卡已刪除");
+      res.json(results); // 正確回傳結果給前端
+    }
+  })
 })
 
 
-app.post("/post/newcard/:credit_num/:expiry_date/:uid",function(req,res){
-    const credit_num = req.params.credit_num
-    const expiry_date = req.params.expiry_date
-    const uid = req.params.uid
-    console.log(credit_num);
-    console.log(expiry_date);
-    console.log(uid);
-    conn.query("INSERT INTO `creditcard` (`cid`, `uid`, `credit_num`, `expiry_date`) VALUES (NULL, ?, ?, ?)",[uid,expiry_date,credit_num],function(err,results){
-        if (err) {
-            console.error("資料庫建立錯誤:", err);
-            res.status(500).send("伺服器錯誤");
-        } else {
-            console.log("成功建立信用卡");
-            res.json(results); // 正確回傳結果給前端
-        }
-    })
+app.post("/post/newcard/:credit_num/:expiry_date/:uid", function (req, res) {
+  const credit_num = req.params.credit_num
+  const expiry_date = req.params.expiry_date
+  const uid = req.params.uid
+  console.log(credit_num);
+  console.log(expiry_date);
+  console.log(uid);
+  conn.query("INSERT INTO `creditcard` (`cid`, `uid`, `credit_num`, `expiry_date`) VALUES (NULL, ?, ?, ?)", [uid, expiry_date, credit_num], function (err, results) {
+    if (err) {
+      console.error("資料庫建立錯誤:", err);
+      res.status(500).send("伺服器錯誤");
+    } else {
+      console.log("成功建立信用卡");
+      res.json(results); // 正確回傳結果給前端
+    }
+  })
 })
 
 
@@ -356,16 +356,16 @@ app.get("/get/userinfo", function (req, res) {
 
 
 app.get("/get/creditcard/:uid", function (req, res) {
-    const uid = req.params.uid;
-    conn.query("SELECT cid as id, uid, credit_num as card_num, expiry_date as expiry FROM creditcard WHERE uid = ?",[uid], function (err, results) {
-        if (err) {
-            console.error("資料庫查詢錯誤:", err);
-            res.status(500).send("伺服器錯誤");
-        } else {
-            console.log("正確抓到資料庫信用卡資訊");
-            res.json(results); // 正確回傳結果給前端
-        }
-    });
+  const uid = req.params.uid;
+  conn.query("SELECT cid as id, uid, credit_num as card_num, expiry_date as expiry FROM creditcard WHERE uid = ?", [uid], function (err, results) {
+    if (err) {
+      console.error("資料庫查詢錯誤:", err);
+      res.status(500).send("伺服器錯誤");
+    } else {
+      console.log("正確抓到資料庫信用卡資訊");
+      res.json(results); // 正確回傳結果給前端
+    }
+  });
 });
 
 
@@ -395,8 +395,8 @@ app.get('/get/recommend-products', (req, res) => {
 });
 
 app.post("/post/productsreach/new", function (req, res) {
-    let {keyword}=req.body
-    let sql = `
+  let { keyword } = req.body
+  let sql = `
    SELECT 
   p.pid AS id,
   p.pd_name AS name,
@@ -451,20 +451,20 @@ WHERE p.condition = 'new'
 );
 
     `
-    conn.query(sql,[`%${keyword}%`,`%${keyword}%`,`%${keyword}%`] ,function (err, rows) {
-        if (err) {
-            console.error("資料庫查詢錯誤:", err);
-            res.status(500).send("伺服器錯誤");
-        } else {
-            console.log("http://localhost:8000/post/productsreach/new 被post連線");
-            res.json(rows); // 正確回傳結果給前端
-        }
-    })
+  conn.query(sql, [`%${keyword}%`, `%${keyword}%`, `%${keyword}%`], function (err, rows) {
+    if (err) {
+      console.error("資料庫查詢錯誤:", err);
+      res.status(500).send("伺服器錯誤");
+    } else {
+      console.log("http://localhost:8000/post/productsreach/new 被post連線");
+      res.json(rows); // 正確回傳結果給前端
+    }
+  })
 })
 
 app.post("/post/productsreach/second", function (req, res) {
-    let {keyword}=req.body
-    let sql = `
+  let { keyword } = req.body
+  let sql = `
   SELECT   p.pid AS id,  p.pet_type,  p.pd_name AS name, p.price,  p.description,  p.categories,  p.city,
   p.district,
   p.uid,
@@ -520,21 +520,21 @@ WHERE p.condition = 'second'
     OR attrs.attributes_object LIKE ?
 );
     `
-    conn.query(sql,[`%${keyword}%`,`%${keyword}%`,`%${keyword}%`] ,function (err, rows) {
-        if (err) {
-            console.error("資料庫查詢錯誤:", err);
-            res.status(500).send("伺服器錯誤");
-        } else {
-            console.log("http://localhost:8000/post/productsreach/second 被post連線");
-            res.json(rows); // 正確回傳結果給前端
-        }
-    })
+  conn.query(sql, [`%${keyword}%`, `%${keyword}%`, `%${keyword}%`], function (err, rows) {
+    if (err) {
+      console.error("資料庫查詢錯誤:", err);
+      res.status(500).send("伺服器錯誤");
+    } else {
+      console.log("http://localhost:8000/post/productsreach/second 被post連線");
+      res.json(rows); // 正確回傳結果給前端
+    }
+  })
 })
 
 //商品詳細頁
 app.get("/productslist/:pid", function (req, res) {
-    const pid = req.params.pid;
-    const sql = `
+  const pid = req.params.pid;
+  const sql = `
     SELECT 
         p.pid,p.condition,p.status,p.pet_type,p.pd_name,p.price,p.description,p.categories,p.city,p.district,p.uid,p.new_level,p.created_at,p.stock,p.sale_count,
         CONCAT('{', GROUP_CONCAT(DISTINCT CONCAT('"', pa.attr, '":"', pa.attr_value, '"')), '}') AS attributes,
@@ -553,92 +553,92 @@ app.get("/productslist/:pid", function (req, res) {
         p.pid;
     `;
 
-    conn.query(sql, [pid], function (err, results) {
-        if (err) {
-            console.error("查詢商品失敗：", err);
-            return res.status(500).send("伺服器錯誤");
-        }
+  conn.query(sql, [pid], function (err, results) {
+    if (err) {
+      console.error("查詢商品失敗：", err);
+      return res.status(500).send("伺服器錯誤");
+    }
 
-        if (results.length === 0) {
-            return res.status(404).json({ success: false, message: "找不到商品" });
-        }
+    if (results.length === 0) {
+      return res.status(404).json({ success: false, message: "找不到商品" });
+    }
 
-        const p = results[0];
-        let attributes = {};
-        let images = [];
+    const p = results[0];
+    let attributes = {};
+    let images = [];
 
-        try {
-            attributes = JSON.parse(p.attributes || '{}');
-        } catch (e) {
-            console.error("屬性解析失敗：", e);
-        }
+    try {
+      attributes = JSON.parse(p.attributes || '{}');
+    } catch (e) {
+      console.error("屬性解析失敗：", e);
+    }
 
-        try {
-            images = JSON.parse(p.images || '[]');
-        } catch (e) {
-            console.error("圖片解析失敗：", e);
-        }
+    try {
+      images = JSON.parse(p.images || '[]');
+    } catch (e) {
+      console.error("圖片解析失敗：", e);
+    }
 
-        res.json({
-            pid: String(p.pid),
-            condition: p.condition,
-            status: p.status,
-            pet_type: p.pet_type,
-            pd_name: p.pd_name,
-            price: String(p.price),
-            description: p.description,
-            categories: p.categories,
-            city: p.city || "",
-            district: p.district || "",
-            uid: p.uid ? String(p.uid) : "",
-            new_level: p.new_level || attributes.new_level || "",
-            stock: String(p.stock),
-            sale_count: String(p.sale_count || "0"),
-            attribute: attributes,
-            images: images
-        });
+    res.json({
+      pid: String(p.pid),
+      condition: p.condition,
+      status: p.status,
+      pet_type: p.pet_type,
+      pd_name: p.pd_name,
+      price: String(p.price),
+      description: p.description,
+      categories: p.categories,
+      city: p.city || "",
+      district: p.district || "",
+      uid: p.uid ? String(p.uid) : "",
+      new_level: p.new_level || attributes.new_level || "",
+      stock: String(p.stock),
+      sale_count: String(p.sale_count || "0"),
+      attribute: attributes,
+      images: images
     });
+  });
 });
 
 
 //新品評論
 app.get("/review/newproduct/:pid", (req, res) => {
-    const { pid } = req.params;
-    const sql = `
+  const { pid } = req.params;
+  const sql = `
       SELECT r.*, u.username, p.pd_name 
       FROM review r 
       LEFT JOIN userinfo u ON r.uid = u.uid 
       LEFT JOIN productslist p ON r.pid = p.pid 
       WHERE r.pid = ?`;
-    conn.query(sql, [pid], (err, results) => {
-      if (err) return res.status(500).send("伺服器錯誤");
-      res.json(results);
-    });
+  conn.query(sql, [pid], (err, results) => {
+    if (err) return res.status(500).send("伺服器錯誤");
+    res.json(results);
   });
+});
 
-  //二手評論
+//二手評論
 app.get("/review/seller/:uid", (req, res) => {
-    const { uid } = req.params;
-    const sql = `
+  const { uid } = req.params;
+  const sql = `
       SELECT r.*, u.username, p.pd_name 
       FROM review r 
       LEFT JOIN userinfo u ON r.uid = u.uid 
       LEFT JOIN productslist p ON r.pid = p.pid 
       WHERE p.uid = ?`;
-    conn.query(sql, [uid], (err, results) => {
-      if (err) return res.status(500).send("伺服器錯誤");
-      res.json(results);
-    });
+  conn.query(sql, [uid], (err, results) => {
+    if (err) return res.status(500).send("伺服器錯誤");
+    res.json(results);
   });
+});
 
 
 
 
 // 賣家其他商品（簡化欄位）
 app.get("/sellerOtherPd/:uid/:excludePid", function (req, res) {
-    const { uid, excludePid } = req.params;
+  const { uid, excludePid } = req.params;
 
-    const sql = `
+  const sql = `
     SELECT 
         p.pid, 
         p.pd_name, 
@@ -659,43 +659,43 @@ app.get("/sellerOtherPd/:uid/:excludePid", function (req, res) {
     LIMIT 6;
     `;
 
-    conn.query(sql, [uid, excludePid], function (err, results) {
+  conn.query(sql, [uid, excludePid], function (err, results) {
 
-        if (err) {
-            console.error("查詢賣家其他商品失敗：", err);
-            return res.status(500).send("伺服器錯誤");
-        }
+    if (err) {
+      console.error("查詢賣家其他商品失敗：", err);
+      return res.status(500).send("伺服器錯誤");
+    }
 
-        res.json(results);
-    });
+    res.json(results);
+  });
 });
 
 //大頭貼
 app.get("/userphoto/:uid", function (req, res) {
-    const uid = req.params.uid;
+  const uid = req.params.uid;
 
-    conn.query("SELECT photo FROM userinfo WHERE uid = ?", [uid], function (err, results) {
-        if (err || results.length === 0 || !results[0].photo) {
-            return res.status(404).send("找不到照片");
-        }
+  conn.query("SELECT photo FROM userinfo WHERE uid = ?", [uid], function (err, results) {
+    if (err || results.length === 0 || !results[0].photo) {
+      return res.status(404).send("找不到照片");
+    }
 
-        const photoBlob = results[0].photo;
+    const photoBlob = results[0].photo;
 
-        // 不同格式的圖片判斷
-        function getMimeType(buffer) {
-            const hex = buffer.toString('hex', 0, 4).toLowerCase();
-            if (hex.startsWith('ffd8')) return 'image/jpeg';
-            if (hex.startsWith('8950')) return 'image/png';
-            if (hex.startsWith('4749')) return 'image/gif';
-            if (hex.startsWith('5249')) return 'image/webp';
-            return 'application/octet-stream';
-        }
+    // 不同格式的圖片判斷
+    function getMimeType(buffer) {
+      const hex = buffer.toString('hex', 0, 4).toLowerCase();
+      if (hex.startsWith('ffd8')) return 'image/jpeg';
+      if (hex.startsWith('8950')) return 'image/png';
+      if (hex.startsWith('4749')) return 'image/gif';
+      if (hex.startsWith('5249')) return 'image/webp';
+      return 'application/octet-stream';
+    }
 
-        const mimeType = getMimeType(photoBlob);
+    const mimeType = getMimeType(photoBlob);
 
-        res.setHeader("Content-Type", mimeType);
-        res.send(photoBlob);
-    });
+    res.setHeader("Content-Type", mimeType);
+    res.send(photoBlob);
+  });
 });
 
 // 後台管理 新品和二手共用 上架 刪除 編輯函式
@@ -724,7 +724,7 @@ async function getList(req, res, condition) {
     res.status(500).json({ error: err.message });
   }
 }
-
+// 取得單個商品資料
 async function getOne(req, res) {
   const pid = +req.params.pid;
   try {
@@ -747,54 +747,51 @@ async function getOne(req, res) {
   }
 }
 
+// 新增和編輯商品
 async function createOrUpdate(req, res, condition, isUpdate = false) {
   const pid = isUpdate ? +req.params.pid : null;
   const pd = req.body;
-  const attrs = Object.entries(pd.attribute || {});
-  const imgs = (pd.images || []).filter(i => i.img_path);
   try {
     await q('START TRANSACTION');
     let targetPid;
     if (isUpdate) {
+      // ... update productslist ...
       targetPid = pid;
-      await q(
-        `UPDATE productslist SET
-           pd_name=?, price=?, description=?, pet_type=?, categories=?,
-           city=?, district=?, new_level=?, stock=?, sale_count=?,
-           delivery_method=?, status=?
-         WHERE pid=?`,
-        [
-          pd.pd_name, pd.price, pd.description, pd.pet_type, pd.categories,
-          pd.city, pd.district, pd.new_level, pd.stock, pd.sale_count || 0,
-          pd.delivery_method, pd.status || 0, pid
-        ]
-      );
     } else {
-      const result = await q(
-        `INSERT INTO productslist
-           (pd_name, price, description, pet_type, categories,
-            city, district, new_level, stock, sale_count,
-            delivery_method, \`condition\`, status)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [
-          pd.pd_name, pd.price, pd.description, pd.pet_type,
-          pd.categories, pd.city, pd.district, pd.new_level,
-          pd.stock, pd.sale_count || 0, pd.delivery_method,
-          condition, pd.status || 0
-        ]
-      );
-      targetPid = result.insertId;
+      // ... insert productslist, 拿 insertId ...
+      targetPid = (await q(/* ... */))[0].insertId;
     }
+
+    // 1. 寫屬性
     await q('DELETE FROM product_attribute WHERE pid=?', [targetPid]);
-    if (attrs.length) {
-      const vals = attrs.map(([k, v]) => [targetPid, k, v]);
-      await q('INSERT INTO product_attribute (pid, attr, attr_value) VALUES ?', [vals]);
+    const attrEntries = Object.entries(pd)
+      .filter(([k]) => k.startsWith('attribute.'))
+      .map(([k, v]) => [targetPid, k.split('.')[1], v]);
+    if (attrEntries.length) {
+      await q(
+        'INSERT INTO product_attribute (pid, attr, attr_value) VALUES ?',
+        [attrEntries]
+      );
     }
+
+    // 2. 寫圖片跟敘述
     await q('DELETE FROM product_image WHERE pid=?', [targetPid]);
-    if (imgs.length) {
-      const vals = imgs.map((i, idx) => [targetPid, i.img_path, i.img_value, idx]);
-      await q('INSERT INTO product_image (pid, img_path, img_value, pd_img_id) VALUES ?', [vals]);
+    const files = req.files || [];
+    const imgValues = Array.isArray(pd.img_value)
+      ? pd.img_value
+      : [pd.img_value].filter(v => v != null);
+    const mediaRoot = path.join(__dirname, '..', 'fashion-paw', 'public', 'media');
+    const imgRows = files.map((file, i) => {
+      const rel = path.relative(mediaRoot, file.path).replace(/\\/g, '/');
+      return [targetPid, `/media/${rel}`, imgValues[i] || '', i];
+    });
+    if (imgRows.length) {
+      await q(
+        'INSERT INTO product_image (pid, img_path, img_value, pd_img_id) VALUES ?',
+        [imgRows]
+      );
     }
+
     await q('COMMIT');
     res.status(isUpdate ? 200 : 201).json({ pid: targetPid, ...pd });
   } catch (err) {
@@ -803,15 +800,36 @@ async function createOrUpdate(req, res, condition, isUpdate = false) {
     res.status(500).json({ error: err.message });
   }
 }
+module.exports = { createOrUpdate };
 //刪除
 async function removeOne(req, res) {
   const pid = +req.params.pid;
   try {
     await q('START TRANSACTION');
+
+    // 1. 先讀出所有圖片的實體路徑
+    const imgRows = await q(
+      'SELECT img_path FROM product_image WHERE pid=?',
+      [pid]
+    );
+    // 2. 刪掉檔案
+    imgRows.forEach(row => {
+      const filePath = path.join(__dirname, '..', 'fashion-paw', 'public', row.img_path);
+      if (fs.existsSync(filePath)) {
+        try { fs.unlinkSync(filePath); }
+        catch (e) { console.warn('刪除檔案失敗：', filePath, e); }
+      }
+    });
+
+    // 3. 刪資料庫裡的紀錄
     await q('DELETE FROM product_attribute WHERE pid=?', [pid]);
     await q('DELETE FROM product_image WHERE pid=?', [pid]);
     const result = await q('DELETE FROM productslist WHERE pid=?', [pid]);
-    if (result.affectedRows === 0) { await q('ROLLBACK'); return res.status(404).send(); }
+    if (result.affectedRows === 0) {
+      await q('ROLLBACK');
+      return res.status(404).send();
+    }
+
     await q('COMMIT');
     res.sendStatus(204);
   } catch (err) {
@@ -823,11 +841,19 @@ async function removeOne(req, res) {
 //分辨是二手 還是新品
 ['second', 'new'].forEach(condition => {
   const base = `/get/${condition}-products`;
+  app.post(
+    base,
+    upload,                                 // ← 直接用這個
+    (req, res) => createOrUpdate(req, res, condition, false)
+  );
+  app.put(
+    `${base}/:pid`,
+    upload,                                 // ← 直接用這個
+    (req, res) => createOrUpdate(req, res, condition, true)
+  );
+  app.delete(`${base}/:pid`, removeOne);
   app.get(base, (req, res) => getList(req, res, condition));
   app.get(`${base}/:pid`, getOne);
-  app.post(base, (req, res) => createOrUpdate(req, res, condition, false));
-  app.put(`${base}/:pid`, (req, res) => createOrUpdate(req, res, condition, true));
-  app.delete(`${base}/:pid`, removeOne);
 });
 
 // 其他獨立路由
@@ -873,7 +899,7 @@ app.get('/get/second_product/home', (req, res) => {
   conn.query(sql, (err, results) => err ? res.status(500).send('伺服器錯誤') : res.json(results));
 });
 
-// 熱銷排行
+// 熱銷排行（只取前三筆）
 app.get('/get/hot-ranking', (req, res) => {
   const hostUrl = `${req.protocol}://${req.get('host')}`;
   const sql = `
@@ -886,6 +912,8 @@ app.get('/get/hot-ranking', (req, res) => {
            SELECT MIN(pd_img_id) FROM product_image GROUP BY pid
          )
       ) pi ON pi.pid = p.pid
+  ORDER BY p.sale_count DESC
+     LIMIT 3
   `;
   conn.query(sql, (err, results) => {
     if (err) return res.status(500).send('伺服器錯誤');
@@ -895,22 +923,26 @@ app.get('/get/hot-ranking', (req, res) => {
         pd_name: row.pd_name,
         price: row.price,
         sale_count: row.sale_count,
-        imageUrl: row.img_path ? `${hostUrl}/${row.img_path.replace(/^\.\.\//, '')}` : null
+        imageUrl: row.img_path
+          ? `${hostUrl}/${row.img_path.replace(/^\.\.\//, '')}`
+          : null
       }))
     );
   });
 });
 
+//首頁的熱銷排行
+
 //文章管理頁面取得文章//
 app.get("/get/article", function (req, res) {
   conn.query("SELECT * FROM article", function (err, results) {
-      if (err) {
-          console.error("資料庫查詢錯誤:", err);
-          res.status(500).send("伺服器錯誤");
-      } else {
-          console.log("/get/article被連線");
-          res.json(results); // 正確回傳結果給前端
-      }
+    if (err) {
+      console.error("資料庫查詢錯誤:", err);
+      res.status(500).send("伺服器錯誤");
+    } else {
+      console.log("/get/article被連線");
+      res.json(results); // 正確回傳結果給前端
+    }
   });
 });
 //新增文章
@@ -930,15 +962,15 @@ app.post('/api/create/article', async (req, res) => {
     (title, banner_URL, intro, pet_type, product_category, sections, create_at)
   VALUES (?, ?, ?, ?, ?, ?, NOW())
 `;
-const params = [
-  title,
-  banner_URL || '',                      // 若沒上傳，預設空字串
-  intro,
-  pet_type,
-  product_category,
-  JSON.stringify(sections)
-];
-const result = await q(sql, params);
+    const params = [
+      title,
+      banner_URL || '',                      // 若沒上傳，預設空字串
+      intro,
+      pet_type,
+      product_category,
+      JSON.stringify(sections)
+    ];
+    const result = await q(sql, params);
     console.log(sql, params);  // ※ 建議先印出來檢查
     res.status(201).json({ insertId: result.insertId });
   } catch (err) {
@@ -994,5 +1026,5 @@ app.get('/get/recommend-products', (req, res) => {
         : null
     }));
     res.json(data);
-  }); 
+  });
 }); 
