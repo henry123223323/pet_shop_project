@@ -1,55 +1,92 @@
 import React, { Component } from 'react';
+
 class Receipt extends Component {
     constructor(props) {
-        super(props)
+        super(props);
         this.state = {
-            selectedReceiptWay: "",
+            selectedReceiptWay: '',
+            phoneCarrier: '',
+            companyTaxID: ''
+        };
+    }
+
+    handleRadioChange = (e) => {
+        const selectedReceiptWay = e.target.id;
+        this.setState({ selectedReceiptWay }, this.sendToParent);
+    }
+
+    handleInputChange = (e) => {
+        const { name, value } = e.target;
+        this.setState({ [name]: value }, this.sendToParent);
+    }
+
+    sendToParent = () => {
+        const { selectedReceiptWay, phoneCarrier, companyTaxID } = this.state;
+
+        let receiptStr = '';
+        switch (selectedReceiptWay) {
+            case 'memberReceipt':
+                receiptStr = '會員載具';
+                break;
+            case 'phoneReceipt':
+                receiptStr = `手機載具: ${phoneCarrier}`;
+                break;
+            case 'companyReceipt':
+                receiptStr = `公司發票: ${companyTaxID}`;
+                break;
+            case 'DonateInvoice':
+                receiptStr = '捐贈發票';
+                break;
+            default:
+                receiptStr = '';
+        }
+
+        if (this.props.onChange) {
+            this.props.onChange({ type: selectedReceiptWay, value: receiptStr });
         }
     }
+
     render() {
-        const { selectedReceiptWay } = this.state
-        
-        return (<>
+        const { selectedReceiptWay, phoneCarrier, companyTaxID } = this.state;
 
-           <div className='px-4 py-2'>
-                <input name="receiptWay" type="radio" id="memberReceipt" onChange={this.payWayChange} />
-                <label className='px-2' htmlFor="memberReceipt"
-                > 會員載具</label><br />
+        return (
+            <div className='px-4 py-2'>
+                <input name="receiptWay" type="radio" id="memberReceipt" onChange={this.handleRadioChange} />
+                <label className='px-2' htmlFor="memberReceipt">會員載具</label><br />
 
-                <input name="receiptWay" type="radio" id="phoneReceipt" onChange={this.payWayChange} />
-                <label className='px-2' htmlFor="phoneReceipt"> 手機載具</label><br />
-                 {selectedReceiptWay === "phoneReceipt" && (<>
+                <input name="receiptWay" type="radio" id="phoneReceipt" onChange={this.handleRadioChange} />
+                <label className='px-2' htmlFor="phoneReceipt">手機載具</label><br />
+                {selectedReceiptWay === "phoneReceipt" && (
                     <div className="px-3">
-                        <input name="installmentOption" type="text" id="phoneReceipt" />
+                        <input
+                            name="phoneCarrier"
+                            type="text"
+                            value={phoneCarrier}
+                            placeholder="請輸入手機條碼"
+                            onChange={this.handleInputChange}
+                        />
                     </div>
-                    <div className='mx-3'>
-                    <input type="checkbox" name="remember_phonereceive" id="remember_phonereceive" className='mx-2'/><label htmlFor="remember_phonereceive">記住我的載具</label>
-                    </div>
-                 </>
                 )}
 
-                <input name="receiptWay" type="radio" id="companyReceipt" onChange={this.payWayChange} />
-                <label className='px-2' htmlFor="companyReceipt"
-                > 公司發票</label><br />
+                <input name="receiptWay" type="radio" id="companyReceipt" onChange={this.handleRadioChange} />
+                <label className='px-2' htmlFor="companyReceipt">公司發票</label><br />
                 {selectedReceiptWay === "companyReceipt" && (
                     <div className="px-3">
-                        <input name="companyReceipt" type="text" id="companyReceipt" />
+                        <input
+                            name="companyTaxID"
+                            type="text"
+                            value={companyTaxID}
+                            placeholder="請輸入統一編號"
+                            onChange={this.handleInputChange}
+                        />
                     </div>
                 )}
 
-
-
-                <input name="receiptWay" type="radio" id="Cash" onChange={this.payWayChange} />
-                <label className='px-2' htmlFor="Cash"
-                > 捐贈發票</label>
+                <input name="receiptWay" type="radio" id="DonateInvoice" onChange={this.handleRadioChange} />
+                <label className='px-2' htmlFor="DonateInvoice">捐贈發票</label>
             </div>
-        </>);
+        );
     }
-    payWayChange = (e) => {
-        // console.log (e.target.id)
-        this.setState({ selectedReceiptWay: e.target.id })
-    }
-
 }
- 
+
 export default Receipt;

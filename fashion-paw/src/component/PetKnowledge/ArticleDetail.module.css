@@ -1,100 +1,78 @@
+/* src/component/PetKnowledge/ArticleDetail.module.css */
+
+/* 最外層 container：左右並排 */
+.container {
+  display: flex;
+  gap: 1.5rem;
+  padding: 1.5rem;
+}
+
+/* 側邊欄已在 Sidebar.module.css 處理，這邊只管主內容 */
+.detailWrapper {
+  flex: 1;               /* 佔滿剩餘空間 */
+  display: flex;
+  flex-direction: column;
+  align-items: center;   /* 置中 */
+  padding-bottom: 4rem;  /* 下方留空，避免 footer 蓋住 */
+}
+
+/* 1. 放在最上方的大圖 */
+.mainImage {
+  width: 100%;           /* 滿寬度 */
+  max-width: 800px;      /* 最多不要超過 800px */
+  height: auto;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+  object-fit: cover;
+}
+
+/* 2. 標題區 */
+.header {
+  width: 100%;
+  max-width: 800px;
+  margin-bottom: 1rem;
+}
 .title {
-    display: inline-block;
-    background-color: #e1c599;
-    padding: 10px;
-    border-radius: 5px;
+  font-size: 2rem;
+  margin: 0;
+}
+.meta {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.9rem;
+  color: #666;
+  margin-top: 0.5rem;
 }
 
-.articlewrapper{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+/* 3. 簡介 */
+.summary {
+  width: 100%;
+  max-width: 800px;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+  color: #444;
 }
 
-.content {
-    /* 文章內文區 */
-    line-height: 1.8;
-    font-size: 1rem;
-    color: #444;
-    margin-bottom: 3rem;
+/* 4. 章節 */
+.sections {
+  width: 100%;
+  max-width: 800px;
+}
+.section {
+  margin-bottom: 2rem;
+}
+.secHeading {
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+.secBody {
+  line-height: 1.8;
+  color: #333;
 }
 
-/* 推薦商品區標題 */
-.recommendTitle {
-    font-size: 1.5rem;
-    font-weight: bold;
-    margin-bottom: 1.5rem;
-    border-bottom: 2px solid #e1c599;
-    display: inline-block;
-}
-
-/* 「為您推薦」這行標題的外層容器 */
-.recommendWrapper {
-    margin-top: 3rem;
-}
-
-/* Bootstrap card override */
-.card {
-    border: none;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    transition: transform .2s;
-}
-
-.card:hover {
-    transform: translateY(-4px);
-}
-
-.card-img-top {
-    object-fit: cover;
-    height: 180px;
-}
-
-/* 商品卡片 body */
-.card-body {
-    padding: 1rem;
-}
-
-.card-title {
-    font-size: 1rem;
-    margin-bottom: .5rem;
-    color: #333;
-}
-
-.card-text {
-    font-size: .875rem;
-    color: #666;
-    margin-bottom: .75rem;
-}
-
-/* 「查看商品」按鈕 */
-.btn-success {
-    background-color: #70823c;
-    border-color: #70823c;
-    font-size: .875rem;
-}
-
-.btn-success:hover {
-    background-color: #5a6a2b;
-    border-color: #5a6a2b;
-}
-
-/* 內文最上方 img */
-.imgFluid {
-    margin-bottom: 2rem;
-    border-radius: 4px;
-    width: 100%;
-    height: auto;
-}
-
-/* 標題 & 日期 */
-h1 {
-    font-size: 2rem;
-    font-weight: bold;
-    margin-bottom: .5rem;
-}
-
-.text-muted {
-    color: #999 !important;
-    margin-bottom: 1.5rem;
+/* Loading 樣式 */
+.loading {
+  padding: 2rem;
+  font-size: 1.2rem;
+  color: #888;
 }
