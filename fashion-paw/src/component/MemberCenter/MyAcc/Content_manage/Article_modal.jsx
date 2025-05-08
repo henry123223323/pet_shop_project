@@ -1,20 +1,30 @@
 import React, { Component } from 'react';
+import axios from 'axios';
 
 export default class Article_modal extends Component {
   constructor(props) {
     super(props);
-    this.state = { form: { ...(props.article || {}) } };
+    this.state = {
+      form: { ...(props.article || {}), article_type: props.article?.article_type || '' }
+    };
   }
 
   componentDidUpdate(prev) {
     if (this.props.article !== prev.article) {
-      this.setState({ form: { ...(this.props.article || {}) } });
+      this.setState({
+        form: {
+          ...(this.props.article || {}),
+          article_type: this.props.article?.article_type || ''
+        }
+      });
     }
   }
 
   handleChange = e => {
     const { name, value } = e.target;
-    this.setState(s => ({ form: { ...s.form, [name]: value } }));
+    this.setState(s => ({
+      form: { ...s.form, [name]: value }
+    }));
   };
 
   handleFileChange = e => {
@@ -37,6 +47,7 @@ export default class Article_modal extends Component {
 
   handleSubmit = () => {
     const { mode, createArticle, editArticle } = this.props;
+    // 傳出去的這個 form 物件現在就含有 article_type
     if (mode === 'Add') createArticle(this.state.form);
     else if (mode === 'Edit') editArticle(this.state.form);
   };
@@ -51,12 +62,14 @@ export default class Article_modal extends Component {
       <div className="modal show fade d-block" tabIndex="-1" style={{ background: 'rgba(0,0,0,0.5)' }}>
         <div className="modal-dialog modal-dialog-scrollable">
           <div className="modal-content">
+
             <div className="modal-header">
               <h5 className="modal-title">
                 {mode === 'Add' ? '新增文章' : mode === 'Edit' ? '編輯文章' : '查看文章'}
               </h5>
               <button type="button" className="btn-close" onClick={close}></button>
             </div>
+
             <div className="modal-body">
               {/* Banner 圖片上傳 */}
               <div className="mb-3">
@@ -68,8 +81,9 @@ export default class Article_modal extends Component {
                   onChange={this.handleFileChange}
                   disabled={readOnly}
                 />
-                {bannerSrc && <img src={bannerSrc} alt="banner preview" style={{ width: '100%', marginTop: '8px' }} />}
+                {bannerSrc && <img src={bannerSrc} alt="banner preview" style={{ width: '100%', marginTop: 8 }} />}
               </div>
+
               {/* 標題 */}
               <div className="mb-3">
                 <label>標題</label>
@@ -82,6 +96,7 @@ export default class Article_modal extends Component {
                   readOnly={readOnly}
                 />
               </div>
+
               {/* 摘要 */}
               <div className="mb-3">
                 <label>摘要</label>
@@ -93,6 +108,7 @@ export default class Article_modal extends Component {
                   readOnly={readOnly}
                 />
               </div>
+
               {/* 寵物類型 */}
               <div className="mb-3">
                 <label>寵物類型</label>
@@ -110,6 +126,7 @@ export default class Article_modal extends Component {
                   <option value="mouse">鼠</option>
                 </select>
               </div>
+
               {/* 文章分類 */}
               <div className="mb-3">
                 <label>文章分類</label>
@@ -129,7 +146,26 @@ export default class Article_modal extends Component {
                   <option value="toys">玩具</option>
                 </select>
               </div>
+
+              {/* 新增：文章類型 */}
+              <div className="mb-3">
+                <label>文章類型</label>
+                <select
+                  className="form-select"
+                  name="article_type"
+                  value={form.article_type || ''}
+                  onChange={this.handleChange}
+                  disabled={readOnly}
+                  required
+                >
+                  <option value="">-- 請選擇 --</option>
+                  <option value="health_check">健康檢查</option>
+                  <option value="pet_feeding">飼養知識</option>
+                </select>
+              </div>
+
               <hr />
+
               <h6>Sections</h6>
               {(form.sections || []).map((sec, i) => {
                 const secImgSrc = sec.image_url_preview || sec.image_url;
@@ -167,11 +203,14 @@ export default class Article_modal extends Component {
                         }}
                         disabled={readOnly}
                       />
-                      {secImgSrc && <img src={secImgSrc} alt="sec preview" style={{ width: '100%', marginTop: '4px' }} />}
+                      {secImgSrc && (
+                        <img src={secImgSrc} alt="sec preview" style={{ width: '100%', marginTop: 4 }} />
+                      )}
                     </div>
                   </div>
                 );
               })}
+
               {!readOnly && (
                 <button
                   className="btn btn-sm btn-outline-secondary"
@@ -184,10 +223,16 @@ export default class Article_modal extends Component {
                 </button>
               )}
             </div>
+
             <div className="modal-footer">
               <button className="btn btn-secondary" onClick={close}>取消</button>
-              {!readOnly && <button className="btn btn-primary" onClick={this.handleSubmit}>{mode === 'Add' ? '新增' : '儲存'}</button>}
+              {!readOnly && (
+                <button className="btn btn-primary" onClick={this.handleSubmit}>
+                  {mode === 'Add' ? '新增' : '儲存'}
+                </button>
+              )}
             </div>
+
           </div>
         </div>
       </div>
