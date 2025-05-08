@@ -747,22 +747,48 @@ async function getOne(req, res) {
   }
 }
 
-// 新增和編輯商品
+
+
 async function createOrUpdate(req, res, condition, isUpdate = false) {
   const pid = isUpdate ? +req.params.pid : null;
   const pd = req.body;
+
   try {
     await q('START TRANSACTION');
+
+    // 1. 新增 or 更新 productslist
     let targetPid;
     if (isUpdate) {
-      // ... update productslist ...
+      await q(
+        `UPDATE productslist SET
+           pd_name=?, price=?, description=?, pet_type=?, categories=?,
+           city=?, district=?, new_level=?, stock=?, sale_count=?,
+           delivery_method=?, status=?
+         WHERE pid=?`,
+        [
+          pd.pd_name, pd.price, pd.description, pd.pet_type, pd.categories,
+          pd.city, pd.district, pd.new_level, pd.stock, pd.sale_count || 0,
+          pd.delivery_method, pd.status || 0, pid
+        ]
+      );
       targetPid = pid;
     } else {
-      // ... insert productslist, 拿 insertId ...
-      targetPid = (await q(/* ... */))[0].insertId;
+      const result = await q(
+        `INSERT INTO productslist
+           (pd_name, price, description, pet_type, categories,
+            city, district, new_level, stock, sale_count,
+            delivery_method, \`condition\`, status)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [
+          pd.pd_name, pd.price, pd.description, pd.pet_type, pd.categories,
+          pd.city, pd.district, pd.new_level, pd.stock, pd.sale_count || 0,
+          pd.delivery_method, condition, pd.status || 0
+        ]
+      );
+      targetPid = result.insertId;
     }
 
-    // 1. 寫屬性
+    // 2. 處理屬性
     await q('DELETE FROM product_attribute WHERE pid=?', [targetPid]);
     const attrEntries = Object.entries(pd)
       .filter(([k]) => k.startsWith('attribute.'))
@@ -774,81 +800,128 @@ async function createOrUpdate(req, res, condition, isUpdate = false) {
       );
     }
 
-    // 2. 寫圖片跟敘述
-    await q('DELETE FROM product_image WHERE pid=?', [targetPid]);
+    // 3. 處理圖片
+    // 先刪掉舊圖
+    await q('DELETE FROM product_image WHERE pid = ?', [targetPid]);
+    console.log('已刪除 PID=', targetPid, '的舊圖片紀錄');
+
+    // 取得上傳的描述陣列
+    let rawValues = pd['img_value[]'] || pd.img_value || [];
+    if (!Array.isArray(rawValues)) rawValues = [rawValues];
+    console.log('解析後的 imgValues =', rawValues);
+
     const files = req.files || [];
-    const imgValues = Array.isArray(pd.img_value)
-      ? pd.img_value
-      : [pd.img_value].filter(v => v != null);
     const mediaRoot = path.join(__dirname, '..', 'fashion-paw', 'public', 'media');
+
+    // 組 batch INSERT 的 rows
     const imgRows = files.map((file, i) => {
       const rel = path.relative(mediaRoot, file.path).replace(/\\/g, '/');
-      return [targetPid, `/media/${rel}`, imgValues[i] || '', i];
+      return [
+        targetPid,
+        `/media/${rel}`,
+        rawValues[i] || '',
+      ];
     });
+
+    console.log('準備寫入 product_image 的 rows：', imgRows);
+
     if (imgRows.length) {
       await q(
-        'INSERT INTO product_image (pid, img_path, img_value, pd_img_id) VALUES ?',
+        'INSERT INTO product_image (pid, img_path, img_value) VALUES ?',
         [imgRows]
       );
+      console.log('成功寫入', imgRows.length, '筆圖片資料');
     }
 
     await q('COMMIT');
+    console.log('提交資料庫，結束 createOrUpdate');
     res.status(isUpdate ? 200 : 201).json({ pid: targetPid, ...pd });
+
   } catch (err) {
     await q('ROLLBACK');
-    console.error(err);
+    console.error('★ createOrUpdate 錯誤：', err);
     res.status(500).json({ error: err.message });
   }
 }
 module.exports = { createOrUpdate };
-//刪除
+
+
+// 路由部分確保 middleware 放在最前面
+app.post(
+  '/get/:condition-products',
+  upload,
+  (req, res) => createOrUpdate(req, res, req.params.condition, false)
+);
+app.put(
+  '/get/:condition-products/:pid',
+  upload,
+  (req, res) => createOrUpdate(req, res, req.params.condition, true)
+);
+
+
+// 刪除商品（含屬性、圖片資料庫紀錄，以及實體檔案）
 async function removeOne(req, res) {
   const pid = +req.params.pid;
   try {
     await q('START TRANSACTION');
 
-    // 1. 先讀出所有圖片的實體路徑
-    const imgRows = await q(
-      'SELECT img_path FROM product_image WHERE pid=?',
+    // 1. 先讀出所有圖片的 img_path
+    const rows = await q(
+      'SELECT img_path FROM product_image WHERE pid = ?',
       [pid]
     );
-    // 2. 刪掉檔案
-    imgRows.forEach(row => {
-      const filePath = path.join(__dirname, '..', 'fashion-paw', 'public', row.img_path);
-      if (fs.existsSync(filePath)) {
-        try { fs.unlinkSync(filePath); }
-        catch (e) { console.warn('刪除檔案失敗：', filePath, e); }
-      }
-    });
 
-    // 3. 刪資料庫裡的紀錄
-    await q('DELETE FROM product_attribute WHERE pid=?', [pid]);
-    await q('DELETE FROM product_image WHERE pid=?', [pid]);
-    const result = await q('DELETE FROM productslist WHERE pid=?', [pid]);
+    // 2. 刪除實體檔案
+    for (const { img_path } of rows) {
+      // 假設 img_path 像 '/media/new_pd/dog/…/123.jpg'
+      // 你要把它轉成 public 下的真實路徑
+      const fileOnDisk = path.join(
+        __dirname,
+        '..',        // 回到 nodejs/ 上層
+        'fashion-paw',
+        'public',
+        img_path.replace(/^\/+/, '')  // 去掉開頭的斜線
+      );
+      if (fs.existsSync(fileOnDisk)) {
+        try { fs.unlinkSync(fileOnDisk); }
+        catch (e) { console.warn('刪除檔案失敗：', fileOnDisk, e); }
+      }
+    }
+
+    // 3. 刪除 DB 裡的屬性與圖片紀錄
+    await q('DELETE FROM product_attribute WHERE pid = ?', [pid]);
+    await q('DELETE FROM product_image       WHERE pid = ?', [pid]);
+
+    // 4. 刪除 productslist
+    const result = await q('DELETE FROM productslist WHERE pid = ?', [pid]);
     if (result.affectedRows === 0) {
       await q('ROLLBACK');
-      return res.status(404).send();
+      return res.status(404).send('Not Found');
     }
 
     await q('COMMIT');
     res.sendStatus(204);
+
   } catch (err) {
     await q('ROLLBACK');
-    console.error(err);
+    console.error('removeOne 錯誤：', err);
     res.status(500).json({ error: err.message });
   }
 }
+
+// 把 removeOne 接到你的路由
+app.delete('/get/:condition-products/:pid', removeOne);
 //分辨是二手 還是新品
 ['second', 'new'].forEach(condition => {
   const base = `/get/${condition}-products`;
   app.post(
     base,
-    upload,                                 // ← 直接用這個
+    upload,
     (req, res) => createOrUpdate(req, res, condition, false)
   );
   app.put(
     `${base}/:pid`,
-    upload,                                 // ← 直接用這個
+    upload,
     (req, res) => createOrUpdate(req, res, condition, true)
   );
   app.delete(`${base}/:pid`, removeOne);
