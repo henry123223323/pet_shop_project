@@ -39,11 +39,11 @@ class PayWay extends Component {
         switch (selectedPayWay) {
             case "creditCard":
                 payLabel = "信用卡：一次付清";
-                cardLast4 = "1234"; // 寫死等串綠界
+                cardLast4 = ""; // 寫死等串綠界
                 break;
             case "installment":
                 payLabel = `信用卡：分期付款（${installmentOption || "未選"}）`;
-                cardLast4 = "1234"; // 分期也通常為信用卡，寫死等串綠界
+                cardLast4 = ""; // 分期也通常為信用卡，寫死等串綠界
                 break;
             case "thirdPartyPayment":
                 const map = {

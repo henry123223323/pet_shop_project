@@ -1069,3 +1069,6 @@ app.post('/orders/create', async (req, res) => {
     res.status(500).json({ error: '訂單建立失敗' });
   }
 });
+
+
+module.exports = { q };//匯出q給payment使用
