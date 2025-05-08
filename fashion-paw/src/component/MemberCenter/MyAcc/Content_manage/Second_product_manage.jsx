@@ -184,8 +184,6 @@ export default class SecondProductManage extends Component {
             new={this.new}
             edit={this.edit}
             close={this.toggleModal}
-            condition="second"
-
           />
         )}
       </>

@@ -1,18 +1,37 @@
+// uploadProductImg.js
 const multer = require('multer');
-const path  = require('path');
-const fs    = require('fs');
+const path   = require('path');
+const fs     = require('fs');
 
-const BASE_DIR = path.join(__dirname, 'public', 'media', 'new_pd');
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const { pet_type, categories } = req.body;
-    const dest = path.join(BASE_DIR, pet_type, categories);
-    fs.mkdirSync(dest, { recursive: true });
-    cb(null, dest);
-  },
-  filename: (req, file, cb) => {
-    cb(null, `${Date.now()}${path.extname(file.originalname)}`);
-  }
-});
+module.exports = multer({
+  storage: multer.diskStorage({
+    destination: (req, file, cb) => {
+      // 從 URL 拿到 condition：'new' or 'second'
+      const condition = req.params.condition;  
+      const petType   = req.body.pet_type;       // 狗 or 貓…
+      const category  = req.body.categories;     // 只有新品才會用到
 
-module.exports = multer({ storage }).array('images', 4);
+      // 根據 condition 決定根目錄
+      const baseDir = path.join(
+        __dirname,
+        'public',
+        'media',
+        condition === 'second' ? 'second_pd' : 'new_pd'
+      );
+
+      // 二手只要 petType，正式新品才要再加 categories
+      const destDir =
+        condition === 'second'
+          ? path.join(baseDir, petType)
+          : path.join(baseDir, petType, category);
+
+      // 確保資料夾存在
+      fs.mkdirSync(destDir, { recursive: true });
+      cb(null, destDir);
+    },
+    filename: (req, file, cb) => {
+      // 保持原有的 timestamp+副檔名命名
+      cb(null, `${Date.now()}${path.extname(file.originalname)}`);
+    }
+  })
+}).array('images', 4);
