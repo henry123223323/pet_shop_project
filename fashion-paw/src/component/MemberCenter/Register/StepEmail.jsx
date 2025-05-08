@@ -2,23 +2,28 @@ import React, { Component } from 'react';
 import axios from 'axios';
 
 class StepEmail extends Component {
-    state = {
-        email: '',
-        code: '',
-        status: '',
-        sending: false,
-        verifying: false,
-        cooldown: 0, // 發送間隔秒數
-        codeExpiresAt: null, // 驗證碼過期時間
-        timeNow: Date.now() // 用於觸發重新渲染
-    };
-    
+    constructor(props) {
+        super(props)
+        this.gotoemail = React.createRef();
+        this.state = {
+            email: '',
+            code: '',
+            status: '',
+            sending: false,
+            verifying: false,
+            cooldown: 0, // 發送間隔秒數
+            codeExpiresAt: null, // 驗證碼過期時間
+            timeNow: Date.now() // 用於觸發重新渲染
+        };
+        this.checkVerifyCode = this.checkVerifyCode.bind(this);
+    }
 
     // 每秒更新狀態
     componentDidMount() {
         this.timer = setInterval(() => {
             this.setState({ timeNow: Date.now() });
         }, 1000);
+        
     }
 
     componentWillUnmount() {
@@ -63,8 +68,8 @@ class StepEmail extends Component {
         }
     };
 
-       // 開始倒數計時
-       startCooldownTimer = () => {
+    // 開始倒數計時
+    startCooldownTimer = () => {
         const interval = setInterval(() => {
             this.setState(prev => {
                 if (prev.cooldown <= 1) {
@@ -92,12 +97,20 @@ class StepEmail extends Component {
 
             if (response.data.success) {
                 this.setState({ status: '✅ 驗證成功！' });
+
+
+                const gotoemail = this.gotoemail.current.value;
+                this.props.getemail(gotoemail);
+
+
                 this.props.next(); //  驗證通過才進下一步
             } else {
                 this.setState({ status: '❌ 驗證失敗：' + response.data.message });
             }
         } catch (error) {
-            this.setState({ status: '❌ 驗證失敗（伺服器錯誤）' });
+            this.setState({ status: '❌ 驗證失敗（伺服器錯誤）'})
+            console.log(error);
+            ;
         } finally {
             this.setState({ verifying: false });
         }
@@ -115,57 +128,58 @@ class StepEmail extends Component {
         //         ? `驗證碼剩餘 ${Math.floor(remainingExpireSec / 60)}分${remainingExpireSec % 60}秒`
         //         : `❌ 驗證碼已過期`
         //     : null;
-            return (
-                <fieldset className="border mt-3">
-                    <legend>Email</legend>
-    
-                    {/* Email 輸入 */}
-                    <div className='d-flex justify-content-center align-items-center m-2'>
-                        <label>電子郵件(email)</label>
-                        <input
-                            name="email"
-                            type="email"
-                            className="form-control w-50 m-2"
-                            value={email}
-                            onChange={(e) => this.setState({ email: e.target.value })}
-                        />
-                    </div>
-    
-                    {/* 驗證碼輸入 + 按鈕 */}
-                    <div className='d-flex justify-content-center align-items-center m-2'>
-                        <label htmlFor="verify" className='mx-3'>驗證碼</label>
-                        <input
-                            type="text"
-                            name="verify"
-                            className="form-control w-25 mx-4"
-                            value={code}
-                            onChange={(e) => this.setState({ code: e.target.value })}
-                        />
-                        <button
-                            className="btn btn-outline-primary me-2"
-                            onClick={this.sendVerifyCode}
-                            disabled={sending || cooldown > 0}
-                        >
-                            {cooldown > 0 ? `請稍候 (${cooldown}s)` : '發送驗證碼'}
-                        </button>
-                    </div>
-    
-                    {/* 驗證按鈕 */}
-                    <div className="mt-3">
-                        <button
-                            className="btn btn-primary"
-                            onClick={this.checkVerifyCode}
-                            disabled={verifying}
-                        >
-                            {verifying ? '驗證中...' : '下一步'}
-                        </button>
-                    </div>
-    
-                    {/* 狀態顯示 */}
-                    {status && <p className="text-secondary mt-2">{status}</p>}
-                    {/* {expireDisplay && <p className="text-danger">{expireDisplay}</p>} */}
-                </fieldset>
-            );
-        }
+        return (
+            <fieldset className="border mt-3">
+                <legend>Email</legend>
+
+                {/* Email 輸入 */}
+                <div className='d-flex justify-content-center align-items-center m-2'>
+                    <label>電子郵件(email)</label>
+                    <input
+                        name="email"
+                        type="email"
+                        className="form-control w-50 m-2"
+                        value={email}
+                        onChange={(e) => this.setState({ email: e.target.value })}
+                        ref={this.gotoemail}
+                    />
+                </div>
+
+                {/* 驗證碼輸入 + 按鈕 */}
+                <div className='d-flex justify-content-center align-items-center m-2'>
+                    <label htmlFor="verify" className='mx-3'>驗證碼</label>
+                    <input
+                        type="text"
+                        name="verify"
+                        className="form-control w-25 mx-4"
+                        value={code}
+                        onChange={(e) => this.setState({ code: e.target.value })}
+                    />
+                    <button
+                        className="btn btn-outline-primary me-2"
+                        onClick={this.sendVerifyCode}
+                        disabled={sending || cooldown > 0}
+                    >
+                        {cooldown > 0 ? `請稍候 (${cooldown}s)` : '發送驗證碼'}
+                    </button>
+                </div>
+
+                {/* 驗證按鈕 */}
+                <div className="mt-3">
+                    <button
+                        className="btn btn-primary"
+                        onClick={this.checkVerifyCode}
+                        disabled={verifying}
+                    >
+                        {verifying ? '驗證中...' : '下一步'}
+                    </button>
+                </div>
+
+                {/* 狀態顯示 */}
+                {status && <p className="text-secondary mt-2">{status}</p>}
+                {/* {expireDisplay && <p className="text-danger">{expireDisplay}</p>} */}
+            </fieldset>
+        );
     }
+}
 export default StepEmail;

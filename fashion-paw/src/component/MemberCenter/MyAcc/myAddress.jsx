@@ -203,11 +203,30 @@ class MyAddress extends Component {
     };
 
     deleteaddr = (index) => {
-        // const newAddr = [...this.state.address];
-        // newAddr.splice(index, 1);
-        // this.setState({ address: newAddr });
-        // 刪除
+        // 設置 Aid
+        this.setState({
+            Aid: index
+        }, () => {
+            // 使用 setState 的回調函數，確保 Aid 更新完成後再執行 gotodelete
+            this.gotodelete();
+        });
     };
+
+
+    gotodelete(){
+        const Aid = this.state.Aid
+        axios.post(`http://localhost:8000/post/deleteaddress/${Aid}`)
+        .then((response) => {
+            console.log("刪除成功:");
+            this.getmysql();
+        })
+        .catch((error) => {
+            console.error("刪除失敗:", error);
+        });
+    }
+
+
+
 
     render() {
         const { showModal, address, newAddress, editingIndex } = this.state;
@@ -222,7 +241,7 @@ class MyAddress extends Component {
                         key={index}
                         addr={addr_item}
                         edit={() => this.toggleEdit(addr_item.Aid,index)}
-                        delete={() => this.deleteaddr(index)}
+                        delete={() => this.deleteaddr(addr_item.Aid)}
                     />
                 ))}
 

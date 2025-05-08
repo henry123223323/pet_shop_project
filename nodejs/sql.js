@@ -289,6 +289,24 @@ app.get("/get/userinfo/:uid", function (req, res) {
 });
 
 
+app.post("/post/deleteaddress/:Aid",function(req,res){
+    const Aid = req.params.Aid
+    conn.query("DELETE FROM address WHERE Aid =?",[Aid],function(err,results){
+        if (err) {
+            console.error("資料庫查詢錯誤:", err);
+            res.status(500).send("伺服器錯誤");
+        } else {
+            console.log("地址已刪除");
+            res.json(results); // 正確回傳結果給前端
+        }
+    })
+    
+})
+
+
+
+
+
 
 app.post("/post/deletecard/:cid",function(req,res){
     const cid = req.params.cid
