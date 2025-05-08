@@ -588,3 +588,86 @@ app.get("/userphoto/:uid", function (req, res) {
         res.send(photoBlob);
     });
 });
+
+
+app.get('/select/collect/:uid/:pid', function (req, res) {
+    let uid = req.params.uid;
+    let pid = req.params.pid;
+    if (pid == 'all') {
+         
+        let sql = `
+        SELECT *
+        from collection
+        WHERE uid=? ;
+        `
+        conn.query(sql, [uid], function (err, rows) {
+            if (err) {
+                console.error("查詢收藏失敗：", err);
+                return res.status(500).send("伺服器錯誤");
+            }
+            console.log(`Select uid:${uid}`);
+            let array=[]
+            rows.forEach((element,index) => {
+                array[index]=element.pid
+            });
+            res.json(array)
+            
+        })
+    }
+    else {
+        
+        let sql = `
+        SELECT *
+        from collection
+        WHERE uid=? and pid=?;
+        `
+        conn.query(sql, [uid,pid], function (err, rows) {
+            if (err) {
+                console.error("查詢收藏失敗：", err);
+                return res.status(500).send("伺服器錯誤");
+            }
+            console.log(`Select uid:${uid},pid:${pid}`);
+            
+            rows.length>0?res.json(true):res.json(false)
+    
+            
+        })
+    }
+})
+
+app.get('/insert/collect/:uid/:pid', function (req, res) {
+    let uid = req.params.uid;
+    let pid = req.params.pid;
+    let sql = `
+    INSERT INTO collection (uid,pid) VALUES (?,?);
+    `
+    conn.query(sql, [uid,pid], function (err, rows) {
+        if (err) {
+            console.error("查詢收藏失敗：", err);
+            return res.status(500).send("伺服器錯誤");
+        }
+        console.log(`Insert uid:${uid},pid:${pid}`);
+        
+        rows.length>0?res.json(true):res.json(false)
+
+        
+    })
+})
+app.get('/delete/collect/:uid/:pid', function (req, res) {
+    let uid = req.params.uid;
+    let pid = req.params.pid;
+    let sql = `
+    DELETE FROM collection Where uid=? and pid=?;
+    `
+    conn.query(sql, [uid,pid], function (err, rows) {
+        if (err) {
+            console.error("查詢收藏失敗：", err);
+            return res.status(500).send("伺服器錯誤");
+        }
+        console.log(`Delete uid:${uid},pid:${pid}`);
+        
+        rows.length>0?res.json(true):res.json(false)
+
+        
+    })
+})

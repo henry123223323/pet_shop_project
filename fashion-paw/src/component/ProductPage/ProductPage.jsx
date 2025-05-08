@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import styles from './ProductPage.module.css';
+import cookie from "js-cookie";
 
 import FilterBar from './FilterBar/FilterBar';
 import Sidebar from './SideBar/SideBar';
@@ -13,6 +14,8 @@ import HotRanking from './HotRanking/HotRanking';
 // import mockProducts from './mockProducts';
 
 export default function ProductPage() {
+  const user_id = cookie.get('user_uid')
+
   const location = useLocation();                     // ← 拿到 location
   const searchState = location.state || {};
   const searchProducts = searchState.products;
@@ -24,6 +27,13 @@ export default function ProductPage() {
   const [displayItems, setDisplay] = useState([]);
   const [favoriteIds, setFavoriteIds] = useState([]);
 
+  useEffect(() => {
+    async function fetchData() {
+      let favArray = await axios.get(`http://localhost:8000/select/collect/${user_id}/all`)
+      setFavoriteIds(favArray.data)
+    }
+    fetchData()
+  }, [user_id, setFavoriteIds])
   // 初始載入
   useEffect(() => {
     if (searchProducts) {
@@ -77,9 +87,22 @@ export default function ProductPage() {
     setDisplay(items);
   }, [products, filters, sortBy]);
 
-  const toggleFav = id => setFavoriteIds(prev =>
-    prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
-  );
+  const toggleFav = (id) => {
+    if (favoriteIds.includes(id)) {
+      //delete api
+      axios.get(`http://localhost:8000/delete/collect/${user_id}/${id}`)
+
+    }
+    else {
+      //insert api
+      axios.get(`http://localhost:8000/insert/collect/${user_id}/${id}`)
+
+    }
+
+    setFavoriteIds(prev =>
+      prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
+    )
+  };
   const addCart = id => console.log('Add to cart', id);
 
   return (
