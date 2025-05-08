@@ -1,6 +1,7 @@
 require('dotenv').config();
 const fs = require('fs');
 var express = require("express");
+const router  = express.Router();
 const path = require('path');
 var cors = require("cors");
 var axios = require('axios');
@@ -10,6 +11,7 @@ const imageType = require('image-type');
 // 夏威夷披薩
 const verifyRoutes = require('./routes/verify');
 const upload = require('../fashion-paw/uploadProductImg');
+const ArticleImgupload = require('../fashion-paw/uploadArticleImg')
 var app = express();
 app.listen(8000, function () {
   console.log("好拾毛" + new Date().toLocaleTimeString());
@@ -53,39 +55,54 @@ app.get("/get/article", function (req, res) {//用於開發者後臺管理
   });
 });
 
-//後台區新增文章
-app.post('/api/create/article', async (req, res) => {
-  try {
+// 新增文章
+router.post(
+  '/api/create/article',
+  ArticleImgupload,        
+  async (req, res) => {
     const {
+      title,
+      intro,
+      pet_type,
+      product_category,
+      article_type,
+      sections
+    } = req.body;
+
+    // Multer 會把檔案路徑放在 req.file.path
+    // 我們轉成 public 下的相對路徑
+    const banner_URL = req.file
+      ? `/media/pet_know/${article_type}/${pet_type}/${req.file.filename}`
+      : '';
+
+    const sql = `
+      INSERT INTO article
+        (title, banner_URL, intro, pet_type,
+         product_category, article_type, sections, create_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, NOW())
+    `;
+
+    const params = [
       title,
       banner_URL,
       intro,
       pet_type,
       product_category,
-      sections
-    } = req.body;
-
-    const sql = `
-  INSERT INTO article
-    (title, banner_URL, intro, pet_type, product_category, sections, create_at)
-  VALUES (?, ?, ?, ?, ?, ?, NOW())
-`;
-    const params = [
-      title,
-      banner_URL || '',                      // 若沒上傳，預設空字串
-      intro,
-      pet_type,
-      product_category,
-      JSON.stringify(sections)
+      article_type,
+      JSON.stringify(sections || [])
     ];
-    const result = await q(sql, params);
-    console.log(sql, params);
-    res.status(201).json({ insertId: result.insertId });
-  } catch (err) {
-    console.error('新增文章失敗：', err);
-    res.status(500).json({ error: err.message });
+
+    try {
+      const result = await q(sql, params);
+      res.status(201).json({ insertId: result.insertId });
+    } catch (err) {
+      console.error('新增文章失敗：', err);
+      res.status(500).json({ error: err.message });
+    }
   }
-});
+);
+
+module.exports = router;
 // 4. 刪除文章
 app.delete('/api/article/:id', async (req, res) => {
   const id = +req.params.id;
@@ -1018,39 +1035,49 @@ app.get("/get/article", function (req, res) {
     }
   });
 });
-//新增文章
-app.post('/api/create/article', async (req, res) => {
-  try {
-    const {
-      title,
-      banner_URL,            // 一定要從 req.body 拿到這個值
-      intro,
-      pet_type,
-      product_category,
-      sections
-    } = req.body;
+// 新增文章
+handleSubmit = async () => {
+  const { mode, createArticle, editArticle } = this.props;
+  const { form } = this.state;
 
-    const sql = `
-  INSERT INTO article
-    (title, banner_URL, intro, pet_type, product_category, sections, create_at)
-  VALUES (?, ?, ?, ?, ?, ?, NOW())
-`;
-    const params = [
-      title,
-      banner_URL || '',                      // 若沒上傳，預設空字串
-      intro,
-      pet_type,
-      product_category,
-      JSON.stringify(sections)
-    ];
-    const result = await q(sql, params);
-    console.log(sql, params);  // ※ 建議先印出來檢查
-    res.status(201).json({ insertId: result.insertId });
-  } catch (err) {
-    console.error('新增文章失敗：', err);
-    res.status(500).json({ error: err.message });
+  // 準備 FormData
+  const fd = new FormData();
+  fd.append('title', form.title);
+  fd.append('intro', form.intro);
+  fd.append('pet_type', form.pet_type);
+  fd.append('product_category', form.product_category);
+  fd.append('article_type', form.article_type);
+  // sections 串成 JSON 字串
+  fd.append('sections', JSON.stringify(form.sections || []));
+  // 如果使用者有選檔案，再放進去
+  if (form.banner_URL instanceof File) {
+    fd.append('banner', form.banner_URL);
   }
-});
+
+  try {
+    if (mode === 'Add') {
+      await axios.post('/api/create/article', fd, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      alert('新增成功');
+      createArticle && createArticle();
+    } else {
+      await axios.put(`/api/article/${form.id}`, fd, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      alert('更新成功');
+      editArticle && editArticle();
+    }
+    this.props.close();
+  } catch (err) {
+    console.error(err);
+    alert('上傳失敗');
+  }
+}
+
+
+
+
 // 4. 刪除文章
 app.delete('/api/article/:id', async (req, res) => {
   const id = +req.params.id;
