@@ -40,6 +40,42 @@
   transition: opacity .2s;
 }
 
+.menuItem {
+  position: relative;
+  /* 讓 ::before 可以絕對定位在這個區塊內 */
+}
+
+.menuLink {
+  position: relative;
+  /* 讓 ::before 以這裡為參考 */
+  display: inline-block;
+  /* 需要 inline-block 才能定位 */
+}
+
+/* 小羽毛圖示：預設隱藏 */
+.menuLink::before {
+  content: '';
+  position: absolute;
+  /* 底邊緊貼文字上方，調整與文字的距離 */
+  /* bottom: 50%; */
+  /* 水平置中文字 */
+  /* left: 50%;                 */
+  transform: translateX(-80%) translateY(-30%);
+  width: 3rem;
+  /* icon 大小 */
+  height: 3rem;
+  background-image: url('./images/feather\ 1.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  opacity: 0;
+  transition: opacity .2s;
+}
+
+/* hover 時顯示 */
+.menuItem:hover .menuLink::before {
+  opacity: 1;
+}
+
 /* 所有 li + a 的基本樣式 */
 .menu li,
 .menu li a {
@@ -332,7 +368,7 @@
     /* 內距，可選 */
     padding: 6rem 2rem;
     display: none !important;
-    
+
   }
 
   .drawer .menu li {
