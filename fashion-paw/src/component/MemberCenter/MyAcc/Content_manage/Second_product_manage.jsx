@@ -178,8 +178,8 @@ export default class SecondProductManage extends Component {
 
         {showModal && (
           <MarketModal
-            mode="second"
-            modalstate={ModalState}
+          condition="second"          // 一定要傳 condition
+          modalState={ModalState}
             product={currentProduct}
             new={this.new}
             edit={this.edit}

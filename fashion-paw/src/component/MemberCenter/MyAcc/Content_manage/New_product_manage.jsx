@@ -202,7 +202,8 @@ export default class New_Products_Manage extends Component {
             new={this.new}
             edit={this.edit}
             product={currentProduct}
-            modalstate={ModalState}
+            modalState={ModalState}
+            condition="new"
           />
         )}
       </>

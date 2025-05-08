@@ -1,74 +1,42 @@
-import React, { useState } from 'react'
+// src/component/ProductPage/HotRanking/BestsellerTabs.jsx
+import React, { useState, useEffect, useRef } from 'react'
+import axios from 'axios'
 import styles from './BestsellerTabs.module.css'
 import pawicon from './images/pawicon.svg'
-import Dog7 from './images/Dog7.jpg'
-import Dog9 from './images/Dog9.jpg'
-import Dog from './images/5-3littlemonster_chicken.png'
-import Dog2 from './images/3-2Rrannk_beef.png'
-import Cat from './images/4-2kitcat_tunacrab.png'
-import Cat2 from './images/5-1Instinct_duck.png'
-import Cat3 from './images/6-2sheba_tunachicken.png'
+import AddToCartBtn from '../share/AddToCartBtn'
+import AddToMyFavorite from '../share/AddToMyFavorite'
 
-
-const categories = [
-  {
-    key: 'feed',
-    label: '飼料',
-    images: [Dog7, Dog9, Dog7, Dog9, Dog7, Dog9],
-  },
-  {
-    key: 'ComplementaryFood',
-    label: '副食',
-    images: [Dog, Dog2, Cat, Cat2, Cat3],
-  },
-  {
-    key: 'snack',
-    label: '零食',
-    images: [Dog7, Dog9, Dog7],
-  },
-  {
-    key: 'health',
-    label: '保健食品',
-    images: [Dog9, Dog7, Dog9],
-  },
-  {
-    key: 'home',
-    label: '生活家居',
-    images: [Dog7, Dog9, Dog7],
-  },
-  {
-    key: 'toy',
-    label: '玩具',
-    images: [Dog9, Dog7, Dog9],
-  },
+const tabs = [
+  { key: 'pet_food',        label: '飼料'       },
+  { key: 'complementary_food', label: '副食'    },
+  { key: 'snacks',          label: '零食'       },
+  { key: 'Health_Supplements', label: '保健食品' },
+  { key: 'Living_Essentials',  label: '生活家居' },
+  { key: 'toys',            label: '玩具'       },
 ]
 
+export default function BestsellerTabs({ petType = 'dog' }) {
+  const [activeTab, setActiveTab] = useState(tabs[0].key)
+  const [items, setItems]         = useState([])    // 後端回傳的前三名商品
+  const [page, setPage]           = useState(0)
+  const listRef                   = useRef(null)
 
-function chunkArray(arr, size) {
-  const chunks = []
-  for (let i = 0; i < arr.length; i += size) {
-    chunks.push(arr.slice(i, i + size))
+  // 每次 petType 或 activeTab 變化，就去後端撈資料
+  useEffect(() => {
+    setPage(0)
+    axios.get(`http://localhost:8000/get/hot-ranking/${petType}/${activeTab}`)
+      .then(res => setItems(res.data))
+      .catch(err => console.error('取得排行失敗', err))
+  }, [petType, activeTab])
+
+  // 把 items 切成每 3 張一組的 slides
+  const slides = []
+  for (let i = 0; i < items.length; i += 3) {
+    slides.push(items.slice(i, i + 3))
   }
-  return chunks
-}
-
-export default function BestsellerTabs() {
-
-  const [activeKey, setActiveKey] = useState(categories[0].key)
-  const activeCategory = categories.find((c) => c.key === activeKey)
-
-  const slides = chunkArray(activeCategory.images, 3)
-
-  const [page, setPage] = useState(0)
 
   const prev = () => setPage((page + slides.length - 1) % slides.length)
   const next = () => setPage((page + 1) % slides.length)
-
-
-  const switchCategory = (key) => {
-    setActiveKey(key)
-    setPage(0)
-  }
 
   return (
     <section className={styles.section}>
@@ -76,31 +44,28 @@ export default function BestsellerTabs() {
         <div className={styles.titleWrapper}>
           <h2 className={styles.title}>
             熱銷排行榜
-            <img src={pawicon} className={styles.icon} />
+            <img src={pawicon} className={styles.icon} alt="paw" />
           </h2>
         </div>
 
-
+        {/* 分類 Tab */}
         <nav className={styles.tabNav}>
-          {categories.map((cat) => (
+          {tabs.map(tab => (
             <button
-              key={cat.key}
-              className={`${styles.tab} ${cat.key === activeKey ? styles.active : ''
-                }`}
-              onClick={() => switchCategory(cat.key)}
+              key={tab.key}
+              className={`${styles.tab} ${tab.key === activeTab ? styles.active : ''}`}
+              onClick={() => setActiveTab(tab.key)}
             >
-              {cat.label}
+              {tab.label}
             </button>
           ))}
         </nav>
       </div>
 
+      {/* Carousel */}
       <div className="container-lg">
         <div className={styles.slider}>
-          <button onClick={prev} className={styles.arrow}>
-            ‹
-          </button>
-
+          <button onClick={prev} className={styles.arrow}>‹</button>
           <div className={styles.viewport}>
             <div
               className={styles.track}
@@ -108,19 +73,30 @@ export default function BestsellerTabs() {
             >
               {slides.map((group, gi) => (
                 <div key={gi} className={styles.slide}>
-                  {group.map((src, idx) => (
-                    <div key={idx} className={styles.card}>
-                      <img src={src} className={styles.img} alt="" />
+                  {group.map(item => (
+                    <div key={item.pid} className={styles.card}>
+                      <div className={styles.imageWrapper}>
+                        <img
+                          src={item.imageUrl || '/placeholder.png'}
+                          alt={item.pd_name}
+                          className={styles.img}
+                        />
+                      </div>
+                      <p className={styles.name}>{item.pd_name}</p>
+                      <p className={styles.price}>
+                        NT$ {Number(item.price).toLocaleString()}
+                      </p>
+                      <div className={styles.actions}>
+                        <AddToMyFavorite isFavorite={false} onClick={()=>{}} size="20px" />
+                        <AddToCartBtn onClick={()=>{}} />
+                      </div>
                     </div>
                   ))}
                 </div>
               ))}
             </div>
           </div>
-
-          <button onClick={next} className={styles.arrow}>
-            ›
-          </button>
+          <button onClick={next} className={styles.arrow}>›</button>
         </div>
       </div>
     </section>
