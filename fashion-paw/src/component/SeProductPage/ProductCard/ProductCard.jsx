@@ -19,15 +19,13 @@ export default function ProductCard({
   const cls = viewMode === 'list'
     ? `${styles.card} ${styles.horizontal}`
     : styles.card;
-
   // 加入購物車處理：顯示 alert 並呼叫傳入的 onAddToCart
   const handleAdd = () => {
     alert('已加入購物車');
     onAddToCart(id);
   };
-
   return (
-    <div className={cls}>
+    <div className={cls} >
       <div className={styles.imageWrapper}>
         <img src={images[0].img_path} alt={name} />
       </div>

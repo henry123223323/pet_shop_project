@@ -1,6 +1,7 @@
 {
   "name": "pet_shop_project",
   "version": "1.0.0",
+  "description": "",
   "main": "sql.js",
   "scripts": {
       "test": "echo \"Error: no test specified\" && exit 1"
@@ -16,7 +17,6 @@
       "url": "https://github.com/henry123223323/pet_shop_project/issues"
   },
   "homepage": "https://github.com/henry123223323/pet_shop_project#readme",
-  "description": "",
   "dependencies": {
       "@pinecone-database/pinecone": "^5.1.2",
       "axios": "^1.9.0",
