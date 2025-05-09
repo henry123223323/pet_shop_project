@@ -387,6 +387,17 @@ app.post("/post/makenewaddress/:uid/:AdressName/:AdressPhone/:City/:District/:ad
 
 
 
+app.post("/post/adduserinfo/:")
+
+
+
+
+
+
+
+
+
+
 app.post("/post/addressedit/:Aid/:AdressName/:AdressPhone/:City/:District/:address",function(req,res){
     const Aid = decodeURIComponent(req.params.Aid);  // 解碼 URL 參數
     const AdressName = decodeURIComponent(req.params.AdressName);
@@ -431,6 +442,19 @@ app.get("/get/userinfo", function (req, res) {
     }
   });
 });
+
+
+// app.get("/get/userinfo/:uid/:power",function(req,res){
+//   const power = req.params.power
+//   conn.query("")
+// })
+
+
+
+
+
+
+
 
 
 app.get("/get/creditcard/:uid", function (req, res) {
