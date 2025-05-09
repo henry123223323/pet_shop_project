@@ -10,6 +10,8 @@ const imageType = require('image-type');
 // 夏威夷披薩
 const verifyRoutes = require('./routes/verify');
 const upload = require('../fashion-paw/uploadProductImg');
+const uploadArticleImg = require('../fashion-paw/uploadArticleImg');
+
 var app = express();
 app.listen(8000, function () {
   console.log("好拾毛" + new Date().toLocaleTimeString());
@@ -53,51 +55,168 @@ app.get("/get/article", function (req, res) {//用於開發者後臺管理
   });
 });
 
-//後台區新增文章
-app.post('/api/create/article', async (req, res) => {
-  try {
-    const {
-      title,
-      banner_URL,
-      intro,
-      pet_type,
-      product_category,
-      sections
-    } = req.body;
+app.post(
+  '/api/create/article',
+  uploadArticleImg.single('banner_URL'),   // ← Multer middleware
+  async (req, res) => {
+    try {
+      // 1. 解構 + 預設值
+      const {
+        title = '',
+        intro = '',
+        pet_type = '',
+        product_category = '',
+        article_type = '',
+        sections = '[]'
+      } = req.body;
 
-    const sql = `
-  INSERT INTO article
-    (title, banner_URL, intro, pet_type, product_category, sections, create_at)
-  VALUES (?, ?, ?, ?, ?, ?, NOW())
-`;
-    const params = [
-      title,
-      banner_URL || '',                      // 若沒上傳，預設空字串
-      intro,
-      pet_type,
-      product_category,
-      JSON.stringify(sections)
-    ];
-    const result = await q(sql, params);
-    console.log(sql, params);
-    res.status(201).json({ insertId: result.insertId });
-  } catch (err) {
-    console.error('新增文章失敗：', err);
-    res.status(500).json({ error: err.message });
+      // 2. 必填檢查
+      if (!title.trim()) {
+        return res.status(400).json({ error: 'title 為必填欄位' });
+      }
+
+      // 3. 從 req.file 組路徑給前端讀
+      const banner_URL = req.file
+        ? `/media/pet_know/${article_type}/${pet_type}/${req.file.filename}`
+        : '';
+
+      // 4. SQL 欄位一定要和參數一一對應
+      const sql = `
+        INSERT INTO article
+          (title, banner_URL, intro, pet_type, product_category, article_type, sections, create_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, NOW())
+      `;
+      const params = [
+        title.trim(),
+        banner_URL,
+        intro.trim(),
+        pet_type,
+        product_category,
+        article_type,
+        // 如果前端送的是物件就 stringify，否則直接用字串
+        typeof sections === 'string' ? sections : JSON.stringify(sections)
+      ];
+
+      const result = await q(sql, params);
+      return res.status(201).json({ insertId: result.insertId });
+    } catch (err) {
+      console.error('新增文章失敗：', err);
+      return res.status(500).json({ error: err.message });
+    }
   }
-});
+);
 // 4. 刪除文章
 app.delete('/api/article/:id', async (req, res) => {
   const id = +req.params.id;
   try {
+    // 1. 先撈出 banner_URL、article_type、pet_type
+    const [row] = await q(
+      'SELECT banner_URL, article_type, pet_type FROM article WHERE ArticleID = ?',
+      [id]
+    );
+    if (!row) return res.status(404).json({ error: 'Not Found' });
+
+    const { banner_URL, article_type, pet_type } = row;
+
+    if (banner_URL) {
+      // 假設 banner_URL="/media/pet_know/health_check/dog/xxxxx.png"
+      // 切掉 "/media/" 前綴
+      const rel = banner_URL.replace(/^\/media\/+/, '');
+      // 拼成實體路徑
+      const fileOnDisk = path.resolve(
+        __dirname,       // e.g. /Users/.../nodejs
+        '..',            // 回到專案根目錄（看你的結構決定）
+        'fashion-paw',   // 或你的 public 資料夾上層資料夾
+        'public',
+        'media',
+        rel
+      );
+      console.log('🗑️ 要刪除的檔案：', fileOnDisk);
+
+      // 確認檔案存在再刪
+      if (fs.existsSync(fileOnDisk)) {
+        try {
+          fs.unlinkSync(fileOnDisk);
+          console.log('✅ 檔案刪除成功');
+        } catch (e) {
+          console.error('❌ 刪除檔案失敗：', e);
+        }
+      } else {
+        console.warn('⚠️ 檔案不存在，無法刪除');
+      }
+    }
+
+    // 2. 再刪除資料庫紀錄
     const result = await q('DELETE FROM article WHERE ArticleID = ?', [id]);
-    if (result.affectedRows === 0) return res.status(404).send('Not Found');
+    if (result.affectedRows === 0) return res.status(404).json({ error: 'Not Found' });
+
     res.sendStatus(204);
   } catch (err) {
     console.error('刪除文章失敗：', err);
-    res.status(500).send('Server Error');
+    res.status(500).json({ error: err.message });
   }
 });
+
+//編輯文章
+app.put(
+  '/api/update/article/:id',
+  uploadArticleImg.single('banner_URL'),
+  async (req, res) => {
+    const id = +req.params.id;
+    try {
+      // 1. 篩出舊的 banner_URL 路徑（若要刪舊圖）
+      const [old] = await q(
+        'SELECT banner_URL, article_type, pet_type FROM article WHERE ArticleID = ?',
+        [id]
+      );
+      if (!old) return res.status(404).json({ error: 'Not Found' });
+
+      // 2. 若前端有傳新檔 (req.file)，就刪掉舊檔並設定新的 banner_URL
+      let bannerPath = old.banner_URL;
+      if (req.file) {
+        // 刪舊檔
+        if (old.banner_URL) {
+          const oldRel = old.banner_URL.replace(/^\/+/,'');
+          const oldFile = path.join(__dirname, 'public', oldRel);
+          if (fs.existsSync(oldFile)) fs.unlinkSync(oldFile);
+        }
+        // 設新檔路徑
+        bannerPath = `/media/pet_know/${req.body.article_type}/${req.body.pet_type}/${req.file.filename}`;
+      }
+
+      // 3. 執行 UPDATE
+      await q(
+        `UPDATE article SET
+           title          = ?, 
+           intro          = ?, 
+           pet_type       = ?, 
+           product_category = ?,
+           article_type   = ?,
+           sections       = ?,
+           banner_URL     = ?,
+           create_at      = NOW()
+         WHERE ArticleID = ?`,
+        [
+          req.body.title,
+          req.body.intro,
+          req.body.pet_type,
+          req.body.product_category,
+          req.body.article_type,
+          typeof req.body.sections === 'string'
+            ? req.body.sections
+            : JSON.stringify(req.body.sections),
+          bannerPath,
+          id
+        ]
+      );
+
+      res.json({ success: true });
+    } catch (err) {
+      console.error('☆ 更新文章失敗：', err);
+      res.status(500).json({ error: err.message });
+    }
+  }
+);
 
 //寵物小知識區取得文章//
 app.get('/get/petknowarticles', async (req, res) => {
@@ -1006,63 +1125,9 @@ app.get('/get/hot-ranking', (req, res) => {
 
 //首頁的熱銷排行
 
-//文章管理頁面取得文章//
-app.get("/get/article", function (req, res) {
-  conn.query("SELECT * FROM article", function (err, results) {
-    if (err) {
-      console.error("資料庫查詢錯誤:", err);
-      res.status(500).send("伺服器錯誤");
-    } else {
-      console.log("/get/article被連線");
-      res.json(results); // 正確回傳結果給前端
-    }
-  });
-});
-//新增文章
-app.post('/api/create/article', async (req, res) => {
-  try {
-    const {
-      title,
-      banner_URL,            // 一定要從 req.body 拿到這個值
-      intro,
-      pet_type,
-      product_category,
-      sections
-    } = req.body;
 
-    const sql = `
-  INSERT INTO article
-    (title, banner_URL, intro, pet_type, product_category, sections, create_at)
-  VALUES (?, ?, ?, ?, ?, ?, NOW())
-`;
-    const params = [
-      title,
-      banner_URL || '',                      // 若沒上傳，預設空字串
-      intro,
-      pet_type,
-      product_category,
-      JSON.stringify(sections)
-    ];
-    const result = await q(sql, params);
-    console.log(sql, params);  // ※ 建議先印出來檢查
-    res.status(201).json({ insertId: result.insertId });
-  } catch (err) {
-    console.error('新增文章失敗：', err);
-    res.status(500).json({ error: err.message });
-  }
-});
-// 4. 刪除文章
-app.delete('/api/article/:id', async (req, res) => {
-  const id = +req.params.id;
-  try {
-    const result = await q('DELETE FROM article WHERE ArticleID = ?', [id]);
-    if (result.affectedRows === 0) return res.status(404).send('Not Found');
-    res.sendStatus(204);
-  } catch (err) {
-    console.error('刪除文章失敗：', err);
-    res.status(500).send('Server Error');
-  }
-});
+
+
 
 
 
