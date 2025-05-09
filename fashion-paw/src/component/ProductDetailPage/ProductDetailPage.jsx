@@ -20,6 +20,7 @@ import { CartContext } from 'component/Cart/CartContext.jsx';
 
 class PdDetailPage extends Component {
   static contextType = CartContext;
+  
   constructor(props) {
     super(props);
     this.state = {
