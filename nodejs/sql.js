@@ -7,7 +7,7 @@ var axios = require('axios');
 const util = require('util');
 var mysql = require("mysql");
 const imageType = require('image-type');
-// 夏威夷披薩
+// 再動就自己寫後端
 const verifyRoutes = require('./routes/verify');
 
 var app = express();
