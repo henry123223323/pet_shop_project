@@ -44,7 +44,7 @@ class CartList extends Component {
             </Link>
 
             <div className="text-muted small mb-2">{color}</div>
-            <div className="text-danger fw-bold me-3">{unit_price} 元</div>
+            <div className="text-danger fw-bold me-3">NT$ {unit_price}</div>
           </div>
 
           {/* 數量、收藏刪除 */}
