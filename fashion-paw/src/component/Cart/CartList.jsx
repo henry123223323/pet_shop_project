@@ -43,7 +43,7 @@ class CartList extends Component {
               <div className="fw-bold mb-1 paw-text-darkgreen">{productName}</div>
             </Link>
 
-            <div className="text-muted small mb-2">{color}</div>
+            {/* <div className="text-muted small mb-2">{color}</div> */}
             <div className="text-danger fw-bold me-3">NT$ {unit_price}</div>
           </div>
 

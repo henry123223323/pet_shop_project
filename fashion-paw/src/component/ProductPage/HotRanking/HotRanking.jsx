@@ -65,10 +65,12 @@ export default function HotRanking() {
                   size="24px"
                   aria-label="收藏"
                 />
-                <AddToCartBtn
-                  onClick={() => handleAddToCart(pid)}
-                  aria-label="加入購物車"
-                />
+                  <AddToCartBtn
+                      type="icon"
+                      product={{ ...item,image: item.imageUrl }}
+                      quantity={1}
+                      aria-label="加入購物車"
+                    />
               </div>
             </div>
           );

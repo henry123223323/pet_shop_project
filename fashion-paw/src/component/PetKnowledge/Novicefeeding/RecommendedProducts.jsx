@@ -35,7 +35,12 @@ export default function RecommendedProducts() {
               <p>價格：{item.price} 元</p>
             </div>
             <div className={styles.btnContainer}>
-           <AddToCartBtn onClick={() => console.log('加入購物車', item.pid)} />
+           <AddToCartBtn
+                      type="icon"
+                      product={{ ...item,image: item.imageUrl }}
+                      quantity={1}
+                      aria-label="加入購物車"
+                    />
           </div>
           </div>
         ))}

@@ -112,7 +112,7 @@ class PdDetailPage extends Component {
                         onQuantityChange={(newQty) => this.setState({ count: newQty })} />
                       {/* 加入購物車、收藏、分享 */}
                       <div className='d-flex align-items-center'>
-                        <AddToCartBtn type="text" onClick={this.addToCart} />
+                        <AddToCartBtn aria-label="加入購物車" type="text" product={currentPd} quantity={this.state.count} aria-label="加入購物車"/>
                         <AddToMyFavorite
                           onClick={this.favBtnClick}
                           isFavorite={this.state.isFavorite}
@@ -218,22 +218,22 @@ class PdDetailPage extends Component {
       });
   }
 
-  addToCart = async () => {
-    const { addToCart } = this.context;
-    const currentPd = this.state.product;
-    const cartItem = {
-      ...currentPd,
-      quantity: this.state.count
-    };
+  // addToCart = async () => {
+  //   const { addToCart } = this.context;
+  //   const currentPd = this.state.product;
+  //   const cartItem = {
+  //     ...currentPd,
+  //     quantity: this.state.count
+  //   };
 
-    const result = await addToCart(cartItem); // ⬅️ 等待結果
-    if (result === 'new' || result === 'updated') {
-      const go = window.confirm("已加入購物車！是否前往查看？");
-      if (go) {
-        window.location.href = '/ShoppingCartPage';
-      }
-    }
-  };
+  //   const result = await addToCart(cartItem); // ⬅️ 等待結果
+  //   if (result === 'new' || result === 'updated') {
+  //     const go = window.confirm("已加入購物車！是否前往查看？");
+  //     if (go) {
+  //       window.location.href = '/ShoppingCartPage';
+  //     }
+  //   }
+  // };
 
   favBtnClick = (e) => {
     // alert('已收藏')
