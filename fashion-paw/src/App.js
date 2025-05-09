@@ -8,6 +8,7 @@ import Header from './component/Homepage/Header';
 import Footer from './component/Homepage/Footer';
 import Breadcrumbs from './component/share/BreadCrumbs';
 import Icon from './component/Homepage/Icon';
+import ChatWindow from './component/chatroom/ChatWindow';
 
 import Homepage           from './component/Homepage/Homepage';
 import MemberCenter       from './component/MemberCenter/MyAccount';
@@ -34,6 +35,7 @@ function App() {
     <BrowserRouter>
       <CartProvider>
         <Header />
+        <ChatWindow />
         <main className={styles.mainContent}>
           <Breadcrumbs />
           <Switch>
