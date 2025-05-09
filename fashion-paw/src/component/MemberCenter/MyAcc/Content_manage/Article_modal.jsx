@@ -1,30 +1,39 @@
 import React, { Component } from 'react';
-import axios from 'axios';
 
 export default class Article_modal extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      form: { ...(props.article || {}), article_type: props.article?.article_type || '' }
+    // 初始化時把 props.article 展開並補預設
+    const initial = {
+      ...(props.article || {}),
+      article_type: props.article?.article_type || '',
+      product_category: props.article?.product_category || ''
     };
+    // 若已有字串形式的 banner_URL，就作為預覽
+    if (typeof initial.banner_URL === 'string' && initial.banner_URL) {
+      initial.banner_URL_preview = initial.banner_URL;
+    }
+    this.state = { form: initial };
   }
 
-  componentDidUpdate(prev) {
-    if (this.props.article !== prev.article) {
-      this.setState({
-        form: {
-          ...(this.props.article || {}),
-          article_type: this.props.article?.article_type || ''
-        }
-      });
+  componentDidUpdate(prevProps) {
+    if (this.props.article !== prevProps.article) {
+      // 更新時同樣處理 props.article
+      const updated = {
+        ...(this.props.article || {}),
+        article_type: this.props.article?.article_type || '',
+        product_category: this.props.article?.product_category || ''
+      };
+      if (typeof updated.banner_URL === 'string' && updated.banner_URL) {
+        updated.banner_URL_preview = updated.banner_URL;
+      }
+      this.setState({ form: updated });
     }
   }
 
   handleChange = e => {
     const { name, value } = e.target;
-    this.setState(s => ({
-      form: { ...s.form, [name]: value }
-    }));
+    this.setState(s => ({ form: { ...s.form, [name]: value } }));
   };
 
   handleFileChange = e => {
@@ -47,16 +56,32 @@ export default class Article_modal extends Component {
 
   handleSubmit = () => {
     const { mode, createArticle, editArticle } = this.props;
-    // 傳出去的這個 form 物件現在就含有 article_type
-    if (mode === 'Add') createArticle(this.state.form);
-    else if (mode === 'Edit') editArticle(this.state.form);
+    const { form } = this.state;
+    const action = mode === 'Add' ? createArticle : editArticle;
+    action(form);
   };
 
   render() {
+    console.log('【Article_modal】form:', this.state.form);
+
     const { mode, close } = this.props;
     const { form } = this.state;
     const readOnly = mode === 'Find';
-    const bannerSrc = form.banner_URL_preview || form.banner_URL;
+    console.log('banner_URL_preview:', form.banner_URL_preview);
+    console.log('banner_URL:', form.banner_URL);
+    // 後端靜態資源根網址
+    const API_BASE = 'http://localhost:8000';
+    // 預覽路徑
+        // 預覽路徑
+    const previewPath = form.banner_URL_preview;
+    // 如果使用者剛選的 File 會存在 previewPath (blob URL)
+    // 否則用後端靜態路徑
+    const bannerSrc = previewPath
+      ? (previewPath.startsWith('blob:')
+          ? previewPath
+          : `${API_BASE}${previewPath}`)
+      : '';
+
 
     return (
       <div className="modal show fade d-block" tabIndex="-1" style={{ background: 'rgba(0,0,0,0.5)' }}>
@@ -81,7 +106,9 @@ export default class Article_modal extends Component {
                   onChange={this.handleFileChange}
                   disabled={readOnly}
                 />
-                {bannerSrc && <img src={bannerSrc} alt="banner preview" style={{ width: '100%', marginTop: 8 }} />}
+                {bannerSrc && (
+                  <img src={bannerSrc} alt="banner preview" style={{ width: '100%', marginTop: 8 }} />
+                )}
               </div>
 
               {/* 標題 */}
@@ -147,7 +174,7 @@ export default class Article_modal extends Component {
                 </select>
               </div>
 
-              {/* 新增：文章類型 */}
+              {/* 文章類型 */}
               <div className="mb-3">
                 <label>文章類型</label>
                 <select
@@ -169,6 +196,11 @@ export default class Article_modal extends Component {
               <h6>Sections</h6>
               {(form.sections || []).map((sec, i) => {
                 const secImgSrc = sec.image_url_preview || sec.image_url;
+                const secSrc = secImgSrc
+                  ? (secImgSrc instanceof File
+                      ? secImgSrc
+                      : `${API_BASE}${secImgSrc}`)
+                  : '';
                 return (
                   <div key={i} className="mb-3 border p-2">
                     <div className="mb-2">
@@ -203,8 +235,8 @@ export default class Article_modal extends Component {
                         }}
                         disabled={readOnly}
                       />
-                      {secImgSrc && (
-                        <img src={secImgSrc} alt="sec preview" style={{ width: '100%', marginTop: 4 }} />
+                      {secSrc && (
+                        <img src={secSrc} alt="sec preview" style={{ width: '100%', marginTop: 4 }} />
                       )}
                     </div>
                   </div>
@@ -212,13 +244,10 @@ export default class Article_modal extends Component {
               })}
 
               {!readOnly && (
-                <button
-                  className="btn btn-sm btn-outline-secondary"
-                  onClick={() => {
-                    const secs = [...(form.sections || []), { heading: '', body: '', image_url: '' }];
-                    this.setState(s => ({ form: { ...s.form, sections: secs } }));
-                  }}
-                >
+                <button className="btn btn-sm btn-outline-secondary" onClick={() => {
+                  const secs = [...(form.sections || []), { heading: '', body: '', image_url: '' }];
+                  this.setState(s => ({ form: { ...s.form, sections: secs } }));
+                }}>
                   新增 Section
                 </button>
               )}
