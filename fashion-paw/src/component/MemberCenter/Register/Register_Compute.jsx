@@ -4,7 +4,9 @@ import StepEmail from './StepEmail';
 import StepPassword from './StepPassword';
 import StepBasicInfo from './StepBasicInfo';
 class Register_Compute extends Component {
-    state = {
+    constructor(props) {
+    super(props)
+    this.state = {
         currentStep: 1,
         steps: [
             { number: "1", content: "驗證email" },
@@ -12,22 +14,43 @@ class Register_Compute extends Component {
             { number: "3", content: "基本資料" }
         ]
     };
-
+}
     handleNext = () => {
         //按下一步 currentStep+1
         this.setState((prevState) => ({
             currentStep: Math.min(prevState.currentStep + 1, prevState.steps.length)
         }));
     };
-    renderStepContent = () => {
+
+    getemail=(value)=>{
+        console.log(value);
+        
+        this.setState({
+            email: value
+        })
+    }
+
+    getpassword=(value)=>{
+        console.log(value);
+        
+        this.setState({
+            password: value
+        })
+    }
+
+    // getemail={this.getemail}
+
+    renderStepContent = (value) => {
         //根據進行到的步驟切換表單 next=傳送handleNext function供表單元件使用
         if (this.state.currentStep == 1) {
-            return <StepEmail next={this.handleNext}/>
+            return <StepEmail next={this.handleNext} getemail={this.getemail} />
         }
         else if (this.state.currentStep == 2) {
+            
+            
             console.log("step2");
             
-            return <StepPassword next={this.handleNext}/>
+            return <StepPassword next={this.handleNext} getpassword={this.getpassword}/>
         }
         else {
             return <StepBasicInfo next={this.handleNext}/>

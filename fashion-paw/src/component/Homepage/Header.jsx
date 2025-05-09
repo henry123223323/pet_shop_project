@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import MainNav from './MainNav'
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { BiMenu, BiX } from 'react-icons/bi';
 import Logo from "./images/Logoblack.png"
 import styles from './IndexStyle.module.css'
 import navstyles from './MainNav.module.css'
 import SearchBar from './SearchBar';
+import cookie from 'js-cookie';
 
 function Header() {
+    const history = useHistory()
     // 設隱藏導覽列的初始值
     const [hideHeader, setHideHeader] = useState(false);
     // 向下滑動隱藏導覽列初始值
@@ -15,6 +17,11 @@ function Header() {
     // 螢幕縮小到768px得時候變成漢堡選單，點擊打開的初始值
     const [openMobileNav, setOpenMobileNav] = useState(false);
 
+    const [uid, setuid] = useState(null)
+    useEffect(() => {
+        let user_ID = cookie.get('user_uid') || null
+        setuid(user_ID)
+    }, [setuid])
     // 向下滑隱藏導覽列的判斷
     useEffect(() => {
         const handleScroll = () => {
@@ -31,7 +38,14 @@ function Header() {
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, [lastScrollY]);
+    const logout = (e) => {
+        cookie.remove('user_uid', { path: '/', sameSite: 'Lax' });
+        setuid(null)
+        console.log(uid);
+        history.push('/')
 
+
+    }
     return (
         <>
             {/* 縮到768px出現漢堡選單 */}
@@ -61,11 +75,21 @@ function Header() {
 
                 {/* header第一列 */}
                 <div className={styles.headerTop}>
-                <SearchBar />
+                    <SearchBar />
                     <button className={styles.iconBtn}><i className="bi bi-cart"></i></button>
-                    <Link to="/Login" className={styles.link}>登入</Link>
-                    <span>|</span>
-                    <Link to="/Register" className={styles.link}>註冊</Link>
+                    {uid ?
+                        <>
+                            {uid}
+                            <button onClick={logout}>登出</button>
+                        </>
+                        : <>
+                            <Link to="/Login" className={styles.link}>登入</Link>
+                            <span>|</span>
+                            <Link to="/Register" className={styles.link}>註冊</Link>
+                        </>
+                    }
+
+
                 </div>
                 {/* header第二列Logo */}
                 <div className={styles.headerLogo}>

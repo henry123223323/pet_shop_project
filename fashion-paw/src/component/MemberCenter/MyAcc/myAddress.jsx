@@ -4,8 +4,16 @@ import axios from 'axios';
 import cookie from "js-cookie";
 
 class MyAddress extends Component {
-    state = {
+    constructor(props) {
+        super(props)
+        this.inputaddressname = React.createRef();
+        this.inputaddressphone = React.createRef();
+        this.inputcity = React.createRef();
+        this.inputdistrict = React.createRef();
+        this.inputaddress = React.createRef();
+    this.state = {
         showModal: false,
+        Aid: "",
         address: [
             {
                 city: "台中市",
@@ -31,9 +39,23 @@ class MyAddress extends Component {
         },
         editingIndex: null  // 🔥 記錄現在是編輯第幾個
     };
+    }
+
+    getmysql(){
+        const uid = cookie.get("user_uid")
+        console.log(uid);
+        axios.get(`http://localhost:8000/get/address/${uid}`)
+        .then(response => {
+            console.log(response.data);
+            this.setState({ address:response.data })
+        }).catch(error => {
+            console.error("發送請求錯誤:", error);
+        });
+    }
+
 
     componentDidMount(){
-        // axios.get(`http://localhost:8000/get/creditcard/${uid}`)
+        this.getmysql()
     }
 
     toggleModal = () => {
@@ -44,7 +66,30 @@ class MyAddress extends Component {
         });
     };
 
-    toggleEdit = (index) => {
+    toggleEdit = (Aid,index) => { 
+        this.setState({
+            Aid : Aid
+        })
+        // const Aid = index
+        
+        // const AdressName = this.inputaddressname.current.value
+
+
+    // axios.post("/post/addressedit/:Aid/:AdressName/:AdressPhone/:City/:District/:address")
+
+
+
+        console.log(index);
+        
+
+
+        // console.log(index);
+
+        // axios.post(``)
+
+
+
+        
         const addressToEdit = this.state.address[index];
         this.setState({
             showModal: true,
@@ -52,6 +97,76 @@ class MyAddress extends Component {
             editingIndex: index
         });
     };
+
+    uporcr(value){
+        
+        if (value === null || value === undefined){
+            // this.editaddress()
+            this.makenewaddress()
+            
+            
+        }else{
+            // this.makenewaddress()          
+            this.editaddress()          
+                   
+        }
+    }
+
+    makenewaddress(){
+        const uid = encodeURIComponent(cookie.get("user_uid"))
+        const AdressName = encodeURIComponent(this.inputaddressname.current.value)
+        const AdressPhone = encodeURIComponent(this.inputaddressphone.current.value)
+        const City = encodeURIComponent(this.inputcity.current.value)
+        const District = encodeURIComponent(this.inputdistrict.current.value)
+        const address = encodeURIComponent(this.inputaddress.current.value)
+
+        console.log(AdressName);
+        console.log(AdressPhone);
+        console.log(City);
+        console.log(District);
+        console.log(address);
+
+        axios.post(`http://localhost:8000/post/makenewaddress/${uid}/${AdressName}/${AdressPhone}/${City}/${District}/${address}`)
+        .then((response) => {
+            console.log("新增成功:");
+            
+            
+            this.getmysql();
+        })
+        .catch((error) => {
+            console.error("新增失敗:", error);
+        });
+    }
+
+
+
+    editaddress(){
+        const Aid = encodeURIComponent(this.state.Aid)
+        const AdressName = encodeURIComponent(this.inputaddressname.current.value)
+        const AdressPhone = encodeURIComponent(this.inputaddressphone.current.value)
+        const City = encodeURIComponent(this.inputcity.current.value)
+        const District = encodeURIComponent(this.inputdistrict.current.value)
+        const address = encodeURIComponent(this.inputaddress.current.value)
+        
+        console.log(Aid);
+        console.log(AdressName);
+        console.log(AdressPhone);
+        console.log(City);
+        console.log(District);
+        console.log(address);
+        
+        axios.post(`http://localhost:8000/post/addressedit/${Aid}/${AdressName}/${AdressPhone}/${City}/${District}/${address}`)
+        .then((response) => {
+            console.log("修改成功:");
+            
+            
+            this.getmysql();
+        })
+        .catch((error) => {
+            console.error("修改失敗:", error);
+        });
+    }
+
 
     handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -88,25 +203,45 @@ class MyAddress extends Component {
     };
 
     deleteaddr = (index) => {
-        const newAddr = [...this.state.address];
-        newAddr.splice(index, 1);
-        this.setState({ address: newAddr });
+        // 設置 Aid
+        this.setState({
+            Aid: index
+        }, () => {
+            // 使用 setState 的回調函數，確保 Aid 更新完成後再執行 gotodelete
+            this.gotodelete();
+        });
     };
+
+
+    gotodelete(){
+        const Aid = this.state.Aid
+        axios.post(`http://localhost:8000/post/deleteaddress/${Aid}`)
+        .then((response) => {
+            console.log("刪除成功:");
+            this.getmysql();
+        })
+        .catch((error) => {
+            console.error("刪除失敗:", error);
+        });
+    }
+
+
+
 
     render() {
         const { showModal, address, newAddress, editingIndex } = this.state;
 
         return (
             <>
-                <h2>我的地址</h2>
+                <h2>我的地址當前AID:{this.state.Aid}</h2>
                 <button className="btn btn-primary" onClick={this.toggleModal}>新增</button>
 
                 {address.map((addr_item, index) => (
                     <MyAddressItem
                         key={index}
                         addr={addr_item}
-                        edit={() => this.toggleEdit(index)}
-                        delete={() => this.deleteaddr(index)}
+                        edit={() => this.toggleEdit(addr_item.Aid,index)}
+                        delete={() => this.deleteaddr(addr_item.Aid)}
                     />
                 ))}
 
@@ -124,28 +259,28 @@ class MyAddress extends Component {
                                     <div className="modal-body">
                                         <div className="form-group">
                                             <label>收件人姓名:</label>
-                                            <input type="text" name="addressName" className="form-control" value={newAddress.addressName} onChange={this.handleInputChange} required />
+                                            <input type="text" name="addressName" className="form-control" value={newAddress.addressName} onChange={this.handleInputChange} ref={this.inputaddressname} required />
                                         </div>
                                         <div className="form-group">
                                             <label>收件人電話:</label>
-                                            <input type="text" name="addressPhone" className="form-control" value={newAddress.addressPhone} onChange={this.handleInputChange} required />
+                                            <input type="text" name="addressPhone" className="form-control" value={newAddress.addressPhone} onChange={this.handleInputChange} ref={this.inputaddressphone} required />
                                         </div>
                                         <div className="form-group">
                                             <label>城市:</label>
-                                            <input type="text" name="city" className="form-control" value={newAddress.city} onChange={this.handleInputChange} required />
+                                            <input type="text" name="city" className="form-control" value={newAddress.city} onChange={this.handleInputChange} ref={this.inputcity} required />
                                         </div>
                                         <div className="form-group">
                                             <label>地區:</label>
-                                            <input type="text" name="district" className="form-control" value={newAddress.district} onChange={this.handleInputChange} required />
+                                            <input type="text" name="district" className="form-control" value={newAddress.district} onChange={this.handleInputChange} ref={this.inputdistrict} required />
                                         </div>
                                         <div className="form-group">
                                             <label>詳細地址:</label>
-                                            <input type="text" name="address" className="form-control" value={newAddress.address} onChange={this.handleInputChange} required />
+                                            <input type="text" name="address" className="form-control" value={newAddress.address} onChange={this.handleInputChange} ref={this.inputaddress} required />
                                         </div>
                                     </div>
                                     <div className="modal-footer">
                                         <button type="button" className="btn btn-secondary" onClick={this.toggleModal}>取消</button>
-                                        <input type="submit" className="btn btn-primary" value={editingIndex === null ? "確認新增" : "確認修改"} />
+                                        <input type="submit" className="btn btn-primary" value={editingIndex === null ? "確認新增" : "確認修改"} onClick={()=>this.uporcr(editingIndex)} />
                                     </div>
                                 </form>
                             </div>
