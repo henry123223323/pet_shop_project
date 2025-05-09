@@ -147,10 +147,10 @@ export default class Article_modal extends Component {
                   disabled={readOnly}
                 >
                   <option value="">-- 請選擇 --</option>
-                  <option value="dog">狗</option>
-                  <option value="cat">貓</option>
-                  <option value="bird">鳥</option>
-                  <option value="mouse">鼠</option>
+                  <option value="dog">狗狗</option>
+                  <option value="cat">貓咪</option>
+                  <option value="bird">鳥類</option>
+                  <option value="mouse">鼠類</option>
                 </select>
               </div>
 
@@ -165,11 +165,11 @@ export default class Article_modal extends Component {
                   disabled={readOnly}
                 >
                   <option value="">-- 請選擇 --</option>
-                  <option value="pet food">寵物主食</option>
-                  <option value="complementary food">副食品</option>
+                  <option value="pet food">飼料</option>
+                  <option value="complementary food">副食</option>
                   <option value="snacks">零食</option>
-                  <option value="Health Supplements">健康保健品</option>
-                  <option value="Living Essentials">生活用品</option>
+                  <option value="Health Supplements">保健食品</option>
+                  <option value="Living Essentials">生活家居</option>
                   <option value="toys">玩具</option>
                 </select>
               </div>

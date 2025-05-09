@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PawDisplay from '../PawDisplay';
+import StarDisplay from '../StarDisplay';
 class PdTitleMessage extends Component {
     state = {}
     render() {
@@ -30,7 +31,7 @@ class PdTitleMessage extends Component {
                 </>: <>
                 <div className='d-flex my-2 '>
                 <span> 商品評價：</span>
-                <PawDisplay rating={Math.floor(avgRating)} />
+                <StarDisplay rating={Math.floor(avgRating)} />
                 <div className="ptxt5 d-flex align-items-end">（<span title="平均分數">{avgRating} </span>｜<span title='評論數'>{ratingCount}</span>）</div>
                 </div>
                 </>}

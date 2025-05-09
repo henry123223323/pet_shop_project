@@ -1,17 +1,26 @@
-// MainNav.jsx
 import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import navstyles from './MainNav.module.css';
-import menuData from './data/product.json';   // ← 直接 import 你的 JSON
-
-
-
+import MegaMenu from './MegaMenu';
 
 export default function MainNav() {
-  const [openKey, setOpenKey] = useState(null);            // 目前打開的是哪一個 path
-  const [selectedPet, setSelectedPet] = useState('');      // 左側選到哪隻寵物
-  const [activeTab, setActiveTab] = useState('');          // 右側選到哪個分頁
+  const [openKey, setOpenKey] = useState(null);
+  const [petByKey, setPetByKey] = useState({});
+  const [tabByKey, setTabByKey] = useState({});
   const [openIndex, setOpenIndex] = useState(null);
+
+  // 控制手風琴展開／收起
+  const handleClick = (i) => {
+    setOpenIndex(openIndex === i ? null : i);
+  };
+
+  const pageNames = {
+    '/ProductPage': '拾毛百貨',
+    '/SeProductPage': '拾毛市場'
+  };
+
+  const paths = Object.keys(pageNames);
+
   // 這個就是手風琴要用的資料
   const items = [
     {
@@ -27,7 +36,7 @@ export default function MainNav() {
         { label: '狗狗', to: '/Novicefeeding/dog' },
         { label: '貓咪', to: '/HealthCheck/dog' },
         { label: '倉鼠', to: '/PartTouch/Touch' },
-        { label: '鳥',   to: '/PetQuiz/Quiz' }
+        { label: '鳥', to: '/PetQuiz/Quiz' }
       ]
     },
     {
@@ -36,7 +45,7 @@ export default function MainNav() {
         { label: '狗狗', to: '/Novicefeeding/dog' },
         { label: '貓咪', to: '/HealthCheck/dog' },
         { label: '倉鼠', to: '/PartTouch/Touch' },
-        { label: '鳥',   to: '/PetQuiz/Quiz' }
+        { label: '鳥', to: '/PetQuiz/Quiz' }
       ]
     },
     {
@@ -52,28 +61,10 @@ export default function MainNav() {
     }
   ];
 
-  // 控制手風琴展開／收起
-  const handleClick = (i) => {
-    setOpenIndex(openIndex === i ? null : i);
-  };
-  // 一旦 openKey（路徑）變了，就把左側跟右側都重設到第一筆
-  useEffect(() => {
-    if (!openKey) return;
-    const { sidebar, tabs } = menuData[openKey];
-    setSelectedPet(sidebar[0].label);
-    setActiveTab(tabs[0]);
-  }, [openKey]);
-
-  const pageNames = {
-    '/ProductPage': '拾毛百貨',
-    '/SeProductPage': '拾毛市場'
-  };
-  const paths = ['/ProductPage', '/SeProductPage'];
-
   return (
     <nav className={navstyles.mainNav}>
       <ul className={navstyles.menu}>
-
+        {/* 關於好拾毛 */}
         <li className={navstyles.dropdown}>
           <NavLink to="#">關於好拾毛</NavLink>
           <ul className={navstyles.dropdownMenu}>
@@ -82,69 +73,30 @@ export default function MainNav() {
           </ul>
         </li>
 
+        {/* 拾毛百貨 / 拾毛市場 */}
         {paths.map(path => (
           <li key={path}
             className={navstyles.menuItem}
             onMouseEnter={() => setOpenKey(path)}
             onMouseLeave={() => setOpenKey(null)}
           >
-            {/* 標題純文字，不連頁 */}
-            <span className={navstyles.menuLink}>
-              {pageNames[path]}
-            </span>
 
-            {/* MegaPanel */}
-            {openKey === path && (
-              <div className={navstyles.megaPanel}>
-                {/* 左側 sidebar */}
-                <aside className={navstyles.sidebar}>
-                  <ul>
-                    {menuData[path].sidebar.map(item => (
-                      <li key={item.label}>
-                        <button
-                          type="button"
-                          className={
-                            `${navstyles.sidebarLink} ` +
-                            `${selectedPet === item.label ? navstyles.activePet : ''}`
-                          }
-                          onClick={() => setSelectedPet(item.label)}
-                        >
-                          {item.label}
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                </aside>
+            <span className={navstyles.menuLink}>{pageNames[path]}</span>
 
-                {/* 右側 tabs & content */}
-                <section className={navstyles.content}>
-                  {/* Tabs 列 */}
-                  <div className={navstyles.tabs}>
-                    {menuData[path].tabs.map(tab => (
-                      <button
-                        key={tab}
-                        className={activeTab === tab ? navstyles.activeTab : ''}
-                        onMouseEnter={() => setActiveTab(tab)}
-                      >
-                        {tab}
-                      </button>
-                    ))}
-                  </div>
+            {/* 這裡渲染 MegaMenu */}
+            <MegaMenu
+              pageKey={path}
+              pageName={pageNames[path]}
+              openKey={openKey}
 
-                  {/* 內容區：取出 JSON 裡面 content[selectedPet][activeTab] */}
-                  <div className={navstyles.tabPane}>
-                    {(menuData[path]
-                      .content[selectedPet]?.[activeTab] || []
-                    ).map((prod, i) => (
-                      <div key={i} className={navstyles.card}>
-                        <img src={prod.img} alt={prod.title} />
-                        <p>{prod.title}</p>
-                      </div>
-                    ))}
-                  </div>
-                </section>
-              </div>
-            )}
+              // 左右選項狀態都存在 mainNav state：petByKey[path], tabByKey[path]
+              selectedPet={petByKey[path]}
+              activeTab={tabByKey[path]}
+
+              // 當 MegaMenu 初始化或點選時，更新 mainNav state
+              onPetChange={pet => setPetByKey(k => ({ ...k, [path]: pet }))}
+              onTabChange={t => setTabByKey(k => ({ ...k, [path]: t }))}
+            />
           </li>
         ))}
 

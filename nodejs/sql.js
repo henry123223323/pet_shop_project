@@ -409,6 +409,42 @@ app.get("/get/userinfo/:uid", function (req, res) {
 });
 
 
+app.post("/post/deleteaddress/:Aid",function(req,res){
+    const Aid = req.params.Aid
+    conn.query("DELETE FROM address WHERE Aid =?",[Aid],function(err,results){
+        if (err) {
+            console.error("資料庫查詢錯誤:", err);
+            res.status(500).send("伺服器錯誤");
+        } else {
+            console.log("地址已刪除");
+            res.json(results); // 正確回傳結果給前端
+        }
+    })
+    
+})
+
+
+
+
+
+app.post("/post/deleteaddress/:Aid",function(req,res){
+    const Aid = req.params.Aid
+    conn.query("DELETE FROM address WHERE Aid =?",[Aid],function(err,results){
+        if (err) {
+            console.error("資料庫查詢錯誤:", err);
+            res.status(500).send("伺服器錯誤");
+        } else {
+            console.log("地址已刪除");
+            res.json(results); // 正確回傳結果給前端
+        }
+    })
+    
+})
+
+
+
+
+
 
 app.post("/post/deletecard/:cid", function (req, res) {
   const cid = req.params.cid
@@ -442,7 +478,72 @@ app.post("/post/newcard/:credit_num/:expiry_date/:uid", function (req, res) {
     }
   })
 })
+app.get("/get/address/:uid", function (req, res) {
+    const uid = req.params.uid
+    conn.query("SELECT Aid,uid,City as city,District as district,address,AdressName as addressName,AdressPhone as addressPhone FROM address WHERE uid = ?", [uid],function (err, results) {
+        if (err) {
+            console.error("資料庫查詢錯誤:", err);
+            res.status(500).send("伺服器錯誤");
+        } else {
+            console.log("http://localhost:8000/get/userinfo 被連線");
+            res.json(results); // 正確回傳結果給前端
+        }
+    });
+});
 
+app.post("/post/makenewaddress/:uid/:AdressName/:AdressPhone/:City/:District/:address", function(req, res) {
+    const uid = decodeURIComponent(req.params.uid);
+    const AdressName = decodeURIComponent(req.params.AdressName);
+    const AdressPhone = decodeURIComponent(req.params.AdressPhone);
+    const City = decodeURIComponent(req.params.City);
+    const District = decodeURIComponent(req.params.District);
+    const address = decodeURIComponent(req.params.address);
+
+    console.log(AdressName);
+    console.log(AdressPhone);
+    console.log(City);
+    console.log(District);
+    console.log(address);
+
+    conn.query("INSERT INTO `address` (`uid`, `AdressName`, `AdressPhone`, `City`, `District`, `address`) VALUES (?, ?, ?, ?, ?, ?)", 
+        [uid, AdressName, AdressPhone, City, District, address], function (err, results) {
+            if (err) {
+                console.error("資料庫建立地址錯誤:", err);
+                res.status(500).send("伺服器錯誤");
+            } else {
+                console.log("新地址建立成功");
+                res.json(results); // 正確回傳結果給前端
+            }
+        });
+    });
+    app.post("/post/addressedit/:Aid/:AdressName/:AdressPhone/:City/:District/:address",function(req,res){
+        const Aid = decodeURIComponent(req.params.Aid);  // 解碼 URL 參數
+        const AdressName = decodeURIComponent(req.params.AdressName);
+        const AdressPhone = decodeURIComponent(req.params.AdressPhone);
+        const City = decodeURIComponent(req.params.City);
+        const District = decodeURIComponent(req.params.District);
+        const address = decodeURIComponent(req.params.address);
+    
+        console.log(Aid);
+        console.log(AdressName);
+        console.log(AdressPhone);
+        console.log(City);
+        console.log(District);
+        console.log(address);
+        
+    
+    
+        conn.query("UPDATE address SET AdressName = ?, AdressPhone = ?, City = ?, District = ?, address = ? WHERE Aid = ?", [AdressName, AdressPhone, City, District, address, Aid], function (err, results) {
+            if (err) {
+                console.error("資料庫查詢錯誤:", err);
+                res.status(500).send("伺服器錯誤");
+            } else {
+                console.log("地址更改成功");
+                res.json(results); // 正確回傳結果給前端
+            }
+        })
+    })
+ 
 
 // app.get("/get/address/:uid", function (req, res) {
 //     conn.query("SELECT Aid,uid,City,District,address,birthday,power,last_time_login,AboutMe as aboutme,Device as device FROM userinfo", function (err, results) {
@@ -463,29 +564,92 @@ app.post("/post/newcard/:credit_num/:expiry_date/:uid", function (req, res) {
 
 
 app.get("/get/userinfo", function (req, res) {
-  conn.query("SELECT uid,email,username,photo,fullname,birthday,power,last_time_login,AboutMe as aboutme,Device as device FROM userinfo", function (err, results) {
-    if (err) {
-      console.error("資料庫查詢錯誤:", err);
-      res.status(500).send("伺服器錯誤");
-    } else {
-      console.log("http://localhost:8000/get/userinfo 被連線");
-      res.json(results); // 正確回傳結果給前端
-    }
-  });
+    conn.query("SELECT uid,email,username,photo,fullname,birthday,power,last_time_login,AboutMe as aboutme,Device as device FROM userinfo", function (err, results) {
+        if (err) {
+            console.error("資料庫查詢錯誤:", err);
+            res.status(500).send("伺服器錯誤");
+        } else {
+            console.log("http://localhost:8000/get/userinfo 被連線");
+            res.json(results); // 正確回傳結果給前端
+        }
+    });
 });
 
 
 app.get("/get/creditcard/:uid", function (req, res) {
-  const uid = req.params.uid;
-  conn.query("SELECT cid as id, uid, credit_num as card_num, expiry_date as expiry FROM creditcard WHERE uid = ?", [uid], function (err, results) {
-    if (err) {
-      console.error("資料庫查詢錯誤:", err);
-      res.status(500).send("伺服器錯誤");
-    } else {
-      console.log("正確抓到資料庫信用卡資訊");
-      res.json(results); // 正確回傳結果給前端
-    }
-  });
+    const uid = req.params.uid;
+    conn.query("SELECT cid as id, uid, credit_num as card_num, expiry_date as expiry FROM creditcard WHERE uid = ?",[uid], function (err, results) {
+        if (err) {
+            console.error("資料庫建立地址錯誤:", err);
+            res.status(500).send("伺服器錯誤");
+        } else {
+            console.log("新地址建立成功");
+            res.json(results); // 正確回傳結果給前端
+        }
+    });
+});
+
+
+
+app.get("/get/new_product/home", function (req, res) {//給全新商品瀏覽頁的api
+    let sql = `
+SELECT p.pid as id, p.pd_name as name, p.pet_type, p.price, p.description, p.categories, p.stock, p.created_at, p.sale_count,
+CONCAT('[', GROUP_CONCAT(DISTINCT CONCAT('{\"img_path\":\"', pi.img_path, '\",\"img_value\":\"', pi.img_value, '\"}')), ']') AS images,
+CONCAT('{', GROUP_CONCAT(DISTINCT CONCAT('"', pa.attr, '":"', pa.attr_value, '"')), '}') AS attributes_object
+FROM productslist p
+LEFT JOIN product_image pi ON p.pid = pi.pid
+LEFT JOIN product_attribute pa ON p.pid = pa.pid
+WHERE p.condition = 'new' AND p.status = 1
+GROUP BY p.pid;
+`;
+
+    conn.query(sql, function (err, results) {
+        if (err) {
+            console.error("資料庫查詢錯誤:", err);
+            res.status(500).send("伺服器錯誤");
+        } else {
+            console.log("地址更改成功");
+            res.json(results); // 正確回傳結果給前端
+        }
+    })
+})
+
+
+
+
+
+
+app.get("/get/new_product/brand", function (req, res) {//查詢有哪些品牌
+    let sql = `
+    SELECT attr_value AS brand
+    FROM product_attribute
+    LEFT JOIN productslist p
+    ON product_attribute.pid=p.pid
+    WHERE attr = 'brand' and p.condition="new"
+    GROUP BY attr_value;`
+    conn.query(sql, function (err, results) {
+        if (err) {
+            console.error("資料庫查詢錯誤:", err);
+            res.status(500).send("伺服器錯誤");
+        } else {
+            console.log("http://localhost:8000/get/new_product/brand 被連線");
+            res.json(results); // 正確回傳結果給前端
+        }
+    });
+});
+
+
+app.get("/get/creditcard/:uid", function (req, res) {
+    const uid = req.params.uid;
+    conn.query("SELECT cid as id, uid, credit_num as card_num, expiry_date as expiry FROM creditcard WHERE uid = ?",[uid], function (err, results) {
+        if (err) {
+            console.error("資料庫查詢錯誤:", err);
+            res.status(500).send("伺服器錯誤");
+        } else {
+            console.log("正確抓到資料庫信用卡資訊");
+            res.json(results); // 正確回傳結果給前端
+        }
+    });
 });
 
 
@@ -532,7 +696,7 @@ app.post("/post/productsreach/new", function (req, res) {
 
 FROM productslist p
 
--- 🔸 子查詢組圖片陣列
+--  子查詢組圖片陣列
 LEFT JOIN (
   SELECT 
     pid, 
@@ -548,7 +712,7 @@ LEFT JOIN (
   GROUP BY pid
 ) imgs ON p.pid = imgs.pid
 
--- 🔸 子查詢組屬性物件
+--  子查詢組屬性物件
 LEFT JOIN (
   SELECT 
     pid, 
@@ -817,6 +981,89 @@ app.get("/userphoto/:uid", function (req, res) {
     res.send(photoBlob);
   });
 });
+
+
+app.get('/select/collect/:uid/:pid', function (req, res) {
+    let uid = req.params.uid;
+    let pid = req.params.pid;
+    if (pid == 'all') {
+         
+        let sql = `
+        SELECT *
+        from collection
+        WHERE uid=? ;
+        `
+        conn.query(sql, [uid], function (err, rows) {
+            if (err) {
+                console.error("查詢收藏失敗：", err);
+                return res.status(500).send("伺服器錯誤");
+            }
+            console.log(`Select uid:${uid}`);
+            let array=[]
+            rows.forEach((element,index) => {
+                array[index]=element.pid
+            });
+            res.json(array)
+            
+        })
+    }
+    else {
+        
+        let sql = `
+        SELECT *
+        from collection
+        WHERE uid=? and pid=?;
+        `
+        conn.query(sql, [uid,pid], function (err, rows) {
+            if (err) {
+                console.error("查詢收藏失敗：", err);
+                return res.status(500).send("伺服器錯誤");
+            }
+            console.log(`Select uid:${uid},pid:${pid}`);
+            
+            rows.length>0?res.json(true):res.json(false)
+    
+            
+        })
+    }
+})
+
+app.get('/insert/collect/:uid/:pid', function (req, res) {
+    let uid = req.params.uid;
+    let pid = req.params.pid;
+    let sql = `
+    INSERT INTO collection (uid,pid) VALUES (?,?);
+    `
+    conn.query(sql, [uid,pid], function (err, rows) {
+        if (err) {
+            console.error("查詢收藏失敗：", err);
+            return res.status(500).send("伺服器錯誤");
+        }
+        console.log(`Insert uid:${uid},pid:${pid}`);
+        
+        rows.length>0?res.json(true):res.json(false)
+
+        
+    })
+})
+app.get('/delete/collect/:uid/:pid', function (req, res) {
+    let uid = req.params.uid;
+    let pid = req.params.pid;
+    let sql = `
+    DELETE FROM collection Where uid=? and pid=?;
+    `
+    conn.query(sql, [uid,pid], function (err, rows) {
+        if (err) {
+            console.error("查詢收藏失敗：", err);
+            return res.status(500).send("伺服器錯誤");
+        }
+        console.log(`Delete uid:${uid},pid:${pid}`);
+        
+        rows.length>0?res.json(true):res.json(false)
+
+        
+    })
+})
 
 // 後台管理 新品和二手共用 上架 刪除 編輯函式
 async function getList(req, res, condition) {
@@ -1231,3 +1478,71 @@ app.get('/get/recommend-products', (req, res) => {
     res.json(data);
   });
 }); 
+
+//建立訂單
+
+// ✅ 新增一筆訂單（主 + 明細）
+app.post('/orders/create', async (req, res) => {
+  const { order, items } = req.body;
+
+  if (!order || !items || !Array.isArray(items) || items.length === 0) {
+    return res.status(400).json({ error: '缺少訂單資料或明細' });
+  }
+
+  const conn2 = await q.getConnection ? await q.getConnection() : conn; // 確保可 transaction（若使用 pool）
+  try {
+    await q('START TRANSACTION');
+
+    // 1. 插入主訂單
+    const insertOrderSQL = `
+      INSERT INTO orders (
+        uid, order_type, display_order_num, total_price, pay_way, card_last4,
+        delivery_method, receiver_name, receiver_phone, receiver_address, receipt
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+
+    const orderParams = [
+      order.uid,
+      order.order_type,
+      order.display_order_num,
+      order.total_price,
+      order.pay_way,
+      order.card_last4,
+      order.delivery_method,
+      order.receiver_name,
+      order.receiver_phone,
+      order.receiver_address,
+      order.receipt
+    ];
+
+    const result = await q(insertOrderSQL, orderParams);
+    const order_id = result.insertId;
+
+    // 2. 插入明細
+    const itemValues = items.map(item => [
+      order_id,
+      item.pid,
+      item.pd_name,
+      item.spec,
+      item.quantity,
+      item.unit_price,
+      item.total_price,
+      item.img_path
+    ]);
+
+    await q(
+      `INSERT INTO orderitem
+      (order_id, pid, pd_name, spec, quantity, unit_price, total_price, img_path)
+      VALUES ?`,
+      [itemValues]
+    );
+
+    await q('COMMIT');
+    res.status(200).json({ success: true, order_id });
+
+  } catch (err) {
+    await q('ROLLBACK');
+    console.error('新增訂單失敗:', err);
+    res.status(500).json({ error: '訂單建立失敗' });
+  }
+});

@@ -2,12 +2,18 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import styles from './HotRanking.module.css';
+// import mockRanking from './mockRanking';
+import cookie from "js-cookie";
+
+// 引入共用按鈕元件
 import AddToCartBtn from '../../share/AddToCartBtn';
 import AddToMyFavorite from '../../share/AddToMyFavorite';
 
 export default function HotRanking() {
   const [ranking, setRanking] = useState([]);
   const [favoriteIds, setFavoriteIds] = useState([]);
+  const user_id = cookie.get('user_uid')
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -20,9 +26,27 @@ export default function HotRanking() {
         setError('無法取得熱銷排行');
       })
       .finally(() => setLoading(false));
-  }, []);
+
+    async function fetchData() {
+      let favArray = await axios.get(`http://localhost:8000/select/collect/${user_id}/all`)
+      setFavoriteIds(favArray.data)
+    }
+    fetchData()
+  }, [user_id, setFavoriteIds])
 
   const handleToggleFavorite = id => {
+
+    if (favoriteIds.includes(id)) {
+      //delete api
+      axios.get(`http://localhost:8000/delete/collect/${user_id}/${id}`)
+
+    }
+    else {
+      //insert api
+      axios.get(`http://localhost:8000/insert/collect/${user_id}/${id}`)
+
+    }
+
     setFavoriteIds(prev =>
       prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
     );

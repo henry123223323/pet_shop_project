@@ -121,12 +121,12 @@ export default class SecondProductManage extends Component {
 
   renderCategory = cat =>
     ({
-      pet_food: '寵物食品',
-      complementary_food: '寵物副食',
-      snacks: '寵物零食',
-      Health_Supplements: '寵物保健品',
-      Living_Essentials: '生活用品',
-      toys: '寵物玩具'
+      pet_food: '飼料',
+      complementary_food: '副食',
+      snacks: '零食',
+      Health_Supplements: '保健食品',
+      Living_Essentials: '生活家居',
+      toys: '玩具'
     }[cat] || cat);
 
   render() {
