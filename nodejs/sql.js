@@ -322,7 +322,72 @@ app.post("/post/newcard/:credit_num/:expiry_date/:uid",function(req,res){
         }
     })
 })
+app.get("/get/address/:uid", function (req, res) {
+    const uid = req.params.uid
+    conn.query("SELECT Aid,uid,City as city,District as district,address,AdressName as addressName,AdressPhone as addressPhone FROM address WHERE uid = ?", [uid],function (err, results) {
+        if (err) {
+            console.error("資料庫查詢錯誤:", err);
+            res.status(500).send("伺服器錯誤");
+        } else {
+            console.log("http://localhost:8000/get/userinfo 被連線");
+            res.json(results); // 正確回傳結果給前端
+        }
+    });
+});
 
+app.post("/post/makenewaddress/:uid/:AdressName/:AdressPhone/:City/:District/:address", function(req, res) {
+    const uid = decodeURIComponent(req.params.uid);
+    const AdressName = decodeURIComponent(req.params.AdressName);
+    const AdressPhone = decodeURIComponent(req.params.AdressPhone);
+    const City = decodeURIComponent(req.params.City);
+    const District = decodeURIComponent(req.params.District);
+    const address = decodeURIComponent(req.params.address);
+
+    console.log(AdressName);
+    console.log(AdressPhone);
+    console.log(City);
+    console.log(District);
+    console.log(address);
+
+    conn.query("INSERT INTO `address` (`uid`, `AdressName`, `AdressPhone`, `City`, `District`, `address`) VALUES (?, ?, ?, ?, ?, ?)", 
+        [uid, AdressName, AdressPhone, City, District, address], function (err, results) {
+            if (err) {
+                console.error("資料庫建立地址錯誤:", err);
+                res.status(500).send("伺服器錯誤");
+            } else {
+                console.log("新地址建立成功");
+                res.json(results); // 正確回傳結果給前端
+            }
+        });
+    });
+    app.post("/post/addressedit/:Aid/:AdressName/:AdressPhone/:City/:District/:address",function(req,res){
+        const Aid = decodeURIComponent(req.params.Aid);  // 解碼 URL 參數
+        const AdressName = decodeURIComponent(req.params.AdressName);
+        const AdressPhone = decodeURIComponent(req.params.AdressPhone);
+        const City = decodeURIComponent(req.params.City);
+        const District = decodeURIComponent(req.params.District);
+        const address = decodeURIComponent(req.params.address);
+    
+        console.log(Aid);
+        console.log(AdressName);
+        console.log(AdressPhone);
+        console.log(City);
+        console.log(District);
+        console.log(address);
+        
+    
+    
+        conn.query("UPDATE address SET AdressName = ?, AdressPhone = ?, City = ?, District = ?, address = ? WHERE Aid = ?", [AdressName, AdressPhone, City, District, address, Aid], function (err, results) {
+            if (err) {
+                console.error("資料庫查詢錯誤:", err);
+                res.status(500).send("伺服器錯誤");
+            } else {
+                console.log("地址更改成功");
+                res.json(results); // 正確回傳結果給前端
+            }
+        })
+    })
+ 
 
 // app.get("/get/address/:uid", function (req, res) {
 //     conn.query("SELECT Aid,uid,City,District,address,birthday,power,last_time_login,AboutMe as aboutme,Device as device FROM userinfo", function (err, results) {
@@ -370,7 +435,7 @@ app.get("/get/creditcard/:uid", function (req, res) {
 
 
 
-app.get("/get/new_product/home", function (req, res) {
+app.get("/get/new_product/home", function (req, res) {//給全新商品瀏覽頁的api
     let sql = `
 SELECT p.pid as id, p.pd_name as name, p.pet_type, p.price, p.description, p.categories, p.stock, p.created_at, p.sale_count,
 CONCAT('[', GROUP_CONCAT(DISTINCT CONCAT('{\"img_path\":\"', pi.img_path, '\",\"img_value\":\"', pi.img_value, '\"}')), ']') AS images,
@@ -398,7 +463,7 @@ GROUP BY p.pid;
 
 
 
-app.get("/get/new_product/brand", function (req, res) {
+app.get("/get/new_product/brand", function (req, res) {//查詢有哪些品牌
     let sql = `
     SELECT attr_value AS brand
     FROM product_attribute
@@ -475,7 +540,7 @@ app.post("/post/productsreach/new", function (req, res) {
 
 FROM productslist p
 
--- 🔸 子查詢組圖片陣列
+--  子查詢組圖片陣列
 LEFT JOIN (
   SELECT 
     pid, 
@@ -491,7 +556,7 @@ LEFT JOIN (
   GROUP BY pid
 ) imgs ON p.pid = imgs.pid
 
--- 🔸 子查詢組屬性物件
+--  子查詢組屬性物件
 LEFT JOIN (
   SELECT 
     pid, 

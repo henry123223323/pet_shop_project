@@ -6,9 +6,9 @@ const { Pinecone } = require('@pinecone-database/pinecone');
 const router = express.Router();
 
 // 這裡就直接用 process.env
-const openai  = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 const pinecone = new Pinecone({ apiKey: process.env.PINECONE_API_KEY });
-const index    = pinecone.index(process.env.PINECONE_INDEX_NAME);
+const index = pinecone.index(process.env.PINECONE_INDEX_NAME);
 
 // 定義 GPT 可以呼叫的 function
 const functions = [
@@ -32,13 +32,13 @@ async function searchProducts(keyword) {
   let result = await axios.post('http://localhost:8000/post/productsreach/second', { 'keyword': keyword })
   if (result.data.length !== 0) {
     res_json = {
-      url: `http://localhost:3000/product/detail/${result.data[0].id}`,
-      pd_name:result.data[0].name
+      url: `http://localhost:3000/product/${result.data[0].id}`,
+      pd_name: result.data[0].name
     }
     return res_json
   }
   else {
-    return'查無商品'
+    return '查無商品'
   }
 
 }
@@ -65,7 +65,7 @@ router.post('/', async (req, res) => {
       .join('\n----\n');
     const messages = [
       { role: 'system', content: `你是一位寵物用品購物網站【好拾毛】的客服助理。以下是知識庫範例：\n${contexts}` },
-      { role: 'user',   content: message }
+      { role: 'user', content: message }
     ];
     const chatResp = await openai.chat.completions.create({
       model: 'gpt-3.5-turbo',
@@ -75,11 +75,11 @@ router.post('/', async (req, res) => {
       temperature: 0.2,
       max_tokens: 512
     });
-    let answer=chatResp.choices[0].message
+    let answer = chatResp.choices[0].message
     if (answer.function_call) {
       const { name, arguments: argsJson } = answer.function_call;
       const args = JSON.parse(argsJson);
-      
+
       let resultData;
       if (name === 'search_products') {
         // 執行你自己的搜尋邏輯
@@ -91,10 +91,10 @@ router.post('/', async (req, res) => {
 
     }
     else {
-          res.json({ answer: answer.content });
+      res.json({ answer: answer.content });
 
     }
-  
+
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: err.message });
@@ -102,3 +102,4 @@ router.post('/', async (req, res) => {
 });
 
 module.exports = router;
+
