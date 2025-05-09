@@ -18,15 +18,15 @@ export default function MegaMenu({
     const categoryNames = {
         pet_food: '飼料',
         Complementary_Food: '副食',
-        Health_Supplements: '保健品',
         snacks: '零食',
+        Health_Supplements: '保健品',
         Living_Essentials: '生活家居',
         toys: '玩具',
     };
 
     // 2) tabs 中文排序
     const desiredTabOrder = [
-        '飼料', '副食', '保健品', '零食', '生活家居', '玩具'
+        '飼料', '副食','零食', '保健品',  '生活家居', '玩具'
     ];
 
     // 3) 後端 pet_type key → 中文
