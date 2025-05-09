@@ -8,8 +8,8 @@ export default class ManageMarket extends Component {
     second_product: [],    // 後端資料
     searchTerm: '',        // 搜尋關鍵字
     showModal: false,
-    ModalState: 'Add',     
-    thisIndex: -1,         
+    ModalState: 'Add',
+    thisIndex: -1,
     loading: false,
     error: null
   };
@@ -38,7 +38,7 @@ export default class ManageMarket extends Component {
     this.toggleModal();
   };
   OpenFound = i => { this.setState({ ModalState: 'Find', thisIndex: i }); this.toggleModal(); };
-  OpenEdit  = i => { this.setState({ ModalState: 'Edit', thisIndex: i }); this.toggleModal(); };
+  OpenEdit = i => { this.setState({ ModalState: 'Edit', thisIndex: i }); this.toggleModal(); };
 
   Delete = async i => {
     const { pid, pd_name } = this.state.second_product[i] || {};
@@ -120,7 +120,7 @@ export default class ManageMarket extends Component {
         </div>
 
         {loading && <div>載入中…</div>}
-        {error   && <div className="text-danger">{error}</div>}
+        {error && <div className="text-danger">{error}</div>}
 
         {!loading && !error && (
           <table className="table table-striped table-hover">
@@ -135,7 +135,7 @@ export default class ManageMarket extends Component {
                 <tr key={p.pid}>
                   <td>
                     {p.imageUrl
-                      ? <img src={p.imageUrl} alt="" style={{ width:50, height:50, objectFit:'cover' }}/>
+                      ? <img src={p.imageUrl} alt="" style={{ width: 50, height: 50, objectFit: 'cover' }} />
                       : <span className="text-muted">無圖</span>
                     }
                   </td>
