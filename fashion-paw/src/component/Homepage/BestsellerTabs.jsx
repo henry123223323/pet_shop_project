@@ -1,104 +1,127 @@
-// src/component/ProductPage/HotRanking/BestsellerTabs.jsx
-import React, { useState, useEffect, useRef } from 'react'
-import axios from 'axios'
-import styles from './BestsellerTabs.module.css'
-import pawicon from './images/pawicon.svg'
-import AddToCartBtn from '../share/AddToCartBtn'
-import AddToMyFavorite from '../share/AddToMyFavorite'
+// src/component/Homepage/BestsellerTabs.jsx
+import React, { useState, useEffect } from 'react';
+import { NavLink } from 'react-router-dom';
+import axios from 'axios';
+import styles from './BestsellerTabs.module.css';
+import pawicon from './images/pawicon.svg';
 
 const tabs = [
-  { key: 'pet_food',        label: '飼料'       },
-  { key: 'complementary_food', label: '副食'    },
-  { key: 'snacks',          label: '零食'       },
+  { key: 'pet_food', label: '飼料' },
+  { key: 'Complementary_Food', label: '副食' },
+  { key: 'snacks', label: '零食' },
   { key: 'Health_Supplements', label: '保健食品' },
-  { key: 'Living_Essentials',  label: '生活家居' },
-  { key: 'toys',            label: '玩具'       },
-]
+  { key: 'Living_Essentials', label: '生活家居' },
+  { key: 'toys', label: '玩具' },
+];
 
-export default function BestsellerTabs({ petType = 'dog' }) {
-  const [activeTab, setActiveTab] = useState(tabs[0].key)
-  const [items, setItems]         = useState([])    // 後端回傳的前三名商品
-  const [page, setPage]           = useState(0)
-  const listRef                   = useRef(null)
-
-  // 每次 petType 或 activeTab 變化，就去後端撈資料
-  useEffect(() => {
-    setPage(0)
-    axios.get(`http://localhost:8000/get/hot-ranking/${petType}/${activeTab}`)
-      .then(res => setItems(res.data))
-      .catch(err => console.error('取得排行失敗', err))
-  }, [petType, activeTab])
-
-  // 把 items 切成每 3 張一組的 slides
-  const slides = []
-  for (let i = 0; i < items.length; i += 3) {
-    slides.push(items.slice(i, i + 3))
+function chunkArray(arr, size) {
+  const chunks = [];
+  for (let i = 0; i < arr.length; i += size) {
+    chunks.push(arr.slice(i, i + size));
   }
+  return chunks;
+}
 
-  const prev = () => setPage((page + slides.length - 1) % slides.length)
-  const next = () => setPage((page + 1) % slides.length)
+export default function BestsellerTabs() {
+  // activeKey 只影響按鈕樣式，不用做資料 fetch
+  const [activeKey, setActiveKey] = useState(tabs[0].key);
+
+  // productList 存一次抓到的最熱銷完整列表
+  const [productList, setProductList] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [page, setPage] = useState(0);
+
+  // ➡️ 只在元件載入時呼叫一次
+  useEffect(() => {
+    setLoading(true);
+    axios
+      .get('http://localhost:8000/get/hot-ranking')
+      .then(res => {
+        setProductList(res.data);
+        setPage(0);
+      })
+      .catch(err => {
+        console.error('載入最熱銷商品失敗', err);
+        setError('載入失敗');
+      })
+      .finally(() => setLoading(false));
+  }, []);
+
+  // 將同一批列表，切成每頁 3 張圖
+  const slides = chunkArray(productList, 3);
+
+  const prev = () => setPage(p => (p + slides.length - 1) % slides.length);
+  const next = () => setPage(p => (p + 1) % slides.length);
 
   return (
     <section className={styles.section}>
       <div className="container-lg">
-        <div className={styles.titleWrapper}>
-          <h2 className={styles.title}>
-            熱銷排行榜
-            <img src={pawicon} className={styles.icon} alt="paw" />
-          </h2>
-        </div>
+        <h2 className={styles.title}>
+          熱銷排行榜 <img src={pawicon} alt="paw" className={styles.icon} />
+        </h2>
 
-        {/* 分類 Tab */}
+        {/* 分類按鈕：純樣式控制 */}
         <nav className={styles.tabNav}>
-          {tabs.map(tab => (
+          {tabs.map(t => (
             <button
-              key={tab.key}
-              className={`${styles.tab} ${tab.key === activeTab ? styles.active : ''}`}
-              onClick={() => setActiveTab(tab.key)}
+              key={t.key}
+              className={`${styles.tab} ${t.key === activeKey ? styles.active : ''}`}
+              onClick={() => {
+                setActiveKey(t.key);
+                setPage(0);
+              }}
             >
-              {tab.label}
+              {t.label}
             </button>
           ))}
         </nav>
       </div>
 
-      {/* Carousel */}
       <div className="container-lg">
-        <div className={styles.slider}>
-          <button onClick={prev} className={styles.arrow}>‹</button>
-          <div className={styles.viewport}>
-            <div
-              className={styles.track}
-              style={{ transform: `translateX(-${page * 100}%)` }}
-            >
-              {slides.map((group, gi) => (
-                <div key={gi} className={styles.slide}>
-                  {group.map(item => (
-                    <div key={item.pid} className={styles.card}>
-                      <div className={styles.imageWrapper}>
+        {loading && <div className={styles.loading}>載入中…</div>}
+        {error && <div className={styles.error}>{error}</div>}
+
+        {!loading && !error && slides.length > 0 && (
+          <div className={styles.slider}>
+            <button onClick={prev} className={styles.arrow}>‹</button>
+
+            <div className={styles.viewport}>
+              <div
+                className={styles.track}
+                style={{ transform: `translateX(-${page * 100}%)` }}
+              >
+                {slides.map((group, gi) => (
+                  <div key={gi} className={styles.slide}>
+                    {group.map(prod => (
+                      <a
+                             key={prod.pid}
+                             href={`http://localhost:3000/product/${prod.pid}`}
+                             className={styles.card}
+                             target="_blank"
+                             rel="noopener noreferrer"
+                           >
                         <img
-                          src={item.imageUrl || '/placeholder.png'}
-                          alt={item.pd_name}
+                          src={prod.imageUrl || '/media/default/no-image.png'}
+                          alt={prod.pd_name}
                           className={styles.img}
                         />
-                      </div>
-                      <p className={styles.name}>{item.pd_name}</p>
-                      <p className={styles.price}>
-                        NT$ {Number(item.price).toLocaleString()}
-                      </p>
-                      <div className={styles.actions}>
-                        <AddToMyFavorite isFavorite={false} onClick={()=>{}} size="20px" />
-                        <AddToCartBtn onClick={()=>{}} />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ))}
+                        <p className={styles.caption}>{prod.pd_name}</p>
+                      </a>
+                    ))}
+                  </div>
+                ))}
+              </div>
             </div>
+
+            <button onClick={next} className={styles.arrow}>›</button>
           </div>
-          <button onClick={next} className={styles.arrow}>›</button>
-        </div>
+        )}
+
+        {!loading && !error && slides.length === 0 && (
+          <div className={styles.noData}>暫無熱銷商品</div>
+        )}
       </div>
     </section>
-  )
+  );
 }

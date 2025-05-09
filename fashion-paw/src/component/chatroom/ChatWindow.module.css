@@ -1,0 +1,104 @@
+.chatContainer {
+    display: flex;
+    flex-direction: column;
+    width: 360px;
+    height: 600px;
+    border: 2px solid #7A8450;
+    border-radius: 16px;
+    overflow: hidden;
+    background: #FFF;
+  }
+  
+  /* 標題區 */
+  .header {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    background: #F5F2E9;
+  }
+  .avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #DDD;
+    object-fit: cover;
+  }
+  .info {
+    margin-left: 8px;
+  }
+  .info h2 {
+    margin: 0;
+    font-size: 1rem;
+    color: #555;
+  }
+  .info p {
+    margin: 2px 0 0;
+    font-size: 0.75rem;
+    color: #999;
+  }
+  
+  /* 訊息列表 */
+  .messages {
+    flex: 1;
+    padding: 12px;
+    overflow-y: auto;
+    background: #FFF;
+  }
+  .message {
+    display: inline-block;
+    max-width: 80%;
+    margin: 8px 0;
+    padding: 8px 12px;
+    border-radius: 12px;
+    position: relative;
+    line-height: 1.4;
+  }
+  .bot {
+    background: #F5E1B0;
+    color: #333;
+    align-self: flex-start;
+  }
+  .user {
+    background: #EEE;
+    color: #333;
+    align-self: flex-end;
+    margin-left: auto;
+  }
+  .time {
+    display: block;
+    font-size: 0.625rem;
+    color: #AAA;
+    margin-top: 4px;
+    text-align: right;
+  }
+  
+  /* 輸入區 */
+  .inputArea {
+    display: flex;
+    align-items: center;
+    padding: 8px;
+    border-top: 1px solid #EEE;
+    background: #FDFCF5;
+  }
+  .input {
+    flex: 1;
+    margin: 0 8px;
+    padding: 6px 8px;
+    border: 1px solid #CCC;
+    border-radius: 12px;
+    font-size: 0.875rem;
+  }
+  .button {
+    background: none;
+    border: none;
+    font-size: 1.25rem;
+    cursor: pointer;
+  }
+  .send {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    margin-left: 4px;
+    cursor: pointer;
+  }
+  

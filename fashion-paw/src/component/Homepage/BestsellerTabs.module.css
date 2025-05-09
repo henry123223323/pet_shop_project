@@ -1,11 +1,13 @@
-.titleWrapper {
+.section {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
 }
 
 .title {
-    display: inline-flex;
+    display: flex;
     align-items: center;
+    justify-content: center;
     gap: 0.5rem;
     color: #E1C599;
     margin-top: 5rem;
@@ -89,7 +91,7 @@
     /* 3 張扣掉左右 gap */
     background: white;
     border-radius: 5px;
-    border: 1px solid rgba(0, 0, 0,0.1);
+    border: 1px solid rgba(0, 0, 0, 0.1);
     overflow: hidden;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
