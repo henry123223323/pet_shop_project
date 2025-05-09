@@ -34,7 +34,7 @@ class manage_market extends Component {
                 },
                 "images": [
                     {
-                        "img_path": "/cat.jpg",
+                        "img_path": "http://localhost:8000/media/1746585840279-åè-å»£ç¨ççè-2.jpg",
                         "img_value": "主打圖"
                     },
                     {
@@ -79,7 +79,7 @@ class manage_market extends Component {
                 },
                 "images": [
                     {
-                        "img_path": "1746431755892-HinanoOkoshi.jpg",
+                        "img_path": "http://localhost:8000/media/1746585840279-åè-å»£ç¨ççè-2.jpg",
                         "img_value": "主打圖"
                     },
                     {
@@ -177,7 +177,7 @@ class manage_market extends Component {
                     <tbody>
                         {second_product.map((product, index) => (
                             <tr key={product.pid}>
-                                <td><img src={product.images[0].img_path} alt="主圖" width="80" /></td>
+                                <td><img style={{ width: '100px' }} src={product.images[0].img_path} alt="主圖" width="80" /></td>
                                 <td>{product.pd_name}</td>
                                 <td>{product.price}</td>
                                 <td>{this.renderCategory(product.categories)}</td>
