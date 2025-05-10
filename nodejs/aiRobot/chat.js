@@ -57,14 +57,21 @@ router.post('/', async (req, res) => {
     const userVec = await embed(message);
     const queryRes = await index.query({
       vector: userVec,
-      topK: 3,
+      topK: 4,
       includeMetadata: true
     });
     const contexts = queryRes.matches
       .map(m => `Q: ${m.metadata.question}\nA: ${m.metadata.answer}`)
       .join('\n----\n');
+    console.log(contexts);
+    
     const messages = [
-      { role: 'system', content: `你是一位寵物用品購物網站【好拾毛】的客服助理。以下是知識庫範例：\n${contexts}` },
+      {
+        role: 'system', content: `
+        你是一位寵物用品購物網站【好拾毛】的客服助理。
+        我們是賣全新、二手商品的購物網站,動物種類有貓、狗、鳥、鼠
+        • 只有當使用者問題中明確提到「請查詢商品庫存」、「請搜尋新聞」等動作時，才返回 function_call；
+        • 其他情況，一律以純文字形式回答。以下是知識庫範例：\n${contexts}` },
       { role: 'user', content: message }
     ];
     const chatResp = await openai.chat.completions.create({
@@ -87,6 +94,7 @@ router.post('/', async (req, res) => {
       } else {
         resultData = { error: `Unknown function ${name}` };
       }
+      
       return res.json({ answer: resultData });
 
     }
