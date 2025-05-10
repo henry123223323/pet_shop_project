@@ -29,7 +29,7 @@ const cartItem = {
   ...product,
   quantity, // ✅ 使用 props 傳入的數量
 };
-
+console.log("🛒 加入購物車的 item：", cartItem);
     if (!product) {
       console.warn("❗ 缺少 product props");
       return;

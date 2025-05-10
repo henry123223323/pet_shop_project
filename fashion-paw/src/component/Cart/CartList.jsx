@@ -11,11 +11,18 @@ class CartList extends Component {
     FavorID: []
 
   }
-  componentDidUpdate() {
-    console.log(this.state.FavorID);
-
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.selected !== this.props.selected) {
+      console.log("🌀 CartList 更新勾選狀態:", this.props.item.cart_id, this.props.selected);
+    }
   }
+  // componentDidUpdate() {
+  //   console.log(this.state.FavorID);
+
+  // }
   componentDidMount() {
+    console.log("👤 當前登入 UID：", this.state.uid);
+
     axios.get(`http://localhost:8000/select/collect/${this.state.uid}/all`)
       .then(res => this.setState({ FavorID: res.data }))
 
@@ -42,21 +49,22 @@ class CartList extends Component {
     }
   }
   render() {
-    const { item, selected } = this.props;
-    const { productName,  unit_price } = item;
+    const { item } = this.props;
+    const { productName, unit_price } = item;
 
-
-
-    console.log(item)
+    // console.log(item)
 
     return (
       <div className='p-3 m-3'>
         <div className="row align-items-center justify-content-start border-bottom pb-3 mb-3">
           {/* 勾選框 */}
           <div className='mt-1 col-1 d-flex justify-content-center align-items-center'>
-            <input type="checkbox" className="form-check-input"
-              checked={!!selected}
-              onChange={() => this.props.onSelectedChange(this.props.item.cart_id)} />
+            <input
+              type="checkbox"
+              className="form-check-input"
+              checked={this.props.selected === true}
+              onChange={() => this.props.onSelectedChange(String(this.props.item.cart_id))}
+            />
           </div>
 
           {/* 商品圖片 */}

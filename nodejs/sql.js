@@ -1552,5 +1552,45 @@ app.post('/orders/create', async (req, res) => {
   }
 });
 
+//購物車存資料庫
+app.post("/api/cart/merge", async (req, res) => {
+  const { cartList } = req.body;
+
+  if (!Array.isArray(cartList)) {
+    return res.status(400).send("缺少購物車資料");
+  }
+
+  try {
+    for (const item of cartList) {
+      const { uid, pid, spec, quantity, unit_price } = item;
+
+      // 查詢是否已存在此商品
+      const [existing] = await q(`
+        SELECT * FROM shoppingcart WHERE uid = ? AND pid = ? AND spec = ?
+      `, [uid, pid, spec || null]);
+
+      if (existing) {
+        // 已存在 → 更新數量
+        await q(`
+          UPDATE shoppingcart SET quantity = quantity + ? 
+          WHERE uid = ? AND pid = ? AND spec = ?
+        `, [quantity, uid, pid, spec || null]);
+      } else {
+        // 不存在 → 新增
+        await q(`
+          INSERT INTO shoppingcart (uid, couponId, pid, spec, quantity, unit_price)
+          VALUES (?, NULL, ?, ?, ?, ?)
+        `, [uid, pid, spec || null, quantity, unit_price]);
+      }
+    }
+
+    res.send("✅ 購物車合併完成");
+  } catch (err) {
+    console.error("❌ 合併失敗", err);
+    res.status(500).send("伺服器錯誤");
+  }
+});
+
+
 
 module.exports = { q };//匯出q給payment使用

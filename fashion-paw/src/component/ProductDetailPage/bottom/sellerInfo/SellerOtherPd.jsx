@@ -66,8 +66,12 @@ class SellerOtherPd extends Component {
                   <div className="d-flex justify-content-center mb-2">
                     <AddToMyFavorite pid={pd.pid} />
                     <AddToCartBtn
-                    aria-label="加入購物車"
-                      product={{ ...pd, image: pd.img_path }}
+                      aria-label="加入購物車"
+                      product={{
+                        ...pd,
+                        image: pd.img_path,
+                        cart_id: String(pd.pid) // ✅ 確保格式一致
+                      }}
                       type="icon"
                       quantity={this.state.count}
                     />

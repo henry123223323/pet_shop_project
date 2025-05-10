@@ -29,8 +29,12 @@ export class CartProvider extends Component {
 
     // 設定 seller 名單
     setSellers = (userList) => {
+        
         if (Array.isArray(userList)) {
-            const merged = [...this.state.sellers, ...userList];
+            const merged = [...this.state.sellers, ...userList.map(user => ({
+                ...user,
+                uid: String(user.uid) // ✅ 強制轉成 string
+              }))];
             const uniqueSellers = Array.from(
                 new Map(merged.map(user => [String(user.uid), user])).values()
             );
@@ -56,14 +60,31 @@ export class CartProvider extends Component {
         }
       };
 
-    componentDidMount() {
+      componentDidMount() {
         const savedCart = localStorage.getItem('cartList');
         if (savedCart) {
-            this.setState({ cartList: JSON.parse(savedCart) });
+            try {
+                const parsed = JSON.parse(savedCart);
+                const formatted = parsed.map(item => {
+                    const cartId = String(item.cart_id || item.pid);
+                    return {
+                        ...item,
+                        cart_id: cartId,
+                    };
+                });
+                this.setState({ cartList: formatted });
+            } catch (err) {
+                console.error("❌ 載入 cartList 時 JSON 解析失敗：", err);
+            }
         }
+    
         const savedSellers = localStorage.getItem('sellers');
         if (savedSellers) {
-            this.setState({ sellers: JSON.parse(savedSellers) });
+            try {
+                this.setState({ sellers: JSON.parse(savedSellers) });
+            } catch (err) {
+                console.error("❌ 載入 sellers 時 JSON 解析失敗：", err);
+            }
         }
     }
 
@@ -77,6 +98,7 @@ export class CartProvider extends Component {
     }
 
     addToCart = (rawItem) => {
+        
         const newItem = this.normalizeCartItem(rawItem);
         return new Promise((resolve) => {
             this.setState((prev) => {
@@ -130,11 +152,11 @@ export class CartProvider extends Component {
           img_path: rawPath,
           final: fullImagePath,
         });
-      
+        const cartId = String(item.cart_id || item.pid);
         return {
-          cart_id: item.cart_id || `${item.pid}`,
+          cart_id: cartId,
           pid: item.pid,
-          uid: item.uid || null,
+          uid: item.uid ? String(item.uid) : null,
           condition: item.condition || "new",
           quantity: item.quantity || 1,
           productName: item.pd_name || item.productName || item.name ,
