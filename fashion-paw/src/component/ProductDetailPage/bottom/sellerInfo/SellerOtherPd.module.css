@@ -1,0 +1,22 @@
+
+  
+  .main {
+    display: flex;
+    margin-bottom: 8px;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .mainGallery {
+    display: block;
+    border: 1px solid black;
+  }
+  
+
+  
+  img {
+    width: 100%;
+    object-fit: contain;
+    display: block;
+  }
+

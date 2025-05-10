@@ -1,7 +1,11 @@
 import React, { Component } from 'react';
 import PD_list from './Product_list/Pd_list';
+import cookie from "js-cookie";
+import axios from 'axios';
 class Orders extends Component {
-    state = {
+    constructor(props) {
+    super(props);
+    this.state = {
         products: [
             {
                 ordernum: "000000001",
@@ -59,6 +63,7 @@ class Orders extends Component {
                 ]
             }
         ]
+    }
     }
     render() {
         let { products } = this.state

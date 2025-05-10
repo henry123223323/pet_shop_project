@@ -1,0 +1,36 @@
+.quiz {
+    background-color: #E1C599;
+    width: 600px;
+    /* 一定要帶單位 */
+    margin: 0 auto;
+    padding: 20px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.quiz .progress {
+    width: 100%;
+  }
+
+  .btn{
+    background-color: #DDB227;
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 10px;
+    display: block;
+  }
+  .btn:hover{
+    color: white;
+    background-color: #ECC978;
+    border: none;
+    border-radius: 5px;
+    
+  }
+  

@@ -1,0 +1,115 @@
+/* 調整整個header的高度大小，一次定義，全局可用 */
+:root {
+  --header-height: 180px;
+}
+
+/* header樣式 */
+.header {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  row-gap: 0.5rem;
+  padding: 5rem 2rem;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--header-height);
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.9);
+  transition: transform 0.3s ease-in-out;
+  z-index: 999;
+  justify-content: center;
+}
+
+.hiddenHeader {
+  transform: translateY(-100%);
+}
+
+/* 第一列：搜尋 + 購物 + 登入註冊 */
+.headerTop {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  /* 左右間隔 */
+  column-gap: 0.5rem;
+  margin-bottom: -0.5rem;
+}
+
+/* 搜尋、購物、登入註冊按鈕 */
+.iconBtn {
+  background: none;
+  border: none;
+  font-size: 1.25rem;
+  cursor: pointer;
+}
+
+.iconBtn:hover {
+  color: #70823C;
+}
+
+.link {
+  color: black;
+}
+
+.link:hover {
+  color: #70823C;
+  text-decoration-line: none;
+}
+
+/* 第二列：Logo 置中 */
+.headerLogo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+/* 確保內容都從這個高度之後才開始 */
+.mainContent {
+  padding-top: var(--header-height);
+}
+
+/* ----------------hambuger------------- */
+@media (min-width: 769px) {
+  .hamburger {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .mainContent {
+    padding-top: 0;
+    /* 手機版不要留空白 */
+  }
+
+  .header {
+    height: auto;
+    /* 改成左右排列 */
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .headerTop,
+  .mainNav {
+    display: none;
+  }
+
+  .hamburger {
+    display: block;
+    font-size: 2rem;
+    background: none;
+    border: none;
+    /* 從父層 .header 移出來 */
+    position: absolute;
+    /* 距離左邊 1rem */
+    left: 1rem;
+    /* 垂直置中 header */
+    top: 50%;
+    transform: translateY(-50%);
+    /* 確保在 overlay 之上 */
+    z-index: 1000;
+  }
+}

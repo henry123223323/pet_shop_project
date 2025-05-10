@@ -1,29 +1,46 @@
 // src/component/ProductPage/FilterBar/FilterBar.jsx
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import styles from './FilterBar.module.css';
 
-const functions = ['功能', '食品', '玩具', '家居'];
-const brands    = ['AAAA', 'BBBB', 'CCCC'];
-const prices    = [
-  { value: '0-100',    label: '100以下' },
-  { value: '101-300',  label: '101–300' },
-  { value: '301-600',  label: '301–600' },
-  { value: '601-999',  label: '601–999' },
-  { value: '1000+',    label: '1000以上' },
+const functions = ['乾糧', '副食', '零食', '保健食品', '玩具', '家居'];
+let brands = ['AAAA', 'BBBB', 'CCCC'];
+const prices = [
+  { value: '101-300', label: '101–300' },
+  { value: '301-600', label: '301–600' },
+  { value: '601-999', label: '601–999' },
+  { value: '1000+', label: '1000以上' }
 ];
 
-export default function FilterBar({ onFilterChange = () => {} }) {
+export default function FilterBar({ onFilterChange = () => { } }) {
   const [selFuncs, setSelFuncs] = useState([]);
   const [selBrands, setSelBrands] = useState([]);
-  const [selPrice,  setSelPrice]  = useState('');
+  const [selPrice, setSelPrice] = useState('');
 
+  useEffect(() => {
+    const fetchBrand = async () => {
+      try {
+        const res = await axios.get('http://localhost:8000/get/new_product/brand');
+        console.log(res.data);
+        let array = []
+        res.data.forEach((br, idx) => {
+          array[idx] = br.brand
+        })
+        brands = array
+      } catch (err) {
+        console.error('抓資料失敗:', err);
+      }
+    };
+    fetchBrand();
+
+  }, [])
   // 每次狀態改變就通知父元件
   useEffect(() => {
     onFilterChange({ functions: selFuncs, brands: selBrands, price: selPrice });
   }, [selFuncs, selBrands, selPrice]);
 
   const toggleArray = (arr, setFn, val) => {
-    setFn(prev => prev.includes(val) ? prev.filter(x => x!==val) : [...prev, val]);
+    setFn(prev => prev.includes(val) ? prev.filter(x => x !== val) : [...prev, val]);
   };
 
   return (

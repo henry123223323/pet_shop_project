@@ -1,23 +1,27 @@
-/* src/component/ProductPage/ProductPage.module.css */
-.container {
-  display: grid;
-  grid-template-columns: 200px 1fr 200px;
-  gap: 24px;
-  padding: 20px;
-}
-
-/* 左／右兩欄可以做固定寬度與捲動 */
-.sidebar,
-.hotRanking {
-  background: #fff;
-  border-radius: 8px;
+/* 外層 flex: 左邊主內容 / 右邊排行 */
+.pageWrapper {
+  display: flex;
+  gap: 16px;
   padding: 16px;
-  height: fit-content;
+  box-sizing: border-box;
 }
 
-/* 中間主內容欄 */
-.main {
+/* 左側主內容撐滿剩餘空間 */
+.mainContent {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+}
+
+/* filterBar, topBar, content 如之前不變 */
+.filterBar { margin-bottom: 16px; }
+.topBar { display: flex; justify-content: flex-end; align-items: center; gap:8px; margin-bottom:16px; }
+.content { display: flex; gap: 16px; }
+.sidebar { width: 220px; flex-shrink: 0; }
+.main { flex: 1; display: flex; flex-direction: column; }
+
+/* 右側 heat ranking 固定寬度 */
+.rankingSection {
+  width: 280px; /* 或你想要的寬度 */
+  flex-shrink: 0;
 }

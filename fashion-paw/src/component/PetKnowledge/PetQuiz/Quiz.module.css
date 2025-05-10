@@ -1,0 +1,107 @@
+/* Quiz.module.css */
+.quizContainer {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.title {
+    text-align: center;
+}
+
+.titleIcon {
+    position: absolute;
+    right: 12px;
+    width: 24px;
+    height: 24px;
+    opacity: 0.6;
+}
+
+/* 下方白卡片 */
+.selectorBox {
+    position: relative;
+    background: #F7F6EE;
+    border: 1px solid #ccc;
+    border-radius: 16px;
+    padding: 24px;
+    width: 100%;
+    max-width: 1000px;
+    height: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* ← 這行已經水平置中 */
+    /* 加下面這行就可以垂直置中 */
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* 開始按鈕 */
+.startBtn {
+    margin-top: 24px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* 右下角寵物 icon */
+.footerIcon {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    width: 150px;
+    height: 150px;
+    object-fit: contain;
+}
+
+.triangleBtn {
+    /* 清除按鈕預設樣式 */
+    background: transparent;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+
+    /* 三角形基礎：寬高都為 0 */
+    width: 0;
+    height: 0;
+
+    /* 上下邊框透明，左右邊框畫出三角形 */
+    border-top: 12px solid transparent;
+    border-bottom: 12px solid transparent;
+    transition: filter .2s;
+}
+
+.triangleBtn:hover {
+    /* 滑過時稍微變深 */
+    filter: brightness(0.8);
+}
+
+.triangleLeft {
+    border-right: 12px solid #b99a69;
+    /* 你的主色 */
+}
+
+.triangleRight {
+    border-left: 12px solid #b99a69;
+}
+
+.selectorControls {
+    display: flex;
+    align-items: center;
+    /* 垂直置中 */
+    justify-content: center;
+    /* 水平置中 */
+    gap: 1rem;
+    /* 三角跟文字之間留點距離 */
+}
+
+/* 文字也可以獨立抽 class, 用來微調 */
+.selectorLabel {
+    min-width: 80px;
+    text-align: center;
+    /* 如果要垂直置中 inline-block 的話，也可以加：
+    display: inline-block;
+    vertical-align: middle;
+    */
+}
