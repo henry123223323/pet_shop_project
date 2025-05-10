@@ -1552,8 +1552,8 @@ app.post('/orders/create', async (req, res) => {
   }
 });
 
-//購物車存資料庫
-app.post("/api/cart/merge", async (req, res) => {
+//登入後把登入前的購物車資料存進uid的該購物車資料庫
+app.post("/cart/merge", async (req, res) => {
   const { cartList } = req.body;
 
   if (!Array.isArray(cartList)) {
@@ -1591,6 +1591,96 @@ app.post("/api/cart/merge", async (req, res) => {
   }
 });
 
+// 從資料庫讀出購物車資料
+app.get("/cart/:uid", async (req, res) => {
+  const { uid } = req.params;
+  try {
+    const result = await q(`
+     SELECT 
+  sc.cart_id,
+  sc.uid,
+  sc.pid,
+  sc.spec,
+  sc.quantity,
+  sc.unit_price,
+  p.pd_name,
+  img.img_path,
+  img.img_value
+FROM shoppingcart sc
+LEFT JOIN productslist p ON sc.pid = p.pid
+LEFT JOIN (
+  SELECT pid, MIN(img_path) AS img_path, MIN(img_value) AS img_value
+  FROM product_image
+  GROUP BY pid
+) img ON sc.pid = img.pid
+WHERE sc.uid = ?
+    `, [uid]);
+    res.json(result);
+  } catch (err) {
+    console.error("❌ 撈取購物車失敗", err);
+    res.status(500).send("伺服器錯誤");
+  }
+});
 
+//修改購物車商品數量
+app.put("/cart/update", async (req, res) => {
+  const { uid, pid, spec, quantity } = req.body;
+
+  if (!uid || !pid || quantity == null) {
+    return res.status(400).send("缺少必要欄位");
+  }
+
+  try {
+    await q(`
+      UPDATE shoppingcart 
+      SET quantity = ? 
+      WHERE uid = ? AND pid = ? AND spec <=> ?
+    `, [quantity, uid, pid, spec || null]);
+
+    res.send("✅ 購物車數量已更新");
+  } catch (err) {
+    console.error("❌ 更新購物車數量失敗", err);
+    res.status(500).send("伺服器錯誤");
+  }
+});
+
+//刪除購物車商品
+app.delete("/cart/remove", async (req, res) => {
+  const { uid, pid, spec } = req.body;
+
+  if (!uid || !pid) {
+    return res.status(400).send("缺少必要欄位");
+  }
+
+  try {
+    await q(`
+      DELETE FROM shoppingcart 
+      WHERE uid = ? AND pid = ? AND spec <=> ?
+    `, [uid, pid, spec || null]);
+
+    res.send("✅ 已從資料庫刪除該商品");
+  } catch (err) {
+    console.error("❌ 刪除購物車商品失敗", err);
+    res.status(500).send("伺服器錯誤");
+  }
+});
+
+//獲取折扣碼
+app.get('/coupons/:uid', async (req, res) => {
+  const { uid } = req.params;
+
+  try {
+    const coupons = await q(`
+      SELECT coupon_code, description, discount_ratio 
+      FROM coupon
+      WHERE uid = ? 
+    `, [uid]);
+
+    res.json(coupons);
+  } catch (err) {
+    console.error("❌ 撈取折扣碼失敗", err);
+    res.status(500).send("伺服器錯誤");
+  }
+});
 
 module.exports = { q };//匯出q給payment使用

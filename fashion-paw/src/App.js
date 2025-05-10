@@ -21,6 +21,7 @@ import SecondPdDetail from './component/ProductDetailPage/router/SecondPdDetail'
 
 
 import ShoppingCartPage from './component/Cart/ShoppingCartPage';
+import SyncCartOnLogin from './component/Cart/SyncCartOnLogin';
 import CheckBillPage from './component/CheckBill/CheckBillPage';
 import Helpme from './component/Aboutus/helpme';
 import Needhelp from './component/Aboutus/needhelp';
@@ -39,6 +40,7 @@ function App() {
     <BrowserRouter>
       <CartProvider>
         <Header />
+        <SyncCartOnLogin /> 
         <main className={styles.mainContent}>
           <Breadcrumbs />
           <Switch>

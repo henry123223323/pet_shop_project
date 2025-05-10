@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
+import cookie from 'js-cookie';
 import CartList from './CartList';
 import SellerTitle from './SellerTitle';
 import Coupon from './Coupon';
@@ -33,7 +34,7 @@ class ShoppingCartPage extends Component {
       }
       secondItemsBySeller[item.uid].push(item);
     });
-    console.log("🧪 全部購物車 cartList：", cartList);
+    // console.log("🧪 全部購物車 cartList：", cartList);
     return (
       <>
         {/* title */}
@@ -195,7 +196,26 @@ class ShoppingCartPage extends Component {
   }
 
   componentDidMount() {
-    console.log("🟡 ShoppingCartPage componentDidMount 被執行");
+    // console.log("🟡 ShoppingCartPage componentDidMount 被執行");
+
+    const uid = cookie.get("user_uid");
+    if (uid) {
+      axios.get(`http://localhost:8000/cart/${uid}`)
+  .then(async res => {
+    const dbCart = res.data;
+
+    // 清空 context 中的 cartList
+    this.context.clearCart();
+
+    // 逐筆加入 context
+    for (let item of dbCart) {
+      await this.context.addToCart(item); // ✅ 加到 context.cartList 裡
+    }
+
+    console.log("✅ 已從資料庫載入購物車，共：", dbCart.length,"筆");
+  })
+    }
+
     this.setState({ selectedItems: [] });
 
     const { cartList, setSellers } = this.context;
@@ -215,7 +235,7 @@ class ShoppingCartPage extends Component {
             uidSet.has(String(user.uid)) // 同樣比對字串
           );
   
-          console.log("✅ 確定比對進來的 sellers：", matchedUsers);
+          // console.log("✅ 確定比對進來的 sellers：", matchedUsers);
           setSellers(matchedUsers);
         });
     }
@@ -259,12 +279,12 @@ class ShoppingCartPage extends Component {
 
     const result = sellerItems.every(item => selectedItems.includes(String(item.cart_id)));
   
-    console.log("🧪 檢查賣家全選判斷", {
-      uid,
-      sellerItemIds: sellerItems.map(i => i.cart_id),
-      selectedItems,
-      result
-    });
+    // console.log("🧪 檢查賣家全選判斷", {
+    //   uid,
+    //   sellerItemIds: sellerItems.map(i => i.cart_id),
+    //   selectedItems,
+    //   result
+    // });
   
     return result;
   };
@@ -299,7 +319,11 @@ class ShoppingCartPage extends Component {
   };
 
   changeQuantity = (cartId, newQuantity) => {
-    const { updateQuantity, removeFromCart } = this.context;
+    const { updateQuantity, removeFromCart, cartList } = this.context;
+    const targetItem = cartList.find(item => item.cart_id === cartId);
+  
+    if (!targetItem) return;
+  
     if (newQuantity < 1) {
       const deletePd = window.confirm("數量為 0，要將此商品從購物車移除嗎？");
       if (deletePd) {
@@ -307,7 +331,21 @@ class ShoppingCartPage extends Component {
       }
       return;
     }
+  
+    // ✅ 前端先更新 context
     updateQuantity(cartId, newQuantity);
+  
+    // ✅ 同步寫入資料庫
+    axios.put("http://localhost:8000/cart/update", {
+      uid: targetItem.uid,
+      pid: targetItem.pid,
+      spec: targetItem.spec || null,
+      quantity: newQuantity
+    }).then(() => {
+      // console.log("✅ 數量已同步資料庫");
+    }).catch(err => {
+      console.error("❌ 購物車數量更新失敗", err);
+    });
   };
 
   applyDiscount = (discountAmount) => {
@@ -315,11 +353,28 @@ class ShoppingCartPage extends Component {
   }
 
   deleteCartItem = (cartId) => {
-    const { removeFromCart } = this.context;
+    const { removeFromCart, cartList } = this.context;
+    const targetItem = cartList.find(item => item.cart_id === cartId);
+    if (!targetItem) return;
+  
     this.setState((prev) => ({
       selectedItems: prev.selectedItems.filter((id) => id !== String(cartId)),
     }));
-    removeFromCart(cartId);
+  
+    removeFromCart(cartId); // 先從 Context 移除
+  
+    // 後端刪除
+    axios.delete("http://localhost:8000/cart/remove", {
+      data: {
+        uid: targetItem.uid,
+        pid: targetItem.pid,
+        spec: targetItem.spec || null
+      }
+    }).then(() => {
+      // console.log("✅ 資料庫已刪除購物車商品");
+    }).catch(err => {
+      console.error("❌ 刪除購物車商品失敗", err);
+    });
   };
 
   goToCheckBillPage = () => {
