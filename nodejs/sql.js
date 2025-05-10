@@ -23,13 +23,25 @@ app.use(express.static(path.resolve(__dirname, '../fashion-paw/public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
+
 app.use('/media', express.static('media'))
 const uploadRoute = require('./upload');
+const cookieParser = require('cookie-parser')
 
 const ai_robot = require('./aiRobot/chat')
+app.use(cookieParser())
 app.use('/api', uploadRoute);//用於上傳圖片
 app.use('/robot', ai_robot)
 
+// 定義 authenticate middleware：從 req.cookies.uid 讀取使用者 ID
+function authenticate(req, res, next) {
+  const uid = req.cookies.uid
+  if (!uid) {
+    return res.status(401).json({ error: '未登入或 Cookie 過期' })
+  }
+  req.user = { id: uid }
+  next()
+}
 const resetPasswordRoutes = require('./routes/resetPassword');
 app.use('/password', resetPasswordRoutes);
 var conn = mysql.createConnection({
@@ -1076,6 +1088,21 @@ app.get('/delete/collect/:uid/:pid', function (req, res) {
   })
 })
 
+//後台管理 賣家個人商場api
+// 只抓自己的二手商品
+app.get('/api/my-second-products', (req, res) => {
+  const uid = req.user.id;  // 假設 middleware 已把 user 放到 req
+  const sql = `
+    SELECT p.*, pi.img_path AS imageUrl
+      FROM productslist p
+ LEFT JOIN ( ... ) pi ON pi.pid = p.pid
+     WHERE p.condition='second' AND p.uid = ?
+  `;
+  conn.query(sql, [uid], (err, results) => { /* ... */ });
+});
+
+
+
 // 後台管理 新品和二手共用 上架 刪除 編輯函式
 async function getList(req, res, condition) {
   const sql = `
@@ -1382,9 +1409,8 @@ app.get('/get/hot-ranking', (req, res) => {
   });
 });
 
-//首頁的熱銷排行
 
-// 取得各分類新品銷量前五（排除二手）
+// 給首頁的熱銷
 app.get('/get/category-ranking', (req, res) => {
   const hostUrl = `${req.protocol}://${req.get('host')}`;
   const sql = `
