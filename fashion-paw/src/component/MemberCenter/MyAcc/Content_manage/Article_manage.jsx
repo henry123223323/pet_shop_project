@@ -1,63 +1,143 @@
+// src/component/MemberCenter/MyAcc/Article_manage.jsx
 import React, { Component } from 'react';
 import Pagination from './Page_manage';
 import Article_modal from './Article_modal';
 import axios from 'axios';
 
-class Article_manage extends Component {
+export default class Article_manage extends Component {
   state = {
     articles: [],
+    searchTerm: '',       // 🔍 搜尋關鍵字
     currentPage: 1,
     itemsPerPage: 10,
     showModal: false,
-    modalMode: 'Add', // 'Add' 或 'Edit'
+    modalMode: 'Add',     // 'Add' or 'Edit'
     modalArticle: { sections: [] },
   };
 
-  async componentDidMount() {
+  componentDidMount() {
+    this.loadArticles();
+  }
+
+  loadArticles = async () => {
     try {
-      const result = await axios.get('http://localhost:8000/get/article');
-      const articles = result.data.map(a => ({
-        ...a,
-        create_at: new Date(a.create_at).toLocaleString(),
-        sections: JSON.parse(a.sections),
-        banner_URL: a.product_category === 'Health Supplements'
-          ? '/media/pet_know/health_check' + a.banner_URL
-          : '/media/pet_know/pet_feeding' + a.banner_URL,
-      }));
-      this.setState({ articles });
+      const res = await axios.get('http://localhost:8000/get/article');
+      // 解析並格式化資料
+      const mapped = res.data.map(a => {
+        let sections = [];
+        try {
+          sections = JSON.parse(a.sections || '[]');
+        } catch {}
+        const banner_URL = a.banner_URL
+          ? `/media/pet_know/${a.article_type}/${a.pet_type}/${a.banner_URL}`
+          : '';
+        return {
+          ArticleID: a.ArticleID,
+          title: a.title,
+          intro: a.intro,
+          product_category: a.product_category,
+          article_type: a.article_type,
+          pet_type: a.pet_type,
+          sections,
+          create_at: new Date(a.create_at).toLocaleString(),
+          banner_URL
+        };
+      });
+      this.setState({ articles: mapped });
     } catch (err) {
       console.error('讀取文章失敗：', err);
       alert('讀取文章失敗，請稍後再試');
     }
-  }
+  };
 
+  // 搜尋欄輸入
+  handleSearchChange = e => {
+    this.setState({ searchTerm: e.target.value, currentPage: 1 });
+  };
+
+  // 過濾文章
+  filteredArticles = () => {
+    const { articles, searchTerm } = this.state;
+    if (!searchTerm.trim()) return articles;
+    return articles.filter(a =>
+      a.title.includes(searchTerm) ||
+      a.intro.includes(searchTerm)
+    );
+  };
+
+  // 打開新增 modal
   openAdd = () => {
-    this.setState({ showModal: true, modalMode: 'Add', modalArticle: { sections: [] } });
+    this.setState({
+      showModal: true,
+      modalMode: 'Add',
+      modalArticle: { sections: [] },
+    });
   };
 
+  // 打開編輯 modal
   openEdit = index => {
-    const article = { ...this.state.articles[index] };
-    this.setState({ showModal: true, modalMode: 'Edit', modalArticle: article });
+    const article = this.filteredArticles()[index];
+    this.setState({
+      showModal: true,
+      modalMode: 'Edit',
+      modalArticle: { ...article },
+    });
   };
 
+  // 新增文章
   createArticle = async form => {
     try {
-      const payload = { ...form, sections: JSON.stringify(form.sections) };
-      const res = await axios.post('http://localhost:8000/api/create/article', payload);
-      const newArticle = { ...form, ArticleID: res.data.insertId, create_at: new Date().toLocaleString() };
-      this.setState(s => ({ articles: [newArticle, ...s.articles], showModal: false }));
+      // 1. 用 form 建立 FormData
+      const fd = new FormData();
+      fd.append('title', form.title);
+      fd.append('intro', form.intro);
+      fd.append('pet_type', form.pet_type);
+      fd.append('product_category', form.product_category);
+      fd.append('article_type', form.article_type);
+      fd.append('sections', JSON.stringify(form.sections || []));
+      if (form.banner_URL instanceof File) {
+        fd.append('banner_URL', form.banner_URL);
+      }
+  
+      // 2. 送出給後端，讓 axios 自動帶 boundary
+      const res = await axios.post(
+        'http://localhost:8000/api/create/article',
+        fd
+      );
+  
+      // 3. 收到 insertId，組出新文章物件
+      const newId = res.data.insertId;
+      const newArticle = {
+        ...form,
+        ArticleID: newId,
+        create_at: new Date().toLocaleString(),
+        banner_URL: form.banner_URL_preview
+          ? `/media/pet_know/${form.article_type}/${form.pet_type}/${form.banner_URL_preview}`
+          : ''
+      };
+  
+      // 4. 更新列表並關閉 Modal
+      this.setState(s => ({
+        articles: [newArticle, ...s.articles],
+        showModal: false,
+      }));
     } catch (err) {
       console.error('新增文章失敗：', err);
       alert('新增文章失敗：' + (err.response?.data?.error || err.message));
     }
   };
 
+  // 編輯文章
   editArticle = async form => {
     try {
-      const payload = { ...form, sections: JSON.stringify(form.sections) };
-      await axios.put(`http://localhost:8000/api/update/article/${form.ArticleID}`, payload);
+      await axios.put(
+        `http://localhost:8000/api/update/article/${form.ArticleID}`,
+        { ...form, sections: JSON.stringify(form.sections) }
+      );
       this.setState(s => ({
-        articles: s.articles.map(a => (a.ArticleID === form.ArticleID ? form : a)),
+        articles: s.articles.map(a =>
+          a.ArticleID === form.ArticleID ? form : a
+        ),
         showModal: false,
       }));
     } catch (err) {
@@ -66,39 +146,64 @@ class Article_manage extends Component {
     }
   };
 
+  // 刪除文章
   deleteArticle = async index => {
-    const article = this.state.articles[index];
+    const article = this.filteredArticles()[index];
     if (!window.confirm(`確定要刪除《${article.title}》？`)) return;
     try {
-      // 呼叫後端刪除 API，路由對應 /get/article/:id
-      await axios.delete(`http://localhost:8000/get/article/${article.ArticleID}`);
-      alert('刪除成功！');
-      // 重新載入列表
-      this.componentDidMount();
+      await axios.delete(`http://localhost:8000/api/article/${article.ArticleID}`);
+      this.loadArticles();
     } catch (err) {
       console.error('刪除文章失敗：', err);
       alert('刪除文章失敗：' + (err.response?.data?.error || err.message));
     }
   };
 
-  handlePageChange = page => this.setState({ currentPage: page });
+  // 分頁
+  handlePageChange = page => {
+    this.setState({ currentPage: page });
+  };
 
   render() {
-    const { articles, currentPage, itemsPerPage, showModal, modalMode, modalArticle } = this.state;
+    const {
+      searchTerm,
+      currentPage,
+      itemsPerPage,
+      showModal,
+      modalMode,
+      modalArticle,
+    } = this.state;
+
+    const filtered = this.filteredArticles();
     const start = (currentPage - 1) * itemsPerPage;
-    const current = articles.slice(start, start + itemsPerPage);
+    const pageItems = filtered.slice(start, start + itemsPerPage);
 
     return (
       <>
-        {/* 操作按鈕區 */}
-        <div className="d-flex justify-content-between mb-3">
-          <button className="btn btn-outline-primary" onClick={this.openAdd}>
+        {/* 搜尋欄 */}
+        <div className="mb-3" style={{ maxWidth: 300 }}>
+          <input
+            type="search"
+            className="form-control"
+            placeholder="搜尋標題或摘要"
+            value={searchTerm}
+            onChange={this.handleSearchChange}
+          />
+        </div>
+
+        {/* 新增文章按鈕 放搜尋欄下面 */}
+        <div className="mb-3">
+          <button
+            className="btn btn-outline-primary"
+            onClick={this.openAdd}
+          >
             新增文章
           </button>
         </div>
 
+        {/* 文章列表 */}
         <table className="table table-striped table-hover">
-          <thead>
+          <thead className="table-primary">
             <tr>
               <th>ArticleID</th>
               <th>標題</th>
@@ -108,34 +213,50 @@ class Article_manage extends Component {
             </tr>
           </thead>
           <tbody>
-            {current.map((a, i) => (
+            {pageItems.map((a, i) => (
               <tr key={a.ArticleID}>
                 <td>{a.ArticleID}</td>
                 <td>{a.title}</td>
                 <td>{a.intro}</td>
                 <td>{a.create_at}</td>
                 <td>
-                  <button className="btn btn-outline-primary btn-sm me-2" onClick={() => this.openEdit(start + i)}>
+                  <button
+                    className="btn btn-sm btn-outline-primary me-2"
+                    onClick={() => this.openEdit(start + i)}
+                  >
                     編輯
                   </button>
-                  <button className="btn btn-outline-danger btn-sm" onClick={() => this.deleteArticle(start + i)}>
+                  <button
+                    className="btn btn-sm btn-outline-danger"
+                    onClick={() => this.deleteArticle(start + i)}
+                  >
                     刪除
                   </button>
                 </td>
               </tr>
             ))}
+            {filtered.length === 0 && (
+              <tr>
+                <td colSpan="5" className="text-center">
+                  無符合的文章
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
 
+        {/* 分頁 */}
         <Pagination
-          totalItems={articles.length}
+          totalItems={filtered.length}
           itemsPerPage={itemsPerPage}
           currentPage={currentPage}
           onPageChange={this.handlePageChange}
         />
 
+        {/* Modal */}
         {showModal && (
           <Article_modal
+            key={`${modalMode}-${modalArticle.ArticleID || 'new'}`}
             mode={modalMode}
             article={modalArticle}
             createArticle={this.createArticle}
@@ -147,5 +268,3 @@ class Article_manage extends Component {
     );
   }
 }
-
-export default Article_manage;

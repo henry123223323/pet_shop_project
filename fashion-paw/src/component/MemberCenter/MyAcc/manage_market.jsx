@@ -1,257 +1,171 @@
+// src/component/MemberCenter/MyAcc/manage_market.jsx
 import React, { Component } from 'react';
 import Market_modal from './market_manage/Market_Modal';
 import axios from 'axios';
-class manage_market extends Component {
-    state = {
-        showModal: false,
-        ModalState: "Add",//Add ,Find ,Edit
-        thisIndex: 0,
-        second_product: [
-            {
-                "pid": "1",//db自動編號
-                "status": 1,//上架or下架,新增預設0
-                "pet_type": "cat",
-                "pd_name": "貓咪抓抓樂跳台",
-                "price": 1200,
-                "description": "堅固耐用，讓貓咪盡情玩耍的跳台。",
-                "categories": "pet_food",
-                "city": "台中市",
-                "district": "北屯區",
-                "uid": "1",
-                "new_level": "5",
-                "stock": 5,
-                "sale_count": 12,
-                "delivery_method": "宅配",
-                "attribute": {
-                    "brand": "喵星人樂園",
-                    "name": "抓抓樂",
-                    "model": "CT-500",
-                    "purchase_date": "2024-05-01",
-                    "condition_level": "良好",
-                    "size": "60x60x120cm",
-                    "color": "米白色",
-                    "weight": "7kg"
-                },
-                "images": [
-                    {
-                        "img_path": "/cat.jpg",
-                        "img_value": "主打圖"
-                    },
-                    {
-                        "img_path": "/media/products/P002/img1.jpg",
-                        "img_value": "正面照片"
-                    },
-                    {
-                        "img_path": "/media/products/P002/img2.jpg",
-                        "img_value": "材質特寫"
-                    },
-                    {
-                        "img_path": "/media/products/P002/img3.jpg",
-                        "img_value": "狗狗實拍"
+
+export default class ManageMarket extends Component {
+  state = {
+    second_product: [],    // 後端資料
+    searchTerm: '',        // 搜尋關鍵字
+    showModal: false,
+    ModalState: 'Add',
+    thisIndex: -1,
+    loading: false,
+    error: null
+  };
+
+  componentDidMount() {
+    this.loadData();
+  }
+
+  loadData = async () => {
+    this.setState({ loading: true, error: null });
+    try {
+      const res = await axios.get('http://localhost:8000/get/second-products');
+      this.setState({ second_product: res.data, loading: false });
+    } catch (err) {
+      console.error('取得二手商品失敗：', err);
+      this.setState({ error: '無法取得二手商品', loading: false });
+    }
+  };
+
+  toggleModal = () => {
+    this.setState(s => ({ showModal: !s.showModal }));
+  };
+
+  OpenAdd = () => {
+    this.setState({ ModalState: 'Add', thisIndex: -1 });
+    this.toggleModal();
+  };
+  OpenFound = i => { this.setState({ ModalState: 'Find', thisIndex: i }); this.toggleModal(); };
+  OpenEdit = i => { this.setState({ ModalState: 'Edit', thisIndex: i }); this.toggleModal(); };
+
+  Delete = async i => {
+    const { pid, pd_name } = this.state.second_product[i] || {};
+    if (!pid || !window.confirm(`確定刪除 ${pd_name}？`)) return;
+    try {
+      await axios.delete(`http://localhost:8000/get/second-products/${pid}`);
+      alert('刪除成功！');
+      this.loadData();
+    } catch {
+      alert('刪除失敗，請稍後再試');
+    }
+  };
+
+  new = async product => {
+    await axios.post('http://localhost:8000/get/second-products', product);
+    alert('新增成功！');
+    this.toggleModal();
+    this.loadData();
+  };
+
+  edit = async product => {
+    await axios.put(`http://localhost:8000/get/second-products/${product.pid}`, product);
+    alert('更新成功！');
+    this.toggleModal();
+    this.loadData();
+  };
+
+  // 搜尋輸入變動
+  handleSearchChange = e => {
+    this.setState({ searchTerm: e.target.value });
+  };
+
+  renderStatus = s => s === 1
+    ? <span className="badge bg-success">上架</span>
+    : <span className="badge bg-secondary">下架</span>;
+
+  renderNewLevel = lvl => {
+    const stars = '★★★★★'.slice(0, parseInt(lvl, 10));
+    return <span style={{ color: '#FFD700' }}>{stars.padEnd(5, '☆')}</span>;
+  };
+
+  renderCategory = cat => ({
+    pet_food: "飼料",
+    complementary_food: "副食",
+    snacks: "零食",
+    Health_Supplements: "保健食品",
+    Living_Essentials: "生活家居",
+    toys: "玩具"
+  }[cat] || cat);
+
+  findProduct = i => this.state.second_product[i] || null;
+
+  render() {
+    const { second_product, loading, error, showModal, ModalState, thisIndex, searchTerm } = this.state;
+    // 根據搜尋關鍵字過濾
+    const filtered = second_product.filter(p =>
+      p.pd_name.includes(searchTerm)
+    );
+
+    return (
+      <>
+        <div className="d-flex justify-content-between mb-3">
+          <div>
+            <input
+              type="search"
+              className="form-control"
+              placeholder="搜尋商品名稱"
+              value={searchTerm}
+              onChange={this.handleSearchChange}
+              style={{ width: 200, display: 'inline-block', marginRight: 8 }}
+            />
+            <button
+              className="btn btn-outline-primary"
+              onClick={this.OpenAdd}
+            >
+              上架二手商品
+            </button>
+          </div>
+        </div>
+
+        {loading && <div>載入中…</div>}
+        {error && <div className="text-danger">{error}</div>}
+
+        {!loading && !error && (
+          <table className="table table-striped table-hover">
+            <thead className="table-primary">
+              <tr>
+                <th>主圖</th><th>名稱</th><th>價格</th><th>類型</th>
+                <th>新舊程度</th><th>狀態</th><th>操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.map((p, i) => (
+                <tr key={p.pid}>
+                  <td>
+                    {p.imageUrl
+                      ? <img src={p.imageUrl} alt="" style={{ width: 50, height: 50, objectFit: 'cover' }} />
+                      : <span className="text-muted">無圖</span>
                     }
-                ]
-            },
-            {
-                "pid": "2",
-                "condition": "second",
-                "status": 0,
-                "pet_type": "dog",
-                "pd_name": "大型犬專用睡墊",
-                "price": 800,
-                "description": "適合大型犬使用的厚實睡墊，舒適又耐咬。",
-                "categories": "Living_Essentials",
-                "city": "新北市",
-                "district": "板橋區",
-                "uid": "2",
-                "new_level": "1",
-                "stock": 3,
-                "sale_count": 5,
-                "delivery_method": "面交",
-                "attribute": {
-                    "brand": "汪汪屋",
-                    "name": "厚睡墊",
-                    "model": "BD-200",
-                    "purchase_date": "2023-12-20",
-                    "condition_level": "近新",
-                    "size": "100x70x10cm",
-                    "color": "深灰色",
-                    "weight": "3kg"
-                },
-                "images": [
-                    {
-                        "img_path": "1746431755892-HinanoOkoshi.jpg",
-                        "img_value": "主打圖"
-                    },
-                    {
-                        "img_path": "1746431755892-HinanoOkoshi.jpg",
-                        "img_value": "正面照片"
-                    },
-                    {
-                        "img_path": "/media/products/P002/img2.jpg",
-                        "img_value": "材質特寫"
-                    },
-                    {
-                        "img_path": "/media/products/P002/img3.jpg",
-                        "img_value": "狗狗實拍"
-                    }
-                ]
+                  </td>
+                  <td>{p.pd_name}</td>
+                  <td>{p.price}</td>
+                  <td>{this.renderCategory(p.categories)}</td>
+                  <td>{this.renderNewLevel(p.new_level)}</td>
+                  <td>{this.renderStatus(p.status)}</td>
+                  <td>
+                    <button className="btn btn-primary btn-sm me-1" onClick={() => this.OpenFound(i)}>查看</button>
+                    <button className="btn btn-warning btn-sm me-1" onClick={() => this.OpenEdit(i)}>編輯</button>
+                    <button className="btn btn-danger btn-sm" onClick={() => this.Delete(i)}>刪除</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
 
-            }
-        ]
-
-
-    }
-    componentDidMount() {
-        //這裡去抓資料庫的二手商品
-    }
-    toggleModal = () => {
-        this.setState({ showModal: !this.state.showModal });
-    }
-    findProduct = (index) => {
-        return this.state.second_product[index]
-    }
-    renderStatus = (status) => {
-        return status === 1
-            ? <span className="badge bg-success">上架</span>
-            : <span className="badge bg-secondary">下架</span>;
-    }
-
-    renderNewLevel = (level) => {
-        const stars = '★★★★★'.slice(0, parseInt(level));
-        return (
-            <span style={{ color: '#FFD700' }}>
-                {stars.padEnd(5, '☆')}
-            </span>
-        );
-    }
-    renderCategory = (category) => {
-        const map = {
-            pet_food: "寵物食品",
-            complementary_food: "寵物副食",
-            snacks: "寵物零食",
-            Health_Supplements: "寵物保健品",
-            Living_Essentials: "生活用品",
-            toys: "寵物玩具"
-        };
-        return map[category] || category;
-    }
-    OpenFound = (index) => {
-        this.setState({ ModalState: "Find", thisIndex: index });
-        this.toggleModal()
-
-    }
-    OpenEdit = (index) => {
-        this.setState({ ModalState: "Edit", thisIndex: index });
-        this.toggleModal()
-
-    }
-    OpenAdd = () => {
-
-        this.setState({ ModalState: "Add" });
-        this.toggleModal()
-
-    }
-    render() {
-        let { second_product, showModal, ModalState, thisIndex } = this.state
-        return (
-            <>
-                <form action="">
-                    <label htmlFor="sort">搜尋:</label>
-                    <input type="search" name="sort" id="sort" />
-                </form>
-                <button className='btn btn-outline-primary' onClick={this.OpenAdd}>
-                    上架商品
-                </button>
-                <table className="table table-striped table-hover">
-                    <thead className="table-primary">
-                        <tr>
-                            <th>主圖</th>
-                            <th>商品名稱</th>
-                            <th>價格</th>
-                            <th>類型</th>
-                            <th>新舊程度</th>
-                            <th>狀態</th>
-                            <th>操作</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {second_product.map((product, index) => (
-                            <tr key={product.pid}>
-                                <td><img src={product.images[0].img_path} alt="主圖" width="80" /></td>
-                                <td>{product.pd_name}</td>
-                                <td>{product.price}</td>
-                                <td>{this.renderCategory(product.categories)}</td>
-                                <td>{this.renderNewLevel(product.new_level)}</td>
-                                <td>{this.renderStatus(product.status)}</td>
-                                <td>
-                                    <button className="btn btn-primary btn-sm me-1" onClick={() => this.OpenFound(index)}>查看</button>
-                                    <button className="btn btn-warning btn-sm me-1" onClick={() => this.OpenEdit(index)}>編輯</button>
-                                    <button className="btn btn-danger btn-sm" onClick={() => { if (window.confirm(`確定要刪除${product.pd_name}`)) { this.Delete(index) } }}>刪除</button>
-                                </td>
-                            </tr>
-                        ))}
-
-                    </tbody>
-                </table>
-
-                {showModal && (
-
-                    <Market_modal close={this.toggleModal} new={this.new} edit={this.edit} product={this.findProduct(thisIndex)} modalstate={ModalState} />
-
-                )}
-
-
-
-
-            </>
-        );
-    }
-    Delete = (index) => {
-        // 修改資料庫(delete)
-        console.log(this.state.second_product[index].pd_name);
-
-    }
-    new = async (product) => {//這裡是新增商品儲存後的新商品物件
-        console.log(product);
-        for (let i = 0; i < product.images.length; i++) {
-            if (product.images[i].img_path instanceof File) {
-                let formData = new FormData();
-                formData.append(`image`, product.images[i].img_path);
-                console.log('我進來了');
-
-                try {
-                    const result = await axios.post('http://localhost:8000/api/uploadimg', formData);
-                    console.log(`✅ 圖片 ${i + 1} 上傳成功`, result.data);
-                } catch (err) {
-                    console.error(`❌ 圖片 ${i + 1} 上傳失敗`, err);
-                }
-            }
-
-        }
-        //這裡去資料庫修改資料(INSERT INTO)
-    }
-    edit = async (product) => {//這裡是修改商品後的商品物件
-        console.log(product);
-        //這裡去資料庫修改資料(UPDATE)
-        for (let i = 0; i < product.images.length; i++) {
-            if (product.images[i].img_path instanceof File) {
-                let formData = new FormData();
-                formData.append(`image`, product.images[i].img_path);
-                console.log('我進來了');
-
-                try {
-                    const result = await axios.post('http://localhost:8000/api/uploadimg', formData);
-                    console.log(`圖片 ${i + 1} 上傳成功`, result.data);
-                } catch (err) {
-                    console.error(` 圖片 ${i + 1} 上傳失敗`, err);
-                }
-            }
-
-        }
-    }
-
-
-
+        {showModal && (
+          <Market_modal
+            condition="second"
+            modalstate={ModalState}
+            product={this.findProduct(thisIndex)}
+            new={this.new}
+            edit={this.edit}
+            close={this.toggleModal}
+          />
+        )}
+      </>
+    );
+  }
 }
-
-export default manage_market;

@@ -35,7 +35,7 @@ export default function ProductCard({
   };
 
   return (
-    <div className={cls}>
+    <div className={cls} >
       <div className={styles.imageWrapper}>
         <img src={images[0].img_path} alt={name} />
       </div>

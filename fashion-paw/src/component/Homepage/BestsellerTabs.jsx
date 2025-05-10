@@ -1,128 +1,127 @@
-import React, { useState } from 'react'
-import styles from './BestsellerTabs.module.css'
-import pawicon from './images/pawicon.svg'
-import Dog7 from './images/Dog7.jpg'
-import Dog9 from './images/Dog9.jpg'
-import Dog from './images/5-3littlemonster_chicken.png'
-import Dog2 from './images/3-2Rrannk_beef.png'
-import Cat from './images/4-2kitcat_tunacrab.png'
-import Cat2 from './images/5-1Instinct_duck.png'
-import Cat3 from './images/6-2sheba_tunachicken.png'
+// src/component/Homepage/BestsellerTabs.jsx
+import React, { useState, useEffect } from 'react';
+import { NavLink } from 'react-router-dom';
+import axios from 'axios';
+import styles from './BestsellerTabs.module.css';
+import pawicon from './images/pawicon.svg';
 
-
-const categories = [
-  {
-    key: 'feed',
-    label: '飼料',
-    images: [Dog7, Dog9, Dog7, Dog9, Dog7, Dog9],
-  },
-  {
-    key: 'ComplementaryFood',
-    label: '副食',
-    images: [Dog, Dog2, Cat, Cat2, Cat3],
-  },
-  {
-    key: 'snack',
-    label: '零食',
-    images: [Dog7, Dog9, Dog7],
-  },
-  {
-    key: 'health',
-    label: '保健食品',
-    images: [Dog9, Dog7, Dog9],
-  },
-  {
-    key: 'home',
-    label: '生活家居',
-    images: [Dog7, Dog9, Dog7],
-  },
-  {
-    key: 'toy',
-    label: '玩具',
-    images: [Dog9, Dog7, Dog9],
-  },
-]
-
+const tabs = [
+  { key: 'pet_food', label: '飼料' },
+  { key: 'Complementary_Food', label: '副食' },
+  { key: 'snacks', label: '零食' },
+  { key: 'Health_Supplements', label: '保健食品' },
+  { key: 'Living_Essentials', label: '生活家居' },
+  { key: 'toys', label: '玩具' },
+];
 
 function chunkArray(arr, size) {
-  const chunks = []
+  const chunks = [];
   for (let i = 0; i < arr.length; i += size) {
-    chunks.push(arr.slice(i, i + size))
+    chunks.push(arr.slice(i, i + size));
   }
-  return chunks
+  return chunks;
 }
 
 export default function BestsellerTabs() {
+  // activeKey 只影響按鈕樣式，不用做資料 fetch
+  const [activeKey, setActiveKey] = useState(tabs[0].key);
 
-  const [activeKey, setActiveKey] = useState(categories[0].key)
-  const activeCategory = categories.find((c) => c.key === activeKey)
+  // productList 存一次抓到的最熱銷完整列表
+  const [productList, setProductList] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [page, setPage] = useState(0);
 
-  const slides = chunkArray(activeCategory.images, 3)
+  // ➡️ 只在元件載入時呼叫一次
+  useEffect(() => {
+    setLoading(true);
+    axios
+      .get('http://localhost:8000/get/hot-ranking')
+      .then(res => {
+        setProductList(res.data);
+        setPage(0);
+      })
+      .catch(err => {
+        console.error('載入最熱銷商品失敗', err);
+        setError('載入失敗');
+      })
+      .finally(() => setLoading(false));
+  }, []);
 
-  const [page, setPage] = useState(0)
+  // 將同一批列表，切成每頁 3 張圖
+  const slides = chunkArray(productList, 3);
 
-  const prev = () => setPage((page + slides.length - 1) % slides.length)
-  const next = () => setPage((page + 1) % slides.length)
-
-
-  const switchCategory = (key) => {
-    setActiveKey(key)
-    setPage(0)
-  }
+  const prev = () => setPage(p => (p + slides.length - 1) % slides.length);
+  const next = () => setPage(p => (p + 1) % slides.length);
 
   return (
     <section className={styles.section}>
       <div className="container-lg">
-        <div className={styles.titleWrapper}>
-          <h2 className={styles.title}>
-            熱銷排行榜
-            <img src={pawicon} className={styles.icon} />
-          </h2>
-        </div>
+        <h2 className={styles.title}>
+          熱銷排行榜 <img src={pawicon} alt="paw" className={styles.icon} />
+        </h2>
 
-
+        {/* 分類按鈕：純樣式控制 */}
         <nav className={styles.tabNav}>
-          {categories.map((cat) => (
+          {tabs.map(t => (
             <button
-              key={cat.key}
-              className={`${styles.tab} ${cat.key === activeKey ? styles.active : ''
-                }`}
-              onClick={() => switchCategory(cat.key)}
+              key={t.key}
+              className={`${styles.tab} ${t.key === activeKey ? styles.active : ''}`}
+              onClick={() => {
+                setActiveKey(t.key);
+                setPage(0);
+              }}
             >
-              {cat.label}
+              {t.label}
             </button>
           ))}
         </nav>
       </div>
 
       <div className="container-lg">
-        <div className={styles.slider}>
-          <button onClick={prev} className={styles.arrow}>
-            ‹
-          </button>
+        {loading && <div className={styles.loading}>載入中…</div>}
+        {error && <div className={styles.error}>{error}</div>}
 
-          <div className={styles.viewport}>
-            <div
-              className={styles.track}
-              style={{ transform: `translateX(-${page * 100}%)` }}
-            >
-              {slides.map((group, gi) => (
-                <div key={gi} className={styles.slide}>
-                  {group.map((src, idx) => (
-                    <div key={idx} className={styles.card}>
-                      <img src={src} className={styles.img} alt="" />
-                    </div>
-                  ))}
-                </div>
-              ))}
+        {!loading && !error && slides.length > 0 && (
+          <div className={styles.slider}>
+            <button onClick={prev} className={styles.arrow}>‹</button>
+
+            <div className={styles.viewport}>
+              <div
+                className={styles.track}
+                style={{ transform: `translateX(-${page * 100}%)` }}
+              >
+                {slides.map((group, gi) => (
+                  <div key={gi} className={styles.slide}>
+                    {group.map(prod => (
+                      <a
+                             key={prod.pid}
+                             href={`http://localhost:3000/product/${prod.pid}`}
+                             className={styles.card}
+                             target="_blank"
+                             rel="noopener noreferrer"
+                           >
+                        <img
+                          src={prod.imageUrl || '/media/default/no-image.png'}
+                          alt={prod.pd_name}
+                          className={styles.img}
+                        />
+                        <p className={styles.caption}>{prod.pd_name}</p>
+                      </a>
+                    ))}
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
 
-          <button onClick={next} className={styles.arrow}>
-            ›
-          </button>
-        </div>
+            <button onClick={next} className={styles.arrow}>›</button>
+          </div>
+        )}
+
+        {!loading && !error && slides.length === 0 && (
+          <div className={styles.noData}>暫無熱銷商品</div>
+        )}
       </div>
     </section>
-  )
+  );
 }

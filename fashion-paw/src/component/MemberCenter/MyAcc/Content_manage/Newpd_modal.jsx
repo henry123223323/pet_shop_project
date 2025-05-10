@@ -38,11 +38,11 @@ export default class New_Products_Manage extends Component {
       : <span className="badge bg-secondary">下架</span>;
 
   renderCategory = cat => ({
-    pet_food: "寵物食品",
-    complementary_food: "副食品",
+    pet_food: "飼料",
+    complementary_food: "副食",
     snacks: "零食",
-    Health_Supplements: "保健品",
-    Living_Essentials: "生活用品",
+    Health_Supplements: "保健食品",
+    Living_Essentials: "生活家居",
     toys: "玩具"
   }[cat] || cat);
 

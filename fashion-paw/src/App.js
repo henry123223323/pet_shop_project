@@ -24,6 +24,7 @@ import ShoppingCartPage from './component/Cart/ShoppingCartPage';
 import CheckBillPage from './component/CheckBill/CheckBillPage';
 import Helpme from './component/Aboutus/helpme';
 import Needhelp from './component/Aboutus/needhelp';
+import Chatroom from './component/Aboutus/chatroom';
 
 
 import KnowledgeLayout from './component/PetKnowledge/KnowledgeLayout';
@@ -54,6 +55,7 @@ function App() {
             <Route path="/CheckBillPage" component={CheckBillPage} exact />
             <Route path="/Aboutus" component={Helpme} exact />
             <Route path="/Help" component={Needhelp} exact />
+            <Route path="/Chatroom" component={Chatroom} exact />
 
             {/* 寵物小知識：列表頁 */}
             <Route

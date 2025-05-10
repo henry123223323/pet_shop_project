@@ -1,19 +1,19 @@
 // src/components/ArticleList.jsx
 import React, { useState, useEffect } from 'react';
-import axios    from 'axios';
+import axios from 'axios';
 import ArticleCard from './ArticleCard';
-import Pagination  from './Pagination';
-import styles      from './ArticleList.module.css';
+import Pagination from './Pagination';
+import styles from './ArticleList.module.css';
 
 export default function ArticleList({ topic, pet }) {
-  const [articles, setArticles]     = useState([]);
-  const [page, setPage]             = useState(1);
+  const [articles, setArticles] = useState([]);
+  const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const PAGE_SIZE = 5;
 
   const typeMap = {
     Novicefeeding: 'pet_feeding',
-    HealthCheck:   'health_check'
+    HealthCheck: 'health_check'
   };
   const articleType = typeMap[topic];
 
@@ -21,11 +21,11 @@ export default function ArticleList({ topic, pet }) {
     axios.get('/api/petknowarticle', {
       params: { type: articleType, pet, page, size: PAGE_SIZE }
     })
-    .then(res => {
-      setArticles(res.data.list);
-      setTotalPages(res.data.totalPages);
-    })
-    .catch(err => console.error('取得文章失敗', err));
+      .then(res => {
+        setArticles(res.data.list);
+        setTotalPages(res.data.totalPages);
+      })
+      .catch(err => console.error('取得文章失敗', err));
   }, [articleType, pet, page]);
 
   return (
@@ -36,8 +36,8 @@ export default function ArticleList({ topic, pet }) {
         ))}
       </div>
       <div className={styles.paginationWrapper}>
-      <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
-    </div>
+        <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+      </div>
     </div>
   );
 }

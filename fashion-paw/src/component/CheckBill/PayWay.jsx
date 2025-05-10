@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import linepayLogo from '../ProductDetailPage/image/LINEPayLogo.png';
-import jkoLogo from '../ProductDetailPage/image/jkopayLogo.webp';
-import PayPalLogo from '../ProductDetailPage/image/PayPalLogo.png';
+// import linepayLogo from '../ProductDetailPage/image/LINEPayLogo.png';
+// import jkoLogo from '../ProductDetailPage/image/jkopayLogo.webp';
+// import PayPalLogo from '../ProductDetailPage/image/PayPalLogo.png';
 
 class PayWay extends Component {
     constructor(props) {
@@ -32,7 +32,8 @@ class PayWay extends Component {
     sendToParent = () => {
         if (!this.props.onChange) return;
     
-        const { selectedPayWay, installmentOption, thirdPartyOption } = this.state;
+        // const { selectedPayWay, installmentOption, thirdPartyOption } = this.state;
+        const { selectedPayWay } = this.state;
         let payLabel = "";
         let cardLast4 = "";
     
@@ -70,7 +71,7 @@ class PayWay extends Component {
     };
 
     render() {
-        const { selectedPayWay } = this.state;
+        // const { selectedPayWay } = this.state;
 
         return (
             <div className='px-4 py-2'>
