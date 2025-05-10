@@ -35,21 +35,27 @@ export default function HotRanking() {
   }, [user_id, setFavoriteIds])
 
   const handleToggleFavorite = id => {
+    if (user_id) {
 
-    if (favoriteIds.includes(id)) {
-      //delete api
-      axios.get(`http://localhost:8000/delete/collect/${user_id}/${id}`)
+      if (favoriteIds.includes(id)) {
+        //delete api
+        axios.get(`http://localhost:8000/delete/collect/${user_id}/${id}`)
 
+      }
+      else {
+        //insert api
+        axios.get(`http://localhost:8000/insert/collect/${user_id}/${id}`)
+
+      }
+
+      setFavoriteIds(prev =>
+        prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
+      );
     }
     else {
-      //insert api
-      axios.get(`http://localhost:8000/insert/collect/${user_id}/${id}`)
-
+      alert('請先登入!!!');
     }
 
-    setFavoriteIds(prev =>
-      prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
-    );
   };
 
   const handleAddToCart = id => {
@@ -89,10 +95,12 @@ export default function HotRanking() {
                   size="24px"
                   aria-label="收藏"
                 />
-                <AddToCartBtn
-                  onClick={() => handleAddToCart(pid)}
-                  aria-label="加入購物車"
-                />
+                  <AddToCartBtn
+                      type="icon"
+                      product={{ ...item,image: item.imageUrl }}
+                      quantity={1}
+                      aria-label="加入購物車"
+                    />
               </div>
             </div>
           );

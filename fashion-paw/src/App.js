@@ -15,14 +15,19 @@ import Login from './component/MemberCenter/Login';
 import Register from './component/MemberCenter/Register';
 import ProductPage from './component/ProductPage/ProductPage';
 import SeProductPage from './component/SeProductPage/SeProductPage';
-import ProductDetailPage from './component/ProductDetailPage/ProductDetailPage';
+import ProductRouter from './component/ProductDetailPage/router/ProductRouter';
+import NewPdDetail from './component/ProductDetailPage/router/NewPdDetail';
+import SecondPdDetail from './component/ProductDetailPage/router/SecondPdDetail';
+
+
 import ShoppingCartPage from './component/Cart/ShoppingCartPage';
 import CheckBillPage from './component/CheckBill/CheckBillPage';
 import Helpme from './component/Aboutus/helpme';
 import Needhelp from './component/Aboutus/needhelp';
 import Chatroom from './component/Aboutus/chatroom';
-import PdDetailPageWrapper from './component/ProductDetailPage/PdDetailPageWrapper';
 import ChatWindow from 'component/chatroom/ChatWindow';
+
+
 import KnowledgeLayout from './component/PetKnowledge/KnowledgeLayout';
 import ArticleDetail from './component/PetKnowledge/ArticleDetail';
 import Touch from './component/PetKnowledge/PartTouch/Touch';
@@ -44,8 +49,9 @@ function App() {
             <Route path="/Register" component={Register} />
             <Route path="/ProductPage" component={ProductPage} exact />
             <Route path="/SeProductPage" component={SeProductPage} exact />
-            <Route path="/ProductDetailPage" component={ProductDetailPage} exact />
-            <Route path="/product/:pid" component={PdDetailPageWrapper} exact />
+            <Route path="/product/:pid" component={ProductRouter} exact />
+            <Route path="/ProductPage/:pid" component={NewPdDetail} exact />
+            <Route path="/SeProductPage/:pid" component={SecondPdDetail} exact />
             <Route path="/ShoppingCartPage" component={ShoppingCartPage} exact />
             <Route path="/CheckBillPage" component={CheckBillPage} exact />
             <Route path="/Aboutus" component={Helpme} exact />

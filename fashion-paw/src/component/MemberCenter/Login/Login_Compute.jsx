@@ -104,6 +104,8 @@ class Login_Compute extends Component {
                                                 return;
                                             }
 
+                                            this.setState({ resetStatus: '請稍後，寄送驗證碼ing...' });
+
                                             try {
                                                 const res = await fetch('http://localhost:8000/password/request-reset', {
                                                     method: 'POST',

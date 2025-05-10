@@ -13,6 +13,8 @@ const verifyRoutes = require('./routes/verify');
 const upload = require('../fashion-paw/uploadProductImg');
 const uploadArticleImg = require('../fashion-paw/uploadArticleImg');
 
+const paymentRouter = require('./routes/payment');
+
 var app = express();
 app.listen(8000, function () {
   console.log("好拾毛" + new Date().toLocaleTimeString());
@@ -54,6 +56,9 @@ var conn = mysql.createConnection({
 conn.connect(err => console.log(err || 'DB connected'));
 const q = util.promisify(conn.query).bind(conn);
 app.use('/verify', verifyRoutes);
+
+//付款綠界API
+app.use('/payment', paymentRouter);
 
 
 app.get("/get/article", function (req, res) {//用於開發者後臺管理
@@ -1648,3 +1653,6 @@ app.post('/orders/create', async (req, res) => {
     res.status(500).json({ error: '訂單建立失敗' });
   }
 });
+
+
+module.exports = { q };//匯出q給payment使用

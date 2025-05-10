@@ -159,7 +159,7 @@ export default class ManageMarket extends Component {
         </div>
 
         {loading && <div>載入中…</div>}
-        {error   && <div className="text-danger">{error}</div>}
+        {error && <div className="text-danger">{error}</div>}
 
         {!loading && !error && (
           <table className="table table-striped table-hover">
@@ -179,7 +179,7 @@ export default class ManageMarket extends Component {
                 <tr key={p.pid}>
                   <td>
                     {p.imageUrl
-                      ? <img src={p.imageUrl} alt="" style={{ width:50, height:50, objectFit:'cover' }}/>
+                      ? <img src={p.imageUrl} alt="" style={{ width: 50, height: 50, objectFit: 'cover' }} />
                       : <span className="text-muted">無圖</span>
                     }
                   </td>

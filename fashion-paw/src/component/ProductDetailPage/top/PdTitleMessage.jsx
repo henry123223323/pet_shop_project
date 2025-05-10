@@ -42,9 +42,8 @@ class PdTitleMessage extends Component {
                 </div>
 
                 <div className={`d-flex align-items-end my-3`}>
-                    <div className=''>價格</div>
-                    <div className='ptxtb2 paw-text-pink mx-2'>{price}</div>
-                    <div>元</div>
+                    {/* <div className='ptxt2'>NT$</div> */}
+                    <div className='ptxtb2 paw-text-pink mx-2'>NT$ {price}</div>
                     <div className='mx-3'>
                         <span>還剩</span>
                         <span className='mx-2 ptxtb4 paw-text-pink'>{stock}</span>

@@ -2,13 +2,52 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import PdQuantity from '../share/PdQuantity';
 import AddToMyFavorite from '../share/AddToMyFavorite';
+import cookie from 'js-cookie';
+import axios from 'axios';
 
 class CartList extends Component {
+  state = {
+    uid: cookie.get('user_uid'),
+    FavorID: []
+
+  }
+  componentDidUpdate() {
+    console.log(this.state.FavorID);
+
+  }
+  componentDidMount() {
+    axios.get(`http://localhost:8000/select/collect/${this.state.uid}/all`)
+      .then(res => this.setState({ FavorID: res.data }))
+
+  }
+  Change_FavorState = async (pid) => {
+    if (this.state.uid) {
+
+      if (this.state.FavorID.includes(pid)) {
+        await axios.get(`http://localhost:8000/delete/collect/${this.state.uid}/${pid}`)
+        this.setState(prevState => ({
+          FavorID: prevState.FavorID.filter(id => id !== pid)
+        }));
+      }
+      else {
+        await axios.get(`http://localhost:8000/insert/collect/${this.state.uid}/${pid}`)
+
+        this.setState(prevState => ({
+          FavorID: [...prevState.FavorID, pid]
+        }));
+      }
+    }
+    else {
+      alert('請先登入!!')
+    }
+  }
   render() {
     const { item, selected } = this.props;
-    const { productName, color, unit_price } = item;
+    const { productName,  unit_price } = item;
 
-    // console.log(item)
+
+
+    console.log(item)
 
     return (
       <div className='p-3 m-3'>
@@ -43,8 +82,8 @@ class CartList extends Component {
               <div className="fw-bold mb-1 paw-text-darkgreen">{productName}</div>
             </Link>
 
-            <div className="text-muted small mb-2">{color}</div>
-            <div className="text-danger fw-bold me-3">{unit_price} 元</div>
+            {/* <div className="text-muted small mb-2">{color}</div> */}
+            <div className="text-danger fw-bold me-3">NT$ {unit_price}</div>
           </div>
 
           {/* 數量、收藏刪除 */}
@@ -61,7 +100,12 @@ class CartList extends Component {
               {/* 收藏刪除按鈕 */}
               <div className="d-flex justify-content-center">
                 <div className="rounded ptxt5 me-2">
-                  <AddToMyFavorite />
+                  <div className="rounded ptxt5 me-2">
+                    <AddToMyFavorite
+                      isFavorite={this.state.FavorID.includes(parseInt(item.pid))}
+                      onClick={() => this.Change_FavorState(parseInt(item.pid))}
+                    />
+                  </div>
                 </div>
                 <button className="btn btn-sm rounded ptxt2"
                   style={{

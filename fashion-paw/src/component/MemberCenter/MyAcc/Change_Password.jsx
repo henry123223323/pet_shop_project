@@ -59,8 +59,12 @@ class Change_Password extends Component {
 
             if (res.data.success) {
                 this.setState({ status: '✅ 密碼更改成功，請重新登入' });
-                // 清除登入狀態
                 localStorage.removeItem('resetEmail');
+            
+                // 兩秒後導向登入頁面
+                setTimeout(() => {
+                    window.location.href = '/Login'; 
+                }, 1000);
             } else {
                 this.setState({ status: '❌ ' + res.data.message });
             }

@@ -30,3 +30,9 @@ nodejs/aiRobot/node_modules
 fashion-paw/public/taiwan_counties.geojson
 
 fashion-paw/public/taiwan_townships.geojson
+
+
+# === 綠界 SDK 不需要控管的項目 ===
+nodejs/utils/ecpay-sdk/.idea/
+nodejs/utils/ecpay-sdk/node_modules/
+nodejs/utils/ecpay-sdk/example/

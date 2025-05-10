@@ -18,8 +18,9 @@ class ShoppingCartPage extends Component {
   render() {
     const { selectedItems } = this.state
     const { cartList } = this.context;
-    
     // console.log("🛒 購物車頁面收到的 cartList：", cartList);
+
+    
     // 分類：新品 & 二手
     const newItems = cartList.filter(item => item.condition === "new");
     const secondItems = cartList.filter(item => item.condition === "second");
@@ -163,14 +164,23 @@ class ShoppingCartPage extends Component {
   }
   componentDidMount() {
     const { cartList, setSellers } = this.context;
-    const secondUids = [...new Set(cartList
-      .filter(item => item.condition === "second" && item.uid)
-      .map(item => String(item.uid)))];
+  
+    const secondUids = [...new Set(
+      cartList
+        .filter(item => item.condition === "second" && item.uid)
+        .map(item => String(item.uid)) // 統一轉字串
+    )];
   
     if (secondUids.length > 0) {
-      axios.get(`http://localhost:8000/get/userinfo`) // or /get/users/by-uids?ids=102,205
+      axios.get(`http://localhost:8000/get/userinfo`)
         .then(res => {
-          const matchedUsers = res.data.filter(user => secondUids.includes(String(user.uid)));
+          const uidSet = new Set(secondUids);
+  
+          const matchedUsers = res.data.filter(user =>
+            uidSet.has(String(user.uid)) // 同樣比對字串
+          );
+  
+          console.log("✅ 確定比對進來的 sellers：", matchedUsers);
           setSellers(matchedUsers);
         });
     }

@@ -27,7 +27,7 @@ export class CartProvider extends Component {
         );
     }
 
-    // 設定 seller 名單（從 PdDetailPage 傳入）
+    // 設定 seller 名單
     setSellers = (userList) => {
         if (Array.isArray(userList)) {
             const merged = [...this.state.sellers, ...userList];
@@ -35,7 +35,9 @@ export class CartProvider extends Component {
                 new Map(merged.map(user => [String(user.uid), user])).values()
             );
             this.setState({ sellers: uniqueSellers });
-        }
+        }else {
+            console.warn("❌ 傳入 setSellers 的不是陣列：", userList);
+          }
     };
 
     // 透過 uid 找 seller username
@@ -52,22 +54,6 @@ export class CartProvider extends Component {
         //   console.log("⚠️ 沒有找到 seller：uid =", uid);
           return `UID: ${uid}（未找到賣家）`;
         }
-      };
-
-      normalizeCartItem = (item) => {
-        return {
-          cart_id: item.cart_id || `${item.pid}`,
-          pid: item.pid,
-          uid: item.uid || null,
-          condition: item.condition || "new",
-          quantity: item.quantity || 1,
-          productName: item.pd_name || item.productName,
-          unit_price: parseInt(item.price || item.unit_price || 0),
-          image: Array.isArray(item.images)
-            ? item.images[0]?.img_path || "/media/default/no-image.png"
-            : item.image || "/media/default/no-image.png",
-          color: item.attribute?.color || item.color || "無",
-        };
       };
 
     componentDidMount() {
@@ -126,6 +112,37 @@ export class CartProvider extends Component {
     };
 
     clearCart = () => this.setState({ cartList: [] });
+
+    //統一不同地方的命名
+    normalizeCartItem = (item) => {
+        // 1. 找第一張圖片（如果有）
+        const firstImg = Array.isArray(item.images)
+          ? item.images.find(img => img?.img_path)
+          : null;
+      
+        // 2. 抓圖片路徑
+        const rawPath = firstImg?.img_path || item.image;
+      
+        // 3. 不加 IMAGE_HOST，直接用相對路徑
+        const fullImagePath = rawPath || "/media/default/no-image.png";
+      
+        console.log("🧪 圖片處理", {
+          img_path: rawPath,
+          final: fullImagePath,
+        });
+      
+        return {
+          cart_id: item.cart_id || `${item.pid}`,
+          pid: item.pid,
+          uid: item.uid || null,
+          condition: item.condition || "new",
+          quantity: item.quantity || 1,
+          productName: item.pd_name || item.productName || item.name ,
+          unit_price: parseInt(item.price || item.unit_price || 0),
+          image: fullImagePath,
+        //   color: item.attribute?.color || item.color || "無",
+        };
+      };
 
 
 }
