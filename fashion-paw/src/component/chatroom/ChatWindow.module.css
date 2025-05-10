@@ -1,0 +1,170 @@
+.container {
+  display: flex;
+  width: 800px;
+  height: 600px;
+  border: 2px solid #7A8450;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+/* ---------------- 左側 Sidebar ---------------- */
+.sidebar {
+  width: 240px;
+  background: #FDFCF5;
+  border-right: 1px solid #E0D6C5;
+  display: flex;
+  flex-direction: column;
+}
+.sidebarHeader {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  border-bottom: 1px solid #E0D6C5;
+}
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #DDD;
+  object-fit: cover;
+}
+.name {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #555;
+}
+.sub {
+  margin: 2px 0 0;
+  font-size: 0.7rem;
+  color: #999;
+}
+.userList {
+  flex: 1;
+  overflow-y: auto;
+}
+.userItem {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+.userItem:hover,
+.userItem.active {
+  background: #F5F2E9;
+}
+.avatarSm {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+}
+.meta {
+  margin-left: 8px;
+}
+.nameSm {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #333;
+}
+.subSm {
+  margin: 2px 0 0;
+  font-size: 0.7rem;
+  color: #777;
+}
+
+/* ---------------- 右側 ChatWindow ---------------- */
+.chatWindow {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #FFF;
+}
+.header {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  border-bottom: 1px solid #E0D6C5;
+}
+.messages {
+  flex: 1;
+  padding: 12px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+.dateSep {
+  align-self: center;
+  margin: 8px 0;
+  font-size: 0.75rem;
+  color: #AAA;
+}
+.message {
+  max-width: 70%;
+  margin: 6px 0;
+  padding: 8px 12px;
+  border-radius: 12px;
+  position: relative;
+}
+.bot {
+  background: #F5E1B0;
+  align-self: flex-start;
+}
+.user {
+  background: #EEE;
+  align-self: flex-end;
+}
+.text {
+  display: block;
+  font-size: 0.85rem;
+  color: #333;
+}
+.time {
+  display: block;
+  font-size: 0.65rem;
+  color: #AAA;
+  margin-top: 4px;
+  text-align: right;
+}
+
+/* 快捷按鈕區（5） */
+.quickBtns {
+  padding: 8px 12px;
+  border-top: 1px solid #E0D6C5;
+  background: #FDFCF5;
+}
+.quickBtns button {
+  margin-right: 8px;
+  padding: 4px 8px;
+  border: 1px solid #CCC;
+  border-radius: 8px;
+  background: #FFF;
+  cursor: pointer;
+}
+
+/* 輸入區（6） */
+.inputArea {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-top: 1px solid #E0D6C5;
+  background: #FDFCF5;
+}
+.btn {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+.input {
+  flex: 1;
+  margin: 0 8px;
+  padding: 6px 8px;
+  border: 1px solid #CCC;
+  border-radius: 12px;
+  font-size: 0.85rem;
+}
+.send {
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  cursor: pointer;
+}

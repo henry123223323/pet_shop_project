@@ -26,6 +26,7 @@ import CheckBillPage from './component/CheckBill/CheckBillPage';
 import Helpme from './component/Aboutus/helpme';
 import Needhelp from './component/Aboutus/needhelp';
 import Chatroom from './component/Aboutus/chatroom';
+import ChatWindow from 'component/chatroom/ChatWindow';
 
 
 import KnowledgeLayout from './component/PetKnowledge/KnowledgeLayout';
@@ -91,6 +92,7 @@ function App() {
         </main>
         <Footer />
       </CartProvider>
+      <ChatWindow/>
       <Icon />
     </BrowserRouter>
   );

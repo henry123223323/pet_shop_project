@@ -27,10 +27,8 @@ export default class Article_manage extends Component {
         let sections = [];
         try {
           sections = JSON.parse(a.sections || '[]');
-        } catch {}
-        const banner_URL = a.banner_URL
-          ? `/media/pet_know/${a.article_type}/${a.pet_type}/${a.banner_URL}`
-          : '';
+        } catch { }
+        const banner_URL = a.banner_URL || '';
         return {
           ArticleID: a.ArticleID,
           title: a.title,
@@ -98,13 +96,13 @@ export default class Article_manage extends Component {
       if (form.banner_URL instanceof File) {
         fd.append('banner_URL', form.banner_URL);
       }
-  
+
       // 2. 送出給後端，讓 axios 自動帶 boundary
       const res = await axios.post(
         'http://localhost:8000/api/create/article',
         fd
       );
-  
+
       // 3. 收到 insertId，組出新文章物件
       const newId = res.data.insertId;
       const newArticle = {
@@ -115,7 +113,7 @@ export default class Article_manage extends Component {
           ? `/media/pet_know/${form.article_type}/${form.pet_type}/${form.banner_URL_preview}`
           : ''
       };
-  
+
       // 4. 更新列表並關閉 Modal
       this.setState(s => ({
         articles: [newArticle, ...s.articles],
@@ -127,24 +125,31 @@ export default class Article_manage extends Component {
     }
   };
 
-  // 編輯文章
-  editArticle = async form => {
-    try {
-      await axios.put(
-        `http://localhost:8000/api/update/article/${form.ArticleID}`,
-        { ...form, sections: JSON.stringify(form.sections) }
-      );
-      this.setState(s => ({
-        articles: s.articles.map(a =>
-          a.ArticleID === form.ArticleID ? form : a
-        ),
-        showModal: false,
-      }));
-    } catch (err) {
-      console.error('編輯文章失敗：', err);
-      alert('編輯文章失敗：' + (err.response?.data?.error || err.message));
-    }
-  };
+  // Article_manage.jsx 裡的 editArticle
+editArticle = async form => {
+  try {
+    // 送出更新（若已經改成 FormData 就用 FormData，這裡示範原本 JSON 寫法）
+    await axios.put(
+      `http://localhost:8000/api/update/article/${form.ArticleID}`,
+      { ...form, sections: JSON.stringify(form.sections) }
+    );
+
+    // 👉 新增這行：編輯成功提示
+    alert('編輯成功');
+
+    // 更新列表並關閉 Modal
+    this.setState(s => ({
+      articles: s.articles.map(a =>
+        a.ArticleID === form.ArticleID ? form : a
+      ),
+      showModal: false,
+    }));
+  } catch (err) {
+    console.error('編輯文章失敗：', err);
+    alert('編輯文章失敗：' + (err.response?.data?.error || err.message));
+  }
+};
+
 
   // 刪除文章
   deleteArticle = async index => {
