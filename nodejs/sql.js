@@ -459,7 +459,7 @@ app.post("/post/addressedit/:Aid/:AdressName/:AdressPhone/:City/:District/:addre
 
 
 app.get("/get/getcollect/:uid",function(req,res){
-  let uid = req.params.uid
+  const uid = req.params.uid
   console.log(uid);
   conn.query("SELECT p.pd_name as pd_name ,c.CollectId AS cid ,p.price as price,p.pid as id, i.img_path as img FROM collection c JOIN productslist p ON c.pid = p.pid LEFT JOIN product_image i ON p.pid = i.pid AND i.img_value = '主圖' WHERE c.uid = ?",[uid],function(err,results){
     if (err) {
@@ -473,8 +473,8 @@ app.get("/get/getcollect/:uid",function(req,res){
 })
 
 app.post("/post/deletecollect/:uid/:cid", function(req, res) {
-  let uid = req.params.uid
-  let cid = req.params.cid
+  const uid = req.params.uid
+  const cid = req.params.cid
   console.log(uid);
   console.log(cid);
   conn.query("DELETE FROM collection WHERE CollectId =? AND uid = ?",[cid,uid],function(err,results){
@@ -488,7 +488,22 @@ app.post("/post/deletecollect/:uid/:cid", function(req, res) {
   })
 })
 
+app.get("/get/getcoupon/:uid",function(req,res){
+  const uid = req.params.uid
+  
+  console.log(uid);
+  
+  conn.query("SELECT coupon_id as coupon_id, discount_ratio as discount_ratio, coupon_code as coupon_code, create_at as create_at, overdate as overdate, description as description FROM coupon WHERE uid = ?",[uid],function(err,results){
+    if (err) {
+          console.error("資料庫查詢錯誤:", err);
+          res.status(500).send("伺服器錯誤");
+      } else {
+          console.log("尋找折扣卷成功");
+          res.json(results); // 正確回傳結果給前端
+      }
+  })
 
+})
 
 
 
