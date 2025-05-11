@@ -9,6 +9,8 @@ const util = require('util');
 var mysql = require("mysql");
 const imageType = require('image-type');
 // 夏威夷披薩
+const secondProducts = require('./routes/secondProducts')
+
 const verifyRoutes = require('./routes/verify');
 const upload = require('../fashion-paw/uploadProductImg');
 const uploadArticleImg = require('../fashion-paw/uploadArticleImg');
@@ -21,12 +23,15 @@ app.listen(8000, function () {
 });
 app.use(express.static("public"));
 app.use(express.static(path.resolve(__dirname, '../fashion-paw/public')));
-
+app.use('/get/my-second-products', secondProducts)
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
-app.use('/media', express.static('media'))
+app.use(
+  '/media',
+  express.static(path.join(__dirname, 'public', 'media'))
+);
 const uploadRoute = require('./upload');
 const cookieParser = require('cookie-parser')
 
@@ -60,6 +65,12 @@ app.use('/verify', verifyRoutes);
 //付款綠界API
 app.use('/payment', paymentRouter);
 
+app.use(cors({
+  origin: 'http://localhost:3000',
+  credentials: true
+}));
+
+app.use('/get/my-second-products', require('./routes/secondProducts'))
 
 app.get("/get/article", function (req, res) {//用於開發者後臺管理
   conn.query("SELECT * FROM article", function (err, results) {
