@@ -506,6 +506,36 @@ app.get("/get/getcoupon/:uid",function(req,res){
 })
 
 
+app.get("/get/getorder/:uid",function(req,res){
+  const uid = req.params.uid
+  console.log(uid);
+  
+
+  conn.query("SELECT display_order_num as ordernum, order_type as neworsecond, order_time as orderdate, total_price as price ,order_id FROM orders WHERE uid = ?",[uid],function(err,results){
+    if (err) {
+          console.error("資料庫查詢錯誤:", err);
+          res.status(500).send("伺服器錯誤");
+      } else {
+          console.log("尋找商品訂單成功");
+          res.json(results); // 正確回傳結果給前端
+      }
+  })
+
+
+
+
+})
+
+app.get("/get/orderitems/:order_id", function(req, res) {
+  const order_id = req.params.order_id;
+  conn.query("SELECT * FROM orderitem WHERE order_id = ?", [order_id], function(err, results) {
+    if (err) return res.status(500).send("資料庫錯誤");
+    res.json(results);
+  });
+});
+
+
+
 
 
 
