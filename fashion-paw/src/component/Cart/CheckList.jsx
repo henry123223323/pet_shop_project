@@ -45,10 +45,10 @@ class CheckList extends Component {
       <>
         <div className='px-4'>
           <div className='my-2'>
-            <span>原價總金額：</span> <span>{totalOriginal.toLocaleString()} </span>
+            <span>原價：</span> <span>NT$ {totalOriginal.toLocaleString()} </span>
           </div>
           <div className='my-2'>
-            <span>運費：</span> <span> {shippingFee.toLocaleString()}</span>
+            <span>運費：</span> <span>NT$ {shippingFee.toLocaleString()}</span>
           </div>
           <div className='my-2'>
             <span>折扣：</span>
@@ -63,7 +63,7 @@ class CheckList extends Component {
           <hr />
           <div>
             <span className='ptxtb3'>結帳金額：</span>
-            <span>{Math.round(finalAmount).toLocaleString()} 元</span>
+            <span>NT$ {Math.round(finalAmount).toLocaleString()} </span>
           </div>
         </div>
       </>

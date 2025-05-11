@@ -91,20 +91,26 @@ export default function ProductPage() {
   }, [products, filters, sortBy, typeFilter, categoryFilter]);
 
   const toggleFav = (id) => {
-    if (favoriteIds.includes(id)) {
-      //delete api
-      axios.get(`http://localhost:8000/delete/collect/${user_id}/${id}`)
+    if (user_id) {
+      if (favoriteIds.includes(id)) {
+        //delete api
+        axios.get(`http://localhost:8000/delete/collect/${user_id}/${id}`)
+
+      }
+      else {
+        //insert api
+        axios.get(`http://localhost:8000/insert/collect/${user_id}/${id}`)
+
+      }
+
+      setFavoriteIds(prev =>
+        prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
+      )
 
     }
     else {
-      //insert api
-      axios.get(`http://localhost:8000/insert/collect/${user_id}/${id}`)
-
+      alert("請先登入!!!")
     }
-
-    setFavoriteIds(prev =>
-      prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
-    )
   };
   const addCart = id => console.log('Add to cart', id);
 

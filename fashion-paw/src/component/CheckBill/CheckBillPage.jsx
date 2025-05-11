@@ -177,14 +177,14 @@ class CheckBillPage extends Component {
         let order_type = this.state.selectedItems[0]?.condition;
 
         
-
+        const orderId = "HSM" + Date.now()
 
         const orderData = {
-            uid: 1001, //模擬登入使用者
+            uid: 205, //模擬登入使用者
             order_type,
-            display_order_num: "ORD" + Date.now(), // 模擬訂單編號
+            display_order_num: orderId, 
             total_price: totalPrice,
-            pay_way: this.state.payMethod || "未填寫",
+            pay_way: payMethod || "未填寫",
 
             card_last4: this.state.cardLast4 || null,// 根據付款方式決定要不要存卡號尾數
             delivery_method: deliveryData.method,
@@ -196,7 +196,6 @@ class CheckBillPage extends Component {
         console.log("🧾 訂單資料：", orderData);
         console.log("📦 訂單項目：", orderItems);
 
-        // 模擬跳轉 or 送出後續處理
 
         // 4. 送到後端
         try {
@@ -206,9 +205,17 @@ class CheckBillPage extends Component {
             });
           
             if (response.status === 200) {
-              alert("✅ 訂單已成功建立！");
-              localStorage.clear();
-              window.location.href = "/MemberCenter/orders";
+                const { data } = await axios.post('http://localhost:8000/payment/create-order', {
+                    orderId: orderId,
+                    amount: orderData.total_price,
+                    itemName: orderItems.map(item => item.pd_name).join(", ")
+                  });
+                
+                  // ✅ 建立一個隱藏的 iframe 或 form，寫入表單並觸發送出
+                  const div = document.createElement('div');
+                  div.innerHTML = data;
+                  document.body.appendChild(div);
+                  div.querySelector('form').submit();
             }
           } catch (error) {
             console.error("❌ 訂單建立失敗：", error);

@@ -13,19 +13,19 @@ class SellerOtherPd extends Component {
   render() {
     const { sellerOtherPd } = this.props
     const { showArrows } = this.state
-    // console.log("👀 傳入 SellerOtherPd 的資料：", sellerOtherPd);
+    console.log("👀 傳入 SellerOtherPd 的資料：", sellerOtherPd);
     if (!sellerOtherPd || sellerOtherPd.length === 0) {
       return (
         <div className="paw-bg-pri-darkbrown py-1">
           <p className="px-3 py-2 ptxtb2">此賣家沒有其他商品</p>
         </div>
       );
-    }  
+    }
     return (<>
       {/* 商品區 */}
       <div className="paw-bg-pri-darkbrown py-1">
         <p className="px-3 py-2 ptxtb2">賣家的其他商品</p>
-        
+
         {/* 卡片區 */}
         <div className={`d-flex align-items-center ${styles.main}`}>
 
@@ -65,7 +65,16 @@ class SellerOtherPd extends Component {
 
                   <div className="d-flex justify-content-center mb-2">
                     <AddToMyFavorite pid={pd.pid} />
-                    <AddToCartBtn product={pd} type="icon" />
+                    <AddToCartBtn
+                      aria-label="加入購物車"
+                      product={{
+                        ...pd,
+                        image: pd.img_path,
+                        cart_id: String(pd.pid) // ✅ 確保格式一致
+                      }}
+                      type="icon"
+                      quantity={this.state.count}
+                    />
                   </div>
                 </div>
               </div>
@@ -94,7 +103,7 @@ class SellerOtherPd extends Component {
       window.addEventListener('resize', this.updateScrollBtn);
     }
   }
-  
+
   componentWillUnmount() {
     if (this.scrollRef.current) {
       this.scrollRef.current.removeEventListener('scroll', this.updateScrollBtn);

@@ -1,23 +1,25 @@
+// src/component/MemberCenter/MyAcc/New_Products_Manage.jsx
 import React, { Component } from 'react';
 import axios from 'axios';
-import Market_modal from '../market_manage/Market_Modal';
+import MarketModal from '../market_manage/Market_Modal';
 import Pagination from './Page_manage';
 
 export default class New_Products_Manage extends Component {
   state = {
     showModal: false,
-    ModalState: 'Add', // 'Add' | 'Find' | 'Edit'
+    ModalState: 'Add',      // 'Add' | 'Find' | 'Edit'
     thisIndex: -1,
     currentPage: 1,
-    searchTerm: '',
-    new_product: [],    // 列表資料
-    currentProduct: null // 編輯/查看時使用
+    searchTerm: '',         // 搜尋關鍵字
+    new_product: [],        // 列表資料
+    currentProduct: null    // 編輯/查看用
   };
 
   async componentDidMount() {
     this.loadList();
   }
 
+  // 讀取新品清單
   loadList = async () => {
     try {
       const res = await axios.get('http://localhost:8000/get/new-products');
@@ -28,16 +30,24 @@ export default class New_Products_Manage extends Component {
     }
   };
 
+  // 分頁
   handlePageChange = page => {
     this.setState({ currentPage: page });
   };
 
+  // 搜尋輸入
   handleSearchChange = e => {
     this.setState({ searchTerm: e.target.value, currentPage: 1 });
   };
 
+  // 開關 Modal
   toggleModal = () => {
     this.setState(s => ({ showModal: !s.showModal }));
+  };
+
+  // 新增
+  OpenAdd = () => {
+    this.setState({ currentProduct: null, ModalState: 'Add', showModal: true });
   };
 
   // 查看
@@ -64,16 +74,10 @@ export default class New_Products_Manage extends Component {
     }
   };
 
-  // 新增
-  OpenAdd = () => {
-    this.setState({ currentProduct: null, ModalState: 'Add', showModal: true });
-  };
-
-
-   // 刪除
-   Delete = async idx => {
-    const pid = this.state.new_product[idx]?.pid;
-    if (!pid) return;
+  // 刪除
+  Delete = async idx => {
+    const pid = this.filteredProducts()[idx]?.pid;
+    if (!pid || !window.confirm('確定要刪除？')) return;
     try {
       await axios.delete(`http://localhost:8000/get/new-products/${pid}`);
       alert('刪除成功');
@@ -81,55 +85,70 @@ export default class New_Products_Manage extends Component {
       this.setState({ currentPage: 1 });
     } catch (err) {
       console.error('刪除失敗：', err);
-      alert('刪除失敗');
+      alert('刪除失敗，請稍後再試');
     }
   };
-  new = async product => {
+
+  // 新增送出
+  new = async pd => {
     try {
-      await axios.post('http://localhost:8000/get/new-products', product);
+      await axios.post('http://localhost:8000/get/new-products', pd);
       alert('新增成功');
       this.loadList();
+      this.toggleModal();
+      this.setState({ currentPage: 1 });
     } catch (err) {
       console.error('新增失敗：', err);
-      alert('新增失敗');
+      alert('新增失敗，請稍後再試');
     }
   };
 
-  edit = async product => {
+  // 編輯送出
+  edit = async pd => {
     try {
-      await axios.put(`http://localhost:8000/get/new-products/${product.pid}`, product);
+      await axios.put(`http://localhost:8000/get/new-products/${pd.pid}`, pd);
       alert('修改成功');
       this.loadList();
+      this.toggleModal();
     } catch (err) {
       console.error('更新失敗：', err);
-      alert('更新失敗');
+      alert('更新失敗，請稍後再試');
     }
   };
 
+  // 過濾
   filteredProducts = () => {
     const { new_product, searchTerm } = this.state;
     if (!searchTerm) return new_product;
     return new_product.filter(p =>
-      p.pd_name.includes(searchTerm) || p.categories.includes(searchTerm)
+      p.pd_name.includes(searchTerm) ||
+      p.categories.includes(searchTerm)
     );
   };
 
+  // 顯示上下架
   renderStatus = status =>
     status === 1
       ? <span className="badge bg-success">上架</span>
       : <span className="badge bg-secondary">下架</span>;
 
-  renderCategory = cat => ({
-    pet_food: '寵物食品',
-    complementary_food: '副食品',
-    snacks: '寵物零食',
-    Health_Supplements: '健康保健品',
-    Living_Essentials: '生活用品',
-    toys: '寵物玩具'
-  }[cat] || cat);
+  // 顯示類別
+  renderCategory = cat =>
+    ({
+      pet_food: '飼料',
+      complementary_food: '副食',
+      snacks: '零食',
+      Health_Supplements: '保健食品',
+      Living_Essentials: '生活家居',
+      toys: '玩具'
+    }[cat] || cat);
 
   render() {
-    const { showModal, ModalState, currentPage, searchTerm, currentProduct } = this.state;
+    const {
+      showModal, ModalState, currentPage,
+      searchTerm, currentProduct
+    } = this.state;
+
     const filtered = this.filteredProducts();
     const itemsPerPage = 5;
     const startIndex = (currentPage - 1) * itemsPerPage;
@@ -137,22 +156,28 @@ export default class New_Products_Manage extends Component {
 
     return (
       <>
+        {/* 搜尋欄 */}
+        <div className="mb-3" style={{ maxWidth: 300 }}>
+          <input
+            type="search"
+            className="form-control"
+            placeholder="搜尋商品名稱或類別"
+            value={searchTerm}
+            onChange={this.handleSearchChange}
+          />
+        </div>
+
+        {/* 新品上架按鈕 放搜尋欄下面 */}
         <div className="mb-3">
-          <form className="mb-2">
-            <label htmlFor="sort" className="me-2">搜尋:</label>
-            <input
-              type="search"
-              id="sort"
-              className="form-control d-inline-block w-25"
-              value={searchTerm}
-              onChange={this.handleSearchChange}
-            />
-          </form>
-          <button className="btn btn-outline-primary" onClick={this.OpenAdd}>
+          <button
+            className="btn btn-outline-primary"
+            onClick={this.OpenAdd}
+          >
             新品上架
           </button>
         </div>
 
+        {/* 商品表格 */}
         <table className="table table-striped table-hover">
           <thead className="table-primary">
             <tr>
@@ -169,8 +194,16 @@ export default class New_Products_Manage extends Component {
               <tr key={p.pid}>
                 <td>
                   {p.imageUrl
-                    ? <img src={p.imageUrl} alt={p.pd_name}
-                        style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '4px' }} />
+                    ? <img
+                        src={p.imageUrl}
+                        alt={p.pd_name}
+                        style={{
+                          width: 80,
+                          height: 80,
+                          objectFit: 'cover',
+                          borderRadius: 4
+                        }}
+                      />
                     : <span className="text-muted">無圖</span>
                   }
                 </td>
@@ -179,15 +212,31 @@ export default class New_Products_Manage extends Component {
                 <td>{this.renderCategory(p.categories)}</td>
                 <td>{this.renderStatus(p.status)}</td>
                 <td>
-                  <button className="btn btn-primary btn-sm me-1" onClick={() => this.OpenFound(startIndex + idx)}>查看</button>
-                  <button className="btn btn-warning btn-sm me-1" onClick={() => this.OpenEdit(startIndex + idx)}>編輯</button>
-                  <button className="btn btn-danger btn-sm" onClick={() => { if (window.confirm(`確定要刪除 ${p.pd_name}？`)) this.Delete(startIndex + idx); }}>刪除</button>
+                  <button
+                    className="btn btn-primary btn-sm me-1"
+                    onClick={() => this.OpenFound(startIndex + idx)}
+                  >
+                    查看
+                  </button>
+                  <button
+                    className="btn btn-warning btn-sm me-1"
+                    onClick={() => this.OpenEdit(startIndex + idx)}
+                  >
+                    編輯
+                  </button>
+                  <button
+                    className="btn btn-danger btn-sm"
+                    onClick={() => this.Delete(startIndex + idx)}
+                  >
+                    刪除
+                  </button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
 
+        {/* 分頁 */}
         <Pagination
           totalItems={filtered.length}
           itemsPerPage={itemsPerPage}
@@ -195,14 +244,16 @@ export default class New_Products_Manage extends Component {
           onPageChange={this.handlePageChange}
         />
 
+        {/* Modal */}
         {showModal && (
-          <Market_modal
+          <MarketModal
             key={`${ModalState}-${currentProduct?.pid || 'new'}`}
-            close={this.toggleModal}
+            condition="new"
+            modalState={ModalState}
+            product={currentProduct}
             new={this.new}
             edit={this.edit}
-            product={currentProduct}
-            modalstate={ModalState}
+            close={this.toggleModal}
           />
         )}
       </>
