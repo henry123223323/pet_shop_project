@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react'
 import { NavLink } from 'react-router-dom'
 import axios from 'axios'
 import styles from './InfoSection.module.css'
+import pawicon from './images/pawicon.svg'
 
 export default function InfoSection() {
   const [articles, setArticles] = useState([])
@@ -44,7 +45,7 @@ export default function InfoSection() {
 
   return (
     <section className={styles.infoSection}>
-      <h2 className={styles.title}>毛孩健康知識</h2>
+      <h2 className={styles.title}>毛孩健康知識<img src={pawicon} className={styles.icon} /></h2>
       <div className={styles.grid}>
         {articles.map(item => {
           const topic = topicMap[item.article_type] || 'Novicefeeding'
@@ -66,7 +67,7 @@ export default function InfoSection() {
                   {new Date(item.created_at).toLocaleDateString()}
                 </p>
                 <p className={styles.text}>{item.title}</p>
-                <span className={styles.cta}>繼續閱讀 &gt;</span>
+                <span className={styles.cta}>繼續閱讀</span>
               </div>
             </NavLink>
           )
