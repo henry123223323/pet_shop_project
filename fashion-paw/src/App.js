@@ -2,7 +2,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import 'bootstrap-icons/font/bootstrap-icons.css';
-
 import styles from './component/Homepage/IndexStyle.module.css';
 import Header from './component/Homepage/Header';
 import Footer from './component/Homepage/Footer';
@@ -35,7 +34,7 @@ function App() {
     <BrowserRouter>
       <CartProvider>
         <Header />
-        <main className={styles.mainContent}>
+        <main className={`mainContent ${styles.mainContent}`}>
           <Breadcrumbs />
           <Switch>
             <Route path="/" component={Homepage} exact />
