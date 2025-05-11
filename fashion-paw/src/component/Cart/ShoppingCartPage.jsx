@@ -7,6 +7,7 @@ import Coupon from './Coupon';
 import CheckList from './CheckList';
 import ConfirmBtn from '../share/ConfirmBtn';
 import { CartContext } from './CartContext';
+import { Link } from 'react-router-dom/cjs/react-router-dom.min';
 
 class ShoppingCartPage extends Component {
   static contextType = CartContext;
@@ -52,7 +53,20 @@ class ShoppingCartPage extends Component {
             🧹 清空購物車（Context + localStorage）
           </button>
         </div>
-        <div className='row g-5'>
+
+
+    {/* 如果購物車為空，顯示提示畫面 */}
+    {cartList.length === 0 && (
+      <div className="text-center my-5">
+        <h5>🛒 購物車內還沒有商品～快去逛逛吧！</h5>
+
+        <Link to="/ProductPage" className='mx-2 btn paw-btn-outline-darkorange '>逛逛新品</Link>
+        <Link to="/SeProductPage" className='mx-2 btn paw-btn-outline-pri-darkbrown'>找找二手</Link>
+      </div>
+    )}
+
+
+        {cartList.length > 0 && (<div className='row g-5'>
           {/* 左邊 */}
           <div className="col-12 col-md-8">
 
@@ -159,8 +173,7 @@ class ShoppingCartPage extends Component {
             </div>
 
           </div>
-        </div>
-
+        </div>)}
       </>
     );
   }
@@ -401,10 +414,7 @@ class ShoppingCartPage extends Component {
       }
     }
 
-    localStorage.setItem(
-      'selectedItems',
-      JSON.stringify(selectedCartItems.map(item => String(item.cart_id)))
-    );
+    localStorage.setItem('selectedItems', JSON.stringify(selectedCartItems));
     localStorage.setItem('discountAmount', discountAmount);
     window.location.href = '/CheckBillPage';
   };
