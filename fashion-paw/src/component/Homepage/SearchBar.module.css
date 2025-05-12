@@ -31,7 +31,7 @@
   .button {
     display: flex;
     align-items: center;
-    background: #fff;
+    background: none;
     border: none;
     border-radius: 4px;
     padding: 0 0.5rem;
@@ -45,4 +45,6 @@
     fill: #333;
     transition: fill 0.2s;
   }
+
+  
   

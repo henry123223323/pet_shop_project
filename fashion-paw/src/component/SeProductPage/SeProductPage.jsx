@@ -7,20 +7,21 @@ import FilterBar from './FilterBar/FilterBar';
 import SortBar from './SortBar/SortBar';
 import SwitchBtn from './SwitchBtn/SwitchBtn';
 import ProductList from './ProductList/ProductList';
-
+import cookie from 'js-cookie';
 import axios from 'axios';
 
 export default function SeProductPage() {
   const location = useLocation();                       // ← 新增
   const searchState = location.state || {};
   const SearchProducts = searchState.products;
-
+  const user_id = cookie.get('user_uid')
   const [viewMode, setViewMode] = useState('grid');
   const [products, setProducts] = useState([]);
   const [filtered, setFiltered] = useState([]);
   const [filters, setFilters] = useState({
     functions: [], price: '', locations: [], depreciation: 0
   });
+  const [fliterkey, setfilterkey] = useState(1)
   const [sortBy, setSortBy] = useState('');
   const [favoriteIds, setFavoriteIds] = useState([]);
   const [selectedType, setSelectedType] = useState(null);
@@ -71,6 +72,13 @@ export default function SeProductPage() {
     fetchData();
   }, [SearchProducts]);
 
+  useEffect(() => {
+    async function fetchData() {
+      let favArray = await axios.get(`http://localhost:8000/select/collect/${user_id}/all`)
+      setFavoriteIds(favArray.data)
+    }
+    fetchData()
+  }, [user_id, setFavoriteIds])
 
 
   // 過濾 + 排序
@@ -135,16 +143,36 @@ export default function SeProductPage() {
   const handleFilterChange = useCallback(nf => setFilters(nf), []);
   const handleSortChange = sk => setSortBy(sk);
   const handleToggleFavorite = id => {
-    setFavoriteIds(prev =>
-      prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
-    );
+    if (user_id) {
+
+      if (favoriteIds.includes(id)) {
+        //delete api
+        axios.get(`http://localhost:8000/delete/collect/${user_id}/${id}`)
+
+      }
+      else {
+        //insert api
+        axios.get(`http://localhost:8000/insert/collect/${user_id}/${id}`)
+
+      }
+      setFavoriteIds(prev =>
+        prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
+      );
+    }
+    else {
+      alert('請先登入!!!')
+    }
+
   };
   const handleAddToCart = id => console.log('Add to cart', id);
   const handleSelectCategory = (t, c) => {
     setSelectedType(t);
     setSelectedCategory(c);
   };
-
+  const doclearsort = () => {
+    setfilterkey(prev => prev + 1)
+    setmapselecttown(null)
+  }
   const uniqueLocations = Array.from(new Set(products.map(p => p.city)));
   let SortProductbyTown = (town) => {
     console.log(town);
@@ -161,6 +189,7 @@ export default function SeProductPage() {
         {/* 1. FilterBar */}
         <div className={styles.filterBar}>
           <FilterBar
+            key={fliterkey}
             city_town={citytownarray}
             locations={uniqueLocations}
             onFilterChange={handleFilterChange}
@@ -168,8 +197,11 @@ export default function SeProductPage() {
           />
         </div>
 
+        <span >{mapselecttown}</span>
         {/* 2. SortBar + SwitchBtn 同列靠右 */}
         <div className={styles.topBar}>
+          <button onClick={doclearsort} className='btn btn-outline-primary'>清除篩選</button>
+
           <SortBar onSortChange={handleSortChange} />
           <SwitchBtn viewMode={viewMode} onViewChange={setViewMode} />
         </div>

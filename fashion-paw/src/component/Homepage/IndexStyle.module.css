@@ -1,30 +1,94 @@
-/* 調整整個header的高度大小，一次定義，全局可用 */
-:root {
-  --header-height: 180px;
-}
-
 /* header樣式 */
 .header {
   width: 100%;
+  height: var(--header-height);
   display: flex;
   flex-direction: column;
   row-gap: 0.5rem;
-  padding: 5rem 2rem;
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  height: var(--header-height);
+  padding: 7rem 1rem 7rem 1rem;
   box-shadow: 0 2px 0 rgba(0, 0, 0, 0.1);
   background: rgba(255, 255, 255, 0.9);
-  transition: transform 0.3s ease-in-out;
+  transition: background-color 0.4s ease, box-shadow 0.3s ease;
   z-index: 999;
   justify-content: center;
 }
 
 .hiddenHeader {
-  transform: translateY(-100%);
+  transform: translateY(-120%);
+  transition: transform 0.3s ease;
 }
+
+/* 非首頁+向上滑三欄 */
+/* 三欄版面容器 */
+.threeColContainer {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  height: 80px;
+  gap: 1rem;
+  /* background: pink !important; */
+}
+
+/* 左：Logo */
+.colLeft {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+/* 中：主選單 */
+.colCenter {
+  flex: 2;
+  display: flex;
+  justify-content: left;
+  margin-left: -150px;
+}
+
+/* 右：登入、搜尋、購物車 */
+.colRight {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  flex-wrap: nowrap;
+  /* 避免段落內換行 */
+  white-space: nowrap; 
+  gap: 0.5rem;
+  margin-right: -20px;
+}
+
+.userInfoWrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap; /* 防止換行 */
+}
+
+.greetingText {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.logoutBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.logoutBtn:hover {
+  color: #70823C;
+  transition: color .2s;
+}
+
+
 
 /* 第一列：搜尋 + 購物 + 登入註冊 */
 .headerTop {
@@ -40,21 +104,35 @@
 .iconBtn {
   background: none;
   border: none;
-  font-size: 1.25rem;
+  font-size: 1.5rem;
   cursor: pointer;
+  color: black;
+  margin-left: 1rem;
 }
 
 .iconBtn:hover {
   color: #70823C;
+  transition: color .2s;
 }
 
 .link {
   color: black;
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
 }
 
 .link:hover {
   color: #70823C;
-  text-decoration-line: none;
+  text-decoration: none;
+  transition: color .2s;
+}
+
+.logsub {
+  margin-left: 0.5rem;
+}
+
+.logsub>span {
+  color: black;
 }
 
 /* 第二列：Logo 置中 */
@@ -65,10 +143,56 @@
   margin-bottom: 0.5rem;
 }
 
-/* 確保內容都從這個高度之後才開始 */
-.mainContent {
-  padding-top: var(--header-height);
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 0.2rem;
+  margin-left: 0.7rem;
 }
+
+.greeting {
+  font-weight: 500;
+  color: #DDB227;
+  transition: color .2s;
+}
+
+.greeting:hover {
+  color: #70823C;
+  text-decoration: none;
+}
+
+.divider {
+  margin: 0 0.3rem;
+}
+
+.logoutBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.logoutBtn:hover {
+  color: #70823C;
+  transition: color .2s;
+}
+
+/* 初始透明 header：蓋在 banner 上 */
+.transparentHeader {
+  background: transparent;
+  color: white;
+  box-shadow: none;
+}
+
+/* 往上滑出現實色 header */
+.solidHeader {
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  color: #333;
+  transition: all 0.3s ease;
+}
+
 
 /* ----------------hambuger------------- */
 @media (min-width: 769px) {
@@ -93,8 +217,14 @@
   }
 
   .headerTop,
-  .mainNav {
+  .mainNav,.colCenter,
+  .colRight {
     display: none;
+  }
+  .colLeft {
+    display: flex;
+    justify-content: center;
+    width: 100%;
   }
 
   .hamburger {

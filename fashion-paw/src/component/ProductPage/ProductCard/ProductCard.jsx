@@ -21,14 +21,21 @@ export default function ProductCard({
     ? `${styles.card} ${styles.horizontal}`
     : styles.card;
 
-  // 加入購物車處理：顯示 alert 並呼叫傳入的 onAddToCart
-  const handleAdd = () => {
-    alert('已加入購物車');
-    onAddToCart(id);
+  // 加入購物車處理：顯示 alert 並呼叫傳入的 onAddToCart（佳宜修過不用這個了）
+  // const handleAdd = () => {
+  //   alert('已加入購物車');
+  //   onAddToCart(id);
+  // };
+
+  const product = {
+    pid: id,
+    pd_name: name,
+    price,
+    image: images?.[0]?.img_path 
   };
 
   return (
-    <div className={cls}>
+    <div className={cls} >
       <div className={styles.imageWrapper}>
         <img src={images[0].img_path} alt={name} />
       </div>
@@ -45,10 +52,13 @@ export default function ProductCard({
         />
 
         {/* 用引入的 AddToCartBtn 取代原生加入購物車按鈕，並彈跳提示 */}
+
         <AddToCartBtn
-          onClick={handleAdd}
-          aria-label="加入購物車"
-        />
+                      type="icon"
+                      product={product}
+                      quantity={1}
+                      aria-label="加入購物車"
+                    />
       </div>
     </div>
   );

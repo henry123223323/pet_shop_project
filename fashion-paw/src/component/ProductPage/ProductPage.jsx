@@ -3,15 +3,18 @@ import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import styles from './ProductPage.module.css';
+import cookie from "js-cookie";
 
 import FilterBar from './FilterBar/FilterBar';
-import Sidebar   from './SideBar/SideBar';
-import SortBar   from './SortBar/SortBar';
+import Sidebar from './SideBar/SideBar';
+import SortBar from './SortBar/SortBar';
 import SwitchBtn from './SwitchBtn/SwitchBtn';
 import ProductList from './ProductList/ProductList';
-import HotRanking  from './HotRanking/HotRanking';
+import HotRanking from './HotRanking/HotRanking';
 
 export default function ProductPage() {
+  const user_id = cookie.get('user_uid')
+
   const location = useLocation();                     // ← 拿到 location
   const searchState = location.state || {};
   const searchProducts = searchState.products;
@@ -22,10 +25,17 @@ export default function ProductPage() {
   const [products, setProducts] = useState([]);
   const [displayItems, setDisplay] = useState([]);
   const [favoriteIds, setFavoriteIds] = useState([]);
-
+  const [filterkey, setFilterKey] = useState(1)
   // 1. 新增 Sidebar 篩選用 state
-  const [typeFilter, setTypeFilter]         = useState('');
+  const [typeFilter, setTypeFilter] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('');
+  useEffect(() => {
+    async function fetchData() {
+      let favArray = await axios.get(`http://localhost:8000/select/collect/${user_id}/all`)
+      setFavoriteIds(favArray.data)
+    }
+    fetchData()
+  }, [user_id, setFavoriteIds])
 
   // 初始載入
   useEffect(() => {
@@ -60,45 +70,71 @@ export default function ProductPage() {
 
   // 2. 過濾＋排序＋Sidebar 篩選
   useEffect(() => {
+
     let items = [...products];
 
     // --- 先套用 Sidebar 篩選 ---
-    if (typeFilter)         items = items.filter(p => p.pet_type === typeFilter);
-    if (categoryFilter)     items = items.filter(p => p.categories === categoryFilter);
+    if (typeFilter) items = items.filter(p => p.pet_type === typeFilter);
+    if (categoryFilter) items = items.filter(p => p.categories === categoryFilter);
 
     // --- 再套用 FilterBar 的篩選 ---
     const { functions: funcs = [], brands = [], price = '', hotRanking = '' } = filters;
-    if (funcs.length)       items = items.filter(p => funcs.includes(p.categories));
-    if (brands.length)      items = items.filter(p => brands.includes(p.attributes_object.brand));
+    if (funcs.length) items = items.filter(p => funcs.includes(p.categories));
+    if (brands.length) items = items.filter(p => brands.includes(p.attributes_object.brand));
     if (price) {
-      const [min, max] = price.includes('+') 
-        ? [Number(price), Infinity] 
+      const [min, max] = price.includes('+')
+        ? [Number(price), Infinity]
         : price.split('-').map(Number);
       items = items.filter(p => p.price >= min && p.price <= max);
     }
-    if (hotRanking === 'hot_desc') items.sort((a,b)=>b.hotranking - a.hotranking);
-    if (hotRanking === 'hot_asc')  items.sort((a,b)=>a.hotranking - b.hotranking);
+    if (hotRanking === 'hot_desc') items.sort((a, b) => b.hotranking - a.hotranking);
+    if (hotRanking === 'hot_asc') items.sort((a, b) => a.hotranking - b.hotranking);
+
 
     // --- 最後排序 ---
-    if (sortBy === 'price_asc')  items.sort((a,b)=>a.price - b.price);
-    else if (sortBy === 'price_desc') items.sort((a,b)=>b.price - a.price);
-    else if (sortBy === 'createdAt')   items.sort((a,b)=>b.created_at - a.created_at);
+    if (sortBy === 'price_asc') items.sort((a, b) => a.price - b.price);
+    else if (sortBy === 'price_desc') items.sort((a, b) => b.price - a.price);
+    else if (sortBy === 'createdAt') items.sort((a, b) => b.created_at - a.created_at);
 
     setDisplay(items);
   }, [products, filters, sortBy, typeFilter, categoryFilter]);
 
-  const toggleFav = id => setFavoriteIds(prev =>
-    prev.includes(id) ? prev.filter(x=>x!==id) : [...prev, id]
-  );
-  const addCart = id => console.log('Add to cart', id);
 
+  const toggleFav = (id) => {
+    if (user_id) {
+      if (favoriteIds.includes(id)) {
+        //delete api
+        axios.get(`http://localhost:8000/delete/collect/${user_id}/${id}`)
+
+      }
+      else {
+        //insert api
+        axios.get(`http://localhost:8000/insert/collect/${user_id}/${id}`)
+
+      }
+
+      setFavoriteIds(prev =>
+        prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
+      )
+
+    }
+    else {
+      alert("請先登入!!!")
+    }
+  };
+  const addCart = id => console.log('Add to cart', id);
+  const doclearsort = () => {
+    setFilterKey(prev => prev + 1);
+    //刪除後取消fliter checkbox radio 選取
+  }
   return (
     <div className={styles.pageWrapper}>
       <div className={styles.mainContent}>
         <div className={styles.filterBar}>
-          <FilterBar onFilterChange={setFilters} />
+          <FilterBar key={filterkey} onFilterChange={setFilters} />
         </div>
         <div className={styles.topBar}>
+          <button onClick={doclearsort} className='btn btn-outline-primary'>清除篩選</button>
           <SortBar onSortChange={setSortBy} />
           <SwitchBtn viewMode={viewMode} onViewChange={setViewMode} />
         </div>

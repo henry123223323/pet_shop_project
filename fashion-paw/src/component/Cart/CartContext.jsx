@@ -6,7 +6,7 @@ export const CartContext = createContext();
 export class CartProvider extends Component {
     state = {
         cartList: [],
-        sellers: [], 
+        sellers: [],
     };
 
     render() {
@@ -27,57 +27,64 @@ export class CartProvider extends Component {
         );
     }
 
-    // 設定 seller 名單（從 PdDetailPage 傳入）
+    // 設定 seller 名單
     setSellers = (userList) => {
+
         if (Array.isArray(userList)) {
-            const merged = [...this.state.sellers, ...userList];
+            const merged = [...this.state.sellers, ...userList.map(user => ({
+                ...user,
+                uid: String(user.uid) // ✅ 強制轉成 string
+            }))];
             const uniqueSellers = Array.from(
                 new Map(merged.map(user => [String(user.uid), user])).values()
             );
             this.setState({ sellers: uniqueSellers });
+        } else {
+            console.warn("❌ 傳入 setSellers 的不是陣列：", userList);
         }
     };
 
     // 透過 uid 找 seller username
     getSellerName = (uid) => {
         if (!uid) return '未知賣家';
-      
+
         const seller = this.state.sellers.find(user => String(user.uid) === String(uid));
-      
+
         // 避免 seller 為 undefined 時就嘗試存取 .username
         if (seller) {
-        //   console.log("🔍 找到 seller =", seller.username);
-          return seller.username;
+            //   console.log("🔍 找到 seller =", seller.username);
+            return seller.username;
         } else {
-        //   console.log("⚠️ 沒有找到 seller：uid =", uid);
-          return `UID: ${uid}（未找到賣家）`;
+            //   console.log("⚠️ 沒有找到 seller：uid =", uid);
+            return `UID: ${uid}（未找到賣家）`;
         }
-      };
-
-      normalizeCartItem = (item) => {
-        return {
-          cart_id: item.cart_id || `${item.pid}`,
-          pid: item.pid,
-          uid: item.uid || null,
-          condition: item.condition || "new",
-          quantity: item.quantity || 1,
-          productName: item.pd_name || item.productName,
-          unit_price: parseInt(item.price || item.unit_price || 0),
-          image: Array.isArray(item.images)
-            ? item.images[0]?.img_path || "/media/default/no-image.png"
-            : item.image || "/media/default/no-image.png",
-          color: item.attribute?.color || item.color || "無",
-        };
-      };
+    };
 
     componentDidMount() {
         const savedCart = localStorage.getItem('cartList');
         if (savedCart) {
-            this.setState({ cartList: JSON.parse(savedCart) });
+            try {
+                const parsed = JSON.parse(savedCart);
+                const formatted = parsed.map(item => {
+                    const cartId = String(item.cart_id || item.pid);
+                    return {
+                        ...item,
+                        cart_id: cartId,
+                    };
+                });
+                this.setState({ cartList: formatted });
+            } catch (err) {
+                console.error("❌ 載入 cartList 時 JSON 解析失敗：", err);
+            }
         }
+
         const savedSellers = localStorage.getItem('sellers');
         if (savedSellers) {
-            this.setState({ sellers: JSON.parse(savedSellers) });
+            try {
+                this.setState({ sellers: JSON.parse(savedSellers) });
+            } catch (err) {
+                console.error("❌ 載入 sellers 時 JSON 解析失敗：", err);
+            }
         }
     }
 
@@ -87,10 +94,11 @@ export class CartProvider extends Component {
         }
         if (prevState.sellers !== this.state.sellers) {
             localStorage.setItem('sellers', JSON.stringify(this.state.sellers));
-          }
+        }
     }
 
     addToCart = (rawItem) => {
+
         const newItem = this.normalizeCartItem(rawItem);
         return new Promise((resolve) => {
             this.setState((prev) => {
@@ -126,6 +134,38 @@ export class CartProvider extends Component {
     };
 
     clearCart = () => this.setState({ cartList: [] });
+
+    //統一不同地方的命名
+    normalizeCartItem = (item) => {
+
+        //  抓圖片路徑
+        const rawPath =
+            (Array.isArray(item.images) && item.images[0]?.img_path) || // 圖片陣列（前端用）
+            item.img_path || // ✅ 後端撈出來的資料庫欄位
+            item.image || // 備援欄位
+            null;
+
+
+        //  不加 IMAGE_HOST，直接用相對路徑
+        const fullImagePath = rawPath || "/media/default/no-image.png";
+
+        // console.log("🧪 圖片處理", {
+        //     img_path: rawPath,
+        //     final: fullImagePath,
+        // });
+        const cartId = String(item.cart_id || item.pid);
+        return {
+            cart_id: cartId,
+            pid: item.pid,
+            uid: item.uid ? String(item.uid) : null,
+            condition: item.condition || "new",
+            quantity: item.quantity || 1,
+            productName: item.pd_name || item.productName || item.name,
+            unit_price: parseInt(item.price || item.unit_price || 0),
+            image: fullImagePath,
+            //   color: item.attribute?.color || item.color || "無",
+        };
+    };
 
 
 }

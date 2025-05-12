@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import linepayLogo from '../ProductDetailPage/image/LINEPayLogo.png';
-import jkoLogo from '../ProductDetailPage/image/jkopayLogo.webp';
-import PayPalLogo from '../ProductDetailPage/image/PayPalLogo.png';
+// import linepayLogo from '../ProductDetailPage/image/LINEPayLogo.png';
+// import jkoLogo from '../ProductDetailPage/image/jkopayLogo.webp';
+// import PayPalLogo from '../ProductDetailPage/image/PayPalLogo.png';
 
 class PayWay extends Component {
     constructor(props) {
@@ -32,28 +32,29 @@ class PayWay extends Component {
     sendToParent = () => {
         if (!this.props.onChange) return;
     
-        const { selectedPayWay, installmentOption, thirdPartyOption } = this.state;
+        // const { selectedPayWay, installmentOption, thirdPartyOption } = this.state;
+        const { selectedPayWay } = this.state;
         let payLabel = "";
         let cardLast4 = "";
     
         switch (selectedPayWay) {
-            case "creditCard":
-                payLabel = "信用卡：一次付清";
-                cardLast4 = "1234"; // 寫死等串綠界
+            case "onlinePay":
+                payLabel = "線上付款";
+                cardLast4 = ""; // 寫死等串綠界
                 break;
-            case "installment":
-                payLabel = `信用卡：分期付款（${installmentOption || "未選"}）`;
-                cardLast4 = "1234"; // 分期也通常為信用卡，寫死等串綠界
-                break;
-            case "thirdPartyPayment":
-                const map = {
-                    linepay: "LINE PAY",
-                    streetpay: "街口支付",
-                    paypal: "PayPal"
-                };
-                payLabel = `行動支付：${map[thirdPartyOption] || "未選"}`;
-                cardLast4 = ""; // 行動支付不填卡號
-                break;
+            // case "installment":
+            //     payLabel = `信用卡：分期付款（${installmentOption || "未選"}）`;
+            //     cardLast4 = ""; // 分期也通常為信用卡，寫死等串綠界
+            //     break;
+            // case "thirdPartyPayment":
+            //     const map = {
+            //         linepay: "LINE PAY",
+            //         streetpay: "街口支付",
+            //         paypal: "PayPal"
+            //     };
+            //     payLabel = `行動支付：${map[thirdPartyOption] || "未選"}`;
+            //     cardLast4 = ""; // 行動支付不填卡號
+            //     break;
             case "cash":
                 payLabel = "貨到付款";
                 cardLast4 = "";
@@ -70,15 +71,15 @@ class PayWay extends Component {
     };
 
     render() {
-        const { selectedPayWay } = this.state;
+        // const { selectedPayWay } = this.state;
 
         return (
             <div className='px-4 py-2'>
-                {/* 信用卡一次付清 */}
-                <input name="payWay" type="radio" id="creditCard" onChange={this.payWayChange} />
-                <label className='px-2' htmlFor="creditCard">信用卡：一次付清</label><br />
-
-                {/* 信用卡分期付款 */}
+                {/* 線上付款 */}
+                <input name="payWay" type="radio" id="onlinePay" onChange={this.payWayChange} />
+                <label className='px-2' htmlFor="onlinePay">線上付款</label><br />
+{/* 
+                信用卡分期付款 
                 <input name="payWay" type="radio" id="installment" onChange={this.payWayChange} />
                 <label className='px-2' htmlFor="installment">信用卡：分期付款</label><br />
                 {selectedPayWay === "installment" && (
@@ -94,7 +95,7 @@ class PayWay extends Component {
                     </div>
                 )}
 
-                {/* 行動支付 */}
+                行動支付 
                 <input name="payWay" type="radio" id="thirdPartyPayment" onChange={this.payWayChange} />
                 <label className='px-2' htmlFor="thirdPartyPayment">行動支付</label><br />
                 {selectedPayWay === "thirdPartyPayment" && (
@@ -112,7 +113,7 @@ class PayWay extends Component {
                             <label className='px-2' htmlFor="paypal" style={{ width: "100px" }}><img src={PayPalLogo} alt="PayPalLogo" /></label><br />
                         </div>
                     </div>
-                )}
+                )} */}
 
                 {/* 貨到付款 */}
                 <input name="payWay" type="radio" id="cash" onChange={this.payWayChange} />

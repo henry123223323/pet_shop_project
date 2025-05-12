@@ -17,9 +17,11 @@ import NewSideBar from '../ProductPage/SideBar/SideBar.jsx';
 import SeSideBar from '../SeProductPage/SideBar/SideBar.jsx';
 import HotRanking from '../ProductPage/HotRanking/HotRanking.jsx';
 import { CartContext } from 'component/Cart/CartContext.jsx';
+import cookie from 'js-cookie';
 
 class PdDetailPage extends Component {
   static contextType = CartContext;
+  
   constructor(props) {
     super(props);
     this.state = {
@@ -32,12 +34,13 @@ class PdDetailPage extends Component {
       review: [],
       loading: true,
       error: null,
+      uid: cookie.get('user_uid') || null
     }
   }
-  
 
   render() {
     //目前商品
+
     const currentPd = this.state.product;
     if (this.state.loading) return <div>載入中...</div>;
     if (this.state.error || !currentPd) return <div>{this.state.error || "找不到商品"}</div>;
@@ -52,14 +55,14 @@ class PdDetailPage extends Component {
     // 根據商品類型取得相應的評論
     const isNew = currentPd.condition === "new";
     const relevantReviews = isNew
-    ? this.state.review.filter((review) => String(review.pid) === String(currentPd.pid))
-    : this.state.review;
+      ? this.state.review.filter((review) => String(review.pid) === String(currentPd.pid))
+      : this.state.review;
 
     // 評價總分與數量
     const ratingCount = relevantReviews.length;
-    const totalRating = relevantReviews.reduce((sum, review) => sum + Number(review.rating), 0);    
+    const totalRating = relevantReviews.reduce((sum, review) => sum + Number(review.rating), 0);
     const avgRating = ratingCount > 0 ? (totalRating / ratingCount).toFixed(2) : "還沒有評價";
-    
+
     return (
       <>
         <div className="container-fluid">
@@ -111,7 +114,7 @@ class PdDetailPage extends Component {
                         onQuantityChange={(newQty) => this.setState({ count: newQty })} />
                       {/* 加入購物車、收藏、分享 */}
                       <div className='d-flex align-items-center'>
-                        <AddToCartBtn type="text" onClick={this.addToCart} />
+                        <AddToCartBtn aria-label="加入購物車" type="text" product={currentPd} quantity={this.state.count} aria-label="加入購物車"/>
                         <AddToMyFavorite
                           onClick={this.favBtnClick}
                           isFavorite={this.state.isFavorite}
@@ -160,18 +163,36 @@ class PdDetailPage extends Component {
       </>
     );
   }
+  // componentDidUpdate() {
+  //   console.log(this.state.uid, this.props.pid);
 
+  // }
   componentDidMount() {
     const { pid } = this.props;
     const { setSellers } = this.context;
-  
+    let { uid } = this.state
+    //柯加的
+    if (uid) {
+
+      axios.get(`http://localhost:8000/select/collect/${uid}/${pid}`)
+        .then(res => {
+          console.log(res.data);
+          this.setState({
+            uid: cookie.get('user_uid'),
+            pid: pid,
+            isFavorite: res.data
+          })
+        })
+    }
+
+    //柯加的
     this.setState({ loading: true });
-  
+
     axios.get(`http://localhost:8000/productslist/${pid}`)
       .then(res => {
         const product = res.data;
         this.setState({ product });
-  
+
         if (product.condition === "new") {
           return axios.get(`http://localhost:8000/review/newproduct/${product.pid}`)
             .then(reviewRes => {
@@ -182,11 +203,11 @@ class PdDetailPage extends Component {
               });
             });
         }
-  
+
         return axios.get(`http://localhost:8000/get/userinfo`)
           .then(userRes => {
             const sellerInfo = userRes.data.find(user => String(user.uid) === String(product.uid));
-  
+
             if (sellerInfo) {
               setSellers([{ uid: sellerInfo.uid, username: sellerInfo.username || "未命名賣家" }]);
               this.setState({
@@ -196,12 +217,12 @@ class PdDetailPage extends Component {
                 }
               });
             }
-  
+
             return axios.get(`http://localhost:8000/sellerOtherPd/${product.uid}/${product.pid}`);
           })
           .then(otherPdRes => {
             this.setState({ sellerOtherPd: otherPdRes.data || [] });
-  
+
             return axios.get(`http://localhost:8000/review/seller/${product.uid}`);
           })
           .then(reviewRes => {
@@ -217,28 +238,41 @@ class PdDetailPage extends Component {
       });
   }
 
-  addToCart = async () => {
-    const { addToCart } = this.context;
-    const currentPd = this.state.product;
-    const cartItem = {
-      ...currentPd,
-      quantity: this.state.count
-    };
+  // addToCart = async () => {
+  //   const { addToCart } = this.context;
+  //   const currentPd = this.state.product;
+  //   const cartItem = {
+  //     ...currentPd,
+  //     quantity: this.state.count
+  //   };
 
-    const result = await addToCart(cartItem); // ⬅️ 等待結果
-    if (result === 'new' || result === 'updated') {
-      const go = window.confirm("已加入購物車！是否前往查看？");
-      if (go) {
-        window.location.href = '/ShoppingCartPage';
-      }
-    }
-  };
+  //   const result = await addToCart(cartItem); // ⬅️ 等待結果
+  //   if (result === 'new' || result === 'updated') {
+  //     const go = window.confirm("已加入購物車！是否前往查看？");
+  //     if (go) {
+  //       window.location.href = '/ShoppingCartPage';
+  //     }
+  //   }
+  // };
 
   favBtnClick = (e) => {
-    // alert('已收藏')
-    this.setState((prevState) => ({
-      isFavorite: !prevState.isFavorite,
-    }));
+    if (this.state.uid) {
+      if (this.state.isFavorite) {//如果按之前是被收藏
+        //delete API
+        axios.get(`http://localhost:8000/delete/collect/${this.state.uid}/${this.props.pid}`)
+      }
+      else {//如果按之前是沒有被收藏
+        //edit API
+        axios.get(`http://localhost:8000/insert/collect/${this.state.uid}/${this.props.pid}`)
+
+      }
+      this.setState((prevState) => ({
+        isFavorite: !prevState.isFavorite,
+      }));
+    }
+    else {
+      alert('登入後才能收藏!!')
+    }
   }
   shareOthers = async () => {
     try {

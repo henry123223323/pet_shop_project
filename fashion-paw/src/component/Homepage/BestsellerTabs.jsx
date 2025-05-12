@@ -1,48 +1,18 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import axios from 'axios'
 import styles from './BestsellerTabs.module.css'
 import pawicon from './images/pawicon.svg'
-import Dog7 from './images/Dog7.jpg'
-import Dog9 from './images/Dog9.jpg'
-import Dog from './images/5-3littlemonster_chicken.png'
-import Dog2 from './images/3-2Rrannk_beef.png'
-import Cat from './images/4-2kitcat_tunacrab.png'
-import Cat2 from './images/5-1Instinct_duck.png'
-import Cat3 from './images/6-2sheba_tunachicken.png'
+const API_BASE = 'http://localhost:8000'
 
-
-const categories = [
-  {
-    key: 'feed',
-    label: '飼料',
-    images: [Dog7, Dog9, Dog7, Dog9, Dog7, Dog9],
-  },
-  {
-    key: 'ComplementaryFood',
-    label: '副食',
-    images: [Dog, Dog2, Cat, Cat2, Cat3],
-  },
-  {
-    key: 'snack',
-    label: '零食',
-    images: [Dog7, Dog9, Dog7],
-  },
-  {
-    key: 'health',
-    label: '保健食品',
-    images: [Dog9, Dog7, Dog9],
-  },
-  {
-    key: 'home',
-    label: '生活家居',
-    images: [Dog7, Dog9, Dog7],
-  },
-  {
-    key: 'toy',
-    label: '玩具',
-    images: [Dog9, Dog7, Dog9],
-  },
+// 對應後端返回的 product_category
+const tabs = [
+  { key: 'pet_food',           label: '飼料' },
+  { key: 'complementary_food',  label: '副食' },
+  { key: 'snacks',              label: '零食' },
+  { key: 'Health_Supplements',  label: '保健食品' },
+  { key: 'Living_Essentials',   label: '生活家居' },
+  { key: 'toys',                label: '玩具' }
 ]
-
 
 function chunkArray(arr, size) {
   const chunks = []
@@ -53,75 +23,92 @@ function chunkArray(arr, size) {
 }
 
 export default function BestsellerTabs() {
-
-  const [activeKey, setActiveKey] = useState(categories[0].key)
-  const activeCategory = categories.find((c) => c.key === activeKey)
-
-  const slides = chunkArray(activeCategory.images, 3)
-
+  const [activeKey, setActiveKey] = useState(tabs[0].key)
+  const [data, setData] = useState([])
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
   const [page, setPage] = useState(0)
 
-  const prev = () => setPage((page + slides.length - 1) % slides.length)
-  const next = () => setPage((page + 1) % slides.length)
+  // 初次載入或 activeKey 改變時，一次拿全部分類前5
+  useEffect(() => {
+  setLoading(true)
+  axios.get(`${API_BASE}/get/category-ranking`)
+    .then(res => {
+      console.log('▶️ category-ranking raw data:', res.data)
+      setData(res.data)
+      setPage(0)
+      })
+      .catch(err => {
+        console.error('載入分類排行失敗', err)
+        setError(err.response?.data || err.message || '載入失敗')
+      })
+      .finally(() => setLoading(false))
+  }, [])
 
-
-  const switchCategory = (key) => {
-    setActiveKey(key)
-    setPage(0)
-  }
+  // 選擇對應分類的商品
+  const currentList = data.filter(item => item.category === activeKey)
+  const slides = chunkArray(currentList, 3)
+  const prev = () => setPage(p => (p + slides.length - 1) % slides.length)
+  const next = () => setPage(p => (p + 1) % slides.length)
 
   return (
     <section className={styles.section}>
       <div className="container-lg">
-        <div className={styles.titleWrapper}>
-          <h2 className={styles.title}>
-            熱銷排行榜
-            <img src={pawicon} className={styles.icon} />
-          </h2>
-        </div>
-
-
+        <h2 className={styles.title}>
+          分類熱銷排行榜 <img src={pawicon} alt="paw" className={styles.icon} />
+        </h2>
         <nav className={styles.tabNav}>
-          {categories.map((cat) => (
+          {tabs.map(t => (
             <button
-              key={cat.key}
-              className={`${styles.tab} ${cat.key === activeKey ? styles.active : ''
-                }`}
-              onClick={() => switchCategory(cat.key)}
+              key={t.key}
+              className={`${styles.tab} ${t.key === activeKey ? styles.active : ''}`}
+              onClick={() => { setActiveKey(t.key); setPage(0) }}
             >
-              {cat.label}
+              {t.label}
             </button>
           ))}
         </nav>
       </div>
 
       <div className="container-lg">
-        <div className={styles.slider}>
-          <button onClick={prev} className={styles.arrow}>
-            ‹
-          </button>
+        {loading && <div className={styles.loading}>載入中…</div>}
+        {error   && <div className={styles.error}>{error}</div>}
 
-          <div className={styles.viewport}>
-            <div
-              className={styles.track}
-              style={{ transform: `translateX(-${page * 100}%)` }}
-            >
-              {slides.map((group, gi) => (
-                <div key={gi} className={styles.slide}>
-                  {group.map((src, idx) => (
-                    <div key={idx} className={styles.card}>
-                      <img src={src} className={styles.img} alt="" />
-                    </div>
-                  ))}
-                </div>
-              ))}
+        {!loading && !error && slides.length > 0 && (
+          <div className={styles.slider}>
+            <button onClick={prev} className={styles.arrow}>‹</button>
+            <div className={styles.viewport}>
+              <div
+                className={styles.track}
+                style={{ transform: `translateX(-${page * 100}%)` }}
+              >
+                {slides.map((group, gi) => (
+                  <div key={gi} className={styles.slide}>
+                    {group.map(prod => (
+                      <a
+                        key={prod.pid}
+                        href={`/product/${prod.pid}`}
+                        className={styles.card}
+                      >
+                        <img
+                          src={prod.imageUrl || '/media/default/no-image.png'}
+                          alt={prod.name}
+                          className={styles.img}
+                        />
+                        <p className={styles.caption}>{prod.name}</p>
+                      </a>
+                    ))}
+                  </div>
+                ))}
+              </div>
             </div>
+            <button onClick={next} className={styles.arrow}>›</button>
           </div>
+        )}
 
-          <button onClick={next} className={styles.arrow}>
-            ›
-          </button>
-        </div>
+        {!loading && !error && slides.length === 0 && (
+          <div className={styles.noData}>暫無資料</div>
+        )}
       </div>
     </section>
   )

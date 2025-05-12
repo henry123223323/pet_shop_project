@@ -24,20 +24,25 @@ class PdAttr extends Component {
                             <td>名稱</td>
                             <td>{pdAttr.name}</td>
                         </tr>)}
-                        {pdAttr.purchase_date && (<tr>
+                        {pdAttr.buydate && (<tr>
                             <td>購入時間</td>
-                            <td>{pdAttr.purchase_date}</td>
+                            <td>{pdAttr.buydate}</td>
                         </tr>)}
-                        {pdAttr.condition_level && (
+                        {pdAttr.new_level && (
                             <tr>
                                 <td>保存狀況</td>
-                                <td><PawDisplay rating={pdAttr.condition_level}/></td>
+                                <td><PawDisplay rating={pdAttr.new_level}/></td>
                             </tr>
                         )}
 
                         {pdAttr.model && (<tr>
                             <td>型號</td>
                             <td>{pdAttr.model}</td>
+                        </tr>)}
+
+                        {pdAttr.pattern && (<tr>
+                            <td>樣式</td>
+                            <td>{pdAttr.pattern}</td>
                         </tr>)}
 
                         {pdAttr.size && (<tr>
