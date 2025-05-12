@@ -838,6 +838,8 @@ WHERE p.condition = 'second'
       res.status(500).send("伺服器錯誤");
     } else {
       console.log("http://localhost:8000/post/productsreach/second 被post連線");
+      console.log(JSON.parse(rows[0].images)[0].img_path );
+      
       res.json(rows); // 正確回傳結果給前端
     }
   })

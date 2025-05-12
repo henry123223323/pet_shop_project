@@ -33,7 +33,8 @@ async function searchProducts(keyword) {
   if (result.data.length !== 0) {
     res_json = {
       url: `http://localhost:3000/product/${result.data[0].id}`,
-      pd_name: result.data[0].name
+      pd_name: result.data[0].name,
+      img:`http://localhost:3000/${JSON.parse(result.data[0].images)[0].img_path}`
     }
     return res_json
   }
