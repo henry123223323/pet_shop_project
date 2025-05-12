@@ -725,6 +725,18 @@ app.get("/get/orderitems/:order_id", function(req, res) {
 });
 
 
+app.get("/get/orderitemfirstpig/:order_id",function(req,res){
+  const order_id = req.params.order_id
+  conn.query("SELECT img_path as pd_img FROM orderitem WHERE order_id = ? limit 1 ",[order_id],function(err,results){
+    if (err) {
+          console.error("資料庫查詢錯誤:", err);
+          res.status(500).send("伺服器錯誤");
+      } else {
+          console.log("尋找商品訂單內容成功");
+          res.json(results); // 正確回傳結果給前端
+      }
+  })
+})
 
 
 
