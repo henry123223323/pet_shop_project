@@ -3,10 +3,22 @@ import axios from 'axios'
 class StepBasicInfo extends Component {
     constructor(props) {
         super(props)
+
+        this.inputusername = React.createRef();
+        this.inputfirstname = React.createRef();
+        this.inputlastname = React.createRef();
+        this.inputaddress = React.createRef();
+        this.inputphone = React.createRef();
+        this.inputbirthday = React.createRef();
+
+
         this.state = {
+            show: false,
             city: [],
             district: [],
-            inputinfo:{}
+            inputinfo: {
+
+            }
         }
     }
     //一進入畫面就帶入所有縣市
@@ -29,36 +41,78 @@ class StepBasicInfo extends Component {
             //去弄淺層複製，下面的抓鄉式也沒好 
 
 
-            this.setState({
-                inputinfo: { city: event.target.value }
-            })
             return cities.name === city
         })
         console.log(city_index);
         let newState = { ... this.state }
         newState.district = this.state.city[city_index].districts
         this.setState(newState)
-
-    }
-
-    getdistrict = (event) =>{
-        console.log(event.target.value);
+        let newinputinfo = { ...this.state.inputinfo, city: event.target.value }
         this.setState({
-            inputinfo:{ district: event.target.value }
+            inputinfo: newinputinfo
+        }, () => {
+            console.log(this.state.inputinfo);
         })
-        console.log(this.state.inputinfo);
-        
+
     }
+
+    getdistrict = (event) => {
+
+        console.log(event.target.value);
+        let newState = { ... this.state.inputinfo, district: event.target.value }
+        this.setState({
+            inputinfo: newState
+        }, () => {
+            console.log(this.state.inputinfo);
+        })
+    }
+
+    timetogo = (event) => {
+        event.preventDefault()
+
+        const inputusername = this.inputusername.current.value
+        const inputfirstname = this.inputfirstname.current.value
+        const inputlastname = this.inputlastname.current.value
+        const inputaddress = this.inputaddress.current.value
+        const fullname = this.inputfirstname.current.value + this.inputlastname.current.value
+        const inputphone = this.inputphone.current.value
+        const inputbirthday = this.inputbirthday.current.value
+
+        const newState = {
+            ... this.state.inputinfo, firstname: inputfirstname, username: inputusername,
+            userfullname: fullname, lastname: inputlastname, adress: inputaddress, phone: inputphone,
+            birthday: inputbirthday
+        }
+        this.setState({
+            inputinfo: newState
+        }, () => {
+            // console.log(this.state.inputinfo);
+            this.props.getallinfo(this.state.inputinfo)
+        })
+
+
+
+
+    }
+
+
+
+
+
+
+
+
+
 
     render() {
         return (
             <>
                 <fieldset className="border">
                     <legend>基本資料</legend>
-                    <label>暱稱:</label> <input name="username" />
+                    <label>暱稱:</label> <input name="username" ref={this.inputusername} />
                     <p></p>
-                    <label>姓:</label> <input name="firstname" />
-                    <label>名:</label> <input name="lastname" />
+                    <label>姓:</label> <input name="firstname" ref={this.inputfirstname} />
+                    <label>名:</label> <input name="lastname" ref={this.inputlastname} />
 
                     <p></p>
                     <label>地址:</label>
@@ -72,20 +126,33 @@ class StepBasicInfo extends Component {
                             return <option key={idx} value={dist.name}>{dist.name}</option>
                         })}
                     </select>
-                    <input type="text" name='address' />
+                    <input type="text" name='address' ref={this.inputaddress} />
                     <p></p>
                     <label>電話:</label>
-                    <input type="text" name='phone' />
+                    <input type="text" name='phone' ref={this.inputphone} />
                     <p></p>
                     <label >生日</label>
-                    <input type="date" name="birthday" />
+                    <input type="date" name="birthday" ref={this.inputbirthday} />
                     <p></p>
-                    <p></p><input type="checkbox" name="" id="confirmuse" />
-                    <label htmlFor="confirmuse">同意使用個人資料</label>
+                    <p></p><input type="checkbox" name="" id="confirmuse" onChange={this.BeSeller} />
+                    <label htmlFor="confirmuse" >是否成為賣家?</label>
                     <p></p>
-                    <button type="submit" className="btn btn-primary">送出</button>
+                    {this.state.show && <textarea placeholder='自我介紹'></textarea>}
+                    <p></p>
+                    <button type="submit" className="btn btn-primary" onClick={this.timetogo}>送出</button>
                 </fieldset></>
         );
+    }
+    BeSeller = (e) => {
+        console.log(e.target.checked);
+        if (e.target.checked) {
+            this.setState({ show: true })
+        }
+        else {
+            this.setState({ show: false })
+
+        }
+
     }
 }
 

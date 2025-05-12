@@ -10,7 +10,7 @@ class Coupon extends Component {
     availableCoupons: [],  // 後端折扣碼清單
     showList: false,
     appliedCouponCode: '',
-
+    isLoggedIn: !!cookie.get('user_uid'), // 判斷是否登入
   };
 
   render() {
@@ -46,7 +46,7 @@ class Coupon extends Component {
             </button>
 
             {showList && availableCoupons.length === 0 && (
-              <p className="text-muted mt-2">尚無可用折扣碼</p>
+              <p className="text-muted mt-2">{this.state.isLoggedIn ? '尚無可用折扣碼' : '請先登入才能使用折扣碼'}</p>
             )}
 
             {showList && availableCoupons.length > 0 && (
@@ -99,6 +99,12 @@ class Coupon extends Component {
 
   showCoupons = async () => {
     const uid = cookie.get('user_uid');
+    console.log("🔍 目前登入 UID：", uid); // 加這行
+    if (!uid) {
+      this.setState({ isLoggedIn: false });
+      return;
+    }
+
     try {
       const res = await axios.get(`http://localhost:8000/coupons/${uid}`);
       this.setState({ availableCoupons: res.data, showList: true });
