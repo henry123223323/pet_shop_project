@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import styles from './ChatWindow.module.css';
 import userAvatar from './user.png';
 import botAvatar from './dog.png';
@@ -7,12 +7,15 @@ import axios from 'axios';
 
 export default function ChatApp() {
   const user_id = cookie.get('user_uid')
+  const [users, setusers] = useState(
+    [
+      { id: 'u3', name: '好拾汪', avatar: userAvatar, lastTime: '前天 09:20', snippet: '嗨(好)嗨(的)～本週熱門商…' },
+      { id: 'u2', name: '好拾啾', avatar: userAvatar, lastTime: '昨天 09:20', snippet: '感謝主人在好拾毛成功完成購…' },
+      { id: 'u1', name: '毛毛主人', avatar: userAvatar, lastTime: '今天 10:22', snippet: '好的，因為是二手商品所…' },
+    ]
+  )
   // 1. 使用者清單
-  const users = [
-    { id: 'u3', name: '好拾汪', avatar: userAvatar, lastTime: '前天 09:20', snippet: '嗨(好)嗨(的)～本週熱門商…' },
-    { id: 'u2', name: '好拾啾', avatar: userAvatar, lastTime: '昨天 09:20', snippet: '感謝主人在好拾毛成功完成購…' },
-    { id: 'u1', name: '毛毛主人', avatar: userAvatar, lastTime: '今天 10:22', snippet: '好的，因為是二手商品所…' },
-  ];
+  const messagesEndRef = useRef(null);
 
   // 2. selected user
   const [selected, setSelected] = useState(users[0]);
@@ -21,6 +24,22 @@ export default function ChatApp() {
   const [messagesMap, setMessagesMap] = useState({
     u1: [
       { id: 1, from: 'bot', text: '好的，因為是二手商品所以不關我的事哦，汪!', time: '10:20' },
+      { id: 1, from: 'bot', text: '好的，因為是二手商品所以不關我的事哦，汪!', time: '10:20' },
+      { id: 1, from: 'bot', text: '好的，因為是二手商品所以不關我的事哦，汪!', time: '10:20' },
+      { id: 1, from: 'bot', text: '好的，因為是二手商品所以不關我的事哦，汪!', time: '10:20' },
+      { id: 1, from: 'bot', text: '好的，因為是二手商品所以不關我的事哦，汪!', time: '10:20' },
+      { id: 1, from: 'bot', text: '好的，因為是二手商品所以不關我的事哦，汪!', time: '10:20' },
+      { id: 1, from: 'bot', text: '好的，因為是二手商品所以不關我的事哦，汪!', time: '10:20' },
+      { id: 1, from: 'bot', text: '好的，因為是二手商品所以不關我的事哦，汪!', time: '10:20' },
+      { id: 1, from: 'user', text: '好的，因為是二手商品所以不關我的事哦，汪!', time: '10:20' },
+      { id: 1, from: 'bot', text: '好的，因為是二手商品所以不關我的事哦，汪!', time: '10:20' },
+      { id: 1, from: 'user', text: '好的，因為是二手商品所以不關我的事哦，汪!', time: '10:20' },
+      { id: 1, from: 'bot', text: '好的，因為是二手商品所以不關我的事哦，汪!', time: '10:20' },
+      { id: 1, from: 'user', text: '好的，因為是二手商品所以不關我的事哦，汪!', time: '10:20' },
+      { id: 1, from: 'bot', text: '好的，因為是二手商品所以不關我的事哦，汪!', time: '10:20' },
+      { id: 1, from: 'user', text: '好的，因為是二手商品所以不關我的事哦，汪!', time: '10:20' },
+      { id: 1, from: 'bot', text: '好的，因為是二手商品所以不關我的事哦，汪!', time: '10:20' },
+      { id: 1, from: 'user', text: '好的，因為是二手商品所以不關我的事哦，汪!', time: '10:20' },
     ],
     u2: [
       { id: 1, from: 'bot', text: '感謝主人在好拾毛成功完成購買! 商品很快就會送達汪!', time: '09:20' },
@@ -34,6 +53,17 @@ export default function ChatApp() {
   const messages = messagesMap[selected.id] || [];
 
   const [input, setInput] = useState('');
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
+  useEffect(() => {
+    axios.get(`http://localhost:8000/channel/${user_id}`)
+      .then(res => {
+        console.log(res.data);
+        setusers(res.data)
+      })
+  }, [])
 
   // 5. 送出訊息要更新對應那位使用者的陣列
   const handleSend = () => {
@@ -129,6 +159,7 @@ export default function ChatApp() {
               <span className={styles.time}>{m.time}</span>
             </div>
           ))}
+          <div ref={messagesEndRef} />
         </div>
 
         <div className={styles.quickBtns}>
@@ -149,6 +180,7 @@ export default function ChatApp() {
           <button className={styles.send} onClick={handleSend}>🐾</button>
         </div>
       </main>
+
     </div>
   );
 }

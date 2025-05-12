@@ -1956,7 +1956,46 @@ app.delete("/cart/remove", async (req, res) => {
     res.status(500).send("伺服器錯誤");
   }
 });
+app.get('/channel/:uid', async(req, res)=>{
+  let uidX=req.params.uid
+  let sql=`
+  SELECT cru.chatroomID AS id, ui.username AS name, ui.photo, ui.last_time_login AS lastTime, cm.message AS snippet 
+  FROM chatroomuser AS cru 
+  LEFT JOIN userinfo AS ui 
+  ON cru.uidY = ui.uid 
+  LEFT JOIN chatmessage AS cm 
+  ON cm.ChatrommID = cru.chatroomID 
+  AND cm.create_time = ( SELECT MAX(create_time) FROM chatmessage WHERE ChatrommID = cru.chatroomID ) 
+  WHERE cru.uidX = ?
 
+  `
+  conn.query(sql, [uidX], function (err, rows) {
+    rows.forEach((room)=>{
+      room.id='chatroom'+room.id
+    })
+    
+    console.log(rows);
+    res.json(rows)
+    
+  })
+})
+app.get('/message/:uid', async (req, res) => {
+  let uidX = req.params.uid;
+  let chatroom_Array=[]
+  let message_json = {}
+  await axios.get(`http://localhost:8000/channel/${uidX}`)
+    .then(res => {
+      res.data.forEach((chatroom) => {
+      chatroom_Array.push(chatroom.id)
+      
+    })
+    })
+  
+  chatroom_Array.map(rid => { message_json[rid] = { hello: rid } })
+  console.log(message_json);
+  res.json(message_json)
+
+})
 //獲取折扣碼
 app.get('/coupons/:uid', async (req, res) => {
   const { uid } = req.params;
