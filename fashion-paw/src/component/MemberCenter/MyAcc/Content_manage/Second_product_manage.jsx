@@ -23,7 +23,8 @@ export default class SecondProductManage extends Component {
   loadData = async () => {
     this.setState({ loading: true, error: null });
     try {
-      const res = await axios.get('http://localhost:8000/get/second-products');
+      const res = await axios.get('http://localhost:8000/get/second-products', {
+   });
       this.setState({ second_product: res.data, loading: false });
     } catch (err) {
       console.error('取得二手商品失敗：', err);
