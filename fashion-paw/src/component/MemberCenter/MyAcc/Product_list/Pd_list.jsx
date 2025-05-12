@@ -63,7 +63,7 @@ class PD_list extends Component {
       this.setState(prevState => ({
         order: {
           ...prevState.order,
-          pd_img: response.data[0]?.pd_img || "/media/default.jpg"
+          pd_img: response.data[0]?.pd_img || "../media/default.jpg"
         }
       }));
     })
