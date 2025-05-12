@@ -14,6 +14,7 @@ const upload = require('../fashion-paw/uploadProductImg');
 const uploadArticleImg = require('../fashion-paw/uploadArticleImg');
 
 const paymentRouter = require('./routes/payment');
+const cvsRoute = require('./routes/cvs');
 
 var app = express();
 app.listen(8000, function () {
@@ -59,7 +60,7 @@ app.use('/verify', verifyRoutes);
 
 //付款綠界API
 app.use('/payment', paymentRouter);
-
+app.use('/', cvsRoute);
 
 app.get("/get/article", function (req, res) {//用於開發者後臺管理
   conn.query("SELECT * FROM article", function (err, results) {
@@ -1462,12 +1463,12 @@ app.get('/get/category-ranking', (req, res) => {
     }
     // 這裡取 row.category，不要再用 row.categories
     const data = results.map(row => ({
-      category:  row.category,
-      pid:       row.pid,
-      name:      row.name,
-      price:     row.price,
+      category: row.category,
+      pid: row.pid,
+      name: row.name,
+      price: row.price,
       saleCount: row.saleCount,
-      imageUrl:  row.img_path
+      imageUrl: row.img_path
         ? `${hostUrl}/${row.img_path.replace(/^\.\.\//, '')}`
         : null
     }));
@@ -1785,4 +1786,90 @@ app.get('/coupons/:uid', async (req, res) => {
   }
 });
 
-module.exports = { q };//匯出q給payment使用
+// 訂單更新載具
+app.post('/updateDevice', async (req, res) => {
+  const { uid, device } = req.body;
+
+  if (!uid || !device) {
+    return res.status(400).json({ success: false, message: '缺少 uid 或 device' });
+  }
+
+  try {
+    await q('UPDATE userinfo SET device = ? WHERE uid = ?', [device, uid]);
+    res.json({ success: true });
+  } catch (err) {
+    console.error('❌ 更新 device 失敗', err);
+    res.status(500).json({ success: false, message: '伺服器錯誤' });
+  }
+});
+
+//訂單新增地址
+app.post("/newAddress", function (req, res) {
+  const { uid, City, District, address, AdressName, AdressPhone } = req.body;
+
+  // ✅ 欄位檢查
+  if (!uid || !City || !District || !address || !AdressName || !AdressPhone) {
+    return res.status(400).json({
+      success: false,
+      message: "缺少必要欄位",
+      missing: {
+        uid: !uid,
+        City: !City,
+        District: !District,
+        address: !address,
+        AdressName: !AdressName,
+        AdressPhone: !AdressPhone
+      }
+    });
+  }
+
+  // ✅ 檢查是否重複地址
+  const checkSQL = `
+    SELECT * FROM address 
+    WHERE uid = ? AND City = ? AND District = ? AND address = ?
+  `;
+
+  conn.query(checkSQL, [uid, City, District, address], function (err, rows) {
+    if (err) {
+      console.error("❌ 資料庫查詢錯誤:", err);
+      return res.status(500).json({
+        success: false,
+        message: "資料庫查詢失敗",
+        error: err.message
+      });
+    }
+
+    if (rows.length > 0) {
+      return res.json({
+        success: false,
+        message: "地址已存在"
+      });
+    }
+
+    // ✅ 新增地址
+    const insertSQL = `
+      INSERT INTO address (uid, City, District, address, AdressName, AdressPhone)
+      VALUES (?, ?, ?, ?, ?, ?)
+    `;
+
+    conn.query(insertSQL, [uid, City, District, address, AdressName, AdressPhone], function (err, result) {
+      if (err) {
+        console.error("❌ 儲存地址失敗:", err);
+        return res.status(500).json({
+          success: false,
+          message: "資料庫新增失敗",
+          error: err.message
+        });
+      }
+
+      console.log("✅ 新地址儲存成功，insertId:", result.insertId);
+      res.json({
+        success: true,
+        message: "地址已成功儲存",
+        insertId: result.insertId
+      });
+    });
+  });
+});
+
+  module.exports = { q };//匯出q給payment使用
