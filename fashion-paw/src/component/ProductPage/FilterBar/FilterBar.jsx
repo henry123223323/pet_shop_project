@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import styles from './FilterBar.module.css';
 
-const functions = ['乾糧', '副食', '零食', '保健食品', '玩具', '家居'];
+const functions = ['乾糧', '副食', '零食', '保健食品', '玩具', '生活家居'];
 let brands = ['AAAA', 'BBBB', 'CCCC'];
 const prices = [
   { value: '101-300', label: '101–300' },
@@ -16,6 +16,8 @@ export default function FilterBar({ onFilterChange = () => { } }) {
   const [selFuncs, setSelFuncs] = useState([]);
   const [selBrands, setSelBrands] = useState([]);
   const [selPrice, setSelPrice] = useState('');
+  const [filterkey, setFilterKey] = useState(1)
+
 
   useEffect(() => {
     const fetchBrand = async () => {
@@ -97,6 +99,16 @@ export default function FilterBar({ onFilterChange = () => { } }) {
           ))}
         </div>
       </div>
+      <div className={styles.actions}>
+        <button className={styles.clearBtn} onClick={() => {
+          setSelFuncs([]);
+          setSelBrands([]);
+          setSelPrice('');
+        }}>
+          清除篩選
+        </button>
+      </div>
     </div>
+
   );
 }

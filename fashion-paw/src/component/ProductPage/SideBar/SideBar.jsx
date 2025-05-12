@@ -10,7 +10,7 @@ export default function Sidebar({ onSelectCategory = () => {} }) {
   const [selectedCategory, setSelectedCategory] = useState({ type: '', cat: '' });
 
 
-  const categories = ['飼料', '副食', '零食', '保健食品', '家居', '玩具'];
+  const categories = ['飼料', '副食', '零食', '保健食品', '生活家居', '玩具'];
 
   return (
     <div className={styles.sidebar}>
@@ -22,7 +22,7 @@ export default function Sidebar({ onSelectCategory = () => {} }) {
                 {type === 'dog' && '狗狗專區'}
                 {type === 'cat' && '貓咪專區'}
                 {type === 'bird' && '鳥類專區'}
-                {type === 'mouse' && '老鼠專區'}
+                {type === 'mouse' && '倉鼠專區'}
                 {expandedType === type ? ' ▾' : ' ▸'}
               </span>
             </button>
