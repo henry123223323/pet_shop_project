@@ -5,6 +5,7 @@ import PayWay from './PayWay'
 import DeliverWay from './DeliverWay'
 import Receipt from './Receipt';
 import ConfirmBtn from '../share/ConfirmBtn';
+import cookie from 'js-cookie';
 
 
 class CheckBillPage extends Component {
@@ -146,24 +147,18 @@ class CheckBillPage extends Component {
         );
     }
     componentDidMount() {
-
         const fromCart = localStorage.getItem("fromCart") === "true";
-        if (!fromCart) {
+        const selectedItems = JSON.parse(localStorage.getItem('selectedItems')) || [];
+
+        if (!fromCart || selectedItems.length === 0) {
             alert("請先從購物車選擇商品");
             window.location.href = "/ShoppingCartPage";
             return;
         }
+
         localStorage.removeItem("fromCart");
 
-
-        const selectedItems = JSON.parse(localStorage.getItem('selectedItems')) || [];
         const discountAmount = Number(localStorage.getItem('discountAmount')) || 0;
-
-        if (selectedItems.length === 0) {
-            alert("查無商品資料，請重新從購物車進入");
-            window.location.href = "/ShoppingCartPage";
-            return;
-        }    
 
         this.setState({ selectedItems, discountAmount });
     }
@@ -174,38 +169,64 @@ class CheckBillPage extends Component {
         const { selectedItems, deliveryData, payMethod, receiptData, cardLast4, finalTotal } = this.state;
 
         const isNew = selectedItems.some(item => item.condition === "new");
-    
+
         const missingFields = [];
-    
-        // ✅ 檢查寄送資料
-        const deliveryRequired = [ 'method',
-            'receiver_name',
-            'receiver_phone',
-            'receiver_address',
-            'shop_type',
-            'selectedCity',
-            'selectedDistrict'];
-        const deliveryMissing = deliveryRequired.filter(field => !deliveryData?.[field] || deliveryData[field].trim() === '');
+
+        // ✅ 根據配送方式決定必填欄位
+        let deliveryRequired = ['method', 'receiver_name', 'receiver_phone', 'receiver_address'];
+
+        if (deliveryData.method === '宅配') {
+            deliveryRequired.push('city', 'district');
+          }
+          
+        const deliveryMissing = deliveryRequired.filter(
+            (field) => !deliveryData?.[field] || deliveryData[field].trim() === ''
+        );
+
         if (deliveryMissing.length > 0) {
             missingFields.push("寄送資訊");
         }
-        
-    
+
         // ✅ 檢查付款方式
         if (!payMethod) {
             missingFields.push("付款方式");
         }
-    
+
         // ✅ 新品需要發票
         if (isNew && (!receiptData?.value || receiptData.value.trim() === "")) {
             missingFields.push("發票資訊");
         }
-    
+
         // ✅ 如果有缺漏，就 alert 出來
         if (missingFields.length > 0) {
             alert(`請完整填寫以下欄位：\n${missingFields.join("、")}`);
             return;
         }
+
+
+        const uid = cookie.get("user_uid");
+        //更新載具
+        if (receiptData.rememberCarrier && receiptData.phoneCarrier) {
+            await axios.post('http://localhost:8000/updateDevice', {
+                uid,
+                device: receiptData.phoneCarrier
+            });
+        }
+
+        //新增地址
+        const { saveThisAddress, receiver_name, receiver_phone, city, district, address } = this.state.deliveryData;
+
+        if (saveThisAddress && receiver_name && receiver_phone && city && district && address) {
+            await axios.post('http://localhost:8000/newAddress', {
+                uid: uid,
+                City: city,
+                District: district,
+                address,
+                AdressName: receiver_name,
+                AdressPhone: receiver_phone
+            });
+        }
+
         // ✅ 整理訂單項目
         const orderItems = selectedItems.map(item => ({
             pid: item.pid,
@@ -216,8 +237,19 @@ class CheckBillPage extends Component {
             total_price: item.unit_price * item.quantity,
             img_path: item.image
         }));
-    
+
         // ✅ 整理訂單主檔
+
+        // ✅ 根據寄送方式決定 receiver_address 顯示格式
+        let finalReceiverAddress = deliveryData.receiver_address;
+
+        if (deliveryData.method === '超商取貨') {
+            const store = JSON.parse(localStorage.getItem('selectedCVS')) || null;
+            if (store?.storename && store?.storeid) {
+                finalReceiverAddress = `${store.storename}（代號：${store.storeid}）`;
+            }
+        }
+
         const orderId = "HSM" + Date.now();
         const orderData = {
             uid: 205, // 模擬登入用戶
@@ -225,36 +257,49 @@ class CheckBillPage extends Component {
             display_order_num: orderId,
             total_price: finalTotal,
             pay_way: payMethod,
-            card_last4: cardLast4 || null,
+            card_last4: cardLast4 || 2222,
             delivery_method: deliveryData.method,
             receiver_name: deliveryData.receiver_name,
             receiver_phone: deliveryData.receiver_phone,
-            receiver_address: deliveryData.receiver_address,
+            receiver_address: finalReceiverAddress,
             receipt: receiptData?.value || '未填'
         };
-    
+
         console.log("🧾 訂單資料：", orderData);
         console.log("📦 訂單項目：", orderItems);
-    
+
         // ✅ 送出訂單資料到後端
         try {
             const res = await axios.post('http://localhost:8000/orders/create', {
                 order: orderData,
                 items: orderItems
             });
-    
+
             if (res.status === 200) {
-                const { data } = await axios.post('http://localhost:8000/payment/create-order', {
-                    orderId,
-                    amount: orderData.total_price,
-                    itemName: orderItems.map(item => item.pd_name).join(", ")
-                });
-    
-                // ✅ 自動送出付款表單
-                const div = document.createElement('div');
-                div.innerHTML = data;
-                document.body.appendChild(div);
-                div.querySelector('form').submit();
+                // ✅ 清除 localStorage 中的購物資料
+                localStorage.removeItem('selectedItems');
+                localStorage.removeItem('discountAmount');
+                localStorage.removeItem('selectedCVS');
+
+                // ✅ 判斷付款方式
+                if (payMethod === '線上付款') {
+                    // 👉 綠界付款流程
+                    const { data } = await axios.post('http://localhost:8000/payment/create-order', {
+                        orderId,
+                        amount: orderData.total_price,
+                        itemName: orderItems.map(item => item.pd_name).join(", ")
+                    });
+
+                    const div = document.createElement('div');
+                    div.innerHTML = data;
+                    document.body.appendChild(div);
+                    div.querySelector('form').submit();
+
+                } else if (payMethod === '貨到付款') {
+                    // 👉 直接完成訂單，導回首頁
+                    alert("✅ 訂單已成立，請留意商品配送");
+                    window.location.href = '/';
+                }
             }
         } catch (error) {
             console.error("❌ 訂單建立失敗：", error);

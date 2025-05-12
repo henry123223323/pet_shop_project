@@ -34,11 +34,11 @@ class Sidebar extends Component {
                 content: "我的地址",
                 auth: 1
             },
-            {
-                link: "change-password",
-                content: "更改密碼",
-                auth: 1
-            },
+            // {
+            //     link: "change-password",
+            //     content: "更改密碼",
+            //     auth: 1
+            // },
             {
                 link: "manage-market",
                 content: "管理賣場",
