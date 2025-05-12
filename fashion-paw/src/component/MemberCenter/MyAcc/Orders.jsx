@@ -65,6 +65,41 @@ class Orders extends Component {
         ]
     }
     }
+
+    getorder=()=>{
+        let uid = cookie.get("user_uid")
+
+        axios.get(`http://localhost:8000/get/getorder/${uid}`).then((response) => {
+            // console.log("查詢成功:", response.data);
+            
+
+
+            this.setState({
+                products: response.data
+            },()=>{
+                console.log(this.state);
+                
+            })
+            
+           
+        })
+        .catch((error) => {
+            console.error("查詢訂單失敗:", error);
+        });
+    }
+
+
+    
+
+
+
+
+    componentDidMount(){
+        this.getorder()
+    }
+
+
+
     render() {
         let { products } = this.state
         return (
@@ -73,7 +108,7 @@ class Orders extends Component {
                 <label for="">搜尋</label>
                 <input type="search" name="" id="" />
                 <div className="container mt-4">
-                    {products.map((pd, index) => {
+                    {products?.map((pd, index) => {
                         return <PD_list key={index} product={pd} />
 
                     })}

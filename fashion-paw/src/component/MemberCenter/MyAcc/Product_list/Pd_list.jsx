@@ -1,40 +1,78 @@
 import React, { Component } from 'react';
 import Order_detail from './Pd_detail';
+import cookie from "js-cookie";
+import axios from 'axios';
+
 
 class PD_list extends Component {
-    state = {
-        showDetail: false,
-        order: {
-            ordernum: "000000002",
-            neworsecond: "second",
-            orderdate: new Date().toLocaleDateString() + new Date().toLocaleTimeString(),
-            orderstate: "已寄件",
-            price: 25500,
-            pd_img: "/media/member_center/catfood.jpg",
-            order_item: [
-                {
-                    pid: "3",
-                    pd_name: "health",
-                    quantity: 2,
-                    unit_price: 100,
-                    img_path: "/media/member_center/catfood.jpg"
-                },
-                {
-                    pid: "4",
-                    pd_name: "snacks",
-                    quantity: 2,
-                    unit_price: 100,
-                    img_path: "/media/member_center/catfood.jpg"
-                }
-            ]
+    constructor(props) {
+        super(props)
+        this.state = {
+            showDetail: false,
+            order: {
+                ordernum: "000000002",
+                neworsecond: "second",
+                orderdate: new Date().toLocaleDateString() + new Date().toLocaleTimeString(),
+                orderstate: "已寄件",
+                price: 25500,
+                pd_img: "/media/member_center/catfood.jpg",
+                order_item: [
+                    {
+                        pid: "3",
+                        pd_name: "health",
+                        quantity: 2,
+                        unit_price: 100,
+                        img_path: "/media/member_center/catfood.jpg"
+                    },
+                    {
+                        pid: "4",
+                        pd_name: "snacks",
+                        quantity: 2,
+                        unit_price: 100,
+                        img_path: "/media/member_center/catfood.jpg"
+                    }
+                ]
+            }
         }
     }
 
-    componentDidMount() {
-        let newState = { ...this.state }
-        newState.order = this.props.product
-        this.setState(newState)
+    getorderitem = () => {
+        axios.get(`http://localhost:8000/get/orderitems/${this.props.product.order_id}`).then((response) => {
+            console.log("查詢成功:", response.data);
+
+            this.setState(prevState => ({
+                order: {
+                    ...prevState.order,
+                    order_item: response.data
+                }
+            }));
+
+
+        })
+            .catch((error) => {
+                console.error("刪除失敗:", error);
+            });
     }
+
+
+
+
+
+
+
+    componentDidUpdate(prevProps) {
+        // 只有在 order_id 改變時才呼叫 getorderitem()
+        if (
+            this.props.product &&
+            (!prevProps.product || this.props.product.order_id !== prevProps.product.order_id)
+        ) {
+            this.setState({ order: this.props.product }, () => {
+                this.getorderitem(); // 在 setState 完成後才執行，避免競爭狀態
+                console.log("更新 order 為:", this.props.product);
+            });
+        }
+    }
+
     render() {
         return (<>
 

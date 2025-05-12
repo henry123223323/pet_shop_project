@@ -1,32 +1,40 @@
 .moveimg {
     position: absolute;
-    top: 40%;
-    left: 85%;
+    top:550px;
+    left: 0%;
     height: 100px;
     width: 100px;
+    
+}
+
+
+.moveing{
     animation-name: gotoright;
     animation-duration: 4s;
+    animation-fill-mode: forwards;
 }
+
 
 @keyframes gotoright {
     0% {
         left: 0%
     }
+    
 
     20% {
-        top: 25%
+        top: 430px
     }
 
     40% {
-        top: 50%
+        top: 630px
     }
 
     60% {
-        top: 40%
+        top: 550px
     }
 
     100% {
-        left: 85%
+        left: 80%
     }
 }
 
@@ -101,18 +109,18 @@
 
 
 .three_box {
-    top: 10%;
+    top: 330px;
     left: 50%;
 }
 
 .four_box {
-    top: 60%;
+    top: 700px;
     left: 65%;
 }
 
 
 .two_box {
-    top: 60%;
+    top: 700px;
     left: 35%;
 
 }
@@ -124,7 +132,7 @@
 }
 
 .first_box {
-    top: 10%;
+    top: 330px;
     left: 20%;
 }
 
@@ -198,21 +206,21 @@
 }
 
 #kusa1 {
-    top: 10%;
+    top: 330px;
     left: 20%;
 }
 
 #kusa3 {
-    top: 10%;
+    top: 330px;
     left: 50%;
 }
 
 #kusa2 {
-    top: 60%;
+    top: 700px;
     left: 35%;
 }
 
 #kusa4 {
-    top: 60%;
+    top: 700px;
     left: 65%;
 }
