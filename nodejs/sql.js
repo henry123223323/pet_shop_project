@@ -738,6 +738,20 @@ app.get("/get/orderitemfirstpig/:order_id",function(req,res){
   })
 })
 
+app.get("/get/useruid/:email",function(req,res){
+  const email = req.params.email
+  conn.query("SELECT uid FROM userinfo WHERE email = ?",[email],function(err,results){
+    if (err) {
+          console.error("資料庫查詢錯誤:", err);
+          res.status(500).send("伺服器錯誤");
+      } else {
+          console.log("找到新建用戶uid");
+          res.json(results); // 正確回傳結果給前端
+      }
+  })
+})
+
+
 
 
 
