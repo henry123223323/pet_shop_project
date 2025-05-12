@@ -9,7 +9,6 @@ const util = require('util');
 var mysql = require("mysql");
 const imageType = require('image-type');
 // 夏威夷披薩
-
 const mySecondRouter = require('./routes/my-second-products')
 
 const verifyRoutes = require('./routes/verify');
@@ -41,7 +40,7 @@ const ai_robot = require('./aiRobot/chat')
 app.use(cookieParser())
 app.use('/api', uploadRoute);//用於上傳圖片
 app.use('/robot', ai_robot)
-
+app.use('/get', mySecondRouter) 
 // 定義 authenticate middleware：從 req.cookies.uid 讀取使用者 ID
 function authenticate(req, res, next) {
   const uid = req.cookies.uid
@@ -72,7 +71,6 @@ app.use(cors({
   credentials: true
 }));
 
-app.use('/get/my-second-products', require('./routes/my-second-products'))
 
 app.get("/get/article", function (req, res) {//用於開發者後臺管理
   conn.query("SELECT * FROM article", function (err, results) {
@@ -1127,20 +1125,6 @@ app.get('/delete/collect/:uid/:pid', function (req, res) {
 
   })
 })
-
-//後台管理 賣家個人商場api
-// 只抓自己的二手商品
-app.get('/api/my-second-products', (req, res) => {
-  const uid = req.user.id;  // 假設 middleware 已把 user 放到 req
-  const sql = `
-    SELECT p.*, pi.img_path AS imageUrl
-      FROM productslist p
- LEFT JOIN ( ... ) pi ON pi.pid = p.pid
-     WHERE p.condition='second' AND p.uid = ?
-  `;
-  conn.query(sql, [uid], (err, results) => { /* ... */ });
-});
-
 
 
 // 後台管理 新品和二手共用 上架 刪除 編輯函式
