@@ -9,7 +9,8 @@ const util = require('util');
 var mysql = require("mysql");
 const imageType = require('image-type');
 // 夏威夷披薩
-const secondProducts = require('./routes/secondProducts')
+
+const mySecondRouter = require('./routes/my-second-products')
 
 const verifyRoutes = require('./routes/verify');
 const upload = require('../fashion-paw/uploadProductImg');
@@ -23,7 +24,8 @@ app.listen(8000, function () {
 });
 app.use(express.static("public"));
 app.use(express.static(path.resolve(__dirname, '../fashion-paw/public')));
-app.use('/get/my-second-products', secondProducts)
+app.use('/my-second-products', mySecondRouter)
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
@@ -70,7 +72,7 @@ app.use(cors({
   credentials: true
 }));
 
-app.use('/get/my-second-products', require('./routes/secondProducts'))
+app.use('/get/my-second-products', require('./routes/my-second-products'))
 
 app.get("/get/article", function (req, res) {//用於開發者後臺管理
   conn.query("SELECT * FROM article", function (err, results) {
@@ -692,27 +694,49 @@ app.get("/get/creditcard/:uid", function (req, res) {
 });
 
 
-// 假設推薦商品存在 productslist 表裡，用某種邏輯挑 3 筆
 app.get('/get/recommend-products', (req, res) => {
-  const sql = `
+  const { pet_type } = req.query;
+  console.log('🔍 前端傳來 pet_type =', pet_type);
+
+  // 基本 SQL
+  let sql = `
     SELECT p.pid, p.pd_name, p.price,
-           (SELECT img_path FROM product_image WHERE pid = p.pid ORDER BY pd_img_id LIMIT 1) AS img_path
-    FROM productslist p
-    WHERE p.status = 1
-    ORDER BY RAND()
-    LIMIT 3
+           (SELECT img_path
+              FROM product_image
+             WHERE pid = p.pid
+             ORDER BY pd_img_id
+             LIMIT 1) AS img_path
+      FROM productslist p
+     WHERE p.status = 1
   `;
-  conn.query(sql, (err, results) => {
-    if (err) return res.status(500).json({ error: err.message });
+  const params = [];
+
+  // 若有 pet_type，加入篩選
+  if (pet_type) {
+    sql += ` AND p.pet_type = ?`;
+    params.push(pet_type);
+  }
+
+  // 隨機取三筆
+  sql += ` ORDER BY RAND() LIMIT 3`;
+  console.log('🔍 最終 SQL =', sql.trim(), '／params =', params);
+
+  conn.query(sql, params, (err, results) => {
+    if (err) {
+      console.error('GET /get/recommend-products 錯誤：', err.message);
+      return res.status(500).json({ error: err.message });
+    }
+
     const host = `${req.protocol}://${req.get('host')}`;
     const data = results.map(r => ({
-      pid: r.pid,
-      name: r.pd_name,
-      price: r.price,
+      pid:      r.pid,
+      name:     r.pd_name,
+      price:    r.price,
       imageUrl: r.img_path
         ? host + '/' + r.img_path.replace(/^public\//, '')
         : null
     }));
+
     res.json(data);
   });
 });
@@ -1572,18 +1596,38 @@ app.get("/get/userinfo", function (req, res) {
     }
   });
 });
-// 假設推薦商品存在 productslist 表裡，用某種邏輯挑 3 筆
 app.get('/get/recommend-products', (req, res) => {
-  const sql = `
+  const petType = req.query.pet_type || req.query.petType;
+  console.log('🔍 接收到 pet_type =', petType);
+
+  let sql = `
     SELECT p.pid, p.pd_name, p.price,
-           (SELECT img_path FROM product_image WHERE pid = p.pid ORDER BY pd_img_id LIMIT 1) AS img_path
-    FROM productslist p
-    WHERE p.status = 1
-    ORDER BY RAND()
-    LIMIT 3
+           (SELECT img_path
+              FROM product_image
+             WHERE pid = p.pid
+             ORDER BY pd_img_id
+             LIMIT 1) AS img_path
+      FROM productslist p
+     WHERE p.status = 1
   `;
-  conn.query(sql, (err, results) => {
-    if (err) return res.status(500).json({ error: err.message });
+  const params = [];
+
+  // 只依 pet_type 篩選
+  if (petType) {
+    sql += ` AND p.pet_type = ?`;
+    params.push(petType);
+  }
+
+  // 隨機 3 筆
+  sql += ` ORDER BY RAND() LIMIT 3`;
+  console.log('🔍 最終 SQL =', sql.trim(), 'params =', params);
+
+  conn.query(sql, params, (err, results) => {
+    if (err) {
+      console.error('GET /get/recommend-products 錯誤：', err.message);
+      return res.status(500).json({ error: err.message });
+    }
+
     const host = `${req.protocol}://${req.get('host')}`;
     const data = results.map(r => ({
       pid: r.pid,
@@ -1593,9 +1637,12 @@ app.get('/get/recommend-products', (req, res) => {
         ? host + '/' + r.img_path.replace(/^public\//, '')
         : null
     }));
+
     res.json(data);
   });
 });
+
+
 
 //建立訂單
 

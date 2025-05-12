@@ -1,33 +1,41 @@
-const express      = require('express')
-const cors         = require('cors')
+const express = require('express')
+const cors = require('cors')
+const fs = require('fs');
+
 const cookieParser = require('cookie-parser')
-const multer       = require('multer')
-const path         = require('path')
-const mysql        = require('mysql')
-const util         = require('util')
+const multer = require('multer')
+const path = require('path')
+const mysql = require('mysql')
+const util = require('util')
 
 // 建立 DB 連線
 const conn = mysql.createConnection({
-  host:     'localhost',
-  user:     'root',
+  host: 'localhost',
+  user: 'root',
   password: '',
   database: 'howsmoat',
-  port:     3306
+  port: 3306
 })
 conn.connect(err => console.log(err || 'DB connected'))
 const q = util.promisify(conn.query).bind(conn)
 
-// Multer：存放二手商品圖片（調整至 second_pd）
+const uploadDir = path.resolve(__dirname, '../public/media/second_pd');
+
 const storage = multer.diskStorage({
-  destination: (req, file, cb) =>
-    cb(null, path.join(__dirname, '../public/media/second_pd')),
+  destination: (req, file, cb) => {
+    // 如果資料夾不存在就建立
+    fs.mkdirSync(uploadDir, { recursive: true });
+    cb(null, uploadDir);
+  },
   filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname)
-    const name = Date.now() + '_' + Math.random().toString(36).slice(2, 7)
-    cb(null, name + ext)
+    const ext = path.extname(file.originalname);
+    const name = Date.now() + '_' + Math.random().toString(36).slice(2, 7);
+    cb(null, name + ext);
   }
-})
-const upload = multer({ storage }).array('images', 4)
+});
+// 限制至最多 4 張圖
+const upload = multer({ storage }).array('images', 4);
+module.exports = upload;
 
 // 建立 Router
 const router = express.Router()
@@ -60,14 +68,14 @@ router.get('/', async (req, res) => {
     const rows = await q(sql, [uid])
     const host = `${req.protocol}://${req.get('host')}`
     const data = rows.map(r => ({
-      uid:        r.uid,
-      pid:        r.pid,
-      pd_name:    r.pd_name,
-      price:      r.price,
+      uid: r.uid,
+      pid: r.pid,
+      pd_name: r.pd_name,
+      price: r.price,
       categories: r.categories,
-      new_level:  r.new_level,
-      status:     r.status,
-      imageUrl:   r.img_path ? `${host}${r.img_path}` : null
+      new_level: r.new_level,
+      status: r.status,
+      imageUrl: r.img_path ? `${host}${r.img_path}` : null
     }))
     res.json(data)
   } catch (e) {
@@ -76,33 +84,44 @@ router.get('/', async (req, res) => {
   }
 })
 
-// 2. POST /my-second-products
 router.post('/', upload, async (req, res) => {
   const uid = req.get('X-UID')
+  console.log('▶️ 收到 POST /my-second-products')
   if (!uid) return res.status(400).json({ error: '請帶入 X-UID' })
+
   const { pd_name, price, categories, new_level, status } = req.body
+  const sql = `
+    INSERT INTO productslist
+      (uid, pd_name, price, categories, new_level, status, \`condition\`)
+    VALUES
+      (?, ?, ?, ?, ?, ?, "second")
+  `
+  const params = [uid, pd_name, price, categories, new_level, status]
+  console.log('即將執行 SQL：', sql.trim(), '參數：', params)
 
   try {
-    // 新增商品
-    const { insertId: pid } = await q(
-      'INSERT INTO productslist (uid, pd_name, price, categories, new_level, status, `condition`) VALUES (?, ?, ?, ?, ?, ?, "second")',
-      [uid, pd_name, price, categories, new_level, status]
-    )
+    const { insertId: pid } = await q(sql, params)
+    console.log('插入後的 pid：', pid)
 
-    // 新增圖片
     if (req.files && req.files.length) {
-      const imgs = req.files.map(file => [pid, `/media/second_pd/${file.filename}`, ''])
-      await q(
-        'INSERT INTO product_image (pid, img_path, img_value) VALUES ?',
-        [imgs]
-      )
+      for (const file of req.files) {
+        const imgPath = `/media/second_pd/${file.filename}`;
+        await q(
+          'INSERT INTO product_image (pid, img_path, img_value) VALUES (?, ?, ?)',
+          [pid, imgPath, '']
+        );
+        console.log('已插入圖片：', imgPath);
+      }
     }
-    res.status(201).json({ pid })
+    return res.status(201).json({ pid })
   } catch (e) {
-    console.error(e)
-    res.status(500).json({ error: e.message })
+    console.error('上傳失敗完整錯誤：', e);
+    console.error('e.message：', e.message);
+    console.error('e.stack：', e.stack);
+    return res.status(500).json({ error: e.message })
   }
 })
+
 
 // 3. PUT /my-second-products/:pid
 router.put('/:pid', upload, async (req, res) => {
