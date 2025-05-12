@@ -13,7 +13,6 @@ import titleIcon from '../images/pawicon.svg';
 import styles from './Quiz.module.css';
 import QuizBg from './QuizBg.jpg';
 
-
 function Quiz() {
     const pets = ['貓咪', '狗狗', '倉鼠', '鳥'];
     const [selectedIndex, setSelectedIndex] = useState(0);
@@ -22,10 +21,10 @@ function Quiz() {
     const [showTransition, setShowTransition] = useState(false);
 
     const petList = [
-        { name: '貓咪', img: SelCatImg, questions: catQuestions, dialog: '😺「我準備好出題囉！你敢挑戰嗎？」' },
-        { name: '狗狗', img: SelDogImg, questions: dogQuestions, dialog: '🐶「汪！通過就送你一個狗狗貼紙喔～」' },
-        { name: '倉鼠', img: SelHamsterImg, questions: hamsterQuestions, dialog: '🐹「讓我看看你懂多少倉鼠知識～」' },
-        { name: '鳥', img: SelBirdImg, questions: birdQuestions, dialog: '🕊️「準備飛入鳥類的世界吧！」' },
+        { name: '貓咪', img: SelCatImg, questions: catQuestions },
+        { name: '狗狗', img: SelDogImg, questions: dogQuestions },
+        { name: '倉鼠', img: SelHamsterImg, questions: hamsterQuestions },
+        { name: '鳥', img: SelBirdImg, questions: birdQuestions },
     ];
 
     const startGame = () => {
@@ -40,8 +39,7 @@ function Quiz() {
     };
 
     return (
-        <div className={`${styles.quizContainer} container-xl py-5`}
-        >
+        <div className={`${styles.quizContainer} container-xl py-5`}>
             {showTransition && (
                 <div className={styles.transitionOverlay}>
                     <img
@@ -56,21 +54,17 @@ function Quiz() {
             {petIndex === null ? (
                 <div className={styles.selectorBox}>
                     <h2 className="border paw-bg-pri-darkbrown text-center rounded d-block mx-auto" style={{ width: 200 }}>寵物知多少</h2>
-                    <img src={titleIcon} className={styles.titleIcon} alt="icon" />
-
                     <Selector
                         options={petList.map(p => p.name)}
                         onChange={idx => setSelectedIndex(idx)} />
 
-                    <div className={styles.dialogBox}>
-                        <p>{petList[selectedIndex].dialog}</p>
+                    <div className={styles.petRow}>
+                        <img
+                            src={petList[selectedIndex].img}
+                            alt={petList[selectedIndex].name}
+                            className={`${styles.footerIcon}`}
+                        />
                     </div>
-
-                    <img
-                        src={petList[selectedIndex].img}
-                        alt={petList[selectedIndex].name}
-                        className={`${styles.footerIcon} ${styles.petImageWrapper}`}
-                    />
 
                     <div className="text-center mt-3">
                         <button
