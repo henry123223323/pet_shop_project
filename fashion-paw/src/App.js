@@ -91,7 +91,7 @@ function App() {
         </main>
         <Footer />
       </CartProvider>
-      <ChatWindow/>
+      
       <Icon />
     </BrowserRouter>
   );

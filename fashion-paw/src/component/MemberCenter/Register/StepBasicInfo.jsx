@@ -13,10 +13,11 @@ class StepBasicInfo extends Component {
 
 
         this.state = {
+            show: false,
             city: [],
             district: [],
             inputinfo: {
-                
+
             }
         }
     }
@@ -56,7 +57,7 @@ class StepBasicInfo extends Component {
     }
 
     getdistrict = (event) => {
-        
+
         console.log(event.target.value);
         let newState = { ... this.state.inputinfo, district: event.target.value }
         this.setState({
@@ -66,7 +67,7 @@ class StepBasicInfo extends Component {
         })
     }
 
-    timetogo = (event) =>{
+    timetogo = (event) => {
         event.preventDefault()
 
         const inputusername = this.inputusername.current.value
@@ -76,25 +77,26 @@ class StepBasicInfo extends Component {
         const fullname = this.inputfirstname.current.value + this.inputlastname.current.value
         const inputphone = this.inputphone.current.value
         const inputbirthday = this.inputbirthday.current.value
-        
-        const newState = { ... this.state.inputinfo, firstname: inputfirstname,username:inputusername,
-            userfullname:fullname,lastname : inputlastname,adress: inputaddress,phone:inputphone,
-            birthday:inputbirthday
-         }
+
+        const newState = {
+            ... this.state.inputinfo, firstname: inputfirstname, username: inputusername,
+            userfullname: fullname, lastname: inputlastname, adress: inputaddress, phone: inputphone,
+            birthday: inputbirthday
+        }
         this.setState({
-            inputinfo : newState
-        },()=>{
+            inputinfo: newState
+        }, () => {
             // console.log(this.state.inputinfo);
             this.props.getallinfo(this.state.inputinfo)
         })
 
 
-        
-    
+
+
     }
 
 
-    
+
 
 
 
@@ -107,10 +109,10 @@ class StepBasicInfo extends Component {
             <>
                 <fieldset className="border">
                     <legend>基本資料</legend>
-                    <label>暱稱:</label> <input name="username" ref={this.inputusername}/>
+                    <label>暱稱:</label> <input name="username" ref={this.inputusername} />
                     <p></p>
-                    <label>姓:</label> <input name="firstname" ref={this.inputfirstname}/>
-                    <label>名:</label> <input name="lastname"  ref={this.inputlastname}/>
+                    <label>姓:</label> <input name="firstname" ref={this.inputfirstname} />
+                    <label>名:</label> <input name="lastname" ref={this.inputlastname} />
 
                     <p></p>
                     <label>地址:</label>
@@ -132,12 +134,25 @@ class StepBasicInfo extends Component {
                     <label >生日</label>
                     <input type="date" name="birthday" ref={this.inputbirthday} />
                     <p></p>
-                    <p></p><input type="checkbox" name="" id="confirmuse" />
-                    <label htmlFor="confirmuse">同意使用個人資料</label>
+                    <p></p><input type="checkbox" name="" id="confirmuse" onChange={this.BeSeller} />
+                    <label htmlFor="confirmuse" >是否成為賣家?</label>
+                    <p></p>
+                    {this.state.show && <textarea placeholder='自我介紹'></textarea>}
                     <p></p>
                     <button type="submit" className="btn btn-primary" onClick={this.timetogo}>送出</button>
                 </fieldset></>
         );
+    }
+    BeSeller = (e) => {
+        console.log(e.target.checked);
+        if (e.target.checked) {
+            this.setState({ show: true })
+        }
+        else {
+            this.setState({ show: false })
+
+        }
+
     }
 }
 
