@@ -34,7 +34,7 @@ export default function ProductCard({
     price,
     image: images?.[0]?.img_path ,
     condition: "second", 
-    uid, 
+    uid: String(uid), 
   };
   return (
     <div className={cls} >

@@ -78,6 +78,11 @@ class PayWay extends Component {
                 {/* 線上付款 */}
                 <input name="payWay" type="radio" id="onlinePay" onChange={this.payWayChange} />
                 <label className='px-2' htmlFor="onlinePay">線上付款</label><br />
+                {this.state.selectedPayWay === "onlinePay" && (
+  <p className="paw-text-darkgreen  ms-4 mt-1">
+    本網站採用綠界金流進行線上付款，可使用信用卡、第三方支付、ATM轉帳等多種方式。
+  </p>
+)}
 {/* 
                 信用卡分期付款 
                 <input name="payWay" type="radio" id="installment" onChange={this.payWayChange} />

@@ -21,7 +21,8 @@ export default function FilterBar({
 }) {
   const [activeTab, setActiveTab] = useState('product');
   const [showModal, setShowModal] = useState(false);
-
+  const [selFuncs, setSelFuncs] = useState([]);
+  const [selBrands, setSelBrands] = useState([]);
   const [selPrice, setSelPrice] = useState('');
   const [selDep, setSelDep] = useState(0);
   const [selLocs, setSelLocs] = useState([]);
@@ -67,6 +68,46 @@ export default function FilterBar({
       {/* 找商品 區塊：價格／折舊／所在地 */}
       {activeTab === 'product' && (
         <div className={styles.content}>
+          {/* 所在地 */}
+          <div className={styles.row}>
+            <span className={styles.label}>所在地</span>
+            <div className={styles.options}>
+              {locations.map((loc, idx) => (
+                <label key={`${loc}-${idx}`}>
+                  <input
+                    type="checkbox"
+                    checked={selLocs.includes(loc)}
+                    onChange={() => toggleArray(selLocs, setSelLocs, loc)}
+                  />
+                  {loc}
+                </label>
+              ))}
+            </div>
+          </div>
+
+
+           {/* 折舊程度 (改用 PawDisplay 圖案) */}
+          <div className={`${styles.row} ${styles.depreciationRow}`}>
+            <span className={styles.label}>折舊程度</span>
+            <div className={styles.options}>
+              {depreciates.map(n => (
+                <label key={n} style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                  <input
+                    type="radio"
+                    name="depreciation"
+                    value={n}
+                    checked={selDep === n}
+                    onChange={() => setSelDep(n)}
+                  />
+                  {/* 外層 wrapper 留 n 顆 paw 的寬度 */}
+                  <div className={styles.pawWrapper} style={{ width: `${n * 25}px` }}>
+                    <PawDisplay rating={n} />
+                  </div>
+                </label>
+              ))}
+            </div>
+          </div>
+
           {/* 價格 */}
           <div className={styles.row}>
             <span className={styles.label}>價格</span>

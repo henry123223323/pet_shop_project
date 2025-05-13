@@ -2,7 +2,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import 'bootstrap-icons/font/bootstrap-icons.css';
-
 import styles from './component/Homepage/IndexStyle.module.css';
 import Header from './component/Homepage/Header';
 import Footer from './component/Homepage/Footer';
@@ -21,6 +20,7 @@ import SecondPdDetail from './component/ProductDetailPage/router/SecondPdDetail'
 
 
 import ShoppingCartPage from './component/Cart/ShoppingCartPage';
+import SyncCartOnLogin from './component/Cart/SyncCartOnLogin';
 import CheckBillPage from './component/CheckBill/CheckBillPage';
 import Helpme from './component/Aboutus/helpme';
 import Needhelp from './component/Aboutus/needhelp';
@@ -40,7 +40,8 @@ function App() {
     <BrowserRouter>
       <CartProvider>
         <Header />
-        <main className={styles.mainContent}>
+        <SyncCartOnLogin /> 
+        <main className={`mainContent ${styles.mainContent}`}>
           <Breadcrumbs />
           <Switch>
             <Route path="/" component={Homepage} exact />
@@ -90,6 +91,7 @@ function App() {
         </main>
         <Footer />
       </CartProvider>
+      
       <Icon />
     </BrowserRouter>
   );

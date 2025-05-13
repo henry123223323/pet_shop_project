@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import cookie from "js-cookie";
+import axios from 'axios';
 
 class FavoriteCard extends Component {
     constructor(props) {
@@ -9,6 +11,8 @@ class FavoriteCard extends Component {
     }
 
     handleShow = () => {
+        // console.log(this.props.cid);
+        
         this.setState({ show: true });
     }
 
@@ -18,11 +22,29 @@ class FavoriteCard extends Component {
 
     handleConfirmRemove = () => {
         this.setState({ show: false });
-        this.props.onRemove();
+        let uid = cookie.get("user_uid")
+        let cid = this.props.cid
+                
+        console.log(uid);
+        console.log(this.props.cid);
+        
+
+        axios.post(`http://localhost:8000/post/deletecollect/${uid}/${cid}`).then((response) => {
+            console.log("刪除成功:", response.data);
+            
+            // 刪除成功後重新獲取資料
+            this.props.getcollect();
+        })
+        .catch((error) => {
+            console.error("刪除失敗:", error);
+        });
+
+        // this.props.onRemove();
+        // this.props.getcollect();
     }
 
     render() {
-        const { img, pd_name, price } = this.props;
+        const { img, pd_name, price , id, cid } = this.props;
         const { show } = this.state;
 
         return (
@@ -32,7 +54,7 @@ class FavoriteCard extends Component {
                     <div className="card-body">
                         <h5 className="card-title">{pd_name}</h5>
                         <p className="card-text">NT$ {price}</p>
-                        <a className="btn btn-outline-primary" href='/productpage'>
+                        <a className="btn btn-outline-primary" href={`/product/${id}`}>
                             進入商品頁
                         </a>
                         <button className="btn btn-outline-danger" onClick={this.handleShow}>

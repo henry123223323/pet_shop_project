@@ -28,10 +28,17 @@ export default function ProductPage() {
   const [products, setProducts] = useState([]);
   const [displayItems, setDisplay] = useState([]);
   const [favoriteIds, setFavoriteIds] = useState([]);
-
+  const [filterkey, setFilterKey] = useState(1)
   // 1. 新增 Sidebar 篩選用 state
   const [typeFilter, setTypeFilter] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('');
+  useEffect(() => {
+    async function fetchData() {
+      let favArray = await axios.get(`http://localhost:8000/select/collect/${user_id}/all`)
+      setFavoriteIds(favArray.data)
+    }
+    fetchData()
+  }, [user_id, setFavoriteIds])
 
   // 初始載入
   useEffect(() => {
@@ -66,6 +73,7 @@ export default function ProductPage() {
 
   // 2. 過濾＋排序＋Sidebar 篩選
   useEffect(() => {
+
     let items = [...products];
 
     // --- 先套用 Sidebar 篩選 ---
@@ -85,6 +93,7 @@ export default function ProductPage() {
     if (hotRanking === 'hot_desc') items.sort((a, b) => b.hotranking - a.hotranking);
     if (hotRanking === 'hot_asc') items.sort((a, b) => a.hotranking - b.hotranking);
 
+
     // --- 最後排序 ---
     if (sortBy === 'price_asc') items.sort((a, b) => a.price - b.price);
     else if (sortBy === 'price_desc') items.sort((a, b) => b.price - a.price);
@@ -92,6 +101,7 @@ export default function ProductPage() {
 
     setDisplay(items);
   }, [products, filters, sortBy, typeFilter, categoryFilter]);
+
 
   const toggleFav = (id) => {
     if (user_id) {
@@ -116,14 +126,18 @@ export default function ProductPage() {
     }
   };
   const addCart = id => console.log('Add to cart', id);
-
+  const doclearsort = () => {
+    setFilterKey(prev => prev + 1);
+    //刪除後取消fliter checkbox radio 選取
+  }
   return (
     <div className={styles.pageWrapper}>
       <div className={styles.mainContent}>
         <div className={styles.filterBar}>
-          <FilterBar onFilterChange={setFilters} />
+          <FilterBar key={filterkey} onFilterChange={setFilters} />
         </div>
         <div className={styles.topBar}>
+          {/* <button onClick={doclearsort} className='btn btn-outline-primary'>清除篩選</button> */}
           <SortBar onSortChange={setSortBy} />
           <SwitchBtn viewMode={viewMode} onViewChange={setViewMode} />
         </div>

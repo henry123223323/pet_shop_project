@@ -1,15 +1,20 @@
 /* src/component/SeProductPage/SeProductPage.module.css */
-
 .container {
   display: flex;
-  gap: 16px;
-  padding: 16px;
+  flex-direction: column;
+  gap: 0;
+  max-width: 1440px;
+  /* 關鍵！限制整體寬度 */
+  margin: 0 auto 3rem auto;
+  /* 水平置中 */
+  padding: 24px 32px;
   box-sizing: border-box;
 }
 
 .sidebar {
   width: 220px;
   flex-shrink: 0;
+  padding-left: 40px;
 }
 
 .main {
@@ -23,20 +28,41 @@
   margin-bottom: 16px;
 }
 
-/* SortBar + SwitchBtn 同列往右 */
+
 .topBar {
   display: flex;
-  justify-content: flex-end; /* 全部靠右 */
   align-items: center;
-  gap: 8px;                  /* 按鈕與下拉選單間距 */
-  margin-bottom: 16px;
+  /* ✨ 垂直置中 */
+  justify-content: flex-end;
+  gap: 12px;
+  font-size: 0.95rem;
+  margin-bottom: 10px;
 }
+
+.mix {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 100%;
+  margin-top: 10px;
+  flex: 1;
+}
+
+.productWrapper {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  /* 水平置中 grid 時很有用 */
+}
+
+
 
 /* 可選：響應式 */
 @media (max-width: 768px) {
   .container {
     flex-direction: column;
   }
+
   .sidebar {
     width: 100%;
     margin-bottom: 16px;

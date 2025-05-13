@@ -1,3 +1,22 @@
+/* 2025/5/11邑新增控制首頁與其他分頁header高度 */
+:root {
+  --header-height: 0px;
+  /* 預設為首頁 */
+}
+
+body.not-home {
+  --header-height: 220px;
+  /* 內頁 padding 高度 */
+}
+
+.mainContent {
+  padding-top: var(--header-height);
+  transition: padding-top 0.3s ease;
+}
+
+/* 新增到這裡為止 */
+
+
 .App {
   text-align: center;
 }
@@ -32,6 +51,7 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
