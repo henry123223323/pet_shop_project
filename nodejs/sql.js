@@ -1730,17 +1730,81 @@ app.delete('/api/article/:id', async (req, res) => {
 
 
 
-app.get("/get/userinfo", function (req, res) {
+app.get("/get/back-userinfo", function (req, res) {
   conn.query("SELECT uid,email,username,photo,fullname,birthday,power,last_time_login,AboutMe as aboutme,Device as device FROM userinfo", function (err, results) {
     if (err) {
       console.error("資料庫查詢錯誤:", err);
       res.status(500).send("伺服器錯誤");
     } else {
-      console.log("http://localhost:8000/get/userinfo 被連線");
+      console.log("http://localhost:8000/get/back-userinfo 被連線");
       res.json(results); // 正確回傳結果給前端
     }
   });
 });
+// ── 刪除會員 ───────────────────────────────────────────────
+app.delete('/get/back-userinfo/:uid', async (req, res) => {
+  const { uid } = req.params;
+  try {
+    const result = await q('DELETE FROM userinfo WHERE uid = ?', [uid]);
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: '找不到該會員' });
+    }
+    return res.json({ success: true, message: '刪除成功' });
+  } catch (err) {
+    console.error('刪除失敗：', err);
+    return res.status(500).json({ error: err.message });
+  }
+});
+
+// ── 編輯會員 ───────────────────────────────────────────────
+app.put('/get/back-userinfo/:uid', async (req, res) => {
+  const { uid } = req.params;
+  // 從前端傳來的 editinguser 物件，解構你需要的欄位
+  const {
+    username,
+    email,
+    fullname,
+    birthday,
+    power,
+    aboutme,
+    device
+  } = req.body;
+
+  try {
+    const sql = `
+      UPDATE userinfo
+         SET username = ?,
+             email    = ?,
+             fullname = ?,
+             birthday = ?,
+             power    = ?,
+             aboutme  = ?,
+             device   = ?
+       WHERE uid = ?
+    `;
+    const result = await q(sql, [
+      username,
+      email,
+      fullname,
+      birthday,
+      power,
+      aboutme,
+      device,
+      uid
+    ]);
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: '找不到該會員' });
+    }
+    return res.json({ success: true, message: '更新成功' });
+  } catch (err) {
+    console.error('更新失敗：', err);
+    return res.status(500).json({ error: err.message });
+  }
+});
+
+
+
+
 app.get('/get/recommend-products', (req, res) => {
   const petType = req.query.pet_type || req.query.petType;
   console.log('🔍 接收到 pet_type =', petType);
