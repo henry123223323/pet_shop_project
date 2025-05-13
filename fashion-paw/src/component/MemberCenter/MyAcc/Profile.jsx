@@ -57,7 +57,7 @@ class Profile extends Component {
     }
     tooglePasswordModal = () => {
         this.setState({ PasswordModal: !this.state.PasswordModal });
-
+    }
 
 
     getuserinfo = () => {
@@ -101,9 +101,7 @@ class Profile extends Component {
             console.log("沒有找到 uid cookie");
         }
 
-        } else {
-            console.log("沒有找到 uid cookie");
-        }
+
 
     }
 
