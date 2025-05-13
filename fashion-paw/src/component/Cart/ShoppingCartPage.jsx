@@ -196,53 +196,33 @@ class ShoppingCartPage extends Component {
   }
 
   componentDidMount() {
-    // console.log("🟡 ShoppingCartPage componentDidMount 被執行");
-
     const uid = cookie.get("user_uid");
+  
+    // 清除 localStorage（避免合併重複）
+    localStorage.removeItem("cartList");
+  
+    // 撈後端購物車資料
     if (uid) {
       axios.get(`http://localhost:8000/cart/${uid}`)
-  .then(async res => {
-    const dbCart = res.data;
-
-    // 清空 context 中的 cartList
-    this.context.clearCart();
-
-    // 逐筆加入 context
-    for (let item of dbCart) {
-      await this.context.addToCart(item); // ✅ 加到 context.cartList 裡
-    }
-
-    console.log("✅ 已從資料庫載入購物車，共：", dbCart.length,"筆");
-  })
-    }
-
-    this.setState({ selectedItems: [] });
-
-    const { cartList, setSellers } = this.context;
+        .then(async res => {
+          const dbCart = res.data;
+          console.log("🛒 撈回購物車資料：", dbCart);
   
-    const secondUids = [...new Set(
-      cartList
-        .filter(item => item.condition === "second" && item.uid)
-        .map(item => String(item.uid)) // 統一轉字串
-    )];
+          this.context.clearCart();
+          const { normalizeCartItem } = this.context;
   
-    if (secondUids.length > 0) {
-      axios.get(`http://localhost:8000/get/userinfo`)
-        .then(res => {
-          const uidSet = new Set(secondUids);
-          console.log("🧪 當前二手商品 UID 清單：", secondUids);
-          const matchedUsers = res.data.filter(user =>
-            uidSet.has(String(user.uid)) // 同樣比對字串
-          );
+          for (let item of dbCart) {
+            await this.context.addToCart(normalizeCartItem(item));
+          }
   
-          // console.log("✅ 確定比對進來的 sellers：", matchedUsers);
-          setSellers(matchedUsers);
+          console.log("✅ 已從資料庫載入購物車，共：", dbCart.length, "筆");
         });
     }
-
-    
+  
+    this.setState({ selectedItems: [] });
   }
 
+  
   //新品全選
   allSelected = () => {
     const { selectedItems } = this.state;

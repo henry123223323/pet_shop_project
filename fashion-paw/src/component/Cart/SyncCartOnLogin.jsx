@@ -4,6 +4,7 @@ import cookie from 'js-cookie';
 
 export default class SyncCartOnLogin extends Component {
   componentDidMount() {
+    console.log("SyncCartOnLogin已觸發")
     const uid = cookie.get("user_uid");
     const merged = localStorage.getItem("cartMerged");
     const localCart = localStorage.getItem("cartList");

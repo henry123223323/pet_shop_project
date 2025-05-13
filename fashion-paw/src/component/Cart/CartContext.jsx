@@ -19,7 +19,8 @@ export class CartProvider extends Component {
                     removeFromCart: this.removeFromCart,
                     clearCart: this.clearCart,
                     setSellers: this.setSellers,
-                    getSellerName: this.getSellerName
+                    getSellerName: this.getSellerName,
+                    normalizeCartItem: this.normalizeCartItem
                 }}
             >
                 {this.props.children}
@@ -97,28 +98,24 @@ export class CartProvider extends Component {
         }
     }
 
-    addToCart = (rawItem) => {
-
-        const newItem = this.normalizeCartItem(rawItem);
-        return new Promise((resolve) => {
-            this.setState((prev) => {
-                const exists = prev.cartList.find(item => item.cart_id === newItem.cart_id);
-                if (exists) {
-                    const updatedList = prev.cartList.map(item =>
-                        item.cart_id === newItem.cart_id
-                            ? { ...item, quantity: item.quantity + newItem.quantity }
-                            : item
-                    );
-                    resolve('updated');
-                    return { cartList: updatedList };
-                } else {
-                    resolve('new');
-                    return { cartList: [...prev.cartList, newItem] };
-                }
-            });
+    addToCart = (newItem) => {
+        this.setState((prevState) => {
+          const existingIndex = prevState.cartList.findIndex(item =>
+            item.pid === newItem.pid &&
+            String(item.uid) === String(newItem.uid) &&
+            (item.spec || null) === (newItem.spec || null)
+          );
+      
+          if (existingIndex !== -1) {
+            // 合併數量
+            const updatedCartList = [...prevState.cartList];
+            updatedCartList[existingIndex].quantity += newItem.quantity;
+            return { cartList: updatedCartList };
+          } else {
+            return { cartList: [...prevState.cartList, newItem] };
+          }
         });
-    };
-
+      };
     updateQuantity = (cart_id, quantity) => {
         this.setState((prev) => ({
             cartList: prev.cartList.map((item) =>
@@ -154,6 +151,8 @@ export class CartProvider extends Component {
         //     final: fullImagePath,
         // });
         const cartId = String(item.cart_id || item.pid);
+        const priceSource = item.price !== undefined ? item.price : item.unit_price;
+        const parsedPrice = parseInt(priceSource, 10);
         return {
             cart_id: cartId,
             pid: item.pid,
@@ -161,7 +160,7 @@ export class CartProvider extends Component {
             condition: item.condition || "new",
             quantity: item.quantity || 1,
             productName: item.pd_name || item.productName || item.name,
-            unit_price: parseInt(item.price || item.unit_price || 0),
+            unit_price: isNaN(parsedPrice) ? 0 : parsedPrice,
             image: fullImagePath,
             //   color: item.attribute?.color || item.color || "無",
         };

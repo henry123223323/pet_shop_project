@@ -1593,28 +1593,31 @@ app.post("/cart/merge", async (req, res) => {
 
 // 從資料庫讀出購物車資料
 app.get("/cart/:uid", async (req, res) => {
-  const { uid } = req.params;
+  const uid = Number(req.params.uid);
   try {
     const result = await q(`
-     SELECT 
-  sc.cart_id,
-  sc.uid,
-  sc.pid,
-  sc.spec,
-  sc.quantity,
-  sc.unit_price,
-  p.pd_name,
-  img.img_path,
-  img.img_value
-FROM shoppingcart sc
-LEFT JOIN productslist p ON sc.pid = p.pid
-LEFT JOIN (
-  SELECT pid, MIN(img_path) AS img_path, MIN(img_value) AS img_value
-  FROM product_image
-  GROUP BY pid
-) img ON sc.pid = img.pid
-WHERE sc.uid = ?
+      SELECT 
+        sc.cart_id,
+        sc.uid,
+        sc.pid,
+        sc.spec,
+        sc.quantity,
+        sc.unit_price,
+        p.pd_name,
+        img.img_path,
+        img.img_value
+      FROM shoppingcart sc
+      LEFT JOIN productslist p ON sc.pid = p.pid
+      LEFT JOIN (
+        SELECT pid, MIN(img_path) AS img_path, MIN(img_value) AS img_value
+        FROM product_image
+        GROUP BY pid
+      ) img ON sc.pid = img.pid
+      WHERE sc.uid = ?
     `, [uid]);
+
+    console.log("✅ 撈到購物車資料：", result.length, "筆");
+
     res.json(result);
   } catch (err) {
     console.error("❌ 撈取購物車失敗", err);
@@ -1679,6 +1682,44 @@ app.get('/coupons/:uid', async (req, res) => {
     res.json(coupons);
   } catch (err) {
     console.error("❌ 撈取折扣碼失敗", err);
+    res.status(500).send("伺服器錯誤");
+  }
+});
+
+//增加商品
+app.post("/cart/add", async (req, res) => {
+  let { uid, pid, spec, quantity, unit_price } = req.body;
+
+  if (!uid || !pid || !quantity) {
+    return res.status(400).send("缺少必要參數");
+  }
+
+  // 強制轉型為字串（避免 uid = '205' 和 205 對不上）
+  uid = String(uid);
+  spec = spec || null;
+  quantity = parseInt(quantity, 10);
+  unit_price = parseInt(unit_price, 10);
+
+  try {
+    const [existing] = await q(`
+      SELECT * FROM shoppingcart WHERE uid = ? AND pid = ? AND spec ${spec === null ? 'IS NULL' : '= ?'}
+    `, spec === null ? [uid, pid] : [uid, pid, spec]);
+
+    if (existing) {
+      await q(`
+        UPDATE shoppingcart SET quantity = quantity + ? 
+        WHERE uid = ? AND pid = ? AND spec ${spec === null ? 'IS NULL' : '= ?'}
+      `, spec === null ? [quantity, uid, pid] : [quantity, uid, pid, spec]);
+    } else {
+      await q(`
+        INSERT INTO shoppingcart (uid, couponId, pid, spec, quantity, unit_price)
+        VALUES (?, NULL, ?, ?, ?, ?)
+      `, [uid, pid, spec, quantity, unit_price]);
+    }
+
+    res.send("✅ 商品已加入購物車");
+  } catch (err) {
+    console.error("❌ 新增購物車失敗", err);
     res.status(500).send("伺服器錯誤");
   }
 });
