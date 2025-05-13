@@ -256,10 +256,22 @@ app.put(
   }
 );
 
-//寵物小知識區取得文章//
+// ── 取得所有文章清單（帶回 category 欄位） ─────────────────────
 app.get('/get/petknowarticles', async (req, res) => {
   try {
-    const rows = await q('SELECT * FROM article');
+    const rows = await q(`
+      SELECT
+        ArticleID        AS id,
+        title            AS title,
+        banner_URL       AS bannerFile,
+        intro            AS summary,
+        pet_type         AS pet,
+        article_type     AS articleType,
+        product_category AS category,
+        sections         AS sections,
+        create_at        AS date
+      FROM article
+    `);
     res.json({ list: rows });
   } catch (err) {
     console.error(err);
@@ -267,31 +279,32 @@ app.get('/get/petknowarticles', async (req, res) => {
   }
 });
 
-// 篩選單篇文章
+// ── 取得單篇文章 / 篩出 category 欄位 ───────────────────────────
 app.get('/api/petknowarticle/:id', async (req, res) => {
-  const id = +req.params.id;
+  const id = Number(req.params.id);
   try {
     const rows = await q(
-      `SELECT
-         ArticleID      AS id,
-         title          AS title,
-         banner_URL     AS bannerFile,    -- 可能是 "dog/dogcare.png" 或 "/dog/dogcare.png"
-         intro          AS summary,
-         pet_type       AS pet,           -- "dog"
-         article_type   AS articleType,   -- "health_check" 或 "pet_feeding"
-         sections       AS sections,
-         create_at      AS date
-       FROM article
-       WHERE ArticleID = ?`,
+      `
+      SELECT
+        ArticleID        AS id,
+        title            AS title,
+        banner_URL       AS bannerFile,
+        intro            AS summary,
+        pet_type         AS pet,
+        article_type     AS articleType,
+        product_category AS category,
+        sections         AS sections,
+        create_at        AS date
+      FROM article
+      WHERE ArticleID = ?
+      `,
       [id]
     );
     if (!rows.length) return res.status(404).json({ error: 'Not Found' });
 
     const row = rows[0];
-    const host = `${req.protocol}://${req.get('host')}`; // e.g. http://localhost:8000
-
-    // 用 path.basename 只留下最末端檔名 ("dogcare.png")
-    const fileName = require('path').basename(row.bannerFile || '');
+    const host = `${req.protocol}://${req.get('host')}`;
+    const fileName = path.basename(row.bannerFile || '');
     const bannerUrl = fileName
       ? `${host}/media/pet_know/${row.articleType}/${row.pet}/${fileName}`
       : null;
@@ -301,7 +314,7 @@ app.get('/api/petknowarticle/:id', async (req, res) => {
       title: row.title,
       summary: row.summary,
       pet: row.pet,
-      topic: row.topic,
+      category: row.category,
       articleType: row.articleType,
       sections: row.sections,
       date: row.date,
@@ -312,47 +325,61 @@ app.get('/api/petknowarticle/:id', async (req, res) => {
     res.status(500).json({ error: '伺服器錯誤' });
   }
 });
-// 列表分頁（同樣拼 bannerUrl）
+
+// ── 分頁取得文章列表 / 帶回 category ────────────────────────────
 app.get('/api/petknowarticle', async (req, res) => {
   const { type, pet, page = 1, size = 5 } = req.query;
-  const pageNum = +page,
-    pageSize = +size,
-    offset = (pageNum - 1) * pageSize;
+  const pageNum = Math.max(1, Number(page));
+  const pageSize = Math.max(1, Number(size));
+  const offset = (pageNum - 1) * pageSize;
+
+  if (!type || !pet) {
+    return res.status(400).json({ error: '缺少必要參數 type 或 pet' });
+  }
 
   try {
-    // 1. 總筆數
+    // 1. 計算總筆數
     const countRows = await q(
-      'SELECT COUNT(*) AS cnt FROM article WHERE article_type=? AND pet_type=?',
+      `SELECT COUNT(*) AS cnt
+         FROM article
+        WHERE article_type = ? AND pet_type = ?`,
       [type, pet]
     );
     const cnt = countRows[0]?.cnt || 0;
     const totalPages = Math.ceil(cnt / pageSize);
     const host = `${req.protocol}://${req.get('host')}`;
 
-    // 2. 分頁資料
+    // 2. 取分頁資料
     const rows = await q(
-      `SELECT
-         ArticleID        AS id,
-         title            AS title,
-         banner_URL       AS bannerFile,
-         intro            AS summary,
-         pet_type         AS pet,
-         product_category AS topic,
-         article_type     AS articleType,
-         create_at        AS date
-       FROM article
-       WHERE article_type=? AND pet_type=?
-       ORDER BY create_at DESC
-       LIMIT ?, ?`,
+      `
+      SELECT
+        ArticleID        AS id,
+        title            AS title,
+        banner_URL       AS bannerFile,
+        intro            AS summary,
+        pet_type         AS pet,
+        article_type     AS articleType,
+        product_category AS category,
+        create_at        AS date
+      FROM article
+      WHERE article_type = ? AND pet_type = ?
+      ORDER BY create_at DESC
+      LIMIT ?, ?
+      `,
       [type, pet, offset, pageSize]
     );
 
-    // 3. 用 path.basename 只留檔名，再拼出正確路徑
+    // 3. 處理 bannerUrl
     const list = rows.map(r => {
-      // r.bannerFile 可能帶了 "dog/dogcare.png" 或 "/dog/dogcare.png"
       const fileName = path.basename(r.bannerFile || '');
       return {
-        ...r,
+        id: r.id,
+        title: r.title,
+        summary: r.summary,
+        pet: r.pet,
+        category: r.category,
+        articleType: r.articleType,
+        date: r.date,
         bannerUrl: fileName
           ? `${host}/media/pet_know/${r.articleType}/${r.pet}/${fileName}`
           : null
@@ -691,8 +718,8 @@ app.get("/get/creditcard/:uid", function (req, res) {
 
 
 app.get('/get/recommend-products', (req, res) => {
-  const { pet_type } = req.query;
-  console.log('🔍 前端傳來 pet_type =', pet_type);
+  const { pet_type, product_category } = req.query;
+  console.log('🔍 前端傳來 pet_type =', pet_type, '、product_category =', product_category);
 
   // 基本 SQL
   let sql = `
@@ -707,13 +734,19 @@ app.get('/get/recommend-products', (req, res) => {
   `;
   const params = [];
 
-  // 若有 pet_type，加入篩選
+  // 依 pet_type 篩選
   if (pet_type) {
     sql += ` AND p.pet_type = ?`;
     params.push(pet_type);
   }
 
+ if (product_category) {
+  sql += ` AND FIND_IN_SET(?, p.categories)`;
+  params.push(product_category);
+ }
+
   // 隨機取三筆
+  sql += ` AND p.condition = 'new'`;
   sql += ` ORDER BY RAND() LIMIT 3`;
   console.log('🔍 最終 SQL =', sql.trim(), '／params =', params);
 
@@ -725,9 +758,9 @@ app.get('/get/recommend-products', (req, res) => {
 
     const host = `${req.protocol}://${req.get('host')}`;
     const data = results.map(r => ({
-      pid:      r.pid,
-      name:     r.pd_name,
-      price:    r.price,
+      pid: r.pid,
+      name: r.pd_name,
+      price: r.price,
       imageUrl: r.img_path
         ? host + '/' + r.img_path.replace(/^public\//, '')
         : null
@@ -736,6 +769,7 @@ app.get('/get/recommend-products', (req, res) => {
     res.json(data);
   });
 });
+
 
 app.post("/post/productsreach/new", function (req, res) {
   let { keyword } = req.body
@@ -1642,12 +1676,12 @@ app.get('/get/category-ranking', (req, res) => {
     }
     // 這裡取 row.category，不要再用 row.categories
     const data = results.map(row => ({
-      category:  row.category,
-      pid:       row.pid,
-      name:      row.name,
-      price:     row.price,
+      category: row.category,
+      pid: row.pid,
+      name: row.name,
+      price: row.price,
       saleCount: row.saleCount,
-      imageUrl:  row.img_path
+      imageUrl: row.img_path
         ? `${hostUrl}/${row.img_path.replace(/^\.\.\//, '')}`
         : null
     }));
@@ -1822,15 +1856,22 @@ app.get('/get/recommend-products', (req, res) => {
   const params = [];
 
   // 只依 pet_type 篩選
-  if (petType) {
+  if (pet_type) {
     sql += ` AND p.pet_type = ?`;
-    params.push(petType);
+    params.push(pet_type);
+  }
+
+  if (product_category) {
+    sql += ` AND FIND_IN_SET(REPLACE(?, ' ', '_'), p.categories)`;
+    params.push(product_category);
   }
 
   // 隨機 3 筆
-  sql += ` ORDER BY RAND() LIMIT 3`;
-  console.log('🔍 最終 SQL =', sql.trim(), 'params =', params);
+  sql += ` AND p.condition = 'new'`;
 
+  sql += ` ORDER BY RAND() LIMIT 3`;
+  console.log(sql.trim());
+  console.log(params);
   conn.query(sql, params, (err, results) => {
     if (err) {
       console.error('GET /get/recommend-products 錯誤：', err.message);
