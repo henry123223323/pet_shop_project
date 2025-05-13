@@ -803,14 +803,30 @@ app.get("/get/useruid/:email", function (req, res) {
       res.status(500).send("伺服器錯誤");
     } else {
       console.log("找到新建用戶uid");
-      res.json(results); // 正確回傳結果給前端
+      res.json(results[0]?.uid || null); // 正確回傳結果給前端
     }
   })
 })
 
 
 
+app.post("/post/newusercoupon/:uid",function(req,res){
+  const uid = req.params.uid
+  const discount_ratio = "0.85"
+  const coupon_code = "meow2025"
+  const overdate = "2026-10-13"
+  const description	= "折扣直送毛孩圈，每一件都超值"
 
+
+
+  conn.query("INSERT INTO coupon (uid,discount_ratio,coupon_code,overdate,description) VALUES (?,?,?,?,?)",[uid,discount_ratio,coupon_code,overdate,description],(err, result) => {
+  if (err) {
+    console.error("資料庫錯誤:", err);
+    return res.status(500).send("新增失敗");
+  }
+  res.json({ message: "新增成功", result });
+});
+})
 
 
 

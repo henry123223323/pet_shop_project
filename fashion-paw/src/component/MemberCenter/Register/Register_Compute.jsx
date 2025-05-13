@@ -67,10 +67,55 @@ class Register_Compute extends Component {
                     console.error("新增失敗", error);
                 });
 
-
+            this.getcoupon()
 
         })
     }
+
+
+    getcoupon = () => {
+
+        const email = encodeURIComponent(this.state.email)
+
+        axios.get(`http://localhost:8000/get/useruid/${email}`).then(response => {
+            console.log("查詢成功！", response.data);
+
+            this.setState({
+                uid : response.data
+            },()=>{
+                console.log(this.state);
+                
+            })
+
+        })
+            .catch(error => {
+                console.error("新增失敗", error);
+            });
+
+        this.newusercoupon()
+
+    }
+
+
+
+    newusercoupon=()=>{
+        let uid = this.state.uid
+
+        axios.post(`http://localhost:8000/post/newusercoupon/${uid}`).then(response => {
+                console.log("新增成功！", response.data);
+
+                
+
+            })
+                .catch(error => {
+                    console.error("新增失敗", error);
+                });
+
+    }
+
+
+
+
 
 
     // getemail={this.getemail}
