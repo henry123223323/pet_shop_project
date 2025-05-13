@@ -1563,30 +1563,34 @@ app.post("/cart/merge", async (req, res) => {
   try {
     for (const item of cartList) {
       const { uid, pid, spec, quantity, unit_price } = item;
+      const specValue = spec || null;
 
       // 查詢是否已存在此商品
-      const [existing] = await q(`
-        SELECT * FROM shoppingcart WHERE uid = ? AND pid = ? AND spec = ?
-      `, [uid, pid, spec || null]);
+      const existingQuery = specValue === null
+        ? `SELECT * FROM shoppingcart WHERE uid = ? AND pid = ? AND spec IS NULL`
+        : `SELECT * FROM shoppingcart WHERE uid = ? AND pid = ? AND spec = ?`;
+
+      const [existing] = await q(existingQuery, specValue === null ? [uid, pid] : [uid, pid, specValue]);
 
       if (existing) {
         // 已存在 → 更新數量
-        await q(`
-          UPDATE shoppingcart SET quantity = quantity + ? 
-          WHERE uid = ? AND pid = ? AND spec = ?
-        `, [quantity, uid, pid, spec || null]);
+        const updateQuery = specValue === null
+          ? `UPDATE shoppingcart SET quantity = quantity + ? WHERE uid = ? AND pid = ? AND spec IS NULL`
+          : `UPDATE shoppingcart SET quantity = quantity + ? WHERE uid = ? AND pid = ? AND spec = ?`;
+
+        await q(updateQuery, specValue === null ? [quantity, uid, pid] : [quantity, uid, pid, specValue]);
       } else {
         // 不存在 → 新增
         await q(`
           INSERT INTO shoppingcart (uid, couponId, pid, spec, quantity, unit_price)
           VALUES (?, NULL, ?, ?, ?, ?)
-        `, [uid, pid, spec || null, quantity, unit_price]);
+        `, [uid, pid, specValue, quantity, unit_price]);
       }
     }
 
     res.send("✅ 購物車合併完成");
   } catch (err) {
-    console.error("❌ 合併失敗", err);
+    console.error("❌ 購物車合併失敗", err);
     res.status(500).send("伺服器錯誤");
   }
 });
@@ -1594,6 +1598,7 @@ app.post("/cart/merge", async (req, res) => {
 // 從資料庫讀出購物車資料
 app.get("/cart/:uid", async (req, res) => {
   const uid = Number(req.params.uid);
+
   try {
     const result = await q(`
       SELECT 
@@ -1604,6 +1609,8 @@ app.get("/cart/:uid", async (req, res) => {
         sc.quantity,
         sc.unit_price,
         p.pd_name,
+        p.condition, -- ✅ 從商品表撈出新品/二手
+        p.uid AS seller_uid,
         img.img_path,
         img.img_value
       FROM shoppingcart sc
@@ -1617,6 +1624,10 @@ app.get("/cart/:uid", async (req, res) => {
     `, [uid]);
 
     console.log("✅ 撈到購物車資料：", result.length, "筆");
+    console.log("🔍 API 回傳的每個 item：");
+    result.forEach(item => {
+      console.log(`pid: ${item.pid}, condition: ${item.condition}, seller_uid: ${item.seller_uid}`);
+    });
 
     res.json(result);
   } catch (err) {

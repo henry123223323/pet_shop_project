@@ -73,7 +73,12 @@ export default function RecommendedProducts() {
               <AddToMyFavorite type='text' isFavorite={favorID.includes(item.pid)} onClick={() => Change_FavorState(item.pid)} />
               <AddToCartBtn
                       type="icon"
-                      product={{ ...item,image: item.imageUrl }}
+                      product={{
+                        ...item,
+                        pd_name: item.name,
+                        images: [{ img_path: item.imageUrl }], // 給 normalizeCartItem 用
+                        unit_price: parseInt(item.price || 0, 10), // 保底
+                      }}
                       quantity={1}
                       aria-label="加入購物車"
                     />

@@ -29,10 +29,11 @@ class ShoppingCartPage extends Component {
     // 二手商品依賣家分組
     const secondItemsBySeller = {};
     secondItems.forEach(item => {
-      if (!secondItemsBySeller[item.uid]) {
-        secondItemsBySeller[item.uid] = [];
+      const sellerUid = item.seller_uid;
+      if (!secondItemsBySeller[sellerUid]) {
+        secondItemsBySeller[sellerUid] = [];
       }
-      secondItemsBySeller[item.uid].push(item);
+      secondItemsBySeller[sellerUid].push(item);
     });
     // console.log("🧪 全部購物車 cartList：", cartList);
     return (
@@ -98,7 +99,7 @@ class ShoppingCartPage extends Component {
               {Object.keys(secondItemsBySeller).map(uid => (
                 <div key={uid} className='border rounded my-2'>
                   <div className='border-bottom px-3'>
-                    <SellerTitle  uid={uid} />
+                    <SellerTitle  uid={String(uid)} />
                   </div>
                   <div className='d-flex align-items-center  p-2 border-bottom'
                   >
@@ -114,7 +115,6 @@ class ShoppingCartPage extends Component {
                     </label>
                   </div>
                   {secondItemsBySeller[uid].map(item => (
-                    
                     <CartList
                       key={item.cart_id}
                       item={item}
@@ -171,8 +171,8 @@ class ShoppingCartPage extends Component {
 
     const secondUids = [...new Set(
       cartList
-        .filter(item => item.condition === "second" && item.uid)
-        .map(item => String(item.uid))
+        .filter(item => item.condition === "second" && item.seller_uid)
+        .map(item => String(item.seller_uid))
     )];
 
     // 檢查：是否有「新加入但之前沒抓過」的 uid
@@ -197,12 +197,13 @@ class ShoppingCartPage extends Component {
 
   componentDidMount() {
     const uid = cookie.get("user_uid");
-  
-    // 清除 localStorage（避免合併重複）
-    localStorage.removeItem("cartList");
-  
+
+    
     // 撈後端購物車資料
     if (uid) {
+        // 清除 localStorage（避免合併重複）
+        localStorage.removeItem("cartList");
+      
       axios.get(`http://localhost:8000/cart/${uid}`)
         .then(async res => {
           const dbCart = res.data;
@@ -212,7 +213,7 @@ class ShoppingCartPage extends Component {
           const { normalizeCartItem } = this.context;
   
           for (let item of dbCart) {
-            await this.context.addToCart(normalizeCartItem(item));
+            await this.context.addToCart(item);
           }
   
           console.log("✅ 已從資料庫載入購物車，共：", dbCart.length, "筆");
@@ -254,19 +255,10 @@ class ShoppingCartPage extends Component {
     const { selectedItems } = this.state;
     const { cartList } = this.context;
     const sellerItems = cartList.filter(
-      item => item.condition === 'second' && String(item.uid) === String(uid)
+      item => item.condition === 'second' && String(item.seller_uid) === String(uid)
     );
-
-    const result = sellerItems.every(item => selectedItems.includes(String(item.cart_id)));
   
-    // console.log("🧪 檢查賣家全選判斷", {
-    //   uid,
-    //   sellerItemIds: sellerItems.map(i => i.cart_id),
-    //   selectedItems,
-    //   result
-    // });
-  
-    return result;
+    return sellerItems.every(item => selectedItems.includes(String(item.cart_id)));
   };
 
 
@@ -274,9 +266,11 @@ class ShoppingCartPage extends Component {
   toggleSellerSelectAll = (uid) => {
     const { selectedItems } = this.state;
     const { cartList } = this.context;
-    const sellerItems = cartList.filter(item => item.condition === 'second' && item.uid === String(uid));
-    const sellerIds = sellerItems.map(item => String(item.cart_id)); 
-
+    const sellerItems = cartList.filter(
+      item => item.condition === 'second' && String(item.seller_uid) === String(uid)
+    );
+    const sellerIds = sellerItems.map(item => String(item.cart_id));
+  
     if (this.sellerAllSelected(uid)) {
       const updated = selectedItems.filter(id => !sellerIds.includes(id));
       this.setState({ selectedItems: updated });

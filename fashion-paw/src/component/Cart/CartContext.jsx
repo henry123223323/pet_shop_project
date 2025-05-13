@@ -99,23 +99,38 @@ export class CartProvider extends Component {
     }
 
     addToCart = (newItem) => {
+        const normalized = this.normalizeCartItem(newItem);
+        console.log("✅ addToCart 正規化後的 uid：", normalized.uid, "condition:", normalized.condition);
+
+        let result = 'new';
+
         this.setState((prevState) => {
-          const existingIndex = prevState.cartList.findIndex(item =>
-            item.pid === newItem.pid &&
-            String(item.uid) === String(newItem.uid) &&
-            (item.spec || null) === (newItem.spec || null)
-          );
-      
-          if (existingIndex !== -1) {
-            // 合併數量
-            const updatedCartList = [...prevState.cartList];
-            updatedCartList[existingIndex].quantity += newItem.quantity;
-            return { cartList: updatedCartList };
-          } else {
-            return { cartList: [...prevState.cartList, newItem] };
-          }
+            const existingIndex = prevState.cartList.findIndex(item =>
+                item.pid === normalized.pid &&
+                String(item.uid) === String(normalized.uid) &&
+                (item.spec || null) === (normalized.spec || null)
+            );
+
+            if (existingIndex !== -1) {
+                const updatedCartList = [...prevState.cartList];
+                const currentQty = updatedCartList[existingIndex].quantity || 0;
+                updatedCartList[existingIndex].quantity = currentQty + (normalized.quantity || 1);
+                result = 'updated';
+                return { cartList: updatedCartList };
+            } else {
+                return {
+                    cartList: [
+                        ...prevState.cartList,
+                        { ...normalized, quantity: normalized.quantity || 1 }
+                    ]
+                };
+            }
         });
-      };
+
+        return result;
+    };
+
+
     updateQuantity = (cart_id, quantity) => {
         this.setState((prev) => ({
             cartList: prev.cartList.map((item) =>
@@ -134,6 +149,8 @@ export class CartProvider extends Component {
 
     //統一不同地方的命名
     normalizeCartItem = (item) => {
+        if (item._normalized) return item;
+
 
         //  抓圖片路徑
         const rawPath =
@@ -154,9 +171,14 @@ export class CartProvider extends Component {
         const priceSource = item.price !== undefined ? item.price : item.unit_price;
         const parsedPrice = parseInt(priceSource, 10);
         return {
+            _normalized: true,
             cart_id: cartId,
             pid: item.pid,
+            // 🧑‍🛒 購物車擁有者（登入者 uid）→ 影響寫入資料庫
             uid: item.uid ? String(item.uid) : null,
+
+            // 🏪 商品賣家（影響顯示 SellerTitle 區分）
+            seller_uid: item.seller_uid ? String(item.seller_uid) : null,
             condition: item.condition || "new",
             quantity: item.quantity || 1,
             productName: item.pd_name || item.productName || item.name,
