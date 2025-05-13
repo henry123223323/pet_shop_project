@@ -7,7 +7,9 @@ var cors = require("cors");
 var axios = require('axios');
 const util = require('util');
 var mysql = require("mysql");
-const imageType = require('image-type');
+const imageType = require("image-type").default;
+const multer = require("multer");
+const photoUpload = multer();
 // 再動就自己寫後端
 const verifyRoutes = require('./routes/verify');
 const upload = require('../fashion-paw/uploadProductImg');
@@ -397,41 +399,37 @@ app.get('/api/petknowarticle', async (req, res) => {
 // });
 
 app.get("/get/userinfo/:uid", function (req, res) {
-  const uid = req.params.uid;  // 從 URL 中獲取 uid
-  console.log("UID from request:", uid);  // 輸出 uid 確認是否正確
+  const uid = req.params.uid;
 
   conn.query("SELECT uid,email,username,photo,fullname,birthday,power,last_time_login,AboutMe as aboutme,Device as device FROM userinfo WHERE uid = ?", [uid], function (err, results) {
     if (err) {
       console.error("資料庫查詢錯誤:", err);
-      res.status(500).send("伺服器錯誤");
-    } else {
-      if (results.length > 0) {
-        console.log("查詢結果:", results);  // 輸出查詢結果
-        // 正確回傳結果給前端
-        const user = results[0];
-        const photoBuffer = user.photo; // 假設 `photo` 是二進位資料 (Buffer)
+      return res.status(500).send("伺服器錯誤");
+    }
 
-        // 將 Buffer 轉換為 Base64
-        const base64Image = `data:image/png;base64,${photoBuffer.toString('base64')}`;
-        // console.log("Base64 圖片資料:", photoBase64);
-        res.json({
-          uid: results[0].uid,
-          email: results[0].email,
-          username: results[0].username,
-          photo: base64Image,
-          firstname: results[0].firstname,
-          lastname: results[0].lastname,
-          fullname: results[0].fullname,
-          birthday: results[0].birthday,
-          lastname_time_login: results[0].lastname_time_login,
-          aboutme: results[0].aboutme,
-          device: results[0].device,
-          power: results[0].power
-        });
-      } else {
-        console.log("沒有找到該 uid 的使用者資料");
-        res.status(404).send("沒有找到資料");
-      }
+    if (results.length > 0) {
+      const user = results[0];
+      const photoBuffer = user.photo;
+      const type = imageType(photoBuffer);
+
+      const base64Image = type
+        ? `data:${type.mime};base64,${photoBuffer.toString('base64')}`
+        : null;
+
+      res.json({
+        uid: user.uid,
+        email: user.email,
+        username: user.username,
+        photo: base64Image,
+        fullname: user.fullname,
+        birthday: user.birthday,
+        lastname_time_login: user.lastname_time_login,
+        aboutme: user.aboutme,
+        device: user.device,
+        power: user.power
+      });
+    } else {
+      res.status(404).send("沒有找到資料");
     }
   });
 });
@@ -738,6 +736,18 @@ app.get("/get/orderitemfirstpig/:order_id",function(req,res){
   })
 })
 
+
+
+// app.post("/post/createuserinfo/")
+
+
+
+
+
+
+
+
+
 app.get("/get/useruid/:email",function(req,res){
   const email = req.params.email
   conn.query("SELECT uid FROM userinfo WHERE email = ?",[email],function(err,results){
@@ -750,6 +760,36 @@ app.get("/get/useruid/:email",function(req,res){
       }
   })
 })
+
+
+
+
+
+
+
+
+app.post("/post/edituserinfo", photoUpload.single("photo"), (req, res) => {
+  const { uid, username, email, birthday } = req.body;
+  const photoBuffer = req.file ? req.file.buffer : null;
+
+  let sql, params;
+
+  if (photoBuffer) {
+    // ✅ 有上傳圖片，就更新 photo 欄位
+    sql = "UPDATE userinfo SET username=?, email=?, birthday=?, photo=? WHERE uid=?";
+    params = [username, email, birthday, photoBuffer, uid];
+  } else {
+    // ✅ 沒有圖片就不更新 photo
+    sql = "UPDATE userinfo SET username=?, email=?, birthday=? WHERE uid=?";
+    params = [username, email, birthday, uid];
+  }
+
+  conn.query(sql, params, (err, result) => {
+    if (err) return res.status(500).send("更新失敗");
+    res.send("更新成功！");
+  });
+});
+
 
 
 

@@ -4,26 +4,65 @@ import axios from 'axios';
 // import 'bootstrap/dist/css/bootstrap.min.css';
 
 class Profile extends Component {
-    constructor(props){
-    super(props)
-    
-    this.state = {
-        showModal: false,
-        photo: "",
-        uid: "",
-        username: ""
+    constructor(props) {
+        super(props)
+        this.inputname = React.createRef();
+        this.inputemail = React.createRef();
+        this.inputbirthday = React.createRef();
+        // this.inputphone = React.createRef();
+        this.inputphoto = React.createRef();
+
+        this.state = {
+            showModal: false,
+            photo: "",
+            uid: "",
+            username: ""
+        }
     }
-}
+
+    handleSave = () => {
+        const file = this.inputphoto.current.files[0]
+        const formData = new FormData();
+
+        if (file) {
+            formData.append("photo", file);
+        }
+
+        formData.append("uid", cookie.get("user_uid"))
+        formData.append("username", this.inputname.current.value);
+        formData.append("email", this.inputemail.current.value);
+        formData.append("birthday", this.inputbirthday.current.value);
+        // formData.append("phone", this.inputphone.current.value);
+
+
+
+        axios.post("http://localhost:8000/post/edituserinfo", formData, {
+            headers: {
+                "Content-Type": "multipart/form-data"
+            }
+        })
+
+
+        this.setState({ showModal: !this.state.showModal });
+
+
+    }
+
+
+
+
     toggleModal = () => {
         this.setState({ showModal: !this.state.showModal });
     }
 
-    componentDidMount() {
+
+
+    getuserinfo = () => {
         const uid = cookie.get("user_uid");  // 獲取 cookie 中的 uid
         if (uid) {
             console.log("UID from cookie:", uid);  // 確認是否獲得了 uid
-            
-            
+
+
             // 使用正確的 URL 格式來發送請求
             axios.get(`http://localhost:8000/get/userinfo/${uid}`)
                 .then(response => {
@@ -39,8 +78,8 @@ class Profile extends Component {
                     const photoBase64 = user.photo;  // 直接使用後端返回的 Base64 字串
                     console.log(photoBase64);
                     console.log(response.data.username);
-                    
-                    
+
+
                     this.setState({
                         uid: response.data.uid,
                         username: response.data.username,
@@ -53,10 +92,21 @@ class Profile extends Component {
                 .catch(error => {
                     console.error("發送請求錯誤:", error);
                 });
-            } else {
-                console.log("沒有找到 uid cookie");
-            }
-            
+        } else {
+            console.log("沒有找到 uid cookie");
+        }
+
+    }
+
+
+
+
+
+
+
+
+    componentDidMount() {
+        this.getuserinfo()
     }
     //去資料庫抓username email 大頭照 生日 電話......
     // 自動帶入編輯裡的資料
@@ -83,8 +133,10 @@ class Profile extends Component {
                     <label className='pb2'>電子信箱:</label>
                     <span className='p2'>{this.state.email}</span><br />
                     <label className='pb2'>大頭照:</label>
-                    {<img src={this.state.photo} alt="User Profile" style={{ borderRadius: "100%", width: "80px" }}/>}<br />
-                    
+                    {this.state.photo && (
+                        <img src={this.state.photo} alt="User Profile" style={{ borderRadius: "100%", width: "80px" }} />
+                    )}<br />
+
                     <label className='pb2'>生日:</label>
                     <span className='p2'>{this.state.birthday}</span>
 
@@ -92,7 +144,7 @@ class Profile extends Component {
 
                 {/* Bootstrap Modal */}
                 {showModal && (
-                    <div className="modal show fade d-block" tabIndex="-1" role="dialog" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+                    <div className="modal show fade d-block" tabIndex="-1" role="dialog" style={{ backgroundColor: 'rgba(0,0,0,0.5)', overflow: "scroll" }}>
                         <div className="modal-dialog" role="document">
                             <div className="modal-content">
                                 <div className="modal-header">
@@ -104,30 +156,30 @@ class Profile extends Component {
                                 <div className="modal-body">
                                     <div className="form-group">
                                         <label>用戶名稱</label>
-                                        <input type="text" className="form-control" />
+                                        <input type="text" className="form-control" ref={this.inputname} />
                                     </div>
                                     <div className="form-group">
                                         <label>大頭照</label>
-                                        <input type="file" className="form-control" onChange={this.PhotoChange} />
+                                        <input type="file" className="form-control" onChange={this.PhotoChange} ref={this.inputphoto} />
                                         <img width={100} src={this.state.photo} alt="大頭照" />
                                         {/* 這裡顯示選擇的圖片 */}
                                     </div>
                                     <div className="form-group">
                                         <label>電子信箱</label>
-                                        <input type="email" className="form-control" />
+                                        <input type="email" className="form-control" ref={this.inputemail} />
                                     </div>
                                     <div className="form-group">
                                         <label>生日</label>
-                                        <input type="date" className="form-control" />
+                                        <input type="date" className="form-control" ref={this.inputbirthday} />
                                     </div>
-                                    <div className="form-group">
+                                    {/* <div className="form-group">
                                         <label>電話</label>
-                                        <input type='phone' className="form-control" />
-                                    </div>
+                                        <input type='phone' className="form-control" ref={this.inputphone} />
+                                    </div> */}
                                 </div>
                                 <div className="modal-footer">
                                     <button type="button" className="btn btn-secondary" onClick={this.toggleModal}>取消</button>
-                                    <button type="button" className="btn btn-primary">儲存變更</button>
+                                    <button type="button" className="btn btn-primary" onClick={this.handleSave} >儲存變更</button>
                                 </div>
                             </div>
                         </div>
