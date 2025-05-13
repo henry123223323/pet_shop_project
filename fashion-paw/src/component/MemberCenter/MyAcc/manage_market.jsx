@@ -23,6 +23,7 @@ export default class ManageMarket extends Component {
     this.setState({ loading: true, error: null })
     try {
       const uid = Cookies.get('user_uid')
+      console.log('▶ uid:', uid);
       if (!uid) throw new Error('請先登入')
       const res = await axios.get(
         '/get/my-second-products',
@@ -64,6 +65,7 @@ export default class ManageMarket extends Component {
   new = async product => {
     try {
       const uid = Cookies.get('user_uid')
+      console.log('🧐 new uid:', uid)   // 確認取到
       const form = new FormData()
       form.append('pd_name', product.pd_name)
       form.append('price', product.price)
@@ -95,7 +97,6 @@ export default class ManageMarket extends Component {
     try {
       const uid = Cookies.get('user_uid')
       const form = new FormData()
-      form.append('uid', uid)
       form.append('pd_name', product.pd_name)
       form.append('price', product.price)
       form.append('categories', product.categories)

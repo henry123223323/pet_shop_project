@@ -87,7 +87,7 @@ export default class MarketModal extends Component {
     const { onEdit, close } = this.props;
     const fd = new FormData();
 
-    ['pd_name','price','description','pet_type','categories','city','district','new_level','status','condition','stock','delivery_method','uid','pid']
+    ['pd_name', 'price', 'description', 'pet_type', 'categories', 'city', 'district', 'new_level', 'status', 'condition', 'stock', 'delivery_method', 'pid']
       .forEach(key => { if (productData[key] !== undefined) fd.append(key, productData[key]); });
 
     Object.entries(productData.attribute).forEach(([k, v]) => fd.append(`attribute.${k}`, v));
@@ -102,7 +102,7 @@ export default class MarketModal extends Component {
     const base = 'http://localhost:8000';
     const endpoint = productData.condition === 'new'
       ? '/get/new-products'
-      : '/get/second-products';
+      : '/get/my-second-products';
     const url = modalState === 'Edit'
       ? `${base}${endpoint}/${productData.pid}`
       : `${base}${endpoint}`;
@@ -150,13 +150,15 @@ export default class MarketModal extends Component {
       { key: 'categories', label: '分類', type: 'select', options: ['pet_food', 'complementary_food', 'snacks', 'Health_Supplements', 'Living_Essentials', 'toys'] },
       { key: 'city', label: '城市', type: 'text' },
       { key: 'district', label: '區域', type: 'text' },
-      { key: 'new_level', label: '新舊程度', type: 'select', options: [
-        { value: '5', label: '全新' },
-        { value: '4', label: '近新' },
-        { value: '3', label: '普通' },
-        { value: '2', label: '使用痕跡' },
-        { value: '1', label: '明顯磨損' }
-      ]},
+      {
+        key: 'new_level', label: '新舊程度', type: 'select', options: [
+          { value: '5', label: '全新' },
+          { value: '4', label: '近新' },
+          { value: '3', label: '普通' },
+          { value: '2', label: '使用痕跡' },
+          { value: '1', label: '明顯磨損' }
+        ]
+      },
       { key: 'stock', label: '庫存數量', type: 'number' }
     ];
 
@@ -217,12 +219,18 @@ export default class MarketModal extends Component {
               <hr />
               <h5>商品圖片與描述</h5>
               {productData.images.map((img, idx) => {
-                const src = img.file ? URL.createObjectURL(img.file) : img.img_path;
+                const src = img.file
+                  ? URL.createObjectURL(img.file)
+                  : (img.img_path.startsWith('http')
+                    ? img.img_path
+                    : `http://localhost:8000${img.img_path}`);
                 return (
                   <div className="d-flex mb-3" key={idx}>
                     <div style={{ width: 80, height: 80, marginRight: 8 }}>
-                      {src && <img src={src} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
-                    </div>
+                      {src
+                        ? <img src={src} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        : <span className="text-muted">無圖</span>
+                      }                    </div>
                     <div className="flex-grow-1">
                       <input type="file" accept="image/*" className="form-control form-control-sm mb-1" onChange={e => this.uploadImageAtIndex(idx, e)} disabled={readOnly} />
                       <input type="text" placeholder="輸入圖片描述" className="form-control form-control-sm" value={img.img_value} onChange={e => this.handleValueChange(idx, e)} disabled={readOnly} />
