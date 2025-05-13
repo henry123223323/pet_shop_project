@@ -208,7 +208,7 @@ export default class New_Products_Manage extends Component {
                   }
                 </td>
                 <td>{p.pd_name}</td>
-                <td>{p.price}</td>
+                <td>NT${p.price}</td>
                 <td>{this.renderCategory(p.categories)}</td>
                 <td>{this.renderStatus(p.status)}</td>
                 <td>

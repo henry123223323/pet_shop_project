@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import MarketModal from '../market_manage/Market_Modal';
 import Pagination from './Page_manage';
+import PawDisplay from '../../../ProductDetailPage/PawDisplay';
 
 export default class SecondProductManage extends Component {
   state = {
@@ -24,7 +25,7 @@ export default class SecondProductManage extends Component {
     this.setState({ loading: true, error: null });
     try {
       const res = await axios.get('http://localhost:8000/get/second-products', {
-   });
+      });
       this.setState({ second_product: res.data, loading: false });
     } catch (err) {
       console.error('取得二手商品失敗：', err);
@@ -115,20 +116,16 @@ export default class SecondProductManage extends Component {
       ? <span className="badge bg-success">上架</span>
       : <span className="badge bg-secondary">下架</span>;
 
-  renderNewLevel = lvl => {
-    const stars = '★★★★★'.slice(0, parseInt(lvl, 10));
-    return <span style={{ color: '#FFD700' }}>{stars.padEnd(5, '☆')}</span>;
-  };
 
   renderCategory = cat =>
-    ({
-      pet_food: '飼料',
-      complementary_food: '副食',
-      snacks: '零食',
-      Health_Supplements: '保健食品',
-      Living_Essentials: '生活家居',
-      toys: '玩具'
-    }[cat] || cat);
+  ({
+    pet_food: '飼料',
+    complementary_food: '副食',
+    snacks: '零食',
+    Health_Supplements: '保健食品',
+    Living_Essentials: '生活家居',
+    toys: '玩具'
+  }[cat] || cat);
 
   render() {
     const {
@@ -195,9 +192,9 @@ export default class SecondProductManage extends Component {
                       )}
                     </td>
                     <td>{p.pd_name}</td>
-                    <td>{p.price}</td>
+                    <td>NT${p.price}</td>
                     <td>{this.renderCategory(p.categories)}</td>
-                    <td>{this.renderNewLevel(p.new_level)}</td>
+                    <td><PawDisplay rating={Number(p.new_level)} /></td>
                     <td>{this.renderStatus(p.status)}</td>
                     <td>
                       <button

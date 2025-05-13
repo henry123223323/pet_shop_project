@@ -83,11 +83,14 @@ export default function HotRanking() {
               </div>
               <p className={styles.name}>{pd_name}</p>
               <p className={styles.price}>
-                價格：{Number(price).toLocaleString('zh-TW', {
+                NT{Number(price).toLocaleString('zh-TW', {
                   style: 'currency',
                   currency: 'TWD',
+                  minimumFractionDigits: 0,
+                  maximumFractionDigits: 0,
                 })}
               </p>
+
               <div className={styles.actions}>
                 <AddToMyFavorite
                   isFavorite={isFav}
@@ -95,12 +98,12 @@ export default function HotRanking() {
                   size="24px"
                   aria-label="收藏"
                 />
-                  <AddToCartBtn
-                      type="icon"
-                      product={{ ...item,image: item.imageUrl }}
-                      quantity={1}
-                      aria-label="加入購物車"
-                    />
+                <AddToCartBtn
+                  type="icon"
+                  product={{ ...item, image: item.imageUrl }}
+                  quantity={1}
+                  aria-label="加入購物車"
+                />
               </div>
             </div>
           );

@@ -5,7 +5,7 @@ import AddToCartBtn from '../../share/AddToCartBtn';
 import AddToMyFavorite from '../../share/AddToMyFavorite';
 import cookie from 'js-cookie';
 
-export default function RecommendedProducts({ pet_type }) {
+export default function RecommendedProducts({ pet_type, product_category }) {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -13,17 +13,21 @@ export default function RecommendedProducts({ pet_type }) {
   const user_id = cookie.get('user_uid');
 
   useEffect(() => {
-        setLoading(true);
+    setLoading(true);
     setError(null);
 
-    console.log('🔍 使用寵物類型參數 pet_type =', pet_type);
-    // 組建 URL：即使沒有 pet_type，也取全部推薦
-    let url = 'http://localhost:8000/get/recommend-products';
-    if (pet_type) url += `?pet_type=${pet_type}`;
-    console.log('🔍 呼叫推薦 API URL =', url);
+    console.log('🔍 使用寵物類型 pet_type =', pet_type, '、功能分類 product_category =', product_category);
 
-    axios.get(url)
-      .then(res => setItems(res.data))
+    const params = {};
+    if (pet_type) params.pet_type = pet_type;
+    if (product_category) params.product_category = product_category;
+
+    axios.get('http://localhost:8000/get/recommend-products', { params })
+      .then(res => {
+      console.log('🐶 pet_type =', pet_type, '📂 product_category =', product_category);
+
+        setItems(res.data);
+      })
       .catch(err => {
         console.error('取得推薦商品失敗', err);
         setError('無法取得推薦商品');
@@ -36,24 +40,22 @@ export default function RecommendedProducts({ pet_type }) {
         console.error('取得收藏狀態失敗', err);
         setError('取得收藏狀態失敗');
       });
-  }, [pet_type, user_id]);
+  }, [pet_type, product_category, user_id]);
 
   if (loading) return <div>載入中…</div>;
-  if (error)   return <div className="text-danger">{error}</div>;
+  if (error) return <div className="text-danger">{error}</div>;
 
-  // 處理收藏狀態
   const Change_FavorState = pid => {
     if (!user_id) return alert('請先登入');
-    const urlBase = 'http://localhost:8000';
+    const base = 'http://localhost:8000';
     if (favorID.includes(pid)) {
-      axios.get(`${urlBase}/delete/collect/${user_id}/${pid}`)
+      axios.get(`${base}/delete/collect/${user_id}/${pid}`)
         .then(() => setFavorID(prev => prev.filter(id => id !== pid)));
     } else {
-      axios.get(`${urlBase}/insert/collect/${user_id}/${pid}`)
+      axios.get(`${base}/insert/collect/${user_id}/${pid}`)
         .then(() => setFavorID(prev => [...prev, pid]));
     }
   };
-
 
   return (
     <div className={styles.container}>
@@ -66,11 +68,11 @@ export default function RecommendedProducts({ pet_type }) {
               : <div className={styles.noImage}>暫無圖片</div>}
             <div className={styles.info}>
               <p>商品名稱：{item.name}</p>
-              <p>價格：{item.price} 元</p>
+              <p>NT${item.price} </p>
             </div>
             <div className={styles.btnContainer}>
               <AddToMyFavorite
-                type='text'
+                type='icon'
                 isFavorite={favorID.includes(item.pid)}
                 onClick={() => Change_FavorState(item.pid)}
               />

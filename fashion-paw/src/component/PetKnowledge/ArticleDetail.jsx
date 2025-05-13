@@ -62,7 +62,10 @@ export default function ArticleDetail({ topic }) {
         </div>
 
         {/* ← 在這裡插入推薦商品元件 */}
-        <RecommendedProducts pet_type={article.pet_type} />
+        <RecommendedProducts
+          pet_type={article.pet}
+          product_category={article.category}
+        />
       </div>
     </div>
   );

@@ -3,6 +3,7 @@ import React, { Component } from 'react'
 import axios from 'axios'
 import Cookies from 'js-cookie'
 import Market_modal from './market_manage/Market_Modal'
+import PawDisplay from '../../ProductDetailPage/PawDisplay';
 
 // 全域設定
 const BASE_URL = 'http://localhost:8000'
@@ -78,7 +79,6 @@ export default class ManageMarket extends Component {
   new = async product => {
     try {
       const uid = Cookies.get('user_uid')
-      console.log('🧐 new uid:', uid)   // 確認取到
       const form = new FormData()
       form.append('pd_name', product.pd_name)
       form.append('price', product.price)
@@ -144,10 +144,6 @@ export default class ManageMarket extends Component {
       ? <span className="badge bg-success">上架</span>
       : <span className="badge bg-secondary">下架</span>
 
-  renderNewLevel = lvl => {
-    const stars = '★★★★★'.slice(0, +lvl).padEnd(5, '☆')
-    return <span style={{ color: '#FFD700' }}>{stars}</span>
-  }
 
   renderCategory = cat => ({
     pet_food: "飼料",
@@ -186,7 +182,7 @@ export default class ManageMarket extends Component {
         </div>
         <div className="row mb-3">
           <div className="col-md-3">
-            <button className="btn btn-primary" onClick={this.OpenAdd}>上架二手商品</button>
+            <button className="btn btn-outline-primary" onClick={this.OpenAdd}>上架二手商品</button>
           </div>
         </div>
 
@@ -215,9 +211,9 @@ export default class ManageMarket extends Component {
                       : <span className="text-muted">無圖</span>}
                   </td>
                   <td>{p.pd_name}</td>
-                  <td>{p.price}</td>
+                  <td>NT${p.price}</td>
                   <td>{this.renderCategory(p.categories)}</td>
-                  <td>{this.renderNewLevel(p.new_level)}</td>
+                  <td><PawDisplay rating={Number(p.new_level)} /></td>
                   <td>{this.renderStatus(p.status)}</td>
                   <td>
                     <button className="btn btn-primary btn-sm me-1" onClick={() => this.OpenFound(start + idx)}>查看</button>
