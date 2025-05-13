@@ -28,6 +28,7 @@ export default class ManageMarket extends Component {
     this.setState({ loading: true, error: null })
     try {
       const uid = Cookies.get('user_uid')
+      console.log('▶ uid:', uid);
       if (!uid) throw new Error('請先登入')
       // 帶入 X-UID header 並自動帶 cookie
       const res = await axios.get(
@@ -74,7 +75,69 @@ export default class ManageMarket extends Component {
     }
   }
 
-  handleSearchChange = e => this.setState({ searchTerm: e.target.value, page: 1 })
+  new = async product => {
+    try {
+      const uid = Cookies.get('user_uid')
+      console.log('🧐 new uid:', uid)   // 確認取到
+      const form = new FormData()
+      form.append('pd_name', product.pd_name)
+      form.append('price', product.price)
+      form.append('categories', product.categories)
+      form.append('new_level', product.new_level)
+      form.append('status', product.status)
+      product.images?.forEach(img => img.file && form.append('images', img.file))
+
+      await axios.post(
+        '/get/my-second-products',
+        form,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            'X-UID': uid
+          }
+        }
+      )
+      alert('新增成功！')
+      this.toggleModal()
+      this.loadData()
+    } catch (err) {
+      console.error('新增失敗：', err)
+      alert('新增失敗，請稍後再試')
+    }
+  }
+
+  edit = async product => {
+    try {
+      const uid = Cookies.get('user_uid')
+      const form = new FormData()
+      form.append('pd_name', product.pd_name)
+      form.append('price', product.price)
+      form.append('categories', product.categories)
+      form.append('new_level', product.new_level)
+      form.append('status', product.status)
+      product.images?.forEach(img => img.file && form.append('images', img.file))
+
+      await axios.put(
+        `/get/my-second-products/${product.pid}`,
+        form,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            'X-UID': uid
+          }
+        }
+      )
+      alert('更新成功！')
+      this.toggleModal()
+      this.loadData()
+    } catch (err) {
+      console.error('更新失敗：', err)
+      alert('更新失敗，請稍後再試')
+    }
+  }
+
+  handleSearchChange = e =>
+    this.setState({ searchTerm: e.target.value })
 
   renderStatus = s =>
     s === 1

@@ -9,7 +9,7 @@ const util = require('util');
 var mysql = require("mysql");
 const imageType = require('image-type');
 // 夏威夷披薩
-const mySecondRouter = require('./routes/my-second-products')
+
 
 const verifyRoutes = require('./routes/verify');
 const upload = require('../fashion-paw/uploadProductImg');
@@ -23,7 +23,6 @@ app.listen(8000, function () {
 });
 app.use(express.static("public"));
 app.use(express.static(path.resolve(__dirname, '../fashion-paw/public')));
-app.use('/my-second-products', mySecondRouter)
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -70,7 +69,6 @@ app.use(cors({
   origin: 'http://localhost:3000',
   credentials: true
 }));
-
 
 app.get("/get/article", function (req, res) {//用於開發者後臺管理
   conn.query("SELECT * FROM article", function (err, results) {
@@ -1125,6 +1123,169 @@ app.get('/delete/collect/:uid/:pid', function (req, res) {
 
   })
 })
+
+//後台管理 賣家個人商場api
+// 只抓自己的二手商品
+// (1) 讀取二手商品
+app.get('/get/my-second-products', async (req, res) => {
+  const uid = req.get('X-UID')
+  if (!uid) return res.status(400).json({ error: '請帶入 X-UID' })
+
+  const sql = `
+    SELECT p.uid,p.pid,p.pd_name,p.price,p.categories,p.new_level,p.status,
+           MIN(pi.img_path) AS img_path
+      FROM productslist p
+ LEFT JOIN product_image pi ON p.pid=pi.pid
+     WHERE p.uid=? AND p.\`condition\`='second'
+  GROUP BY p.pid
+  `
+  try {
+    const rows = await q(sql, [uid])
+    const host = `${req.protocol}://${req.get('host')}`
+    const data = rows.map(r => ({
+      uid: r.uid,
+      pid: r.pid,
+      pd_name: r.pd_name,
+      price: r.price,
+      categories: r.categories,
+      new_level: r.new_level,
+      status: r.status,
+      imageUrl: r.img_path ? `${host}${r.img_path}` : null
+    }))
+    res.json(data)
+  } catch (e) {
+    console.error(e)
+    res.status(500).json({ error: e.message })
+  }
+})
+
+// (2) 新增二手商品
+app.post('/get/my-second-products', upload, async (req, res) => {
+  console.log('🔎 POST 收到 X-UID:', req.get('X-UID'));
+  const uid = req.get('X-UID');
+  if (!uid) return res.status(400).json({ error: '請帶入 X-UID' });
+
+  const { pd_name, price, categories, new_level, status } = req.body;
+  const insertSql = `
+    INSERT INTO productslist
+      (uid, pd_name, price, categories, new_level, status, \`condition\`)
+    VALUES (?, ?, ?, ?, ?, ?, "second")
+  `;
+  try {
+    const { insertId: pid } = await q(insertSql, [uid, pd_name, price, categories, new_level, status]);
+    console.log('新增後 pid=', pid);
+
+    // 處理圖片：直接 batch insert
+    // 1. 先刪掉任何舊圖（理論上不應該有）
+    await q('DELETE FROM product_image WHERE pid = ?', [pid]);
+
+    // 2. 解析描述陣列
+    let rawValues = req.body['img_value[]'] || req.body.img_value || [];
+    if (!Array.isArray(rawValues)) rawValues = [rawValues];
+    console.log('解析後的 imgValues =', rawValues);
+
+    // 3. 準備 batch INSERT 的 rows
+    const mediaRoot = path.join(__dirname, '..', 'public', 'media', 'second_pd');
+    const imgRows = (req.files || []).map((file, i) => {
+      // file.path 已是實體路徑，可直接取 file.filename
+      return [
+        pid,
+        `/media/second_pd/${file.filename}`,
+        rawValues[i] || ''
+      ];
+    });
+    console.log('準備寫入 product_image 的 rows：', imgRows);
+
+    if (imgRows.length) {
+      await q(
+        'INSERT INTO product_image (pid, img_path, img_value) VALUES ?',
+        [imgRows]
+      );
+      console.log('成功寫入', imgRows.length, '筆圖片資料');
+    }
+
+    res.status(201).json({ pid });
+  } catch (e) {
+    console.error('上傳失敗：', e);
+    res.status(500).json({ error: e.message });
+  }
+});
+
+
+// (3) 編輯二手商品
+app.put('/get/my-second-products/:pid', upload, async (req, res) => {
+  const uid = req.get('X-UID');
+  const pid = +req.params.pid;
+  if (!uid) return res.status(400).json({ error: '請帶入 X-UID' });
+
+  const { pd_name, price, categories, new_level, status } = req.body;
+  try {
+    // 驗證商品
+    const rows = await q(
+      'SELECT 1 FROM productslist WHERE pid=? AND uid=? AND `condition`="second"',
+      [pid, uid]
+    );
+    if (!rows.length) return res.status(404).json({ error: '找不到商品' });
+
+    // 更新商品基本資料
+    await q(
+      'UPDATE productslist SET pd_name=?,price=?,categories=?,new_level=?,status=? WHERE pid=?',
+      [pd_name, price, categories, new_level, status, pid]
+    );
+    console.log('已更新 productslist pid=', pid);
+
+    // 刪掉舊圖
+    await q('DELETE FROM product_image WHERE pid=?', [pid]);
+    console.log('已刪除 PID=', pid, '的舊圖片紀錄');
+
+    // 解析描述陣列
+    let rawValues = req.body['img_value[]'] || req.body.img_value || [];
+    if (!Array.isArray(rawValues)) rawValues = [rawValues];
+    console.log('解析後的 imgValues =', rawValues);
+
+    // 準備 batch INSERT
+    const imgRows = (req.files || []).map((file, i) => [
+      pid,
+      `/media/second_pd/${file.filename}`,
+      rawValues[i] || ''
+    ]);
+    console.log('準備寫入 product_image 的 rows：', imgRows);
+
+    if (imgRows.length) {
+      await q(
+        'INSERT INTO product_image (pid, img_path, img_value) VALUES ?',
+        [imgRows]
+      );
+      console.log('成功寫入', imgRows.length, '筆圖片資料');
+    }
+
+    res.json({ pid });
+  } catch (e) {
+    console.error('更新失敗：', e);
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// (4) 刪除二手商品
+app.delete('/get/my-second-products/:pid', async (req, res) => {
+  const uid = req.get('X-UID')
+  const pid = +req.params.pid
+  if (!uid) return res.status(400).json({ error: '請帶入 X-UID' })
+
+  try {
+    await q('DELETE FROM product_image WHERE pid=?', [pid])
+    const { affectedRows } = await q(
+      'DELETE FROM productslist WHERE pid=? AND uid=? AND `condition`="second"',
+      [pid, uid]
+    )
+    if (!affectedRows) return res.status(404).json({ error: '找不到商品' })
+    res.sendStatus(204)
+  } catch (e) {
+    console.error(e)
+    res.status(500).json({ error: e.message })
+  }
+})
+
 
 
 // 後台管理 新品和二手共用 上架 刪除 編輯函式
