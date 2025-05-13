@@ -6,6 +6,8 @@ import PayWay from './PayWay';
 import DeliverWay from './DeliverWay';
 import Receipt from './Receipt';
 import ConfirmBtn from '../share/ConfirmBtn';
+import cookie from 'js-cookie';
+
 import styles from './CheckBillPage.module.css';
 
 class CheckBillPage extends Component {

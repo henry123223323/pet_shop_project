@@ -386,6 +386,9 @@ class ShoppingCartPage extends Component {
       }
     }
 
+      // ✅ 加入 flag，供 CheckBillPage 驗證是否從購物車進入
+  localStorage.setItem('fromCart', 'true');
+
     localStorage.setItem('selectedItems', JSON.stringify(selectedCartItems));
     localStorage.setItem('discountAmount', discountAmount);
     window.location.href = '/CheckBillPage';

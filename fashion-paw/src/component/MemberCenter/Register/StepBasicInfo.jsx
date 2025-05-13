@@ -10,6 +10,8 @@ class StepBasicInfo extends Component {
         this.inputaddress = React.createRef();
         this.inputphone = React.createRef();
         this.inputbirthday = React.createRef();
+        this.inputpower = React.createRef();
+        this.inputsyoukai = React.createRef();
 
 
         this.state = {
@@ -78,10 +80,21 @@ class StepBasicInfo extends Component {
         const inputphone = this.inputphone.current.value
         const inputbirthday = this.inputbirthday.current.value
 
+        let inputpower = "";
+        if(this.inputpower.current.checked){
+             inputpower = "seller"
+        } else {
+             inputpower = "buyer"
+        }
+
+        const inputsyoukai = this.inputsyoukai.current.value
+
+
+
         const newState = {
             ... this.state.inputinfo, firstname: inputfirstname, username: inputusername,
             userfullname: fullname, lastname: inputlastname, adress: inputaddress, phone: inputphone,
-            birthday: inputbirthday
+            birthday: inputbirthday,power: inputpower,syoukai:inputsyoukai
         }
         this.setState({
             inputinfo: newState
@@ -134,10 +147,10 @@ class StepBasicInfo extends Component {
                     <label >生日</label>
                     <input type="date" name="birthday" ref={this.inputbirthday} />
                     <p></p>
-                    <p></p><input type="checkbox" name="" id="confirmuse" onChange={this.BeSeller} />
+                    <p></p><input type="checkbox" name="" id="confirmuse" onChange={this.BeSeller} ref={this.inputpower}/>
                     <label htmlFor="confirmuse" >是否成為賣家?</label>
                     <p></p>
-                    {this.state.show && <textarea placeholder='自我介紹'></textarea>}
+                    {this.state.show && <textarea placeholder='自我介紹' ref={this.inputsyoukai}></textarea>}
                     <p></p>
                     <button type="submit" className="btn btn-primary" onClick={this.timetogo}>送出</button>
                 </fieldset></>

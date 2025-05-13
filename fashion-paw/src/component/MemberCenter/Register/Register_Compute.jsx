@@ -47,6 +47,7 @@ class Register_Compute extends Component {
         },()=>{
             console.log(this.state);
             
+            console.log(this.state.userinfo);
             
 
 

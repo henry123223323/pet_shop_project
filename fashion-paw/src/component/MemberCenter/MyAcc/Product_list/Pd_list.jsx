@@ -50,11 +50,27 @@ class PD_list extends Component {
 
         })
             .catch((error) => {
-                console.error("刪除失敗:", error);
+                console.error("查詢失敗:", error);
             });
     }
 
 
+    getorderitemfirstpig = () => {
+  axios
+    .get(`http://localhost:8000/get/orderitemfirstpig/${this.props.product.order_id}`)
+    .then((response) => {
+      console.log("主圖查詢成功:", response.data);
+      this.setState(prevState => ({
+        order: {
+          ...prevState.order,
+          pd_img: response.data[0]?.pd_img || "../media/default.jpg"
+        }
+      }));
+    })
+    .catch((error) => {
+      console.error("主圖查詢失敗:", error);
+    });
+};
 
 
 
@@ -68,6 +84,7 @@ class PD_list extends Component {
         ) {
             this.setState({ order: this.props.product }, () => {
                 this.getorderitem(); // 在 setState 完成後才執行，避免競爭狀態
+                this.getorderitemfirstpig();
                 console.log("更新 order 為:", this.props.product);
             });
         }

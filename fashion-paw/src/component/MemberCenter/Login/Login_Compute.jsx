@@ -50,6 +50,7 @@ class Login_Compute extends Component {
                     cookie.set('user_power', user.power, { expires: 1 ,SameSite:'Lax'})
                     console.log('成功設置cookie',cookie.get('user_uid'));
                     console.log('成功設置cookie',cookie.get('user_power'));
+                    window.location.href = "/";
                     
                 } else {
                     alert("email或密碼錯誤")
