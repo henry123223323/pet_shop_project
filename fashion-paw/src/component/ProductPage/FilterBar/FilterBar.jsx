@@ -12,7 +12,10 @@ const prices = [
   { value: '1000+', label: '1000以上' }
 ];
 
-export default function FilterBar({ onFilterChange = () => { } }) {
+export default function FilterBar({
+  petType = '',                  // 新增：當前寵物類型
+  onFilterChange = () => { }
+}) {
   const [selFuncs, setSelFuncs] = useState([]);
   const [selBrands, setSelBrands] = useState([]);
   const [selPrice, setSelPrice] = useState('');
@@ -36,8 +39,13 @@ export default function FilterBar({ onFilterChange = () => { } }) {
   }, [])
   // 每次狀態改變就通知父元件
   useEffect(() => {
-    onFilterChange({ functions: selFuncs, brands: selBrands, price: selPrice });
-  }, [selFuncs, selBrands, selPrice]);
+    onFilterChange({
+      petType,                   // 把寵物類型也帶出去
+      functions: selFuncs,
+      brands: selBrands,
+      price: selPrice
+    });
+  }, [petType, selFuncs, selBrands, selPrice]);
 
   const toggleArray = (arr, setFn, val) => {
     setFn(prev => prev.includes(val) ? prev.filter(x => x !== val) : [...prev, val]);

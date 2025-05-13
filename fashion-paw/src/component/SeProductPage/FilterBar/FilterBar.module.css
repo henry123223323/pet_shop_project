@@ -36,3 +36,6 @@
   position:absolute; top:8px; right:8px;
   background:none; border:none; font-size:24px; cursor:pointer;
 }
+.depreciationRow img[src*="pawDark_final.svg"] {
+  display: none !important;
+}
