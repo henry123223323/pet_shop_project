@@ -11,8 +11,8 @@ class SellerTitle extends Component {
     const sellerName = this.context.getSellerName(uid);
 
     return (
-      <div className="mt-3 mb-2">
-        <h4>{sellerName} 的賣場</h4>
+      <div className="mt-3 mb-1">
+        <span style={{ fontWeight: "500" }}>{sellerName}</span>
       </div>
     );
   }
