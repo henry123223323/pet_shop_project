@@ -43,8 +43,8 @@ class Profile extends Component {
         })
 
 
-        this.setState({ showModal: !this.state.showModal });
-
+        this.setState({ showModal: !this.state.showModal },()=>{this.getuserinfo()});
+        
 
     }
 
