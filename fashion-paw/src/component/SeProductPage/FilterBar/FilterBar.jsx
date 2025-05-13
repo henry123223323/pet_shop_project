@@ -86,7 +86,7 @@ export default function FilterBar({
             </div>
           </div>
 
-          {/* 折舊程度 (改用 PawDisplay 圖案) */}
+           {/* 折舊程度 (改用 PawDisplay 圖案) */}
           <div className={`${styles.row} ${styles.depreciationRow}`}>
             <span className={styles.label}>折舊程度</span>
             <div className={styles.options}>
@@ -99,7 +99,10 @@ export default function FilterBar({
                     checked={selDep === n}
                     onChange={() => setSelDep(n)}
                   />
-                  <PawDisplay rating={n} />
+                  {/* 外層 wrapper 留 n 顆 paw 的寬度 */}
+                  <div className={styles.pawWrapper} style={{ width: `${n * 25}px` }}>
+                    <PawDisplay rating={n} />
+                  </div>
                 </label>
               ))}
             </div>

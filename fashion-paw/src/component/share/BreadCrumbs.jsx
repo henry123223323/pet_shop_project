@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import styles from './BreadCrumbs.module.css';
 
@@ -38,13 +38,26 @@ const nameMap = {
   Quiz: '寵物小測驗',
   ProductPage: '商品頁面',
   SeProductPage: '二手商品頁面',
-
   // ...其他路徑段對應
 };
 
 export default function Breadcrumbs() {
   const { pathname } = useLocation();
   const segments = pathname.split('/').filter(Boolean);
+  const lastSeg = segments[segments.length - 1] || '';
+
+  // 把 hook 提到最上層
+  const [productName, setProductName] = useState('');
+  useEffect(() => {
+    if (/^\d+$/.test(lastSeg)) {
+      fetch(`http://localhost:8000/productslist/${lastSeg}`)
+        .then(res => res.json())
+        .then(data => setProductName(data.pd_name || '商品'))
+        .catch(() => setProductName('商品'));
+    }
+  }, [lastSeg]);
+
+  // 早期 return 只處理空路徑
   if (segments.length === 0) return null;
 
   return (
@@ -57,11 +70,13 @@ export default function Breadcrumbs() {
         {segments.map((seg, i) => {
           const to = '/' + segments.slice(0, i + 1).join('/');
           const isLast = i === segments.length - 1;
-          const label = nameMap[seg] || seg;  // 取對照表，找不到就顯示原始 seg
+          const label = isLast && /^\d+$/.test(seg)
+            ? (productName || '載入中…')
+            : (nameMap[seg] || seg);
 
           return (
             <React.Fragment key={to}>
-              <li className={styles.separator}></li>
+              <li className={styles.separator}>›</li>
               <li
                 className={`${styles.breadcrumbItem} ${isLast ? styles.active : ''}`}
                 {...(isLast ? { 'aria-current': 'page' } : {})}

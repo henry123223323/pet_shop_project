@@ -36,6 +36,11 @@
   position:absolute; top:8px; right:8px;
   background:none; border:none; font-size:24px; cursor:pointer;
 }
-.depreciationRow img[src*="pawDark_final.svg"] {
-  display: none !important;
+.pawWrapper {
+  display: inline-block;
+  overflow: hidden;
+  /* 假設每顆 paw 寬度是 1em，就留 n*1em */
+  /* 也可以用 px，視你的 icon 大小調整 */
+    vertical-align: middle; /* 垂直置中，可選 */
+
 }
