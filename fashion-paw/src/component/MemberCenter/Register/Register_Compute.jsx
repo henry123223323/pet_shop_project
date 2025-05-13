@@ -39,20 +39,33 @@ class Register_Compute extends Component {
         })
     }
 
-    getallinfo=(value)=>{
+    getallinfo = (value) => {
         console.log(value);
         let userinfo = value
         this.setState({
             userinfo
-        },()=>{
+        }, () => {
             console.log(this.state);
-            
             console.log(this.state.userinfo);
-            
+            const newuserinfo = {
 
+                email: this.state.email,
+                username: this.state.userinfo.username,
+                password: this.state.password,
+                firstname: this.state.userinfo.firstname,
+                lastname: this.state.userinfo.lastname,
+                birthday: this.state.userinfo.birthday,
+                power: this.state.userinfo.power,
+                Aboutme: this.state.userinfo.syoukai,
+                fullname: this.state.userinfo.userfullname
+            }
 
-
-
+            axios.post("http://localhost:8000/post/createuserinfo", newuserinfo).then(response => {
+                console.log("新增成功！", response.data);
+            })
+                .catch(error => {
+                    console.error("新增失敗", error);
+                });
 
 
 
@@ -75,7 +88,7 @@ class Register_Compute extends Component {
             return <StepPassword next={this.handleNext} getpassword={this.getpassword} />
         }
         else {
-            return <StepBasicInfo next={this.handleNext} getallinfo={this.getallinfo}/>
+            return <StepBasicInfo next={this.handleNext} getallinfo={this.getallinfo} />
         }
     }
     render() {
