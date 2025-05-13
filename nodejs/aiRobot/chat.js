@@ -25,8 +25,27 @@ const functions = [
       },
       required: ['keyword']
     }
+  },
+  {
+    name: 'get_hot_ranking',
+    description: '取得前三名熱銷商品，包括 pid、商品名稱、價格、銷售數與圖片 URL',
+    parameters: {
+      type: 'object',
+      properties: {
+        
+      },
+      required: []
+    }
   }
 ];
+
+async function HOTRANKING(limit) {
+  let result = await axios.get(`http://localhost:8000/get/hot-ranking`)
+  console.log(result.data);
+  return result.data;
+  
+}
+
 
 async function searchProducts(keyword) {
   let result = await axios.post('http://localhost:8000/post/productsreach/second', { 'keyword': keyword })
@@ -92,17 +111,25 @@ router.post('/', async (req, res) => {
       if (name === 'search_products') {
         // 執行你自己的搜尋邏輯
         resultData = await searchProducts(args.keyword);
-      } else {
+
+      }
+      else if (name === 'get_hot_ranking') {
+      resultData = await HOTRANKING();
+
+    }
+      else {
         resultData = { error: `Unknown function ${name}` };
       }
       
-      return res.json({ answer: resultData });
+      return res.json({functions:name, answer: resultData });
 
     }
+    
     else {
-      res.json({ answer: answer.content });
+      res.json({functions:"text", answer: answer.content });
 
     }
+console.log('ai');
 
   } catch (err) {
     console.error(err);

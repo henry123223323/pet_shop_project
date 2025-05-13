@@ -45,6 +45,7 @@ function authenticate(req, res, next) {
   next()
 }
 const resetPasswordRoutes = require('./routes/resetPassword');
+const { log } = require('console');
 app.use('/password', resetPasswordRoutes);
 var conn = mysql.createConnection({
   user: "root",
@@ -1882,7 +1883,31 @@ app.post("/cart/merge", async (req, res) => {
     res.status(500).send("伺服器錯誤");
   }
 });
-
+app.get('/build_AIchatroom/:user_id', async (req, res) => {
+  let { user_id } = req.params;
+  let sql = `
+  INSERT INTO chatroomuser (uidX,uidY) VALUES(?,1)
+  `
+  conn.query(sql, [user_id], function (err, rows) {
+    
+  })
+})
+app.get('/AI_check/:userid', async (req, res) => {
+  let { userid } = req.params;
+  let sql = `
+  SELECT * 
+  FROM chatroomuser
+  WHERE uidX=? and uidY=1;
+  `
+  conn.query(sql, [userid], function (err, rows) {
+    if (rows.length>0) {
+      res.json(true)
+    }
+    else {
+      res.json(false)
+    }
+  })
+})
 // 從資料庫讀出購物車資料
 app.get("/cart/:uid", async (req, res) => {
   const { uid } = req.params;
@@ -1959,19 +1984,20 @@ app.delete("/cart/remove", async (req, res) => {
 app.get('/channel/:uid', async(req, res)=>{
   let uidX=req.params.uid
   let sql=`
-  SELECT cru.chatroomID AS id, ui.username AS name, ui.photo, ui.last_time_login AS lastTime, cm.message AS snippet 
+  SELECT cru.chatroomID AS id,ui.uid, ui.username AS name, ui.photo as avatar, ui.last_time_login AS lastTime, cm.message AS snippet 
   FROM chatroomuser AS cru 
   LEFT JOIN userinfo AS ui 
   ON cru.uidY = ui.uid 
   LEFT JOIN chatmessage AS cm 
-  ON cm.ChatrommID = cru.chatroomID 
-  AND cm.create_time = ( SELECT MAX(create_time) FROM chatmessage WHERE ChatrommID = cru.chatroomID ) 
+  ON cm.ChatroomID = cru.chatroomID 
+  AND cm.create_time = ( SELECT MAX(create_time) FROM chatmessage WHERE ChatroomID = cru.chatroomID ) 
   WHERE cru.uidX = ?
 
   `
   conn.query(sql, [uidX], function (err, rows) {
     rows.forEach((room)=>{
-      room.id='chatroom'+room.id
+      room.id = 'chatroom' + room.id
+      room.lastTime=new Date(room.lastTime).toLocaleTimeString()
     })
     
     console.log(rows);
@@ -1979,23 +2005,70 @@ app.get('/channel/:uid', async(req, res)=>{
     
   })
 })
-app.get('/message/:uid', async (req, res) => {
-  let uidX = req.params.uid;
-  let chatroom_Array=[]
-  let message_json = {}
-  await axios.get(`http://localhost:8000/channel/${uidX}`)
-    .then(res => {
-      res.data.forEach((chatroom) => {
-      chatroom_Array.push(chatroom.id)
-      
-    })
-    })
+app.get('/chatroom/message/:room', async(req, res)=>{
+  let roomid = parseInt(req.params.room.match(/\d+/)[0], 10) 
   
-  chatroom_Array.map(rid => { message_json[rid] = { hello: rid } })
-  console.log(message_json);
-  res.json(message_json)
+  
+  let sql=`
+ SELECT cm.speakerID as id,cm.message as text,cm.create_time as time 
+ FROM chatmessage cm 
+ WHERE ChatroomID=?;
 
+  `
+  conn.query(sql, [roomid], function (err, rows) {
+    
+    console.log('-----');
+    rows.forEach(msg => {
+  msg.time=new Date(msg.time).toLocaleTimeString()
+})    
+    console.log(rows);
+    res.json(rows)
+    
+  })
 })
+
+app.get('/message/:uid', async (req, res) => {
+  try {
+    const uidX = req.params.uid;
+    // 先拿所有 chatroom
+    const channelResp = await axios.get(`http://localhost:8000/channel/${uidX}`);
+    const chatroomIds = channelResp.data.map(room => room.id);
+
+    // 串 Promise 取得每個聊天室的訊息，並標記 from
+    const messagesByRoom = {};
+    await Promise.all(chatroomIds.map(async (roomId) => {
+      const msgResp = await axios.get(`http://localhost:8000/chatroom/message/${roomId}`);
+      const processed = msgResp.data.map(msg => ({
+        ...msg,
+        from: msg.id == uidX ? 'user' : 'bot'
+      }));
+      messagesByRoom[roomId] = processed;
+    }));
+
+    // 全部做完再回傳
+    return res.json(messagesByRoom);
+
+  } catch (err) {
+    console.error(err);
+    return res.status(500).send('伺服器錯誤');
+  }
+});
+
+app.post('/post/insert/message', function (req, res) {
+  req.body.ChatroomID = parseInt(req.body.ChatroomID.match(/\d+/)[0], 10)
+  req.body.speakerID=parseInt(req.body.speakerID)
+  console.log(req.body);
+  let {ChatroomID,speakerID,message,isRead}=req.body
+  conn.query(`    
+    INSERT INTO chatmessage
+          (ChatroomID,speakerID,message,isRead)
+        VALUES (?, ?, ?, ?)
+        `, [ChatroomID, speakerID, message, isRead], function (err, result) {
+    console.log('insert成功');
+    
+        })
+})
+
 //獲取折扣碼
 app.get('/coupons/:uid', async (req, res) => {
   const { uid } = req.params;
