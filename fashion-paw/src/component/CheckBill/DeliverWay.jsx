@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import cookie from 'js-cookie';
+import styles from './DeliverWay.module.css'
 
 class DeliverWay extends Component {
     constructor(props) {
@@ -224,29 +225,29 @@ class DeliverWay extends Component {
         return (
             <div className="px-3">
                 {/* 宅配 */}
-                <div className='d-flex align-items-center my-1'>
+                <div className='d-flex align-items-center mt-2'>
                     <input name="DeliverWay" type="radio" id="mailTo" onChange={this.deliverWayChange} />
                     <label className='px-2' htmlFor="mailTo">宅配</label>
                 </div>
                 {selectedDeliverWay === "mailTo" && (
                     <div className='w-75'>
-                        <div className="d-flex gap-2">
-                            <button
-                                className="btn paw-btn-outline-pri-darkbrown btn-sm my-2"
+                        <div className="d-flex">
+                            <div
+                                className={`${styles.myadd} mx-2 mt-2 mb-3`}
                                 onClick={this.loadSavedAddresses}
                             >
                                 我的地址
-                            </button>
-                            <button
-                                className="btn paw-btn-outline-lightgreen btn-sm my-2"
+                            </div>
+                            <div
+                                className={`${styles.myclear} mx-2 mt-2 mb-3`}
                                 onClick={this.clearAddress}
                             >
                                 清除內容
-                            </button>
+                            </div>
                         </div>
                         {this.state.showAddressDropdown && (
                             <select
-                                className="form-select my-2"
+                                className="form-select mb-3"
                                 onChange={(e) => this.fillAddressFromSaved(e.target.value)}
                             >
                                 <option value="">選擇儲存地址</option>
@@ -257,7 +258,7 @@ class DeliverWay extends Component {
                                 ))}
                             </select>
                         )}
-                        <div>
+                        <div className='mx-2'>
                             <label>姓名：</label>
                             <input type="text" name="receiver_name" className="w-50 rounded mx-2" value={this.state.receiver_name} placeholder="請填寫真實姓名"
                                 onChange={this.handleInputChange} />
@@ -265,7 +266,7 @@ class DeliverWay extends Component {
                                 <span className="text-danger small mt-1 ms-2">{this.state.errors.receiver_name}</span>
                             )}
                         </div>
-                        <div>
+                        <div className='mx-2'>
                             <label>手機：</label>
                             <input type="text" name="receiver_phone" className="w-50 rounded mx-2" value={this.state.receiver_phone}
                                 placeholder="請填寫台灣手機號碼"
@@ -274,7 +275,7 @@ class DeliverWay extends Component {
                                 <span className="text-danger small mt-1 ms-2">{this.state.errors.receiver_phone}</span>
                             )}
                         </div>
-                        <div>
+                        <div className='mx-2'>
                             <label>地址：</label>
                             <select className='rounded m-2' name="city" value={this.state.selectedCity} onChange={this.citychange}>
                                 <option>選擇縣市</option>
@@ -284,15 +285,15 @@ class DeliverWay extends Component {
                                 <option>選擇區域</option>
                                 {district.map((d, i) => <option key={i} value={d.name}>{d.name}</option>)}
                             </select>
-                            <input type="text" name="address" value={this.state.address} placeholder="詳細地址" className="w-100 rounded mx-2"
+                            <input type="text" name="address" value={this.state.address} placeholder="詳細地址" className="w-100 rounded mx-5 my-1"
                                 onChange={this.handleInputChange} />
                             {this.state.errors.address && (
                                 <span className="text-danger small mt-1 ms-2">{this.state.errors.address}</span>
                             )}
                         </div>
-                        <div className="form-check my-2 ms-1">
+                        <div className="form-check mx-5 mt-1">
                             <input
-                                className="mx-2"
+                                className="mr-2"
                                 type="checkbox"
                                 id="saveThisAddress"
                                 name="saveThisAddress"
@@ -309,7 +310,7 @@ class DeliverWay extends Component {
                 )}
 
                 {/* 超商 */}
-                <div className='d-flex align-items-center my-1'>
+                <div className='d-flex align-items-center my-2'>
                     <input
                         name="DeliverWay"
                         type="radio"
@@ -321,7 +322,7 @@ class DeliverWay extends Component {
                 </div>
                 {selectedDeliverWay === "shop" && (
                     <div className='w-75'>
-                        <div>
+                        <div className='mx-2'>
                             <label>姓名：</label>
                             <input type="text" name="receiver_name" placeholder="請填寫真實姓名" className="w-50 rounded mx-2"
                                 onChange={this.handleInputChange} />
@@ -329,7 +330,7 @@ class DeliverWay extends Component {
                                 <span className="text-danger small mt-1 ms-2">{this.state.errors.receiver_name}</span>
                             )}
                         </div>
-                        <div>
+                        <div className='mx-2'>
                             <label>手機：</label>
                             <input type="text" name="receiver_phone" className="w-50 rounded mx-2" placeholder="請填寫台灣手機號碼"
                                 onChange={this.handleInputChange} />
@@ -337,8 +338,8 @@ class DeliverWay extends Component {
                                 <span className="text-danger small mt-1 ms-2">{this.state.errors.receiver_phone}</span>
                             )}
                         </div>
-                        <div>
-                            <button className="btn">
+                        <div className='mx-5'>
+                            <button className={styles.btn}>
                                 <a
                                     href={mapUrl}
                                     target="_blank"
@@ -350,11 +351,11 @@ class DeliverWay extends Component {
 
                             {/* 顯示門市資訊 */}
                             {this.state.selectedStore && (
-                                <div className="mt-2 text-muted">
-                                    <div>
+                                <div className="mt-2 ">
+                                    <div className='mx-3'>
                                         <span>門市代號：</span><span>{this.state.selectedStore.storeID}</span>
                                     </div>
-                                    <div>
+                                    <div className='mx-3'>
                                         <span>門市名稱：</span><span>{this.state.selectedStore.storeName}</span><p></p>
                                     </div>
                                 </div>

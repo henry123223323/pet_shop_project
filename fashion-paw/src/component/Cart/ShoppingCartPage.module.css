@@ -12,7 +12,9 @@
 
 .pageWrapper {
   background-color: #fff;
-  padding: 5rem;
+  padding-left: 4rem;
+  padding-right: 4rem;
+  margin-bottom: 3rem;
 }
 
 .cooponcart {

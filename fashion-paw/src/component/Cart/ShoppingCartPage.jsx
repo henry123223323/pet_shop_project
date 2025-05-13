@@ -35,7 +35,7 @@ class ShoppingCartPage extends Component {
 
     return (
       <div className={styles.pageWrapper}>
-        <div className="my-2 p-3">
+        <div className="pb-2">
           <h3>購物車</h3>
         </div>
 
