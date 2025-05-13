@@ -6,7 +6,7 @@ class DeliverWay extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            CvsMapCallBack: "https://0623-203-222-25-160.ngrok-free.app",
+            CvsMapCallBack: " https://744a-118-163-218-100.ngrok-free.app",
             selectedDeliverWay: "",
             city: [],
             district: [],

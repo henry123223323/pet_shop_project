@@ -88,7 +88,7 @@ class Receipt extends Component {
                                 name="phoneCarrier"
                                 type="text"
                                 value={phoneCarrier}  // ✅ 直接顯示完整字串
-                                placeholder="請輸入手機條碼7碼（開頭需為 /）"
+                                placeholder="請輸入手機條碼7碼"
                                 maxLength={8}
                                 onChange={(e) => {
                                     const raw = e.target.value.replace(/^\/+/, ''); // 移除多個斜線
