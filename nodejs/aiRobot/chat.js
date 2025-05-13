@@ -25,15 +25,35 @@ const functions = [
       },
       required: ['keyword']
     }
+  },
+  {
+    name: 'get_hot_ranking',
+    description: '取得前三名熱銷商品，包括 pid、商品名稱、價格、銷售數與圖片 URL',
+    parameters: {
+      type: 'object',
+      properties: {
+        
+      },
+      required: []
+    }
   }
 ];
+
+async function HOTRANKING(limit) {
+  let result = await axios.get(`http://localhost:8000/get/hot-ranking`)
+  console.log(result.data);
+  return result.data;
+  
+}
+
 
 async function searchProducts(keyword) {
   let result = await axios.post('http://localhost:8000/post/productsreach/second', { 'keyword': keyword })
   if (result.data.length !== 0) {
     res_json = {
       url: `http://localhost:3000/product/${result.data[0].id}`,
-      pd_name: result.data[0].name
+      pd_name: result.data[0].name,
+      img:`http://localhost:3000/${JSON.parse(result.data[0].images)[0].img_path}`
     }
     return res_json
   }
@@ -57,14 +77,21 @@ router.post('/', async (req, res) => {
     const userVec = await embed(message);
     const queryRes = await index.query({
       vector: userVec,
-      topK: 3,
+      topK: 4,
       includeMetadata: true
     });
     const contexts = queryRes.matches
       .map(m => `Q: ${m.metadata.question}\nA: ${m.metadata.answer}`)
       .join('\n----\n');
+    console.log(contexts);
+    
     const messages = [
-      { role: 'system', content: `你是一位寵物用品購物網站【好拾毛】的客服助理。以下是知識庫範例：\n${contexts}` },
+      {
+        role: 'system', content: `
+        你是一位寵物用品購物網站【好拾毛】的客服助理。
+        我們是賣全新、二手商品的購物網站,動物種類有貓、狗、鳥、鼠
+        • 只有當使用者問題中明確提到「請查詢商品庫存」、「請搜尋新聞」等動作時，才返回 function_call；
+        • 其他情況，一律以純文字形式回答。以下是知識庫範例：\n${contexts}` },
       { role: 'user', content: message }
     ];
     const chatResp = await openai.chat.completions.create({
@@ -84,16 +111,25 @@ router.post('/', async (req, res) => {
       if (name === 'search_products') {
         // 執行你自己的搜尋邏輯
         resultData = await searchProducts(args.keyword);
-      } else {
+
+      }
+      else if (name === 'get_hot_ranking') {
+      resultData = await HOTRANKING();
+
+    }
+      else {
         resultData = { error: `Unknown function ${name}` };
       }
-      return res.json({ answer: resultData });
+      
+      return res.json({functions:name, answer: resultData });
 
     }
+    
     else {
-      res.json({ answer: answer.content });
+      res.json({functions:"text", answer: answer.content });
 
     }
+console.log('ai');
 
   } catch (err) {
     console.error(err);

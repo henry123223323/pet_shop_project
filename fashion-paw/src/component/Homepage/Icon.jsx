@@ -1,12 +1,17 @@
-import React, { useEffect, useState,useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import goTopIcon from './images/Vector.svg';
 import chatIcon1 from './images/chatbot1.png';
+import ChatWindow from 'component/chatroom/ChatWindow';
+import cookie from 'js-cookie';
+import axios from 'axios';
+
 
 function Icon() {
     const [showGoTop, setShowGoTop] = useState(false);
     const [showChat, setShowChat] = useState(false); // ✅ 控制聊天室開關
+    const user_id = cookie.get('user_uid')
 
-    
+
     useEffect(() => {
         const onScroll = () => setShowGoTop(window.scrollY > 500);
         window.addEventListener('scroll', onScroll);
@@ -16,8 +21,34 @@ function Icon() {
     const scrollToTop = () =>
         window.scrollTo({ top: 0, behavior: 'smooth' });
 
-    const toggleChat = () => {
-        setShowChat(prev => !prev); // ✅ 切換聊天室狀態
+    const toggleChat = async () => {
+        if (user_id) {
+            let Has_Room = await axios.get(`http://localhost:8000/AI_check/${user_id}`)
+            let Has_Room_boolean = Has_Room.data
+            console.log(Has_Room_boolean);
+            if (Has_Room_boolean) {
+                setShowChat(prev => !prev); // ✅ 切換聊天室狀態    
+            }
+            else {
+                if (window.confirm('建立客服聊天室?')) {
+                    setShowChat(prev => !prev); // ✅ 切換聊天室狀態    
+                    await axios.get(`http://localhost:8000/build_AIchatroom/${user_id}`)
+                    console.log('以建立客服聊天室');
+
+                }
+                else {
+                    console.log('no');
+                    setShowChat(prev => !prev); // ✅ 切換聊天室狀態    
+
+                }
+
+            }
+
+
+
+        }
+        else
+            alert('使用聊天室請先登入!!!')
     };
     const chatRef = useRef();
 
@@ -27,42 +58,40 @@ function Icon() {
                 setShowChat(false);
             }
         };
-    
+
         if (showChat) {
             document.addEventListener('mousedown', handleClickOutside);
         } else {
             document.removeEventListener('mousedown', handleClickOutside);
         }
-    
+
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, [showChat]);
-    
+
 
     return (
         <>
-            {/* ✅ 聊天室彈出畫面 */}
-            {showChat && (
-                <div ref={chatRef} style={{
-                    position: 'fixed',
-                    bottom: '6rem',
-                    right: '1rem',
-                    width: '300px',
-                    height: '400px',
-                    background: 'white',
-                    border: '2px solid #ccc',
-                    borderRadius: '1rem',
-                    boxShadow: '0 0 10px rgba(0,0,0,0.2)',
-                    zIndex: 2001,
-                    padding: '1rem',
-                    animation: 'fadeInUp 0.3s ease'
-                }}>
-                    <p style={{ textAlign: 'center', marginTop: '40%' }}>
-                        🛠 聊天室建構中...
-                    </p>
-                </div>
-            )}
+            {
+                (showChat && (
+                    <div ref={chatRef} style={{
+                        position: 'fixed',
+                        bottom: '0',
+                        right: '0',
+                        width: '850px',
+                        height: '630px',
+                        zIndex: 2001,
+                        padding: '1rem',
+                        animation: 'fadeInUp 0.3s ease'
+                    }}>
+
+                        <ChatWindow />
+
+                    </div>
+                ))
+            }
+
 
             {/* 右下角按鈕們 */}
             <div style={{

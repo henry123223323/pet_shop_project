@@ -1,33 +1,64 @@
 import React, { Component } from 'react';
+import cookie from "js-cookie";
+import axios from 'axios';
+
+
+
 class MyCoupon extends Component {
-    state = {
-        coupon: [
-            {
-                coupon_id: 1,
-                discount_ratio: 0.88,
-                coupon_code: "2025LOVEPET",
-                create_at: "2025*05*01",
-                overdate: "2025*06-01",
-                description: ""
-            },
-            {
-                coupon_id: 1,
-                discount_ratio: 0.88,
-                coupon_code: "2025LOVEPET",
-                create_at: "2025*05*01",
-                overdate: "2025*06-01",
-                description: ""
-            },
-            {
-                coupon_id: 1,
-                discount_ratio: 0.88,
-                coupon_code: "2025LOVEPET",
-                create_at: "2025*05*01",
-                overdate: "2025*06-01",
-                description: ""
-            }
-        ]
+    constructor(props) {
+        super(props)
+        this.state = {
+            coupon: [
+                {
+                    coupon_id: 1,
+                    discount_ratio: 0.88,
+                    coupon_code: "2025LOVEPET",
+                    create_at: "2025*05*01",
+                    overdate: "2025*06-01",
+                    description: ""
+                },
+                {
+                    coupon_id: 1,
+                    discount_ratio: 0.88,
+                    coupon_code: "2025LOVEPET",
+                    create_at: "2025*05*01",
+                    overdate: "2025*06-01",
+                    description: ""
+                },
+                {
+                    coupon_id: 1,
+                    discount_ratio: 0.88,
+                    coupon_code: "2025LOVEPET",
+                    create_at: "2025*05*01",
+                    overdate: "2025*06-01",
+                    description: ""
+                }
+            ]
+        }
     }
+
+    getcoupon=()=>{
+        let uid = cookie.get("user_uid")
+
+        axios.get(`http://localhost:8000/get/getcoupon/${uid}`).then((response) => {
+            console.log("查詢成功:", response.data);
+            
+            this.setState({
+                coupon: response.data
+            })
+
+        })
+        .catch((error) => {
+            console.error("查詢失敗:", error);
+        });
+    }
+
+
+    componentDidMount(){
+        this.getcoupon()
+    }
+
+
     render() {
         let { coupon } = this.state
         return (

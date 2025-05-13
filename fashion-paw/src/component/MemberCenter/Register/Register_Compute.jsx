@@ -3,6 +3,7 @@ import Step from './Step';
 import StepEmail from './StepEmail';
 import StepPassword from './StepPassword';
 import StepBasicInfo from './StepBasicInfo';
+import axios from 'axios';
 class Register_Compute extends Component {
     constructor(props) {
         super(props)
@@ -38,6 +39,27 @@ class Register_Compute extends Component {
         })
     }
 
+    getallinfo=(value)=>{
+        console.log(value);
+        let userinfo = value
+        this.setState({
+            userinfo
+        },()=>{
+            console.log(this.state);
+            
+            console.log(this.state.userinfo);
+            
+
+
+
+
+
+
+
+        })
+    }
+
+
     // getemail={this.getemail}
 
     renderStepContent = (value) => {
@@ -53,7 +75,7 @@ class Register_Compute extends Component {
             return <StepPassword next={this.handleNext} getpassword={this.getpassword} />
         }
         else {
-            return <StepBasicInfo next={this.handleNext} />
+            return <StepBasicInfo next={this.handleNext} getallinfo={this.getallinfo}/>
         }
     }
     render() {

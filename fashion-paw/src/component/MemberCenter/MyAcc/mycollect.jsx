@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
 import FavoriteCard from './mycollect/Favorite';
+import cookie from "js-cookie";
+import axios from 'axios';
+
 class mycollect extends Component {
     constructor(props) {
         super(props);
@@ -23,6 +26,32 @@ class mycollect extends Component {
         }));
     }
 
+
+    componentDidMount(){
+        this.getcollect()
+    }
+
+    getcollect=()=>{
+        const uid = cookie.get("user_uid")
+        axios.get(`http://localhost:8000/get/getcollect/${uid}`).then(response => {
+            
+            console.log(response.data);
+             
+            this.setState({
+                favorites: response.data
+            })
+            
+            
+        }).catch(error => {
+            console.error("發送請求錯誤:", error);
+        });
+    }
+
+
+
+
+
+
     render() {
         return (<>
             <h3>我的收藏</h3>
@@ -33,7 +62,10 @@ class mycollect extends Component {
                         img={fav.img}
                         pd_name={fav.pd_name}
                         price={fav.price}
+                        id={fav.id}
+                        cid={fav.cid}
                         onRemove={() => this.removeFavorite(fav.id)}
+                        getcollect={()=>this.getcollect()}
                     />
                 ))}
             </div></>
