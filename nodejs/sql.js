@@ -39,7 +39,7 @@ const ai_robot = require('./aiRobot/chat')
 app.use(cookieParser())
 app.use('/api', uploadRoute);//用於上傳圖片
 app.use('/robot', ai_robot)
-app.use('/get', mySecondRouter) 
+
 // 定義 authenticate middleware：從 req.cookies.uid 讀取使用者 ID
 function authenticate(req, res, next) {
   const uid = req.cookies.uid
