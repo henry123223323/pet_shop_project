@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import cookie from "js-cookie";
 import axios from 'axios';
+
 // import 'bootstrap/dist/css/bootstrap.min.css';
 
 class Profile extends Component {
@@ -54,6 +55,8 @@ class Profile extends Component {
     toggleModal = () => {
         this.setState({ showModal: !this.state.showModal });
     }
+    tooglePasswordModal = () => {
+        this.setState({ PasswordModal: !this.state.PasswordModal });
 
 
 
@@ -80,6 +83,8 @@ class Profile extends Component {
                     console.log(response.data.username);
 
 
+
+
                     this.setState({
                         uid: response.data.uid,
                         username: response.data.username,
@@ -92,6 +97,10 @@ class Profile extends Component {
                 .catch(error => {
                     console.error("發送請求錯誤:", error);
                 });
+        } else {
+            console.log("沒有找到 uid cookie");
+        }
+
         } else {
             console.log("沒有找到 uid cookie");
         }
@@ -120,13 +129,13 @@ class Profile extends Component {
         }
     }
     render() {
-        const { showModal } = this.state;
+        const { showModal, PasswordModal } = this.state;
 
         return (
             <>
                 <h2>個人檔案</h2>
                 <button className="btn btn-primary" onClick={this.toggleModal}>編輯</button>
-
+                <button className="btn btn-primary" onClick={this.tooglePasswordModal}>變更密碼</button>
                 <div className=" border fs-4 border-danger mt-3 p-3">
                     <label className='pb2'>用戶名稱:</label>
                     <span className='p2'>{this.state.username}</span><br />
@@ -143,8 +152,33 @@ class Profile extends Component {
                 </div>
 
                 {/* Bootstrap Modal */}
+                {PasswordModal && (
+                    <div className="modal show fade d-block" tabIndex="-1" role="dialog" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+                        <div className="modal-dialog" role="document">
+                            <div className="modal-content">
+                                <div className="modal-header">
+                                    <h5 className="modal-title">變更密碼</h5>
+                                    <button type="button" className="close btn" onClick={this.tooglePasswordModal}>
+                                        <span>&times;</span>
+                                    </button>
+                                </div>
+                                <div className="modal-body">
+                                    <label htmlFor="">輸入密碼:</label>
+                                    <input type="text" />
+                                    <p></p>
+                                    <label htmlFor="">再次輸入密碼:</label>
+                                    <input type="text" />
+                                </div>
+                                <div className="modal-footer">
+                                    <button type="button" className="btn btn-secondary" onClick={this.tooglePasswordModal}>取消</button>
+                                    <button type="button" className="btn btn-primary">儲存變更</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
                 {showModal && (
-                    <div className="modal show fade d-block" tabIndex="-1" role="dialog" style={{ backgroundColor: 'rgba(0,0,0,0.5)', overflow: "scroll" }}>
+                    <div className="modal show fade d-block" tabIndex="-1" role="dialog" style={{ backgroundColor: 'rgba(0,0,0,0.5)', overflowY: 'auto' }}>
                         <div className="modal-dialog" role="document">
                             <div className="modal-content">
                                 <div className="modal-header">
@@ -183,8 +217,9 @@ class Profile extends Component {
                                 </div>
                             </div>
                         </div>
-                    </div>
-                )}
+                    </div >
+                )
+                }
             </>
         );
     }
