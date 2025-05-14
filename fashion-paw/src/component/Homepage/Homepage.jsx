@@ -12,8 +12,8 @@ function Homepage() {
 
   return (
     <>
-      <NewsBar />
       <Banner />
+      <NewsBar />
       <SectionLinks />
       <CategoryIcons />
       <BestsellerTabs />

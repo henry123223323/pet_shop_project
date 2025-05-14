@@ -1,3 +1,4 @@
+import './ShoppingCartPage.module.css';
 import React, { Component } from 'react';
 import axios from 'axios';
 import cookie from 'js-cookie';
@@ -7,17 +8,19 @@ import Coupon from './Coupon';
 import CheckList from './CheckList';
 import ConfirmBtn from '../share/ConfirmBtn';
 import { CartContext } from './CartContext';
+import { Link } from 'react-router-dom/cjs/react-router-dom.min';
+import styles from './ShoppingCartPage.module.css';
 
 class ShoppingCartPage extends Component {
   static contextType = CartContext;
   state = {
     coupon: "discount88",
     discountAmount: 0,
-    selectedItems: [], //有勾選的 cart_id
+    selectedItems: [],  //有勾選的 cart_id
   };
 
   render() {
-    const { selectedItems } = this.state
+    const { selectedItems } = this.state;
     const { cartList } = this.context;
     // console.log("🛒 購物車頁面收到的 cartList：", cartList);
 
@@ -25,7 +28,7 @@ class ShoppingCartPage extends Component {
     // 分類：新品 & 二手
     const newItems = cartList.filter(item => item.condition === "new");
     const secondItems = cartList.filter(item => item.condition === "second");
-
+    
     // 二手商品依賣家分組
     const secondItemsBySeller = {};
     secondItems.forEach(item => {
@@ -35,131 +38,126 @@ class ShoppingCartPage extends Component {
       }
       secondItemsBySeller[sellerUid].push(item);
     });
-    // console.log("🧪 全部購物車 cartList：", cartList);
+// console.log("🧪 全部購物車 cartList：", cartList);
     return (
-      <>
-        {/* title */}
-        <div className='my-2 p-3'>
+       <>
+      {/* title */}
+      <div className={styles.pageWrapper}>
+        <div className="my-2 p-3">
           <h3>購物車</h3>
         </div>
+
         {/* 開發用：清空 localStorage 按鈕 */}
         <div className="text-end my-3 px-4">
-          <button
-            className="btn btn-outline-danger btn-sm"
-            onClick={() => {
-              this.context.clearCart();
-            }}
-          >
+          <button className="btn btn-outline-danger btn-sm" onClick={() => this.context.clearCart()}>
             🧹 清空購物車（Context + localStorage）
           </button>
         </div>
-        <div className='row g-5'>
-          {/* 左邊 */}
-          <div className="col-12 col-md-8">
 
-            {/* 新品購物車 */}
-            {newItems.length > 0 && (<div className='p-4'>
-              <div className='paw-bg-middleorange'>
-                <h3 className='p-3'>拾毛百貨</h3>
-              </div>
+        {cartList.length === 0 && (
+          <div className={styles.emptyCartNotice}>
+            <h5>🛒 購物車內還沒有商品～快去逛逛吧！</h5>
+            <Link to="/ProductPage" className='mx-2 btn paw-btn-outline-darkorange'>逛逛新品</Link>
+            <Link to="/SeProductPage" className='mx-2 btn paw-btn-outline-pri-darkbrown'>找找二手</Link>
+          </div>
+        )}
 
-              <div className='border rounded px-1'>
-                <div className='d-flex align-items-center  p-2 border-bottom'
-                >
-                  <input
-                    id='selectAll'
-                    type='checkbox'
-                    checked={this.allSelected()}
-                    onChange={this.toggleSelectAll}
-                    className='me-2 mx-2'
-                  />
-                  <label htmlFor='selectAll'
-                    style={{ paddingTop: '5px' }}>全選</label>
+        {cartList.length > 0 && (
+          <div className='row g-1 justify-content-center'>
+            <div className="col-12 col-md-9">
+              {newItems.length > 0 && (
+                <div className='pe-md-4'>
+                   {/* 新品購物車 */}
+                  <div className={styles.sectionTitle}>拾毛百貨</div>
+
+                  <div className={styles.cartBlock}>
+                    <div className='d-flex align-items-center p-2 border-bottom'>
+                      <input
+                        id='selectAll'
+                        type='checkbox'
+                        checked={this.allSelected()}
+                        onChange={this.toggleSelectAll}
+                        className='me-2 mx-2'
+                      />
+                      <label htmlFor='selectAll' className='pt-1'>全選</label>
+                    </div>
+
+                    {newItems.map(item => (
+                      <CartList
+                        key={item.cart_id}
+                        item={item}
+                        selected={selectedItems.includes(String(item.cart_id))}
+                        onSelectedChange={this.selectChange}
+                        onQuantityChange={this.changeQuantity}
+                        onDelete={this.deleteCartItem}
+                      />
+                    ))}
+                  </div>
                 </div>
+              )}
 
-                {newItems.map(item => (
-                  <CartList
-                    key={item.cart_id}
-                    item={item}
-                    selected={selectedItems.includes(String(item.cart_id))}
-                    onSelectedChange={this.selectChange}
-                    onQuantityChange={this.changeQuantity}
-                    onDelete={this.deleteCartItem}
-                  />
-                ))}
-              </div>
-            </div>)}
+              {/* 二手購物車 */}
+              {secondItems.length > 0 && (
+                <div className='ps-md-0'>
+                  <div className={styles.sectionTitle}>拾毛市場</div>
 
-            {/* 二手購物車 */}
-            {secondItems.length > 0 && (<div className='p-4'>
-              <div className='paw-bg-middleorange'>
-                <h3 className='p-3'>拾毛市場</h3>
-              </div>
+                  {Object.keys(secondItemsBySeller).map(uid => (
+                    <div key={uid} className={styles.cartBlock}>
+                      <div className='d-flex align-items-center px-1 border-bottom'>
+                        <input
+                          id={`selectAll-${uid}`}
+                          type='checkbox'
+                          checked={this.sellerAllSelected(uid)}
+                          onChange={() => this.toggleSellerSelectAll(uid)}
+                          className='me-1 ml-2'
+                        />
+                        <label htmlFor={`selectAll-${uid}`} className='pt-1'>
+                          <label className='pl-3 '>
+                          <SellerTitle  uid={String(uid)} />
+                        </label></label>
+                      </div>
 
-              {Object.keys(secondItemsBySeller).map(uid => (
-                <div key={uid} className='border rounded my-2'>
-                  <div className='border-bottom px-3'>
-                    <SellerTitle  uid={String(uid)} />
-                  </div>
-                  <div className='d-flex align-items-center  p-2 border-bottom'
-                  >
-                    <input
-                      id={`selectAll-${uid}`}
-                      type='checkbox'
-                      checked={this.sellerAllSelected(uid)}
-                      onChange={() => this.toggleSellerSelectAll(uid)}
-                      className='me-2 mx-2'
-                    />
-                    <label htmlFor={`selectAll-${uid}`} style={{ paddingTop: '5px' }}>
-                      全選
-                    </label>
-                  </div>
-                  {secondItemsBySeller[uid].map(item => (
-                    <CartList
-                      key={item.cart_id}
-                      item={item}
-                      selected={selectedItems.includes(String(item.cart_id))}
-                      onSelectedChange={this.selectChange}
-                      onQuantityChange={this.changeQuantity}
-                      onDelete={this.deleteCartItem}
-                    />
+
+                      {secondItemsBySeller[uid].map(item => (
+                        <CartList
+                          key={item.cart_id}
+                          item={item}
+                          selected={selectedItems.includes(String(item.cart_id))}
+                          onSelectedChange={this.selectChange}
+                          onQuantityChange={this.changeQuantity}
+                          onDelete={this.deleteCartItem}
+                        />
+                      ))}
+                    </div>
                   ))}
                 </div>
-              ))}
+              )}
             </div>
-            )}
+
+            <div className="col-12 col-md-3">
+              <div className={`pl-3 ${styles.cooponcart}`}>
+                {/* <div className={styles.sectionTitle}>折價券</div> */}
+                <div className={styles.cartBlock}>
+                  <p className={styles.cartinsidetitle}>折價券</p>
+                  <Coupon onApplyDiscount={this.applyDiscount} />
+                </div>
+              </div>
+
+              <div className={`pl-3 ${styles.cooponcart}`}>
+                {/* <div className={styles.sectionTitle}>結帳明細</div> */}
+                <div className={styles.cartBlock}>
+                  <p className={styles.cartinsidetitle}>結帳明細</p>
+                  <CheckList
+                    selectedItems={cartList.filter(item => selectedItems.includes(item.cart_id))}
+                    discountAmount={this.state.discountAmount}
+                  />
+                  <ConfirmBtn type="toPayPage" onClick={this.goToCheckBillPage} />
+                </div>
+              </div>
+            </div>
           </div>
-
-          {/* 右邊 */}
-          <div className="col-12 col-md-4">
-            {/* 折價券 */}
-            <div className='p-4'>
-              <div className='paw-bg-middleorange'>
-                <h3 className='p-2'>折價券</h3>
-              </div>
-              <Coupon
-                onApplyDiscount={this.applyDiscount} />
-            </div>
-
-            {/* 訂單確認 */}
-            <div className='p-4'>
-              <div className='paw-bg-middleorange'>
-                <h3 className='p-2'>結帳明細</h3>
-              </div>
-              <div className='border rounded'>
-                <CheckList
-                  selectedItems={cartList.filter(item => selectedItems.includes(item.cart_id))}
-                  discountAmount={this.state.discountAmount}
-
-                />
-
-                <ConfirmBtn type="toPayPage" onClick={this.goToCheckBillPage} />
-
-              </div>
-            </div>
-
-          </div>
-        </div>
+        )}
+      </div>
 
       </>
     );
@@ -295,9 +293,9 @@ class ShoppingCartPage extends Component {
   changeQuantity = (cartId, newQuantity) => {
     const { updateQuantity, removeFromCart, cartList } = this.context;
     const targetItem = cartList.find(item => item.cart_id === cartId);
-  
+
     if (!targetItem) return;
-  
+
     if (newQuantity < 1) {
       const deletePd = window.confirm("數量為 0，要將此商品從購物車移除嗎？");
       if (deletePd) {
@@ -305,10 +303,10 @@ class ShoppingCartPage extends Component {
       }
       return;
     }
-  
+
     // ✅ 前端先更新 context
     updateQuantity(cartId, newQuantity);
-  
+
     // ✅ 同步寫入資料庫
     axios.put("http://localhost:8000/cart/update", {
       uid: targetItem.uid,
@@ -330,13 +328,13 @@ class ShoppingCartPage extends Component {
     const { removeFromCart, cartList } = this.context;
     const targetItem = cartList.find(item => item.cart_id === cartId);
     if (!targetItem) return;
-  
+
     this.setState((prev) => ({
       selectedItems: prev.selectedItems.filter((id) => id !== String(cartId)),
     }));
-  
+
     removeFromCart(cartId); // 先從 Context 移除
-  
+
     // 後端刪除
     axios.delete("http://localhost:8000/cart/remove", {
       data: {
@@ -375,10 +373,10 @@ class ShoppingCartPage extends Component {
       }
     }
 
-    localStorage.setItem(
-      'selectedItems',
-      JSON.stringify(selectedCartItems.map(item => String(item.cart_id)))
-    );
+      // ✅ 加入 flag，供 CheckBillPage 驗證是否從購物車進入
+  localStorage.setItem('fromCart', 'true');
+
+    localStorage.setItem('selectedItems', JSON.stringify(selectedCartItems));
     localStorage.setItem('discountAmount', discountAmount);
     window.location.href = '/CheckBillPage';
   };

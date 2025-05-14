@@ -1,5 +1,5 @@
 // src/component/Homepage/MainNav/MegaMenu.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useRef} from 'react';
 // import { NavLink } from 'react-router-dom';  // 如果要讓卡片可點進詳細頁的話
 import navstyles from './MainNav.module.css';
 import axios from 'axios';
@@ -12,8 +12,8 @@ export default function MegaMenu({
     onPetChange,    // 切換左側 pet 時回呼
     onTabChange     // 切換右側 tab 時回呼
 }) {
+    const hasInit = useRef(false);
     // ── 先把所有靜態常數都放最上面 ──
-
     // 1) 後端 categories key → 中文
     const categoryNames = {
         pet_food: '飼料',
@@ -103,8 +103,11 @@ export default function MegaMenu({
 
             setData({ sidebar: pets, tabs, content });
             // 初始化第一筆
-            onPetChange(pets[0]);
-            onTabChange(tabs[0]);
+            if (!hasInit.current) {
+                onPetChange(pets[0]);
+                onTabChange(tabs[0]);
+                hasInit.current = true;
+              }
         })
             .catch(err => {
                 console.error('MegaMenu 載入失敗', err);

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import styles from './PdQuantity.module.css'
 
 class PdQuantity extends Component {
     render() {
@@ -13,10 +14,14 @@ class PdQuantity extends Component {
                 <div className='d-flex align-items-center my-3'>
                     {/* 減少按鈕 */}
                     <button
-                        className={`mx-2 rounded  ${disabledMin ? "paw-btn-darkbrown" : "paw-btn-outline-pri-darkbrown"}`}
+                        className={`
+    ${styles.quantityBtn} 
+    ${disabledMin ? styles.quantityBtnDisabled : styles.quantityBtnActive}
+  mx-2`}
                         onClick={this.quantityDown}
-                        disabled={reachMin}>
-                        <i className="bi bi-caret-down-fill"></i>
+                        disabled={reachMin}
+                    >
+                        <i className="bi bi-dash-lg"></i>
                     </button>
                     {/* 數量格子 */}
                     <div
@@ -28,10 +33,11 @@ class PdQuantity extends Component {
                     </div>
                     {/* 增加按鈕 */}
                     <button
-                        className={`mx-2 rounded  ${disabledMax ? "paw-btn-darkbrown" : "paw-btn-outline-pri-darkbrown"}`}
+                        className={`${styles.quantityBtn} ${disabledMax ? styles.quantityBtnDisabled : styles.quantityBtnActive} mx-2`}
                         onClick={this.quantityUp}
-                        disabled={reachMax}>
-                        <i className="bi bi-caret-up-fill"></i>
+                        disabled={reachMax}
+                    >
+                        <i className="bi bi-plus-lg"></i>
                     </button>
                 </div>
             </>

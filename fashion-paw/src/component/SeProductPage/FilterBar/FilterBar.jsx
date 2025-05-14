@@ -21,7 +21,8 @@ export default function FilterBar({
 }) {
   const [activeTab, setActiveTab] = useState('product');
   const [showModal, setShowModal] = useState(false);
-
+  const [selFuncs, setSelFuncs] = useState([]);
+  const [selBrands, setSelBrands] = useState([]);
   const [selPrice, setSelPrice] = useState('');
   const [selDep, setSelDep] = useState(0);
   const [selLocs, setSelLocs] = useState([]);
@@ -71,24 +72,23 @@ export default function FilterBar({
       {/* 找商品 區塊：價格／折舊／所在地 */}
       {activeTab === 'product' && (
         <div className={styles.content}>
-          {/* 價格 */}
+          {/* 所在地 */}
           <div className={styles.row}>
-            <span className={styles.label}>價格</span>
+            <span className={styles.label}>所在地</span>
             <div className={styles.options}>
-              {prices.map(p => (
-                <label key={p.value}>
+              {locations.map((loc, idx) => (
+                <label key={`${loc}-${idx}`}>
                   <input
-                    type="radio"
-                    name="price"
-                    value={p.value}
-                    checked={selPrice === p.value}
-                    onChange={() => setSelPrice(p.value)}
+                    type="checkbox"
+                    checked={selLocs.includes(loc)}
+                    onChange={() => toggleArray(selLocs, setSelLocs, loc)}
                   />
-                  {p.label}
+                  {loc}
                 </label>
               ))}
             </div>
           </div>
+
 
           {/* 折舊程度 */}
           <div className={styles.row}>
@@ -109,21 +109,34 @@ export default function FilterBar({
             </div>
           </div>
 
-          {/* 所在地 */}
+          {/* 價格 */}
           <div className={styles.row}>
-            <span className={styles.label}>所在地</span>
+            <span className={styles.label}>價格</span>
             <div className={styles.options}>
-              {locations.map((loc, idx) => (
-                <label key={`${loc}-${idx}`}>
+              {prices.map(p => (
+                <label key={p.value}>
                   <input
-                    type="checkbox"
-                    checked={selLocs.includes(loc)}
-                    onChange={() => toggleArray(selLocs, setSelLocs, loc)}
+                    type="radio"
+                    name="price"
+                    value={p.value}
+                    checked={selPrice === p.value}
+                    onChange={() => setSelPrice(p.value)}
                   />
-                  {loc}
+                  {p.label}
                 </label>
               ))}
             </div>
+          </div>
+          <div className={styles.actions}>
+            <button className={styles.clearBtn} onClick={() => {
+              setSelFuncs([]);
+              setSelBrands([]);
+              setSelPrice('');
+              setSelDep(0);
+              setSelLocs([]);
+            }}>
+              清除篩選
+            </button>
           </div>
         </div>
       )}

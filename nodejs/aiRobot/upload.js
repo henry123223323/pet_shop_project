@@ -5,7 +5,8 @@ import OpenAI from 'openai';
 import { Pinecone } from '@pinecone-database/pinecone';
 
 dotenv.config();
-
+console.log('Working dir:', process.cwd());
+console.log('OPENAI_API_KEY:', process.env.OPENAI_API_KEY);
 // 1. 初始化客戶端
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 const pinecone = new Pinecone({ apiKey: process.env.PINECONE_API_KEY });

@@ -4,6 +4,7 @@ import PdQuantity from '../share/PdQuantity';
 import AddToMyFavorite from '../share/AddToMyFavorite';
 import cookie from 'js-cookie';
 import axios from 'axios';
+import styles from './CartList.module.css'
 
 class CartList extends Component {
   state = {
@@ -86,12 +87,12 @@ class CartList extends Component {
 
           {/* 商品文字區塊 */}
           <div className="col-5">
-            <Link to={`/product/${item.pid}`} className="ptxtb4 d-block">
-              <div className="fw-bold mb-1 paw-text-darkgreen">{productName}</div>
+            <Link to={`/product/${item.pid}`} className={`${styles.linknameReset} mb-1 ptxtb4 d-block`}>
+              <div>{productName}</div>
             </Link>
 
             {/* <div className="text-muted small mb-2">{color}</div> */}
-            <div className="text-danger fw-bold me-3">NT$ {unit_price}</div>
+            <div className={`${styles.price} me-3`}>NT$ {unit_price}</div>
           </div>
 
           {/* 數量、收藏刪除 */}

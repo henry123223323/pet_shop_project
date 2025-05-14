@@ -38,11 +38,19 @@ class Login_Compute extends Component {
                 const user = response.data.find(user => user.email === email);
                 
                 if (user) {
+                    // console.log(user.power);
+                    this.state.power = user.power
+                    
+                    
                     this.state.uid = user.uid
                     this.setState({})
                     console.log(this.state.uid);
+                    console.log(this.state.power);
                     cookie.set('user_uid', user.uid, { expires: 1 ,SameSite:'Lax'})
+                    cookie.set('user_power', user.power, { expires: 1 ,SameSite:'Lax'})
                     console.log('成功設置cookie',cookie.get('user_uid'));
+                    console.log('成功設置cookie',cookie.get('user_power'));
+                    window.location.href = "/";
                     
                 } else {
                     alert("email或密碼錯誤")

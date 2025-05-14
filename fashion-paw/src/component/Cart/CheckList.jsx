@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import styles from './CheckList.module.css';
+
 
 class CheckList extends Component {
   componentDidUpdate(prevProps) {
@@ -40,33 +42,33 @@ class CheckList extends Component {
     const afterDiscount = totalOriginal * validDiscount;
     const shippingFee = afterDiscount < 399 && afterDiscount > 0 ? 70 : 0;
     const finalAmount = afterDiscount + shippingFee;
+console.log("✅ 傳進來的 selectedItems:", selectedItems);
 
     return (
-      <>
-        <div className='px-4'>
-          <div className='my-2'>
-            <span>原價：</span> <span>NT$ {totalOriginal.toLocaleString()} </span>
-          </div>
-          <div className='my-2'>
-            <span>運費：</span> <span>NT$ {shippingFee.toLocaleString()}</span>
-          </div>
-          <div className='my-2'>
-            <span>折扣：</span>
-            <span>
-              {
-                validDiscount < 1
-                  ? ` ${(validDiscount * 100).toFixed(0)} 折`
-                  : "未使用折價券"
-              }
-            </span>
-          </div>
-          <hr />
-          <div>
-            <span className='ptxtb3'>結帳金額：</span>
-            <span>NT$ {Math.round(finalAmount).toLocaleString()} </span>
-          </div>
+      <div className={styles.checkListWrapper}>
+        <div className={styles.checkRow}>
+          <span>商品小計</span>
+          <span>NT$ {totalOriginal.toLocaleString()}</span>
         </div>
-      </>
+        <div className={styles.checkRow}>
+          <span>運費</span>
+          <span>{shippingFee > 0 ? `+NT$ ${shippingFee}` : "NT$ 0"}</span>
+        </div>
+        {validDiscount < 1 && (
+          <div className={styles.checkRow}>
+            <span>折扣</span>
+            <span>-{(100 - validDiscount * 100).toFixed(0)}%</span>
+          </div>
+        )}
+
+        <div className={styles.divider}></div>
+
+        <div className={styles.totalRow}>
+          <span>應付總額</span>
+          <span>NT$ {Math.round(finalAmount).toLocaleString()}</span>
+        </div>
+      </div>
+
     );
   }
 }

@@ -75,7 +75,7 @@ function QuizGame({ pet, questions, onRestart }) {
                 <div className="mt-2 flex justify-center">
                     {/* 重新遊戲：把本元件的 state 重置回初始 */}
                     <button
-                        className="btn btn-outline-primary"
+                        className={styles.returnBtn}
                         
                         onClick={() => {
                             // 如果同時想在 QuizGame 裡也重置題目進度：
@@ -89,7 +89,7 @@ function QuizGame({ pet, questions, onRestart }) {
                     </button>
                     {/* 回首頁 */}
                     <button
-                        className="btn btn-outline-secondary ml-2"
+                        className={styles.homeBtn}
                         onClick={() => history.push('/')}
                     >
                         回首頁
@@ -117,8 +117,8 @@ function QuizGame({ pet, questions, onRestart }) {
                 <p className="question-text">{q.text}</p>
 
                 <div className="btn-group">
-                    <button className={styles.btn} onClick={() => answer(true)}>可以</button>
-                    <button className={styles.btn} onClick={() => answer(false)}>不可以</button>
+                    <button className={styles.btncorrect} onClick={() => answer(true)}>可以</button>
+                    <button className={styles.btnwrong} onClick={() => answer(false)}>不可以</button>
                 </div>
             </div>
             {/* 這裡放進度文字 */}
@@ -131,38 +131,12 @@ function QuizGame({ pet, questions, onRestart }) {
 
             {/* 4. 如果 feedback 不為 null，就顯示彈跳窗 */}
             {feedback && (
-                <div
-                    className={"feedback-modal"}
-                    style={{
-                        position: 'absolute',
-                        top: 0, left: 0, right: 0, bottom: 0,
-                        backgroundColor: 'rgba(0,0,0,0.4)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                    }}
-                >
-                    <div
-                        className="feedback-content"
-                        style={{
-                            background: '#F7F6EE',
-                            borderRadius: 8,
-                            padding: '1.5rem',
-                            width: 400,
-                            textAlign: 'center',
-                        }}
-                    >
+                <div className={styles.feedbackModal}>
+                    <div className={styles.feedbackContent}>
                         <h3>{feedback.title}</h3>
                         <p style={{ margin: '1rem 0' }}>{feedback.message}</p>
                         <p style={{ margin: '1rem 0' }}>{feedback.detail}</p>
-                        <button 
-                        style={{
-                            background: '#E1C599',
-                            borderRadius: 5,
-                            padding: '10px',
-                            textAlign: 'center',
-                        }}
-                        onClick={nextQuestion}>下一題</button>
+                        <button className={styles.feedbackBtn} onClick={nextQuestion}>下一題</button>
                     </div>
                 </div>
             )}

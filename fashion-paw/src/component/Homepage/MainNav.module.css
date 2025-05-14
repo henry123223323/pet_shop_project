@@ -45,11 +45,23 @@
   /* 讓 ::before 可以絕對定位在這個區塊內 */
 }
 
+/* 新舊商品導覽列文字 */
 .menuLink {
   position: relative;
   /* 讓 ::before 以這裡為參考 */
   display: inline-block;
   /* 需要 inline-block 才能定位 */
+  cursor: pointer;
+  color: black;
+  padding: 2px;
+  font-size: 18px;
+}
+
+.menuLink:hover {
+  background-color: rgba(112, 130, 60, 0.5);
+  color: white;
+  border-radius: 5px;
+  transition: color 0.2s;
 }
 
 /* 小羽毛圖示：預設隱藏 */
@@ -83,14 +95,18 @@
 }
 
 .menu li a {
-  color: #333;
+  color: black;
   text-decoration: none;
   padding: 0.25rem;
   transition: color 0.2s;
+  font-size: 18px;
 }
 
+/* 關於我們+寵物小知識的hoverlink+megapanel的card */
 .menu li a:hover {
-  color: #70823C;
+  background-color: rgba(112, 130, 60, 0.5);
+  border-radius: 5px;
+  color: white;
 }
 
 /* dropdown 容器 */
@@ -129,24 +145,24 @@
   width: 100%;
   text-align: center;
   padding: 0.5rem 1rem;
+  font-size: 17px;
 }
 
 .dropdownMenu li:hover>a {
-  background: #F8F6EE;
-  color: #70823C;
-  border-radius: 4px;
+  background: rgba(112, 130, 60, 0.5);
+  ;
+  /* color: #70823C; */
+  border-radius: 10px;
+  margin-top: 10px;
 }
 
 /* noLink 項目文字改灰、禁止 hover 背景 */
 .noLink>span {
-  color: #999;
-  /* 灰色文字 */
+  color: #6c757d;
   cursor: default;
-}
-
-.noLink:hover>span {
-  background: none;
-  color: #999;
+  border-bottom: 3px solid #E9D1B0;
+  line-height: 1.2;
+  padding-bottom: 2px;
 }
 
 /* ----------------下拉式選單的大版塊------------------- */
@@ -171,6 +187,7 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   padding: 1rem;
   z-index: 1000;
+  border-radius: 5px
 }
 
 /* 左側子選單 */
@@ -185,7 +202,7 @@
 .sidebarLink {
   display: block;
   padding: 0.5rem 1rem;
-  color: #333;
+  color: black;
   text-decoration: none;
   transition: color 0.2s;
   border: none;
@@ -213,7 +230,7 @@
 }
 
 .sidebar li a {
-  color: #333;
+  color: black;
   text-decoration: none;
   padding: 0.25rem 0.5rem;
 }
@@ -221,6 +238,14 @@
 .sidebar li a:hover {
   color: #70823C;
 }
+
+.activePet {
+  background-color: #f1f5eb;
+  color: #70823C;
+  font-weight: 400;
+  border-left: 3px solid #70823C;
+}
+
 
 /* 右側內容區 */
 .content {
@@ -264,17 +289,16 @@
   max-height: 300px;
   /* 如果要滾動 */
   overflow-y: auto;
+
 }
 
 .card {
-  text-align: center;
-
-}
-
-.cardContent {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  text-align: center;
+  height: 180px;
 }
 
 .card img {
@@ -286,7 +310,11 @@
 .card p {
   margin-top: 0.5rem;
   font-size: 0.875rem;
-  color: #333;
+  color: black;
+}
+
+.card p:hover {
+  color: white;
 }
 
 /* -------側邊欄------- */
@@ -428,7 +456,7 @@
 
 .header a {
   text-decoration: none;
-  color: #333;
+  color: black;
   font-size: 1rem;
 }
 
@@ -493,9 +521,24 @@
 
 .accountList a {
   text-decoration: none;
-  color: #333;
+  color: black;
 }
 
 .accountList a:hover {
   color: #70823C;
+}
+
+/* 側邊欄登出按鈕 */
+.drawerLogoutBtn {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  color: #333;
+  cursor: pointer;
+}
+
+.drawerLogoutBtn:hover {
+  color: #70823C;
+  text-decoration: none;
 }
