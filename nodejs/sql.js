@@ -1027,7 +1027,7 @@ WHERE p.condition = 'second'
       res.status(500).send("伺服器錯誤");
     } else {
       console.log("http://localhost:8000/post/productsreach/second 被post連線");
-      console.log(JSON.parse(rows[0].images)[0].img_path );
+      // console.log(JSON.parse(rows[0].images)[0].img_path );
       
       res.json(rows); // 正確回傳結果給前端
     }
@@ -1981,51 +1981,94 @@ app.delete("/cart/remove", async (req, res) => {
     res.status(500).send("伺服器錯誤");
   }
 });
-app.get('/channel/:uid', async(req, res)=>{
-  let uidX=req.params.uid
-  let sql=`
-  SELECT cru.chatroomID AS id,ui.uid, ui.username AS name, ui.photo as avatar, ui.last_time_login AS lastTime, cm.message AS snippet 
-  FROM chatroomuser AS cru 
-  LEFT JOIN userinfo AS ui 
-  ON cru.uidY = ui.uid 
-  LEFT JOIN chatmessage AS cm 
-  ON cm.ChatroomID = cru.chatroomID 
-  AND cm.create_time = ( SELECT MAX(create_time) FROM chatmessage WHERE ChatroomID = cru.chatroomID ) 
-  WHERE cru.uidX = ?
+app.get('/channel/:uid', (req, res) => {
+  const uidX = req.params.uid;
+  const sql = `
+    SELECT
+      cru.chatroomID AS id,
+      ui.uid,
+      ui.username        AS name,
+      ui.photo           AS avatar,
+      ui.last_time_login AS lastTime,
+      cm.message         AS snippet
+    FROM chatroomuser AS cru
+    LEFT JOIN userinfo AS ui
+      ON cru.uidY = ui.uid
+    LEFT JOIN chatmessage AS cm
+      ON cm.ChatroomID = cru.chatroomID
+      AND cm.messageID = (
+        SELECT MAX(messageID)
+        FROM chatmessage
+        WHERE ChatroomID = cru.chatroomID
+      )
+    WHERE cru.uidX = ?
+  `;
 
-  `
-  conn.query(sql, [uidX], function (err, rows) {
-    rows.forEach((room)=>{
-      room.id = 'chatroom' + room.id
-      room.lastTime=new Date(room.lastTime).toLocaleTimeString()
-    })
-    
-    console.log(rows);
-    res.json(rows)
-    
-  })
-})
-app.get('/chatroom/message/:room', async(req, res)=>{
-  let roomid = parseInt(req.params.room.match(/\d+/)[0], 10) 
-  
-  
-  let sql=`
- SELECT cm.speakerID as id,cm.message as text,cm.create_time as time 
- FROM chatmessage cm 
- WHERE ChatroomID=?;
+  conn.query(sql, [uidX], (err, rows) => {
+    if (err) {
+      console.error('取得聊天室列表失敗：', err);
+      return res.status(500).json({ error: '伺服器錯誤' });
+    }
 
-  `
-  conn.query(sql, [roomid], function (err, rows) {
-    
-    console.log('-----');
-    rows.forEach(msg => {
-  msg.time=new Date(msg.time).toLocaleTimeString()
-})    
-    console.log(rows);
-    res.json(rows)
-    
-  })
-})
+    // rows 可能是 undefined，也可能是 []，统一用 [] 防呆
+    const list = Array.isArray(rows) ? rows : [];
+
+    const result = list.map(room => ({
+      // 前端预期的 id 格式
+      id: 'chatroom' + room.id,
+      uid: room.uid,
+      name: room.name,
+      avatar: room.avatar,
+      // 格式化成「上午10:22」这种 zh-TW 时间
+      lastTime: room.lastTime
+        ? new Date(room.lastTime)
+            .toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' })
+        : null,
+      snippet: room.snippet
+    }));
+
+    console.log('channel result:', result);
+    res.json(result);
+  });
+});
+
+app.get('/chatroom/message/:room', (req, res) => {
+  const match = req.params.room.match(/\d+/);
+  const roomid = match ? parseInt(match[0], 10) : null;
+  if (roomid === null) {
+    return res.status(400).json({ error: '無效的 room 參數' });
+  }
+
+  const sql = `
+    SELECT 
+      cm.speakerID AS id,
+      cm.message   AS text,
+      cm.create_time AS time
+    FROM chatmessage cm
+    WHERE cm.ChatroomID = ?
+  `;
+
+  conn.query(sql, [roomid], (err, rows) => {
+    // 2. SQL 錯誤先攔截
+    if (err) {
+      console.error('取得訊息失敗：', err);
+      return res.status(500).json({ error: '伺服器錯誤' });
+    }
+
+    // 3. 确保 rows 是陣列，否則用空陣列
+    const messages = Array.isArray(rows) ? rows.map(msg => ({
+      id: msg.id,
+      text: msg.text,
+      // 4. 格式化時間為 zh-TW 兩位小時兩位分鐘
+      time: new Date(msg.time)
+        .toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' })
+    })) : [];
+
+    console.log(`聊天室 ${roomid} 訊息：`, messages);
+    res.json(messages);
+  });
+});
+
 
 app.get('/message/:uid', async (req, res) => {
   try {
@@ -2055,19 +2098,27 @@ app.get('/message/:uid', async (req, res) => {
 });
 
 app.post('/post/insert/message', function (req, res) {
-  req.body.ChatroomID = parseInt(req.body.ChatroomID.match(/\d+/)[0], 10)
-  req.body.speakerID=parseInt(req.body.speakerID)
-  console.log(req.body);
-  let {ChatroomID,speakerID,message,isRead}=req.body
-  conn.query(`    
+  req.body.ChatroomID = parseInt(req.body.ChatroomID.match(/\d+/)[0], 10);
+  req.body.speakerID = parseInt(req.body.speakerID);
+
+  const { ChatroomID, speakerID, message, isRead } = req.body;
+  console.log('[Insert 試圖寫入]', { ChatroomID, speakerID, message, isRead });
+
+  conn.query(`
     INSERT INTO chatmessage
-          (ChatroomID,speakerID,message,isRead)
-        VALUES (?, ?, ?, ?)
-        `, [ChatroomID, speakerID, message, isRead], function (err, result) {
-    console.log('insert成功');
-    
-        })
-})
+      (ChatroomID, speakerID, message, isRead)
+    VALUES (?, ?, ?, ?)
+  `, [ChatroomID, speakerID, message, isRead], function (err, result) {
+    if (err) {
+      console.error('[Insert 錯誤]', err.sqlMessage);
+      return res.status(500).json({ error: err.sqlMessage });
+    }
+
+    console.log('[Insert 成功]');
+    res.json({ success: true });
+  });
+});
+
 
 //獲取折扣碼
 app.get('/coupons/:uid', async (req, res) => {

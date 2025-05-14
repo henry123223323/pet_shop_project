@@ -40,27 +40,37 @@ export default function ChatApp() {
   const [input, setInput] = useState('');
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    console.log(messages);
+    console.log(messages, selected);
 
   }, [messages]);
 
   useEffect(() => {
+
     axios.get(`http://localhost:8000/channel/${user_id}`)
       .then(res => {
-        console.log(res.data);
+        console.log(users);
         setusers(res.data)
+        console.log(users);
+        if (res.data.length > 0) {
+          setSelected(res.data[0]); // 只有在拿到数据后才设 selected
+
+        }
       })
 
+    console.log(users[0]);
     axios.get(`http://localhost:8000/message/${user_id}`)
       .then(msg => {
         console.log(msg.data);
         setMessagesMap(msg.data);
 
       })
+
   }, [])
 
   // 5. 送出訊息要更新對應那位使用者的陣列
   const handleSend = () => {
+    console.log('>> send to bot? selected.uid =', selected.uid, typeof selected.uid);
+
     if (!input.trim()) return;//輸入為空
     const newMsg = {
       id: user_id,
@@ -79,19 +89,37 @@ export default function ChatApp() {
         message: input.trim(),
         isRead: 1
       })
+      .then(() => console.log('[DB] user 訊息已 insert'))
+      .catch(err => console.error('[DB] user insert 失敗', err));
     //insert newMsg
     setInput('');
+    console.log((selected.uid));
+
     if (selected.uid == '1') {//對方是機器人才會回答
+      console.log((selected.uid));
+
       axios.post('http://localhost:8000/robot', { message: input })
         .then(res => {
           let func = res.data.functions
           console.log(func);
           if (func === 'search_products') {
+            let pd3 = '<div class="row bg-light">'
+            res.data.answer.map((pd, idx) => {
+              pd3 += `
+              <div class='border position-relative col-4'>
+              <span class='badge position-absolute top-0 start-0'>${idx + 1}</span>
+              <img  src='${pd.img}'/>
+              <a class='ellipsis' href="${pd.url}">${pd.pd_name}</a><br>
+              <span>NT$${pd.price}</span>
+              </div>
+              
+              `
+            })
+            pd3 += `</div>`
             let newAIMsg = {
               id: selected.uid,
               from: 'bot',
-              text: `<img width="50px" src='${res.data.answer.img}'/>
-            <a href="${res.data.answer.url}">${res.data.answer.pd_name}</a>`,
+              text: pd3,
               time: new Date().toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' })
             };
             //insert api
@@ -102,35 +130,50 @@ export default function ChatApp() {
                 message: newAIMsg.text,
                 isRead: 1
               })
+              .then(() => console.log('[DB] user 訊息已 insert'))
+              .catch(err => console.error('[DB] user insert 失敗', err));
             setMessagesMap(prev => ({
               ...prev,
               [selected.id]: [...(prev[selected.id] || []), newAIMsg]
             }));
           }
           else if (func === 'get_hot_ranking') {
+            let top3 = '<div class="d-flex bg-light">'
             res.data.answer.map((pd, idx) => {
-              let newAIMsg = {
-                id: selected.uid,
-                from: 'bot',
-                text: `<img width="50px" src='${pd.imageUrl}'/>
-              <a href="http://localhost:8000/product/${pd.pid}">${pd.pd_name}</a>
-              <span>NT$${pd.price}</span>`,
-                time: new Date().toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' })
-              };
-              //insert api
-              axios.post('http://localhost:8000/post/insert/message',
-                {
-                  ChatroomID: selected.id,
-                  speakerID: selected.uid,
-                  message: newAIMsg.text,
-                  isRead: 1
-                })
-              setMessagesMap(prev => ({
-                ...prev,
-                [selected.id]: [...(prev[selected.id] || []), newAIMsg]
-              }));
-
+              top3 += `
+              <div class='border position-relative'>
+              <span class='badge position-absolute top-0 start-0'>${idx + 1}</span>
+              <img  src='${pd.imageUrl}'/>
+              <a class='ellipsis' href="http://localhost:3000/product/${pd.pid}">${pd.pd_name}</a>
+              <span>NT$${pd.price}</span>
+              </div>
+              
+              `
             })
+            top3 += `</div>`
+
+            let newAIMsg = {
+              id: selected.uid,
+              from: 'bot',
+              text: top3,
+              time: new Date().toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' })
+            };
+            //insert api
+            axios.post('http://localhost:8000/post/insert/message',
+              {
+                ChatroomID: selected.id,
+                speakerID: selected.uid,
+                message: newAIMsg.text,
+                isRead: 1
+              })
+              .then(() => console.log('[DB] user 訊息已 insert'))
+              .catch(err => console.error('[DB] user insert 失敗', err));
+            setMessagesMap(prev => ({
+              ...prev,
+              [selected.id]: [...(prev[selected.id] || []), newAIMsg]
+            }));
+
+
           }
           else {
             let newAIMsg = {
@@ -147,6 +190,8 @@ export default function ChatApp() {
                 message: newAIMsg.text,
                 isRead: 1
               })
+              .then(() => console.log('[DB] user 訊息已 insert'))
+              .catch(err => console.error('[DB] user insert 失敗', err));
             setMessagesMap(prev => ({
               ...prev,
               [selected.id]: [...(prev[selected.id] || []), newAIMsg]
@@ -158,6 +203,7 @@ export default function ChatApp() {
 
 
   };
+
   /**
  * 不管傳進來的是 Blob 還是 mimicked Buffer (nodejs Buffer 物件)
  * 都能轉成一條可給 <img src> 的 URL
@@ -215,18 +261,18 @@ export default function ChatApp() {
       {/* 右側 ChatWindow */}
       <main className={styles.chatWindow}>
         <header className={styles.header}>
-          <img src={botAvatar} alt="客服汪" className={styles.avatar} />
+          <img src={blobtoURL(selected.avatar)} alt="客服汪" className={styles.avatar} />
           <div>
-            <p className={styles.name}>好拾汪</p>
+            <p className={styles.name}>{selected.name}</p>
             <p className={styles.sub}>官網客服｜上次上線時間：使命必達汪汪時間</p>
           </div>
         </header>
 
         <div key={selected.id} className={styles.messages}>
           <div className={styles.dateSep}>前天</div>
-          {messages.map(m => (
-            <div key={m.id} className={`${styles.message} ${m.from === 'bot' ? styles.bot : styles.user}`}>
-              <span className={styles.text} dangerouslySetInnerHTML={{ __html: m.text }}></span>
+          {messages.map((m, idx) => (
+            <div key={idx} className={`${styles.message} ${m.from === 'bot' ? styles.bot : styles.user}`}>
+              <div className={styles.text} dangerouslySetInnerHTML={{ __html: m.text }}></div>
               <span className={styles.time}>{m.time}</span>
             </div>
           ))}
@@ -234,8 +280,8 @@ export default function ChatApp() {
         </div>
 
         <div className={styles.quickBtns}>
-          <button>熱門商品TOP3</button>
-          <button>拾毛活動</button>
+          <button onClick={() => setInput('熱門商品TOP3')}>熱門商品TOP3</button>
+          <button onClick={() => setInput('尋找商品:')}>尋找商品</button>
         </div>
 
         <div className={styles.inputArea}>
