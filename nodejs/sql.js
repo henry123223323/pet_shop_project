@@ -831,6 +831,46 @@ app.post("/post/newusercoupon/:uid",function(req,res){
 
 
 
+app.post("/post/newusercoupon2/:uid",function(req,res){
+  const uid = req.params.uid
+  const discount_ratio = "0.77"
+  const coupon_code = "wow2025"
+  const overdate = "2026-10-13"
+  const description	= "毛孩生活用品限時優惠，通通抱回家不手軟~"
+
+
+
+  conn.query("INSERT INTO coupon (uid,discount_ratio,coupon_code,overdate,description) VALUES (?,?,?,?,?)",[uid,discount_ratio,coupon_code,overdate,description],(err, result) => {
+  if (err) {
+    console.error("資料庫錯誤:", err);
+    return res.status(500).send("新增失敗");
+  }
+  res.json({ message: "新增成功", result });
+});
+})
+
+
+
+
+app.post("/post/newusercoupon3/:uid",function(req,res){
+  const uid = req.params.uid
+  const discount_ratio = "0.88"
+  const coupon_code = "wowmeow2025"
+  const overdate = "2026-10-13"
+  const description	= "毛小孩用品大採購，現在就是最佳時機!"
+
+
+
+  conn.query("INSERT INTO coupon (uid,discount_ratio,coupon_code,overdate,description) VALUES (?,?,?,?,?)",[uid,discount_ratio,coupon_code,overdate,description],(err, result) => {
+  if (err) {
+    console.error("資料庫錯誤:", err);
+    return res.status(500).send("新增失敗");
+  }
+  res.json({ message: "新增成功", result });
+});
+})
+
+
 app.post("/post/edituserinfo", photoUpload.single("photo"), (req, res) => {
   const { uid, username, email, birthday } = req.body;
   const photoBuffer = req.file ? req.file.buffer : null;

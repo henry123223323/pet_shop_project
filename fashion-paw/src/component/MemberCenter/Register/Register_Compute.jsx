@@ -74,46 +74,80 @@ class Register_Compute extends Component {
 
 
     getcoupon = () => {
-
-        const email = encodeURIComponent(this.state.email)
+        const email = encodeURIComponent(this.state.email);
 
         axios.get(`http://localhost:8000/get/useruid/${email}`).then(response => {
             console.log("查詢成功！", response.data);
 
             this.setState({
-                uid : response.data
-            },()=>{
-                console.log(this.state);
-                
-            })
+                uid: response.data
+            }, () => {
+                // 確保 uid 更新後再呼叫 newusercoupon
+                this.newusercoupon();
+            });
 
+        })
+            .catch(error => {
+                // 處理錯誤
+            });
+    }
+
+
+
+    newusercoupon = () => {
+        let uid = this.state.uid;
+
+        // 確保 uid 有被正確設置
+        if (uid === 0 || !uid) {
+            console.error("UID 不存在或為 0");
+            return;
+        }
+
+        axios.post(`http://localhost:8000/post/newusercoupon/${uid}`).then(response => {
+            console.log("新增成功！", response.data);
+            this.newusercoupon2()
+        })
+            .catch(error => {
+                console.error("新增失敗", error);
+            });
+    }
+
+    newusercoupon2=()=>{
+        let uid = this.state.uid;
+
+        // 確保 uid 有被正確設置
+        if (uid === 0 || !uid) {
+            console.error("UID 不存在或為 0");
+            return;
+        }
+
+        axios.post(`http://localhost:8000/post/newusercoupon2/${uid}`).then(response => {
+            console.log("新增成功！", response.data);
+            this.newusercoupon3()
+        })
+            .catch(error => {
+                console.error("新增失敗", error);
+            });
+    }
+
+    newusercoupon3=()=>{
+        let uid = this.state.uid;
+
+        // 確保 uid 有被正確設置
+        if (uid === 0 || !uid) {
+            console.error("UID 不存在或為 0");
+            return;
+        }
+
+        axios.post(`http://localhost:8000/post/newusercoupon3/${uid}`).then(response => {
+            console.log("新增成功！", response.data);
+            
         })
             .catch(error => {
                 console.error("新增失敗", error);
             });
 
-        this.newusercoupon()
-
     }
-
-
-
-    newusercoupon=()=>{
-        let uid = this.state.uid
-
-        axios.post(`http://localhost:8000/post/newusercoupon/${uid}`).then(response => {
-                console.log("新增成功！", response.data);
-
-                
-
-            })
-                .catch(error => {
-                    console.error("新增失敗", error);
-                });
-
-    }
-
-
 
 
 
