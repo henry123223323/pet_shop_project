@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import MainNav from './MainNav'
 import { Link, useHistory } from "react-router-dom";
 import { BiMenu, BiX } from 'react-icons/bi';
@@ -7,10 +7,13 @@ import styles from './IndexStyle.module.css'
 import navstyles from './MainNav.module.css'
 import SearchBar from './SearchBar';
 import cookie from 'js-cookie';
+import { CartContext } from 'component/Cart/CartContext';
 import { useLocation } from "react-router-dom";
 
 
 function Header() {
+    const { clearCart } = useContext(CartContext);
+
     const history = useHistory()
     // 設隱藏導覽列的初始值
     const [hideHeader, setHideHeader] = useState(false);
@@ -93,6 +96,10 @@ function Header() {
     // 點擊登出跳轉到首頁
     const logout = (e) => {
         cookie.remove('user_uid', { path: '/', sameSite: 'Lax' });
+        localStorage.removeItem("cartList");
+        localStorage.removeItem("sellers");
+        localStorage.removeItem("cartMerged");
+        clearCart?.();
         setuid(null)
         // console.log(uid);
         setOpenMobileNav(false);
@@ -101,6 +108,8 @@ function Header() {
             history.push('/');
         }
     }
+
+
 
     return (
         <>
