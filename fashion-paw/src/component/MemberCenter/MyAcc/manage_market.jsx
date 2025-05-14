@@ -54,10 +54,11 @@ export default class ManageMarket extends Component {
   toggleModal = () =>
     this.setState(s => ({ showModal: !s.showModal }))
 
-  OpenAdd = () => this.setState({ ModalState: 'Add', thisIndex: -1 }, this.toggleModal)
-  OpenFound = i => this.setState({ ModalState: 'Find', thisIndex: i }, this.toggleModal)
-  OpenEdit = i => this.setState({ ModalState: 'Edit', thisIndex: i }, this.toggleModal)
+  OpenAdd = () => { this.setState({ ModalState: 'Add', thisIndex: -1 }); this.toggleModal(); };
+  OpenFound = i => { this.setState({ ModalState: 'Find', thisIndex: i }); this.toggleModal(); };
+  OpenEdit = i => { this.setState({ ModalState: 'Edit', thisIndex: i }); this.toggleModal(); };
 
+  // 刪除商品
   Delete = async i => {
     const { pid, pd_name } = this.state.second_product[i] || {}
     if (!pid || !window.confirm(`確定刪除 ${pd_name}？`)) return
@@ -145,14 +146,15 @@ export default class ManageMarket extends Component {
       : <span className="badge bg-secondary">下架</span>
 
 
-  renderCategory = cat => ({
+  renderCategory = cat =>
+  ({
     pet_food: "飼料",
     complementary_food: "副食",
     snacks: "零食",
     Health_Supplements: "保健食品",
     Living_Essentials: "生活家居",
-    toys: "玩具",
-  }[cat] ?? cat)
+    toys: "玩具"
+  }[cat] || cat);
 
   findProduct = i => this.state.second_product[i] ?? null
 
@@ -200,6 +202,7 @@ export default class ManageMarket extends Component {
                 <th>新舊程度</th>
                 <th>狀態</th>
                 <th>操作</th>
+                <th>回報錯誤</th>
               </tr>
             </thead>
             <tbody>
@@ -216,9 +219,19 @@ export default class ManageMarket extends Component {
                   <td><PawDisplay rating={Number(p.new_level)} /></td>
                   <td>{this.renderStatus(p.status)}</td>
                   <td>
-                    <button className="btn btn-primary btn-sm me-1" onClick={() => this.OpenFound(start + idx)}>查看</button>
-                    <button className="btn btn-warning btn-sm me-1" onClick={() => this.OpenEdit(start + idx)}>編輯</button>
-                    <button className="btn btn-danger btn-sm" onClick={() => this.Delete(start + idx)}>刪除</button>
+                    <button className="btn btn-primary btn-sm me-1" onClick={() => this.OpenFound(i)}>查看</button>
+                    <button className="btn btn-warning btn-sm me-1" onClick={() => this.OpenEdit(i)}>編輯</button>
+                    <button className="btn btn-danger btn-sm" onClick={() => this.Delete(i)}>刪除</button>
+                  </td>
+                  <td>
+                    <select>
+                      <option value="">----選擇----</option>
+                      <option value="">無法出貨</option>
+                      <option value="">貨物損毀</option>
+                      <option value="">重複上架</option>
+                    </select>
+                    <p></p>
+                    <button className='btn btn-danger'>回報</button>
                   </td>
                 </tr>
               ))}
