@@ -85,20 +85,21 @@ export default function HotRanking() {
               <p className={styles.price}>
                 NT${Number(price).toLocaleString()}
               </p>
-              {/* <div className={styles.actions}>
+
+              <div className={styles.actions}>
                 <AddToMyFavorite
                   isFavorite={isFav}
                   onClick={() => handleToggleFavorite(pid)}
                   size="20px"
                   aria-label="收藏"
                 />
-                  <AddToCartBtn
-                      type="icon"
-                      product={{ ...item,image: item.imageUrl }}
-                      quantity={1}
-                      aria-label="加入購物車"
-                    />
-              </div> */}
+                <AddToCartBtn
+                  type="icon"
+                  product={{ ...item, image: item.imageUrl }}
+                  quantity={1}
+                  aria-label="加入購物車"
+                />
+              </div>
             </div>
           );
         })}

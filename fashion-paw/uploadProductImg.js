@@ -1,15 +1,19 @@
 // uploadProductImg.js
 const multer = require('multer');
-const path   = require('path');
-const fs     = require('fs');
+const path = require('path');
+const fs = require('fs');
 
 module.exports = multer({
   storage: multer.diskStorage({
     destination: (req, file, cb) => {
       // 從 URL 拿到 condition：'new' or 'second'
-      const condition = req.params.condition;  
-      const petType   = req.body.pet_type;       // 狗 or 貓…
-      const category  = req.body.categories;     // 只有新品才會用到
+      let condition = req.params.condition;
+      if (!condition) {
+        const url = req.baseUrl || req.originalUrl;
+        condition = url.includes('second') ? 'second' : 'new';
+      }
+      const petType = req.body.pet_type;       // 狗 or 貓…
+      const category = req.body.categories;     // 只有新品才會用到
 
       // 根據 condition 決定根目錄
       const baseDir = path.join(

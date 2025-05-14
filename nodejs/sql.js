@@ -11,6 +11,8 @@ const imageType = require("image-type").default;
 const multer = require("multer");
 const photoUpload = multer();
 // 再動就自己寫後端
+
+
 const verifyRoutes = require('./routes/verify');
 const upload = require('../fashion-paw/uploadProductImg');
 const uploadArticleImg = require('../fashion-paw/uploadArticleImg');
@@ -29,7 +31,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
-app.use('/media', express.static('media'))
+app.use(
+  '/media',
+  express.static(path.join(__dirname, 'public', 'media'))
+);
 const uploadRoute = require('./upload');
 const cookieParser = require('cookie-parser')
 
@@ -64,6 +69,11 @@ app.use('/verify', verifyRoutes);
 //付款綠界API
 app.use('/payment', paymentRouter);
 app.use('/', cvsRoute);
+
+app.use(cors({
+  origin: 'http://localhost:3000',
+  credentials: true
+}));
 
 app.get("/get/article", function (req, res) {//用於開發者後臺管理
   conn.query("SELECT * FROM article", function (err, results) {
@@ -251,10 +261,22 @@ app.put(
   }
 );
 
-//寵物小知識區取得文章//
+// ── 取得所有文章清單（帶回 category 欄位） ─────────────────────
 app.get('/get/petknowarticles', async (req, res) => {
   try {
-    const rows = await q('SELECT * FROM article');
+    const rows = await q(`
+      SELECT
+        ArticleID        AS id,
+        title            AS title,
+        banner_URL       AS bannerFile,
+        intro            AS summary,
+        pet_type         AS pet,
+        article_type     AS articleType,
+        product_category AS category,
+        sections         AS sections,
+        create_at        AS date
+      FROM article
+    `);
     res.json({ list: rows });
   } catch (err) {
     console.error(err);
@@ -262,31 +284,32 @@ app.get('/get/petknowarticles', async (req, res) => {
   }
 });
 
-// 篩選單篇文章
+// ── 取得單篇文章 / 篩出 category 欄位 ───────────────────────────
 app.get('/api/petknowarticle/:id', async (req, res) => {
-  const id = +req.params.id;
+  const id = Number(req.params.id);
   try {
     const rows = await q(
-      `SELECT
-         ArticleID      AS id,
-         title          AS title,
-         banner_URL     AS bannerFile,    -- 可能是 "dog/dogcare.png" 或 "/dog/dogcare.png"
-         intro          AS summary,
-         pet_type       AS pet,           -- "dog"
-         article_type   AS articleType,   -- "health_check" 或 "pet_feeding"
-         sections       AS sections,
-         create_at      AS date
-       FROM article
-       WHERE ArticleID = ?`,
+      `
+      SELECT
+        ArticleID        AS id,
+        title            AS title,
+        banner_URL       AS bannerFile,
+        intro            AS summary,
+        pet_type         AS pet,
+        article_type     AS articleType,
+        product_category AS category,
+        sections         AS sections,
+        create_at        AS date
+      FROM article
+      WHERE ArticleID = ?
+      `,
       [id]
     );
     if (!rows.length) return res.status(404).json({ error: 'Not Found' });
 
     const row = rows[0];
-    const host = `${req.protocol}://${req.get('host')}`; // e.g. http://localhost:8000
-
-    // 用 path.basename 只留下最末端檔名 ("dogcare.png")
-    const fileName = require('path').basename(row.bannerFile || '');
+    const host = `${req.protocol}://${req.get('host')}`;
+    const fileName = path.basename(row.bannerFile || '');
     const bannerUrl = fileName
       ? `${host}/media/pet_know/${row.articleType}/${row.pet}/${fileName}`
       : null;
@@ -296,7 +319,7 @@ app.get('/api/petknowarticle/:id', async (req, res) => {
       title: row.title,
       summary: row.summary,
       pet: row.pet,
-      topic: row.topic,
+      category: row.category,
       articleType: row.articleType,
       sections: row.sections,
       date: row.date,
@@ -307,47 +330,61 @@ app.get('/api/petknowarticle/:id', async (req, res) => {
     res.status(500).json({ error: '伺服器錯誤' });
   }
 });
-// 列表分頁（同樣拼 bannerUrl）
+
+// ── 分頁取得文章列表 / 帶回 category ────────────────────────────
 app.get('/api/petknowarticle', async (req, res) => {
   const { type, pet, page = 1, size = 5 } = req.query;
-  const pageNum = +page,
-    pageSize = +size,
-    offset = (pageNum - 1) * pageSize;
+  const pageNum = Math.max(1, Number(page));
+  const pageSize = Math.max(1, Number(size));
+  const offset = (pageNum - 1) * pageSize;
+
+  if (!type || !pet) {
+    return res.status(400).json({ error: '缺少必要參數 type 或 pet' });
+  }
 
   try {
-    // 1. 總筆數
+    // 1. 計算總筆數
     const countRows = await q(
-      'SELECT COUNT(*) AS cnt FROM article WHERE article_type=? AND pet_type=?',
+      `SELECT COUNT(*) AS cnt
+         FROM article
+        WHERE article_type = ? AND pet_type = ?`,
       [type, pet]
     );
     const cnt = countRows[0]?.cnt || 0;
     const totalPages = Math.ceil(cnt / pageSize);
     const host = `${req.protocol}://${req.get('host')}`;
 
-    // 2. 分頁資料
+    // 2. 取分頁資料
     const rows = await q(
-      `SELECT
-         ArticleID        AS id,
-         title            AS title,
-         banner_URL       AS bannerFile,
-         intro            AS summary,
-         pet_type         AS pet,
-         product_category AS topic,
-         article_type     AS articleType,
-         create_at        AS date
-       FROM article
-       WHERE article_type=? AND pet_type=?
-       ORDER BY create_at DESC
-       LIMIT ?, ?`,
+      `
+      SELECT
+        ArticleID        AS id,
+        title            AS title,
+        banner_URL       AS bannerFile,
+        intro            AS summary,
+        pet_type         AS pet,
+        article_type     AS articleType,
+        product_category AS category,
+        create_at        AS date
+      FROM article
+      WHERE article_type = ? AND pet_type = ?
+      ORDER BY create_at DESC
+      LIMIT ?, ?
+      `,
       [type, pet, offset, pageSize]
     );
 
-    // 3. 用 path.basename 只留檔名，再拼出正確路徑
+    // 3. 處理 bannerUrl
     const list = rows.map(r => {
-      // r.bannerFile 可能帶了 "dog/dogcare.png" 或 "/dog/dogcare.png"
       const fileName = path.basename(r.bannerFile || '');
       return {
-        ...r,
+        id: r.id,
+        title: r.title,
+        summary: r.summary,
+        pet: r.pet,
+        category: r.category,
+        articleType: r.articleType,
+        date: r.date,
         bannerUrl: fileName
           ? `${host}/media/pet_know/${r.articleType}/${r.pet}/${fileName}`
           : null
@@ -937,18 +974,45 @@ app.get("/get/creditcard/:uid", function (req, res) {
 });
 
 
-// 假設推薦商品存在 productslist 表裡，用某種邏輯挑 3 筆
 app.get('/get/recommend-products', (req, res) => {
-  const sql = `
+  const { pet_type, product_category } = req.query;
+  console.log('🔍 前端傳來 pet_type =', pet_type, '、product_category =', product_category);
+
+  // 基本 SQL
+  let sql = `
     SELECT p.pid, p.pd_name, p.price,
-           (SELECT img_path FROM product_image WHERE pid = p.pid ORDER BY pd_img_id LIMIT 1) AS img_path
-    FROM productslist p
-    WHERE p.status = 1
-    ORDER BY RAND()
-    LIMIT 3
+           (SELECT img_path
+              FROM product_image
+             WHERE pid = p.pid
+             ORDER BY pd_img_id
+             LIMIT 1) AS img_path
+      FROM productslist p
+     WHERE p.status = 1
   `;
-  conn.query(sql, (err, results) => {
-    if (err) return res.status(500).json({ error: err.message });
+  const params = [];
+
+  // 依 pet_type 篩選
+  if (pet_type) {
+    sql += ` AND p.pet_type = ?`;
+    params.push(pet_type);
+  }
+
+ if (product_category) {
+  sql += ` AND FIND_IN_SET(?, p.categories)`;
+  params.push(product_category);
+ }
+
+  // 隨機取三筆
+  sql += ` AND p.condition = 'new'`;
+  sql += ` ORDER BY RAND() LIMIT 3`;
+  console.log('🔍 最終 SQL =', sql.trim(), '／params =', params);
+
+  conn.query(sql, params, (err, results) => {
+    if (err) {
+      console.error('GET /get/recommend-products 錯誤：', err.message);
+      return res.status(500).json({ error: err.message });
+    }
+
     const host = `${req.protocol}://${req.get('host')}`;
     const data = results.map(r => ({
       pid: r.pid,
@@ -958,9 +1022,11 @@ app.get('/get/recommend-products', (req, res) => {
         ? host + '/' + r.img_path.replace(/^public\//, '')
         : null
     }));
+
     res.json(data);
   });
 });
+
 
 app.post("/post/productsreach/new", function (req, res) {
   let { keyword } = req.body
@@ -1353,16 +1419,165 @@ app.get('/delete/collect/:uid/:pid', function (req, res) {
 
 //後台管理 賣家個人商場api
 // 只抓自己的二手商品
-app.get('/api/my-second-products', (req, res) => {
-  const uid = req.user.id;  // 假設 middleware 已把 user 放到 req
+// (1) 讀取二手商品
+app.get('/get/my-second-products', async (req, res) => {
+  const uid = req.get('X-UID')
+  if (!uid) return res.status(400).json({ error: '請帶入 X-UID' })
+
   const sql = `
-    SELECT p.*, pi.img_path AS imageUrl
+    SELECT p.uid,p.pid,p.pd_name,p.price,p.categories,p.new_level,p.status,
+           MIN(pi.img_path) AS img_path
       FROM productslist p
- LEFT JOIN ( ... ) pi ON pi.pid = p.pid
-     WHERE p.condition='second' AND p.uid = ?
+ LEFT JOIN product_image pi ON p.pid=pi.pid
+     WHERE p.uid=? AND p.\`condition\`='second'
+  GROUP BY p.pid
+  `
+  try {
+    const rows = await q(sql, [uid])
+    const host = `${req.protocol}://${req.get('host')}`
+    const data = rows.map(r => ({
+      uid: r.uid,
+      pid: r.pid,
+      pd_name: r.pd_name,
+      price: r.price,
+      categories: r.categories,
+      new_level: r.new_level,
+      status: r.status,
+      imageUrl: r.img_path ? `${host}${r.img_path}` : null
+    }))
+    res.json(data)
+  } catch (e) {
+    console.error(e)
+    res.status(500).json({ error: e.message })
+  }
+})
+
+// (2) 新增二手商品
+app.post('/get/my-second-products', upload, async (req, res) => {
+  console.log('🔎 POST 收到 X-UID:', req.get('X-UID'));
+  const uid = req.get('X-UID');
+  if (!uid) return res.status(400).json({ error: '請帶入 X-UID' });
+
+  const { pd_name, price, categories, new_level, status } = req.body;
+  const insertSql = `
+    INSERT INTO productslist
+      (uid, pd_name, price, categories, new_level, status, \`condition\`)
+    VALUES (?, ?, ?, ?, ?, ?, "second")
   `;
-  conn.query(sql, [uid], (err, results) => { /* ... */ });
+  try {
+    const { insertId: pid } = await q(insertSql, [uid, pd_name, price, categories, new_level, status]);
+    console.log('新增後 pid=', pid);
+
+    // 處理圖片：直接 batch insert
+    // 1. 先刪掉任何舊圖（理論上不應該有）
+    await q('DELETE FROM product_image WHERE pid = ?', [pid]);
+
+    // 2. 解析描述陣列
+    let rawValues = req.body['img_value[]'] || req.body.img_value || [];
+    if (!Array.isArray(rawValues)) rawValues = [rawValues];
+    console.log('解析後的 imgValues =', rawValues);
+
+    // 3. 準備 batch INSERT 的 rows
+    const mediaRoot = path.join(__dirname, '..', 'public', 'media', 'second_pd');
+    const imgRows = (req.files || []).map((file, i) => {
+      // file.path 已是實體路徑，可直接取 file.filename
+      return [
+        pid,
+        `/media/second_pd/${file.filename}`,
+        rawValues[i] || ''
+      ];
+    });
+    console.log('準備寫入 product_image 的 rows：', imgRows);
+
+    if (imgRows.length) {
+      await q(
+        'INSERT INTO product_image (pid, img_path, img_value) VALUES ?',
+        [imgRows]
+      );
+      console.log('成功寫入', imgRows.length, '筆圖片資料');
+    }
+
+    res.status(201).json({ pid });
+  } catch (e) {
+    console.error('上傳失敗：', e);
+    res.status(500).json({ error: e.message });
+  }
 });
+
+
+// (3) 編輯二手商品
+app.put('/get/my-second-products/:pid', upload, async (req, res) => {
+  const uid = req.get('X-UID');
+  const pid = +req.params.pid;
+  if (!uid) return res.status(400).json({ error: '請帶入 X-UID' });
+
+  const { pd_name, price, categories, new_level, status } = req.body;
+  try {
+    // 驗證商品
+    const rows = await q(
+      'SELECT 1 FROM productslist WHERE pid=? AND uid=? AND `condition`="second"',
+      [pid, uid]
+    );
+    if (!rows.length) return res.status(404).json({ error: '找不到商品' });
+
+    // 更新商品基本資料
+    await q(
+      'UPDATE productslist SET pd_name=?,price=?,categories=?,new_level=?,status=? WHERE pid=?',
+      [pd_name, price, categories, new_level, status, pid]
+    );
+    console.log('已更新 productslist pid=', pid);
+
+    // 刪掉舊圖
+    await q('DELETE FROM product_image WHERE pid=?', [pid]);
+    console.log('已刪除 PID=', pid, '的舊圖片紀錄');
+
+    // 解析描述陣列
+    let rawValues = req.body['img_value[]'] || req.body.img_value || [];
+    if (!Array.isArray(rawValues)) rawValues = [rawValues];
+    console.log('解析後的 imgValues =', rawValues);
+
+    // 準備 batch INSERT
+    const imgRows = (req.files || []).map((file, i) => [
+      pid,
+      `/media/second_pd/${file.filename}`,
+      rawValues[i] || ''
+    ]);
+    console.log('準備寫入 product_image 的 rows：', imgRows);
+
+    if (imgRows.length) {
+      await q(
+        'INSERT INTO product_image (pid, img_path, img_value) VALUES ?',
+        [imgRows]
+      );
+      console.log('成功寫入', imgRows.length, '筆圖片資料');
+    }
+
+    res.json({ pid });
+  } catch (e) {
+    console.error('更新失敗：', e);
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// (4) 刪除二手商品
+app.delete('/get/my-second-products/:pid', async (req, res) => {
+  const uid = req.get('X-UID')
+  const pid = +req.params.pid
+  if (!uid) return res.status(400).json({ error: '請帶入 X-UID' })
+
+  try {
+    await q('DELETE FROM product_image WHERE pid=?', [pid])
+    const { affectedRows } = await q(
+      'DELETE FROM productslist WHERE pid=? AND uid=? AND `condition`="second"',
+      [pid, uid]
+    )
+    if (!affectedRows) return res.status(404).json({ error: '找不到商品' })
+    res.sendStatus(204)
+  } catch (e) {
+    console.error(e)
+    res.status(500).json({ error: e.message })
+  }
+})
 
 
 
@@ -1808,29 +2023,120 @@ app.delete('/api/article/:id', async (req, res) => {
 
 
 
-app.get("/get/userinfo", function (req, res) {
+app.get("/get/back-userinfo", function (req, res) {
   conn.query("SELECT uid,email,username,photo,fullname,birthday,power,last_time_login,AboutMe as aboutme,Device as device FROM userinfo", function (err, results) {
     if (err) {
       console.error("資料庫查詢錯誤:", err);
       res.status(500).send("伺服器錯誤");
     } else {
-      console.log("http://localhost:8000/get/userinfo 被連線");
+      console.log("http://localhost:8000/get/back-userinfo 被連線");
       res.json(results); // 正確回傳結果給前端
     }
   });
 });
-// 假設推薦商品存在 productslist 表裡，用某種邏輯挑 3 筆
+// ── 刪除會員 ───────────────────────────────────────────────
+app.delete('/get/back-userinfo/:uid', async (req, res) => {
+  const { uid } = req.params;
+  try {
+    const result = await q('DELETE FROM userinfo WHERE uid = ?', [uid]);
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: '找不到該會員' });
+    }
+    return res.json({ success: true, message: '刪除成功' });
+  } catch (err) {
+    console.error('刪除失敗：', err);
+    return res.status(500).json({ error: err.message });
+  }
+});
+
+// ── 編輯會員 ───────────────────────────────────────────────
+app.put('/get/back-userinfo/:uid', async (req, res) => {
+  const { uid } = req.params;
+  // 從前端傳來的 editinguser 物件，解構你需要的欄位
+  const {
+    username,
+    email,
+    fullname,
+    birthday,
+    power,
+    aboutme,
+    device
+  } = req.body;
+
+  try {
+    const sql = `
+      UPDATE userinfo
+         SET username = ?,
+             email    = ?,
+             fullname = ?,
+             birthday = ?,
+             power    = ?,
+             aboutme  = ?,
+             device   = ?
+       WHERE uid = ?
+    `;
+    const result = await q(sql, [
+      username,
+      email,
+      fullname,
+      birthday,
+      power,
+      aboutme,
+      device,
+      uid
+    ]);
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: '找不到該會員' });
+    }
+    return res.json({ success: true, message: '更新成功' });
+  } catch (err) {
+    console.error('更新失敗：', err);
+    return res.status(500).json({ error: err.message });
+  }
+});
+
+
+
+
 app.get('/get/recommend-products', (req, res) => {
-  const sql = `
+  const petType = req.query.pet_type || req.query.petType;
+  console.log('🔍 接收到 pet_type =', petType);
+
+  let sql = `
     SELECT p.pid, p.pd_name, p.price,
-           (SELECT img_path FROM product_image WHERE pid = p.pid ORDER BY pd_img_id LIMIT 1) AS img_path
-    FROM productslist p
-    WHERE p.status = 1
-    ORDER BY RAND()
-    LIMIT 3
+           (SELECT img_path
+              FROM product_image
+             WHERE pid = p.pid
+             ORDER BY pd_img_id
+             LIMIT 1) AS img_path
+      FROM productslist p
+     WHERE p.status = 1
   `;
-  conn.query(sql, (err, results) => {
-    if (err) return res.status(500).json({ error: err.message });
+  const params = [];
+
+  // 只依 pet_type 篩選
+  if (pet_type) {
+    sql += ` AND p.pet_type = ?`;
+    params.push(pet_type);
+  }
+
+  if (product_category) {
+    sql += ` AND FIND_IN_SET(REPLACE(?, ' ', '_'), p.categories)`;
+    params.push(product_category);
+  }
+
+  // 隨機 3 筆
+  sql += ` AND p.condition = 'new'`;
+
+  sql += ` ORDER BY RAND() LIMIT 3`;
+  console.log(sql.trim());
+  console.log(params);
+  conn.query(sql, params, (err, results) => {
+    if (err) {
+      console.error('GET /get/recommend-products 錯誤：', err.message);
+      return res.status(500).json({ error: err.message });
+    }
+
     const host = `${req.protocol}://${req.get('host')}`;
     const data = results.map(r => ({
       pid: r.pid,
@@ -1840,9 +2146,14 @@ app.get('/get/recommend-products', (req, res) => {
         ? host + '/' + r.img_path.replace(/^public\//, '')
         : null
     }));
+
     res.json(data);
   });
 });
+
+
+
+
 
 //建立訂單
 

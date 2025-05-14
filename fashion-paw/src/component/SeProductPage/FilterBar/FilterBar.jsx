@@ -2,8 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import styles from './FilterBar.module.css';
 import TaiwanMap from '../Map/TaiwanMap';
-// import axios from 'axios';
-// 一定要有這個 prices 陣列
+import PawDisplay from '../../ProductDetailPage/PawDisplay';  // ← 引入
+
 const prices = [
   { value: '100以下', label: '100以下' },
   { value: '101-300', label: '101–300' },
@@ -26,10 +26,6 @@ export default function FilterBar({
   const [selPrice, setSelPrice] = useState('');
   const [selDep, setSelDep] = useState(0);
   const [selLocs, setSelLocs] = useState([]);
-  useEffect(() => {
-    console.log(city_town);
-  }, [city_town]);
-
 
   useEffect(() => {
     onFilterChange({
@@ -90,12 +86,12 @@ export default function FilterBar({
           </div>
 
 
-          {/* 折舊程度 */}
-          <div className={styles.row}>
+           {/* 折舊程度 (改用 PawDisplay 圖案) */}
+          <div className={`${styles.row} ${styles.depreciationRow}`}>
             <span className={styles.label}>折舊程度</span>
             <div className={styles.options}>
               {depreciates.map(n => (
-                <label key={n}>
+                <label key={n} style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
                   <input
                     type="radio"
                     name="depreciation"
@@ -103,7 +99,10 @@ export default function FilterBar({
                     checked={selDep === n}
                     onChange={() => setSelDep(n)}
                   />
-                  {Array(n).fill('🐾').join('')}
+                  {/* 外層 wrapper 留 n 顆 paw 的寬度 */}
+                  <div className={styles.pawWrapper} style={{ width: `${n * 25}px` }}>
+                    <PawDisplay rating={n} />
+                  </div>
                 </label>
               ))}
             </div>
@@ -126,17 +125,6 @@ export default function FilterBar({
                 </label>
               ))}
             </div>
-          </div>
-          <div className={styles.actions}>
-            <button className={styles.clearBtn} onClick={() => {
-              setSelFuncs([]);
-              setSelBrands([]);
-              setSelPrice('');
-              setSelDep(0);
-              setSelLocs([]);
-            }}>
-              清除篩選
-            </button>
           </div>
         </div>
       )}

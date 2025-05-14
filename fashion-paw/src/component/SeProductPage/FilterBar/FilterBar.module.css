@@ -102,26 +102,11 @@
   font-size: 24px;
   cursor: pointer;
 }
-.actions {
-  text-align: right;
-  margin-top: 12px;
-}
+.pawWrapper {
+  display: inline-block;
+  overflow: hidden;
+  /* 假設每顆 paw 寬度是 1em，就留 n*1em */
+  /* 也可以用 px，視你的 icon 大小調整 */
+    vertical-align: middle; /* 垂直置中，可選 */
 
-.clearBtn {
-  padding: 6px 12px;
-  font-size: 0.9rem;
-  background-color: transparent;
-  color: #7A4B2A;
-  /* 咖啡色文字 */
-  border: 1px solid #7A4B2A;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.2s, color 0.2s;
-}
-
-.clearBtn:hover {
-  background-color: #87512D;
-  /* 奶茶色 hover 背景 */
-  color: white;
-  /* 字體可略變深以增加對比 */
 }

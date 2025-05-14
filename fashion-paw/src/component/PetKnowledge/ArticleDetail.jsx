@@ -1,10 +1,10 @@
 // src/component/PetKnowledge/ArticleDetail.jsx
 import React, { useState, useEffect } from 'react';
-import { useParams }                   from 'react-router-dom';
-import Sidebar                         from './SideBar';
-import styles                          from './ArticleDetail.module.css';
-import axios                           from 'axios';
-import RecommendedProducts             from './Novicefeeding/RecommendedProducts';  // ← 引入推薦商品
+import { useParams } from 'react-router-dom';
+import Sidebar from './SideBar';
+import styles from './ArticleDetail.module.css';
+import axios from 'axios';
+import RecommendedProducts from './Novicefeeding/RecommendedProducts';  // ← 引入推薦商品
 
 export default function ArticleDetail({ topic }) {
   const { pet, id } = useParams();
@@ -20,7 +20,7 @@ export default function ArticleDetail({ topic }) {
 
   let sections = [];
   try { sections = JSON.parse(article.sections); }
-  catch {}
+  catch { }
 
   return (
     <div className={styles.container}>
@@ -31,8 +31,8 @@ export default function ArticleDetail({ topic }) {
       <div className={styles.detailWrapper}>
         {article.bannerUrl && (
           <img src={article.bannerUrl}
-               alt={article.title}
-               className={styles.mainImage} />
+            alt={article.title}
+            className={styles.mainImage} />
         )}
 
         <div className={styles.header}>
@@ -54,7 +54,7 @@ export default function ArticleDetail({ topic }) {
         <div className={styles.sections}>
           {sections.map((sec, i) => (
             <section key={i} className={styles.section}>
-              {sec.heading && 
+              {sec.heading &&
                 <h2 className={styles.secHeading}>{sec.heading}</h2>}
               <p className={styles.secBody}>{sec.body}</p>
             </section>
@@ -62,8 +62,10 @@ export default function ArticleDetail({ topic }) {
         </div>
 
         {/* ← 在這裡插入推薦商品元件 */}
-        <RecommendedProducts />
-
+        <RecommendedProducts
+          pet_type={article.pet}
+          product_category={article.category}
+        />
       </div>
     </div>
   );
