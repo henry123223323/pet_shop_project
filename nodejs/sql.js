@@ -448,8 +448,22 @@ app.post("/post/deleteaddress/:Aid", function (req, res) {
 
 })
 
+app.post("/post/editpassword", function (req, res) {
+  const { uid, password } = req.body;
 
+  if (!uid || !password) {
+    return res.status(400).send("缺少必要欄位");
+  }
 
+  conn.query("UPDATE userinfo SET password = ? WHERE uid = ?", [password, uid], function (err, results) {
+    if (err) {
+      console.error("資料庫查詢錯誤:", err);
+      return res.status(500).send("伺服器錯誤");
+    }
+    console.log("密碼已更新");
+    res.json(results);
+  });
+});
 
 
 app.post("/post/deleteaddress/:Aid", function (req, res) {
@@ -737,7 +751,39 @@ app.get("/get/orderitemfirstpig/:order_id", function (req, res) {
 
 
 
-// app.post("/post/createuserinfo/")
+app.post("/post/createuserinfo", function (req, res) {
+  const imagePath = path.join(__dirname, 'media/userphoto.png'); // 圖片路徑
+  const imageBuffer = fs.readFileSync(imagePath); // 把圖片讀進來成 buffer
+
+  const { email, username, password, firstname, lastname, birthday, power, Aboutme, fullname } = req.body;
+
+  const sql = "INSERT INTO userinfo (email, username, password, firstname, lastname, birthday, power, Aboutme ,photo, fullname) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+  conn.query(sql, [
+    email,
+    username,
+    password,
+    firstname,
+    lastname,
+    birthday,
+    power,
+    Aboutme,
+    imageBuffer, // 預設圖片
+    fullname     // 從前端直接來的
+  ], (err, result) => {
+    if (err) {
+      console.error("資料庫錯誤:", err);
+      return res.status(500).send("新增失敗");
+    }
+    res.json({ message: "新增成功", result });
+  });
+})
+
+
+
+
+
+
 
 
 
@@ -755,9 +801,65 @@ app.get("/get/useruid/:email", function (req, res) {
       res.status(500).send("伺服器錯誤");
     } else {
       console.log("找到新建用戶uid");
-      res.json(results); // 正確回傳結果給前端
+      res.json(results[0]?.uid || null); // 正確回傳結果給前端
     }
   })
+})
+
+
+
+app.post("/post/newusercoupon/:uid", function (req, res) {
+  const uid = req.params.uid
+  const discount_ratio = "0.85"
+  const coupon_code = "meow2025"
+  const overdate = "2026-10-13"
+  const description = "折扣直送毛孩圈，每一件都超值"
+
+
+
+  conn.query("INSERT INTO coupon (uid,discount_ratio,coupon_code,overdate,description) VALUES (?,?,?,?,?)", [uid, discount_ratio, coupon_code, overdate, description], (err, result) => {
+    if (err) {
+      console.error("資料庫錯誤:", err);
+      return res.status(500).send("新增失敗");
+    }
+    res.json({ message: "新增成功", result });
+  });
+})
+
+
+app.post("/post/calladmin/:speakerID/:message", function (req, res) {
+  console.log('收到請求：', req.params);  // 打印 speakerID 和 message 參數
+  let speakerID = req.params.speakerID;
+  let message = decodeURIComponent(req.params.message);
+
+  conn.query("INSERT INTO chatmessage (speakerID,message) VALUES (?,?);", [speakerID, message], function (err, results) {
+    if (err) {
+      console.error("資料庫錯誤:", err);
+      return res.status(500).send("新增失敗");
+    }
+    res.json({ message: "新增成功", result: results });
+  });
+});
+
+
+
+app.post("/post/newuseraddress", function (req, res) {
+
+  const { uid, City, District, address, AdressName, AdressPhone } = req.body;
+
+  const sql = "INSERT INTO address (uid, City, District, address, AdressName, AdressPhone) VALUES (?, ?, ?, ?, ?, ?)";
+
+  conn.query(sql,[uid,City,District,address,AdressName,AdressPhone], (err, result) => {
+    if (err) {
+      console.error("資料庫錯誤:", err);
+      return res.status(500).send("新增失敗");
+    }
+    res.json({ message: "新增成功", result });
+  });
+
+
+
+
 })
 
 
@@ -765,6 +867,45 @@ app.get("/get/useruid/:email", function (req, res) {
 
 
 
+
+app.post("/post/newusercoupon2/:uid", function (req, res) {
+  const uid = req.params.uid
+  const discount_ratio = "0.77"
+  const coupon_code = "wow2025"
+  const overdate = "2026-10-13"
+  const description = "毛孩生活用品限時優惠，通通抱回家不手軟~"
+
+
+
+  conn.query("INSERT INTO coupon (uid,discount_ratio,coupon_code,overdate,description) VALUES (?,?,?,?,?)", [uid, discount_ratio, coupon_code, overdate, description], (err, result) => {
+    if (err) {
+      console.error("資料庫錯誤:", err);
+      return res.status(500).send("新增失敗");
+    }
+    res.json({ message: "新增成功", result });
+  });
+})
+
+
+
+
+app.post("/post/newusercoupon3/:uid", function (req, res) {
+  const uid = req.params.uid
+  const discount_ratio = "0.88"
+  const coupon_code = "wowmeow2025"
+  const overdate = "2026-10-13"
+  const description = "毛小孩用品大採購，現在就是最佳時機!"
+
+
+
+  conn.query("INSERT INTO coupon (uid,discount_ratio,coupon_code,overdate,description) VALUES (?,?,?,?,?)", [uid, discount_ratio, coupon_code, overdate, description], (err, result) => {
+    if (err) {
+      console.error("資料庫錯誤:", err);
+      return res.status(500).send("新增失敗");
+    }
+    res.json({ message: "新增成功", result });
+  });
+})
 
 
 app.post("/post/edituserinfo", photoUpload.single("photo"), (req, res) => {
@@ -894,6 +1035,15 @@ GROUP BY p.pid;
     }
   })
 })
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1120,7 +1270,7 @@ WHERE p.condition = 'second'
       res.status(500).send("伺服器錯誤");
     } else {
       console.log("http://localhost:8000/post/productsreach/second 被post連線");
-      console.log(JSON.parse(rows[0].images)[0].img_path);
+      // console.log(JSON.parse(rows[0].images)[0].img_path );
 
       res.json(rows); // 正確回傳結果給前端
     }
@@ -2295,30 +2445,34 @@ app.post("/cart/merge", async (req, res) => {
   try {
     for (const item of cartList) {
       const { uid, pid, spec, quantity, unit_price } = item;
+      const specValue = spec || null;
 
       // 查詢是否已存在此商品
-      const [existing] = await q(`
-        SELECT * FROM shoppingcart WHERE uid = ? AND pid = ? AND spec = ?
-      `, [uid, pid, spec || null]);
+      const existingQuery = specValue === null
+        ? `SELECT * FROM shoppingcart WHERE uid = ? AND pid = ? AND spec IS NULL`
+        : `SELECT * FROM shoppingcart WHERE uid = ? AND pid = ? AND spec = ?`;
+
+      const [existing] = await q(existingQuery, specValue === null ? [uid, pid] : [uid, pid, specValue]);
 
       if (existing) {
         // 已存在 → 更新數量
-        await q(`
-          UPDATE shoppingcart SET quantity = quantity + ? 
-          WHERE uid = ? AND pid = ? AND spec = ?
-        `, [quantity, uid, pid, spec || null]);
+        const updateQuery = specValue === null
+          ? `UPDATE shoppingcart SET quantity = quantity + ? WHERE uid = ? AND pid = ? AND spec IS NULL`
+          : `UPDATE shoppingcart SET quantity = quantity + ? WHERE uid = ? AND pid = ? AND spec = ?`;
+
+        await q(updateQuery, specValue === null ? [quantity, uid, pid] : [quantity, uid, pid, specValue]);
       } else {
         // 不存在 → 新增
         await q(`
           INSERT INTO shoppingcart (uid, couponId, pid, spec, quantity, unit_price)
           VALUES (?, NULL, ?, ?, ?, ?)
-        `, [uid, pid, spec || null, quantity, unit_price]);
+        `, [uid, pid, specValue, quantity, unit_price]);
       }
     }
 
     res.send("✅ 購物車合併完成");
   } catch (err) {
-    console.error("❌ 合併失敗", err);
+    console.error("❌ 購物車合併失敗", err);
     res.status(500).send("伺服器錯誤");
   }
 });
@@ -2349,28 +2503,38 @@ app.get('/AI_check/:userid', async (req, res) => {
 })
 // 從資料庫讀出購物車資料
 app.get("/cart/:uid", async (req, res) => {
-  const { uid } = req.params;
+  const uid = Number(req.params.uid);
+
   try {
     const result = await q(`
-     SELECT 
-  sc.cart_id,
-  sc.uid,
-  sc.pid,
-  sc.spec,
-  sc.quantity,
-  sc.unit_price,
-  p.pd_name,
-  img.img_path,
-  img.img_value
-FROM shoppingcart sc
-LEFT JOIN productslist p ON sc.pid = p.pid
-LEFT JOIN (
-  SELECT pid, MIN(img_path) AS img_path, MIN(img_value) AS img_value
-  FROM product_image
-  GROUP BY pid
-) img ON sc.pid = img.pid
-WHERE sc.uid = ?
+      SELECT 
+        sc.cart_id,
+        sc.uid,
+        sc.pid,
+        sc.spec,
+        sc.quantity,
+        sc.unit_price,
+        p.pd_name,
+        p.condition, -- ✅ 從商品表撈出新品/二手
+        p.uid AS seller_uid,
+        img.img_path,
+        img.img_value
+      FROM shoppingcart sc
+      LEFT JOIN productslist p ON sc.pid = p.pid
+      LEFT JOIN (
+        SELECT pid, MIN(img_path) AS img_path, MIN(img_value) AS img_value
+        FROM product_image
+        GROUP BY pid
+      ) img ON sc.pid = img.pid
+      WHERE sc.uid = ?
     `, [uid]);
+
+    console.log("✅ 撈到購物車資料：", result.length, "筆");
+    console.log("🔍 API 回傳的每個 item：");
+    result.forEach(item => {
+      console.log(`pid: ${item.pid}, condition: ${item.condition}, seller_uid: ${item.seller_uid}`);
+    });
+
     res.json(result);
   } catch (err) {
     console.error("❌ 撈取購物車失敗", err);
@@ -2420,51 +2584,94 @@ app.delete("/cart/remove", async (req, res) => {
     res.status(500).send("伺服器錯誤");
   }
 });
-app.get('/channel/:uid', async (req, res) => {
-  let uidX = req.params.uid
-  let sql = `
-  SELECT cru.chatroomID AS id,ui.uid, ui.username AS name, ui.photo as avatar, ui.last_time_login AS lastTime, cm.message AS snippet 
-  FROM chatroomuser AS cru 
-  LEFT JOIN userinfo AS ui 
-  ON cru.uidY = ui.uid 
-  LEFT JOIN chatmessage AS cm 
-  ON cm.ChatroomID = cru.chatroomID 
-  AND cm.create_time = ( SELECT MAX(create_time) FROM chatmessage WHERE ChatroomID = cru.chatroomID ) 
-  WHERE cru.uidX = ?
+app.get('/channel/:uid', (req, res) => {
+  const uidX = req.params.uid;
+  const sql = `
+    SELECT
+      cru.chatroomID AS id,
+      ui.uid,
+      ui.username        AS name,
+      ui.photo           AS avatar,
+      ui.last_time_login AS lastTime,
+      cm.message         AS snippet
+    FROM chatroomuser AS cru
+    LEFT JOIN userinfo AS ui
+      ON cru.uidY = ui.uid
+    LEFT JOIN chatmessage AS cm
+      ON cm.ChatroomID = cru.chatroomID
+      AND cm.messageID = (
+        SELECT MAX(messageID)
+        FROM chatmessage
+        WHERE ChatroomID = cru.chatroomID
+      )
+    WHERE cru.uidX = ?
+  `;
 
-  `
-  conn.query(sql, [uidX], function (err, rows) {
-    rows.forEach((room) => {
-      room.id = 'chatroom' + room.id
-      room.lastTime = new Date(room.lastTime).toLocaleTimeString()
-    })
+  conn.query(sql, [uidX], (err, rows) => {
+    if (err) {
+      console.error('取得聊天室列表失敗：', err);
+      return res.status(500).json({ error: '伺服器錯誤' });
+    }
 
-    console.log(rows);
-    res.json(rows)
+    // rows 可能是 undefined，也可能是 []，统一用 [] 防呆
+    const list = Array.isArray(rows) ? rows : [];
 
-  })
-})
-app.get('/chatroom/message/:room', async (req, res) => {
-  let roomid = parseInt(req.params.room.match(/\d+/)[0], 10)
+    const result = list.map(room => ({
+      // 前端预期的 id 格式
+      id: 'chatroom' + room.id,
+      uid: room.uid,
+      name: room.name,
+      avatar: room.avatar,
+      // 格式化成「上午10:22」这种 zh-TW 时间
+      lastTime: room.lastTime
+        ? new Date(room.lastTime)
+          .toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' })
+        : null,
+      snippet: room.snippet
+    }));
 
+    console.log('channel result:', result);
+    res.json(result);
+  });
+});
 
-  let sql = `
- SELECT cm.speakerID as id,cm.message as text,cm.create_time as time 
- FROM chatmessage cm 
- WHERE ChatroomID=?;
+app.get('/chatroom/message/:room', (req, res) => {
+  const match = req.params.room.match(/\d+/);
+  const roomid = match ? parseInt(match[0], 10) : null;
+  if (roomid === null) {
+    return res.status(400).json({ error: '無效的 room 參數' });
+  }
 
-  `
-  conn.query(sql, [roomid], function (err, rows) {
+  const sql = `
+    SELECT 
+      cm.speakerID AS id,
+      cm.message   AS text,
+      cm.create_time AS time
+    FROM chatmessage cm
+    WHERE cm.ChatroomID = ?
+  `;
 
-    console.log('-----');
-    rows.forEach(msg => {
-      msg.time = new Date(msg.time).toLocaleTimeString()
-    })
-    console.log(rows);
-    res.json(rows)
+  conn.query(sql, [roomid], (err, rows) => {
+    // 2. SQL 錯誤先攔截
+    if (err) {
+      console.error('取得訊息失敗：', err);
+      return res.status(500).json({ error: '伺服器錯誤' });
+    }
 
-  })
-})
+    // 3. 确保 rows 是陣列，否則用空陣列
+    const messages = Array.isArray(rows) ? rows.map(msg => ({
+      id: msg.id,
+      text: msg.text,
+      // 4. 格式化時間為 zh-TW 兩位小時兩位分鐘
+      time: new Date(msg.time)
+        .toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' })
+    })) : [];
+
+    console.log(`聊天室 ${roomid} 訊息：`, messages);
+    res.json(messages);
+  });
+});
+
 
 app.get('/message/:uid', async (req, res) => {
   try {
@@ -2494,19 +2701,27 @@ app.get('/message/:uid', async (req, res) => {
 });
 
 app.post('/post/insert/message', function (req, res) {
-  req.body.ChatroomID = parseInt(req.body.ChatroomID.match(/\d+/)[0], 10)
-  req.body.speakerID = parseInt(req.body.speakerID)
-  console.log(req.body);
-  let { ChatroomID, speakerID, message, isRead } = req.body
-  conn.query(`    
-    INSERT INTO chatmessage
-          (ChatroomID,speakerID,message,isRead)
-        VALUES (?, ?, ?, ?)
-        `, [ChatroomID, speakerID, message, isRead], function (err, result) {
-    console.log('insert成功');
+  req.body.ChatroomID = parseInt(req.body.ChatroomID.match(/\d+/)[0], 10);
+  req.body.speakerID = parseInt(req.body.speakerID);
 
-  })
-})
+  const { ChatroomID, speakerID, message, isRead } = req.body;
+  console.log('[Insert 試圖寫入]', { ChatroomID, speakerID, message, isRead });
+
+  conn.query(`
+    INSERT INTO chatmessage
+      (ChatroomID, speakerID, message, isRead)
+    VALUES (?, ?, ?, ?)
+  `, [ChatroomID, speakerID, message, isRead], function (err, result) {
+    if (err) {
+      console.error('[Insert 錯誤]', err.sqlMessage);
+      return res.status(500).json({ error: err.sqlMessage });
+    }
+
+    console.log('[Insert 成功]');
+    res.json({ success: true });
+  });
+});
+
 
 //獲取折扣碼
 app.get('/coupons/:uid', async (req, res) => {
@@ -2610,6 +2825,44 @@ app.post("/newAddress", function (req, res) {
       });
     });
   });
+});
+
+//增加商品
+app.post("/cart/add", async (req, res) => {
+  let { uid, pid, spec, quantity, unit_price } = req.body;
+
+  if (!uid || !pid || !quantity) {
+    return res.status(400).send("缺少必要參數");
+  }
+
+  // 強制轉型為字串（避免 uid = '205' 和 205 對不上）
+  uid = String(uid);
+  spec = spec || null;
+  quantity = parseInt(quantity, 10);
+  unit_price = parseInt(unit_price, 10);
+
+  try {
+    const [existing] = await q(`
+      SELECT * FROM shoppingcart WHERE uid = ? AND pid = ? AND spec ${spec === null ? 'IS NULL' : '= ?'}
+    `, spec === null ? [uid, pid] : [uid, pid, spec]);
+
+    if (existing) {
+      await q(`
+        UPDATE shoppingcart SET quantity = quantity + ? 
+        WHERE uid = ? AND pid = ? AND spec ${spec === null ? 'IS NULL' : '= ?'}
+      `, spec === null ? [quantity, uid, pid] : [quantity, uid, pid, spec]);
+    } else {
+      await q(`
+        INSERT INTO shoppingcart (uid, couponId, pid, spec, quantity, unit_price)
+        VALUES (?, NULL, ?, ?, ?, ?)
+      `, [uid, pid, spec, quantity, unit_price]);
+    }
+
+    res.send("✅ 商品已加入購物車");
+  } catch (err) {
+    console.error("❌ 新增購物車失敗", err);
+    res.status(500).send("伺服器錯誤");
+  }
 });
 
 module.exports = { q };//匯出q給payment使用

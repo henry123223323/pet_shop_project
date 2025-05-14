@@ -77,11 +77,16 @@ export default function RecommendedProducts({ pet_type, product_category }) {
                 onClick={() => Change_FavorState(item.pid)}
               />
               <AddToCartBtn
-                type="icon"
-                product={{ ...item, image: item.imageUrl }}
-                quantity={1}
-                aria-label="加入購物車"
-              />
+                      type="icon"
+                      product={{
+                        ...item,
+                        pd_name: item.name,
+                        images: [{ img_path: item.imageUrl }], // 給 normalizeCartItem 用
+                        unit_price: parseInt(item.price || 0, 10), // 保底
+                      }}
+                      quantity={1}
+                      aria-label="加入購物車"
+                    />
             </div>
           </div>
         ))}

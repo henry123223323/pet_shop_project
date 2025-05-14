@@ -16,29 +16,38 @@ class ShoppingCartPage extends Component {
   state = {
     coupon: "discount88",
     discountAmount: 0,
-    selectedItems: [],
+    selectedItems: [],  //有勾選的 cart_id
   };
 
   render() {
     const { selectedItems } = this.state;
     const { cartList } = this.context;
+    // console.log("🛒 購物車頁面收到的 cartList：", cartList);
+
+    
+    // 分類：新品 & 二手
     const newItems = cartList.filter(item => item.condition === "new");
     const secondItems = cartList.filter(item => item.condition === "second");
-
+    
+    // 二手商品依賣家分組
     const secondItemsBySeller = {};
     secondItems.forEach(item => {
-      if (!secondItemsBySeller[item.uid]) {
-        secondItemsBySeller[item.uid] = [];
+      const sellerUid = item.seller_uid;
+      if (!secondItemsBySeller[sellerUid]) {
+        secondItemsBySeller[sellerUid] = [];
       }
-      secondItemsBySeller[item.uid].push(item);
+      secondItemsBySeller[sellerUid].push(item);
     });
-
+// console.log("🧪 全部購物車 cartList：", cartList);
     return (
+       <>
+      {/* title */}
       <div className={styles.pageWrapper}>
         <div className="my-2 p-3">
           <h3>購物車</h3>
         </div>
 
+        {/* 開發用：清空 localStorage 按鈕 */}
         <div className="text-end my-3 px-4">
           <button className="btn btn-outline-danger btn-sm" onClick={() => this.context.clearCart()}>
             🧹 清空購物車（Context + localStorage）
@@ -58,6 +67,7 @@ class ShoppingCartPage extends Component {
             <div className="col-12 col-md-9">
               {newItems.length > 0 && (
                 <div className='pe-md-4'>
+                   {/* 新品購物車 */}
                   <div className={styles.sectionTitle}>拾毛百貨</div>
 
                   <div className={styles.cartBlock}>
@@ -86,6 +96,7 @@ class ShoppingCartPage extends Component {
                 </div>
               )}
 
+              {/* 二手購物車 */}
               {secondItems.length > 0 && (
                 <div className='ps-md-0'>
                   <div className={styles.sectionTitle}>拾毛市場</div>
@@ -102,7 +113,7 @@ class ShoppingCartPage extends Component {
                         />
                         <label htmlFor={`selectAll-${uid}`} className='pt-1'>
                           <label className='pl-3 '>
-                          <SellerTitle uid={uid} />
+                          <SellerTitle  uid={String(uid)} />
                         </label></label>
                       </div>
 
@@ -147,6 +158,8 @@ class ShoppingCartPage extends Component {
           </div>
         )}
       </div>
+
+      </>
     );
   }
   prevFetchedUids = [];
@@ -156,8 +169,8 @@ class ShoppingCartPage extends Component {
 
     const secondUids = [...new Set(
       cartList
-        .filter(item => item.condition === "second" && item.uid)
-        .map(item => String(item.uid))
+        .filter(item => item.condition === "second" && item.seller_uid)
+        .map(item => String(item.seller_uid))
     )];
 
     // 檢查：是否有「新加入但之前沒抓過」的 uid
@@ -181,53 +194,34 @@ class ShoppingCartPage extends Component {
   }
 
   componentDidMount() {
-    // console.log("🟡 ShoppingCartPage componentDidMount 被執行");
-
     const uid = cookie.get("user_uid");
+
+    
+    // 撈後端購物車資料
     if (uid) {
+        // 清除 localStorage（避免合併重複）
+        localStorage.removeItem("cartList");
+      
       axios.get(`http://localhost:8000/cart/${uid}`)
         .then(async res => {
           const dbCart = res.data;
-
-          // 清空 context 中的 cartList
+          console.log("🛒 撈回購物車資料：", dbCart);
+  
           this.context.clearCart();
-
-          // 逐筆加入 context
+          const { normalizeCartItem } = this.context;
+  
           for (let item of dbCart) {
-            await this.context.addToCart(item); // ✅ 加到 context.cartList 裡
+            await this.context.addToCart(item);
           }
-
+  
           console.log("✅ 已從資料庫載入購物車，共：", dbCart.length, "筆");
-        })
-    }
-
-    this.setState({ selectedItems: [] });
-
-    const { cartList, setSellers } = this.context;
-
-    const secondUids = [...new Set(
-      cartList
-        .filter(item => item.condition === "second" && item.uid)
-        .map(item => String(item.uid)) // 統一轉字串
-    )];
-
-    if (secondUids.length > 0) {
-      axios.get(`http://localhost:8000/get/userinfo`)
-        .then(res => {
-          const uidSet = new Set(secondUids);
-          console.log("🧪 當前二手商品 UID 清單：", secondUids);
-          const matchedUsers = res.data.filter(user =>
-            uidSet.has(String(user.uid)) // 同樣比對字串
-          );
-
-          // console.log("✅ 確定比對進來的 sellers：", matchedUsers);
-          setSellers(matchedUsers);
         });
     }
-
-
+  
+    this.setState({ selectedItems: [] });
   }
 
+  
   //新品全選
   allSelected = () => {
     const { selectedItems } = this.state;
@@ -259,19 +253,10 @@ class ShoppingCartPage extends Component {
     const { selectedItems } = this.state;
     const { cartList } = this.context;
     const sellerItems = cartList.filter(
-      item => item.condition === 'second' && String(item.uid) === String(uid)
+      item => item.condition === 'second' && String(item.seller_uid) === String(uid)
     );
-
-    const result = sellerItems.every(item => selectedItems.includes(String(item.cart_id)));
-
-    // console.log("🧪 檢查賣家全選判斷", {
-    //   uid,
-    //   sellerItemIds: sellerItems.map(i => i.cart_id),
-    //   selectedItems,
-    //   result
-    // });
-
-    return result;
+  
+    return sellerItems.every(item => selectedItems.includes(String(item.cart_id)));
   };
 
 
@@ -279,9 +264,11 @@ class ShoppingCartPage extends Component {
   toggleSellerSelectAll = (uid) => {
     const { selectedItems } = this.state;
     const { cartList } = this.context;
-    const sellerItems = cartList.filter(item => item.condition === 'second' && item.uid === String(uid));
+    const sellerItems = cartList.filter(
+      item => item.condition === 'second' && String(item.seller_uid) === String(uid)
+    );
     const sellerIds = sellerItems.map(item => String(item.cart_id));
-
+  
     if (this.sellerAllSelected(uid)) {
       const updated = selectedItems.filter(id => !sellerIds.includes(id));
       this.setState({ selectedItems: updated });

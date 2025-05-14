@@ -2,69 +2,73 @@
 import React from 'react';
 import styles from './ProductCard.module.css';
 import { Link } from 'react-router-dom';
-// 引入 Share 底下的通用按鈕元件
 import AddToCartBtn from '../../share/AddToCartBtn';
 import AddToMyFavorite from '../../share/AddToMyFavorite';
 
-export default function ProductCard({
-  id,
-  uid,
-  name,
-  price,
-  images,
-  isFavorite,
-  onToggleFavorite,
-  onAddToCart,
-  viewMode
-}) {
-  
+// 占位图，请把这张图放到 public 目录下，或者改成你项目里能访问到的默认图
+const PLACEHOLDER = '/placeholder.png';
+
+export default function ProductCard(props) {
+  const {
+    id,
+    uid,
+    name,
+    price,
+    images,               // 可能是 undefined / null / array
+    isFavorite,
+    onToggleFavorite,
+    onAddToCart,
+    viewMode
+  } = props;
+
+  // 1. 安全地处理 images，保证是一个数组
+  const safeImages = Array.isArray(images) ? images : [];
+
+  // 2. 取第一张，如果没有就用占位图
+  const firstImg = safeImages.length > 0 && safeImages[0].img_path
+    ? safeImages[0].img_path
+    : PLACEHOLDER;
+
   const cls = viewMode === 'list'
     ? `${styles.card} ${styles.horizontal}`
     : styles.card;
-
-  // 加入購物車處理：顯示 alert 並呼叫傳入的 onAddToCart（佳宜修過不用這個了）
-  // const handleAdd = () => {
-  //   alert('已加入購物車');
-  //   onAddToCart(id);
-  // };
 
   const product = {
     pid: id,
     pd_name: name,
     price,
-    image: images?.[0]?.img_path ,
-    condition: "second", 
-    uid: String(uid), 
+    image: firstImg,
+    condition: 'second',
+    uid: String(uid),
   };
+
   return (
-    <div className={cls} >
+    <div className={cls}>
       <div className={styles.imageWrapper}>
-       <Link to={`/product/${id}`}>
-         <img
-           src={images[0].img_path}           alt={name}
-          style={{ cursor: 'pointer' }}  // ← 可選，讓滑鼠有點擊感
-        />
-       </Link>
-     </div>
+        <Link to={`/product/${id}`}>
+          <img
+            src={firstImg}
+            alt={name}
+            style={{ cursor: 'pointer' }}
+          />
+        </Link>
+      </div>
       <div className={styles.content}>
         <h3 className={styles.name}>{name}</h3>
         <p className={styles.price}>NT${price}</p>
       </div>
       <div className={styles.actions}>
-        {/* 用引入的 AddToMyFavorite 取代原生收藏按鈕 */}
         <AddToMyFavorite
           isFavorite={isFavorite}
           onClick={() => onToggleFavorite(id)}
           aria-label="切換收藏"
         />
-
-        {/* 用引入的 AddToCartBtn 取代原生加入購物車按鈕，並彈跳提示 */}
         <AddToCartBtn
-                      type="icon"
-                      product={product}
-                      quantity={1}
-                      aria-label="加入購物車"
-                    />
+          type="icon"
+          product={product}
+          quantity={1}
+          aria-label="加入購物車"
+        />
       </div>
     </div>
   );

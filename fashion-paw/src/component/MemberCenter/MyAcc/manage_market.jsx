@@ -8,18 +8,21 @@ import PawDisplay from '../../ProductDetailPage/PawDisplay'
 const BASE_URL = 'http://localhost:8000'
 
 export default class ManageMarket extends Component {
-  state = {
-    second_product: [],
-    searchTerm: '',
-    page: 1,
-    pageSize: 5,
-    loading: false,
-    error: null,
-    showModal: false,
-    ModalState: 'Add', // 'Add' | 'Find' | 'Edit'
-    thisIndex: -1
+  constructor(props) {
+    super(props)
+    this.selectRef = React.createRef(); 
+    this.state = {
+      second_product: [],
+      searchTerm: '',
+      page: 1,
+      pageSize: 5,
+      loading: false,
+      error: null,
+      showModal: false,
+      ModalState: 'Add', // 'Add' | 'Find' | 'Edit'
+      thisIndex: -1
+    }
   }
-
   componentDidMount() {
     // 初次掛載時載入資料
     this.loadData()
@@ -119,6 +122,27 @@ export default class ManageMarket extends Component {
     }
   }
 
+  calladmin = (value) => {
+  let speakerID = Cookies.get("user_uid");
+  
+  // 確保 selectRef.current 存在且有值
+  if (this.selectRef.current) {
+    let message = encodeURIComponent(value + " " + this.selectRef.current.value);
+
+    axios.post(`http://localhost:8000/post/calladmin/${speakerID}/${message}`)
+      .then((response) => {
+        console.log("發送成功:", response.data);
+      })
+      .catch((error) => {
+        console.error("查詢失敗:", error);
+      });
+  } else {
+    console.error("選擇框尚未渲染，無法獲取選中的值");
+  }
+}
+
+
+
   handleSearchChange = e => this.setState({ searchTerm: e.target.value })
 
   renderStatus = s => s === 1
@@ -129,6 +153,16 @@ export default class ManageMarket extends Component {
     pet_food: "飼料", complementary_food: "副食", snacks: "零食",
     Health_Supplements: "保健食品", Living_Essentials: "生活家居", toys: "玩具"
   }[cat] || cat)
+
+  renderCategory = cat =>
+  ({
+    pet_food: "飼料",
+    complementary_food: "副食",
+    snacks: "零食",
+    Health_Supplements: "保健食品",
+    Living_Essentials: "生活家居",
+    toys: "玩具"
+  }[cat] || cat);
 
   findProduct = i => this.state.second_product[i] || null
   setPage = page => this.setState({ page })
@@ -161,7 +195,18 @@ export default class ManageMarket extends Component {
         {/* 商品列表 */}
         {!loading && !error && (
           <table className="table table-striped table-hover align-middle">
-            <thead className="table-primary"><tr><th>主圖</th><th>商品名稱</th><th>價格</th><th>類型</th><th>新舊程度</th><th>狀態</th><th>操作</th></tr></thead>
+            <thead className="table-primary">
+              <tr>
+                <th>主圖</th>
+                <th>商品名稱</th>
+                <th>價格</th>
+                <th>類型</th>
+                <th>新舊程度</th>
+                <th>狀態</th>
+                <th>操作</th>
+                <th>回報錯誤</th>
+              </tr>
+            </thead>
             <tbody>
               {paged.map((p, idx) => (
                 <tr key={p.pid}>
@@ -189,6 +234,16 @@ export default class ManageMarket extends Component {
                     <button className="btn btn-primary btn-sm me-1" onClick={() => this.OpenFound(start + idx)}>查看</button>
                     <button className="btn btn-warning btn-sm me-1" onClick={() => this.OpenEdit(start + idx)}>編輯</button>
                     <button className="btn btn-danger btn-sm" onClick={() => this.Delete(start + idx)}>刪除</button>
+                  </td>
+                  <td>
+                    <select ref={this.selectRef}>
+                      <option value="">----選擇----</option>
+                      <option value="無法出貨">無法出貨</option>
+                      <option value="貨物損毀">貨物損毀</option>
+                      <option value="重複上架">重複上架</option>
+                    </select>
+                    <p></p>
+                    <button className='btn btn-danger' onClick={() => this.calladmin(p.pd_name)}>回報</button>
                   </td>
                 </tr>
               ))}
