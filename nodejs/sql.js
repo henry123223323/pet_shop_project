@@ -66,6 +66,10 @@ conn.connect(err => console.log(err || 'DB connected'));
 const q = util.promisify(conn.query).bind(conn);
 app.use('/verify', verifyRoutes);
 
+// 啟用 Google 登入與 session
+const initPassportAuth = require('./utils/initPassportAuth');
+initPassportAuth(app); 
+
 //付款綠界API
 app.use('/payment', paymentRouter);
 app.use('/', cvsRoute);
