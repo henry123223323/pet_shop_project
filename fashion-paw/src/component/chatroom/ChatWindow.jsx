@@ -16,7 +16,7 @@ export default function ChatApp() {
   )
   // 1. 使用者清單
   const messagesEndRef = useRef(null);
-
+  const [typing, settyping] = useState(false)
   // 2. selected user
   const [selected, setSelected] = useState(users[0]);
 
@@ -97,7 +97,7 @@ export default function ChatApp() {
 
     if (selected.uid == '1') {//對方是機器人才會回答
       console.log((selected.uid));
-
+      settyping(true);
       axios.post('http://localhost:8000/robot', { message: input })
         .then(res => {
           let func = res.data.functions
@@ -106,10 +106,10 @@ export default function ChatApp() {
             let pd3 = '<div class="row bg-light">'
             res.data.answer.map((pd, idx) => {
               pd3 += `
-              <div class='border position-relative col-4'>
+              <div class='border position-relative col-6'>
               <span class='badge position-absolute top-0 start-0'>${idx + 1}</span>
               <img  src='${pd.img}'/>
-              <a class='ellipsis' href="${pd.url}">${pd.pd_name}</a><br>
+              <a class='d-block fw-bold text-truncate mb-1' href="${pd.url}">${pd.pd_name}</a><br>
               <span>NT$${pd.price}</span>
               </div>
               
@@ -136,21 +136,32 @@ export default function ChatApp() {
               ...prev,
               [selected.id]: [...(prev[selected.id] || []), newAIMsg]
             }));
+            settyping(false);
+
           }
           else if (func === 'get_hot_ranking') {
-            let top3 = '<div class="d-flex bg-light">'
-            res.data.answer.map((pd, idx) => {
+            let top3 = `
+  <div class="row  justify-content-start flex-wrap">
+`;
+
+            res.data.answer.forEach((pd, idx) => {
               top3 += `
-              <div class='border position-relative'>
-              <span class='badge position-absolute top-0 start-0'>${idx + 1}</span>
-              <img  src='${pd.imageUrl}'/>
-              <a class='ellipsis' href="http://localhost:3000/product/${pd.pid}">${pd.pd_name}</a>
-              <span>NT$${pd.price}</span>
-              </div>
-              
-              `
-            })
-            top3 += `</div>`
+    <div class="col-4  rounded p-2 position-relative" style="width: 150px; background-color: white;">
+      <span class="badge bg-primary position-absolute top-0 start-0">${idx + 1}</span>
+      <img src="${pd.imageUrl}" class="w-100 rounded mb-2" style="height: 120px; object-fit: cover;" />
+      <a href="http://localhost:3000/product/${pd.pid}" 
+         class="d-block  fw-bold text-truncate mb-1" 
+         style="max-width: 100%;" 
+         title="${pd.pd_name}">
+         ${pd.pd_name}
+      </a>
+      <span class="text-danger fw-bold">NT$${pd.price}</span>
+    </div>
+  `;
+            });
+
+            top3 += `</div>`;
+
 
             let newAIMsg = {
               id: selected.uid,
@@ -173,6 +184,7 @@ export default function ChatApp() {
               [selected.id]: [...(prev[selected.id] || []), newAIMsg]
             }));
 
+            settyping(false);
 
           }
           else {
@@ -197,6 +209,7 @@ export default function ChatApp() {
               [selected.id]: [...(prev[selected.id] || []), newAIMsg]
             }));
           }
+          settyping(false);
 
         })
     }
@@ -276,8 +289,20 @@ export default function ChatApp() {
               <span className={styles.time}>{m.time}</span>
             </div>
           ))}
+          {
+            typing && <div className={`${styles.typingBubble} ${styles.bot}`}>
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          }
           <div ref={messagesEndRef} />
+
         </div>
+        {/* ...原本的聊天訊息 */}
+
+
+
 
         <div className={styles.quickBtns}>
           <button onClick={() => setInput('熱門商品TOP3')}>熱門商品TOP3</button>
@@ -296,8 +321,8 @@ export default function ChatApp() {
           />
           <button className={styles.send} onClick={handleSend}>🐾</button>
         </div>
-      </main>
+      </main >
 
-    </div>
+    </div >
   );
 }
