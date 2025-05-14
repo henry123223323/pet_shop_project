@@ -31,46 +31,46 @@ export default class MarketModal extends Component {
   }
 
   componentDidMount() {
-  const { modalState, product } = this.props;
-  // 先拿出原本的 productData
-  let pd = { ...this.state.productData };
+    const { modalState, product } = this.props;
+    // 先拿出原本的 productData
+    let pd = { ...this.state.productData };
 
-  // 如果是編輯或查看，且後端真的回傳了 product
-  if ((modalState === 'Edit' || modalState === 'Find') && product) {
-    pd = {
-      ...pd,
-      pid:         product.pid        ?? pd.pid,
-      condition:   product.condition  ?? pd.condition,
-      status:      product.status     ?? pd.status,
-      pet_type:    product.pet_type   ?? pd.pet_type,
-      categories:  product.categories ?? pd.categories,
-      pd_name:     product.pd_name    ?? pd.pd_name,
-      price:       product.price      ?? pd.price,
-      description: product.description?? pd.description,
-      city:        product.city       ?? pd.city,
-      district:    product.district   ?? pd.district,
-      new_level:   product.new_level  ?? pd.new_level,
-      stock:       product.stock      ?? pd.stock,
-      // 只有 product.attribute 存在時，才覆蓋原本的 attribute
-      attribute:   product.attribute
-                     ? { ...product.attribute }
-                     : { ...pd.attribute },
-      // 同理處理圖片陣列
-      images: Array(4).fill().map((_, i) => {
-        const img = product.images?.[i];
-        const path = img?.img_path || img?.imageUrl || '';
-        return {
-          file:      null,
-          img_value: img?.img_value || '',
-          img_path:  path
-        };
-      })
-    };
+    // 如果是編輯或查看，且後端真的回傳了 product
+    if ((modalState === 'Edit' || modalState === 'Find') && product) {
+      pd = {
+        ...pd,
+        pid: product.pid ?? pd.pid,
+        condition: product.condition ?? pd.condition,
+        status: product.status ?? pd.status,
+        pet_type: product.pet_type ?? pd.pet_type,
+        categories: product.categories ?? pd.categories,
+        pd_name: product.pd_name ?? pd.pd_name,
+        price: product.price ?? pd.price,
+        description: product.description ?? pd.description,
+        city: product.city ?? pd.city,
+        district: product.district ?? pd.district,
+        new_level: product.new_level ?? pd.new_level,
+        stock: product.stock ?? pd.stock,
+        // 只有 product.attribute 存在時，才覆蓋原本的 attribute
+        attribute: product.attribute
+          ? { ...product.attribute }
+          : { ...pd.attribute },
+        // 同理處理圖片陣列
+        images: Array(4).fill().map((_, i) => {
+          const img = product.images?.[i];
+          const path = img?.img_path || img?.imageUrl || '';
+          return {
+            file: null,
+            img_value: img?.img_value || '',
+            img_path: path
+          };
+        })
+      };
+    }
+
+    // 最後把新的 pd push 回 state，並設定 modalState
+    this.setState({ productData: pd, modalState });
   }
-
-  // 最後把新的 pd push 回 state，並設定 modalState
-  this.setState({ productData: pd, modalState });
-}
 
   handleChange = e => {
     const { name, value } = e.target;
@@ -115,12 +115,13 @@ export default class MarketModal extends Component {
       .forEach(key => { if (productData[key] !== undefined) fd.append(key, productData[key]); });
 
     Object.entries(productData.attribute).forEach(([k, v]) => fd.append(`attribute.${k}`, v));
-    productData.images.forEach(img => {
-      if (img.file) {
-        fd.append('images', img.file);
-        fd.append('img_value', img.img_value);
-      }
+    productData.images.forEach((img, idx) => {
+      fd.append('image_id[]', img.id || '');
+      // 这里 img.img_value 需要是唯一的，比如 '主图'、'副图1'、'副图2'……
+      fd.append('img_value[]', img.img_value || `slot${idx}`);
+      if (img.file) fd.append('images', img.file);
     });
+
 
     // 根據 condition 選擇後端路由
     const base = 'http://localhost:8000';
@@ -242,26 +243,24 @@ export default class MarketModal extends Component {
               ))}
               <hr />
               <h5>商品圖片與描述</h5>
-              {productData.images.map((img, idx) => {
-                const src = img.file
-                  ? URL.createObjectURL(img.file)
-                  : (img.img_path.startsWith('http')
-                    ? img.img_path
-                    : `http://localhost:8000${img.img_path}`);
-                return (
-                  <div className="d-flex mb-3" key={idx}>
-                    <div style={{ width: 80, height: 80, marginRight: 8 }}>
-                      {src
-                        ? <img src={src} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              {productData.images.map((img, idx) => (
+                <div className="d-flex mb-3" key={idx}>
+                  <div style={{ width: 80, height: 80, marginRight: 8 }}>
+                    {img.file ?
+                      <img src={URL.createObjectURL(img.file)} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      : img.img_path ?
+                        <img src={img.img_path.startsWith('http') ? img.img_path : `http://localhost:8000${img.img_path}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                         : <span className="text-muted">無圖</span>
-                      }                    </div>
-                    <div className="flex-grow-1">
-                      <input type="file" accept="image/*" className="form-control form-control-sm mb-1" onChange={e => this.uploadImageAtIndex(idx, e)} disabled={readOnly} />
-                      <input type="text" placeholder="輸入圖片描述" className="form-control form-control-sm" value={img.img_value} onChange={e => this.handleValueChange(idx, e)} disabled={readOnly} />
-                    </div>
+                    }
                   </div>
-                );
-              })}
+                  <div className="flex-grow-1">
+                    <input type="hidden" name="slot[]" value={`slot${idx}`} />
+                    <input type="hidden" name="image_id[]" value={img.id || ''} />
+                    <input type="file" name={`images[${idx}]`} accept="image/*" className="form-control form-control-sm mb-1" onChange={e => this.uploadImageAtIndex(idx, e)} disabled={readOnly} />
+                    <input type="text" name="img_value[]" className="form-control form-control-sm" placeholder="輸入圖片描述" value={img.img_value} onChange={e => this.handleValueChange(idx, e)} disabled={readOnly} />
+                  </div>
+                </div>
+              ))}
             </div>
             <div className="modal-footer">
               <button className="btn btn-secondary" onClick={close}>取消</button>

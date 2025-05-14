@@ -1,4 +1,3 @@
-// src/component/MemberCenter/MyAcc/manage_market.jsx
 import React, { Component } from 'react'
 import axios from 'axios'
 import Cookies from 'js-cookie'
@@ -22,10 +21,11 @@ export default class ManageMarket extends Component {
   }
 
   componentDidMount() {
+    // 初次掛載時載入資料
     this.loadData()
   }
 
- // 取得二手商品清單（含屬性）
+  // 取得二手商品清單（含屬性、補足四格圖片 slot）
   loadData = async () => {
     this.setState({ loading: true, error: null })
     try {
@@ -35,25 +35,23 @@ export default class ManageMarket extends Component {
         `${BASE_URL}/get/my-second-products`,
         { headers: { 'X-UID': uid } }
       )
-      // 確保 attribute 和 images 欄位存在
-      const items = data.map(item => ({
+      const items = (data || []).map(item => ({
         ...item,
         attribute: item.attribute || {},
-        images: item.images || []
+        images: Array(4).fill().map((_, i) => item.images[i] || { id: '', img_path: '', img_value: '' })
       }))
       this.setState({ second_product: items, loading: false })
     } catch (err) {
-      let errorMsg = ''
-      if (err.response) errorMsg = `伺服器錯誤 (${err.response.status})`
-      else if (err.request) errorMsg = '無法連線伺服器，請確認後端是否啟動'
-      else errorMsg = err.message
+      const errorMsg = err.response
+        ? `伺服器錯誤 (${err.response.status})`
+        : err.request
+          ? '無法連線伺服器，請確認後端是否啟動'
+          : err.message
       this.setState({ error: errorMsg, loading: false })
     }
   }
 
-  toggleModal = () =>
-    this.setState(s => ({ showModal: !s.showModal }))
-
+  toggleModal = () => this.setState(s => ({ showModal: !s.showModal }))
   OpenAdd = () => this.setState({ ModalState: 'Add', thisIndex: -1 }, this.toggleModal)
   OpenFound = i => this.setState({ ModalState: 'Find', thisIndex: i }, this.toggleModal)
   OpenEdit = i => this.setState({ ModalState: 'Edit', thisIndex: i }, this.toggleModal)
@@ -79,38 +77,16 @@ export default class ManageMarket extends Component {
       const uid = Cookies.get('user_uid')
       const form = new FormData()
       // 基本欄位
-      form.append('pd_name', product.pd_name)
-      form.append('price', product.price)
-      form.append('categories', product.categories)
-      form.append('new_level', product.new_level)
-      form.append('status', product.status)
-      // 新增欄位
-      form.append('pet_type', product.pet_type)
-      form.append('description', product.description)
-      form.append('stock', product.stock)
-      form.append('city', product.city)
-      form.append('district', product.district)
+      ['pd_name', 'price', 'categories', 'new_level', 'status', 'pet_type', 'description', 'stock', 'city', 'district']
+        .forEach(k => form.append(k, product[k]))
       // 圖片
-      product.images?.forEach(img => img.file && form.append('images', img.file))
-      // ── 商品屬性 ────────────────────────────────
-      form.append('attribute.brand', product.attribute.brand)
-      form.append('attribute.pattern', product.attribute.pattern)
-      form.append('attribute.name', product.attribute.name)
-      form.append('attribute.model', product.attribute.model)
-      form.append('attribute.buydate', product.attribute.buydate)
-      form.append('attribute.new_level', product.attribute.new_level)
-      form.append('attribute.size', product.attribute.size)
-      form.append('attribute.color', product.attribute.color)
-      form.append('attribute.weight', product.attribute.weight)
+      product.images.forEach(img => img.file && form.append('images', img.file))
+      // 屬性
+      Object.entries(product.attribute).forEach(([k, v]) => form.append(`attribute.${k}`, v))
       await axios.post(
         `${BASE_URL}/get/my-second-products`,
         form,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            'X-UID': uid
-          }
-        }
+        { headers: { 'Content-Type': 'multipart/form-data', 'X-UID': uid } }
       )
       alert('新增成功！')
       this.toggleModal()
@@ -125,36 +101,14 @@ export default class ManageMarket extends Component {
     try {
       const uid = Cookies.get('user_uid')
       const form = new FormData()
-      form.append('pd_name', product.pd_name)
-      form.append('price', product.price)
-      form.append('categories', product.categories)
-      form.append('new_level', product.new_level)
-      form.append('status', product.status)
-      form.append('pet_type', product.pet_type)
-      form.append('description', product.description)
-      form.append('stock', product.stock)
-      form.append('city', product.city)
-      form.append('district', product.district)
-      product.images?.forEach(img => img.file && form.append('images', img.file))
-// ── 商品屬性 ────────────────────────────────
-      form.append('attribute.brand', product.attribute.brand)
-      form.append('attribute.pattern', product.attribute.pattern)
-      form.append('attribute.name', product.attribute.name)
-      form.append('attribute.model', product.attribute.model)
-      form.append('attribute.buydate', product.attribute.buydate)
-      form.append('attribute.new_level', product.attribute.new_level)
-      form.append('attribute.size', product.attribute.size)
-      form.append('attribute.color', product.attribute.color)
-      form.append('attribute.weight', product.attribute.weight)
+      ['pd_name', 'price', 'categories', 'new_level', 'status', 'pet_type', 'description', 'stock', 'city', 'district']
+        .forEach(k => form.append(k, product[k]))
+      product.images.forEach(img => img.file && form.append('images', img.file))
+      Object.entries(product.attribute).forEach(([k, v]) => form.append(`attribute.${k}`, v))
       await axios.put(
         `${BASE_URL}/get/my-second-products/${product.pid}`,
         form,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            'X-UID': uid
-          }
-        }
+        { headers: { 'Content-Type': 'multipart/form-data', 'X-UID': uid } }
       )
       alert('更新成功！')
       this.toggleModal()
@@ -165,25 +119,18 @@ export default class ManageMarket extends Component {
     }
   }
 
-  handleSearchChange = e =>
-    this.setState({ searchTerm: e.target.value })
+  handleSearchChange = e => this.setState({ searchTerm: e.target.value })
 
-  renderStatus = s =>
-    s === 1
-      ? <span className="badge bg-success">上架</span>
-      : <span className="badge bg-secondary">下架</span>
+  renderStatus = s => s === 1
+    ? <span className="badge bg-success">上架</span>
+    : <span className="badge bg-secondary">下架</span>
 
   renderCategory = cat => ({
-    pet_food: "飼料",
-    complementary_food: "副食",
-    snacks: "零食",
-    Health_Supplements: "保健食品",
-    Living_Essentials: "生活家居",
-    toys: "玩具",
-  }[cat] ?? cat)
+    pet_food: "飼料", complementary_food: "副食", snacks: "零食",
+    Health_Supplements: "保健食品", Living_Essentials: "生活家居", toys: "玩具"
+  }[cat] || cat)
 
-  findProduct = i => this.state.second_product[i] ?? null
-
+  findProduct = i => this.state.second_product[i] || null
   setPage = page => this.setState({ page })
 
   render() {
@@ -196,17 +143,11 @@ export default class ManageMarket extends Component {
     return (
       <div className="container-fluid mt-4">
         <h3 className="mb-3">二手商品管理</h3>
-
         {/* 搜尋 & 新增 */}
         <div className="row mb-3">
           <div className="col-md-3">
-            <input
-              type="search"
-              className="form-control"
-              placeholder="搜尋商品名稱"
-              value={searchTerm}
-              onChange={this.handleSearchChange}
-            />
+            <input type="search" className="form-control" placeholder="搜尋商品名稱"
+              value={searchTerm} onChange={this.handleSearchChange} />
           </div>
           <div className="col-md-3">
             <button className="btn btn-outline-primary" onClick={this.OpenAdd}>上架二手商品</button>
@@ -220,24 +161,24 @@ export default class ManageMarket extends Component {
         {/* 商品列表 */}
         {!loading && !error && (
           <table className="table table-striped table-hover align-middle">
-            <thead className="table-primary">
-              <tr>
-                <th>主圖</th>
-                <th>商品名稱</th>
-                <th>價格</th>
-                <th>類型</th>
-                <th>新舊程度</th>
-                <th>狀態</th>
-                <th>操作</th>
-              </tr>
-            </thead>
+            <thead className="table-primary"><tr><th>主圖</th><th>商品名稱</th><th>價格</th><th>類型</th><th>新舊程度</th><th>狀態</th><th>操作</th></tr></thead>
             <tbody>
               {paged.map((p, idx) => (
                 <tr key={p.pid}>
-                  <td style={{ width: 80 }}>
-                    {p.imageUrl
-                      ? <img src={p.imageUrl} alt="主圖" className="img-thumbnail" style={{ width: 60, height: 60 }} />
-                      : <span className="text-muted">無圖</span>}
+                  <td style={{ width: 120, whiteSpace: 'nowrap' }}>
+                    {(() => {
+                      const imgs = p.images.filter(img => img.img_path);
+                      if (!imgs.length) return <span className="text-muted">無圖</span>;
+                      const img = imgs[0];
+                      return (
+                        <img
+                          src={img.img_path}
+                          alt={img.img_value || '圖'}
+                          className="img-thumbnail"
+                          style={{ width: 60, height: 60 }}
+                        />
+                      );
+                    })()}
                   </td>
                   <td>{p.pd_name}</td>
                   <td>NT${p.price}</td>
@@ -256,30 +197,20 @@ export default class ManageMarket extends Component {
         )}
 
         {/* 分頁 */}
-        <nav aria-label="Page navigation">
-          <ul className="pagination justify-content-center">
-            <li className={`page-item ${page === 1 ? 'disabled' : ''}`}>
-              <button className="page-link" onClick={() => this.setPage(page - 1)}>上一頁</button>
-            </li>
-            {[...Array(totalPages)].map((_, i) => (
-              <li key={i} className={`page-item ${page === i + 1 ? 'active' : ''}`}>
-                <button className="page-link" onClick={() => this.setPage(i + 1)}>{i + 1}</button>
-              </li>
-            ))}
-            <li className={`page-item ${page === totalPages ? 'disabled' : ''}`}>
-              <button className="page-link" onClick={() => this.setPage(page + 1)}>下一頁</button>
-            </li>
-          </ul>
-        </nav>
+        <nav aria-label="Page navigation"><ul className="pagination justify-content-center">
+          <li className={`page-item ${page === 1 ? 'disabled' : ''}`}><button className="page-link" onClick={() => this.setPage(page - 1)}>上一頁</button></li>
+          {[...Array(totalPages)].map((_, i) => (
+            <li key={i} className={`page-item ${page === i + 1 ? 'active' : ''}`}><button className="page-link" onClick={() => this.setPage(i + 1)}>{i + 1}</button></li>
+          ))}
+          <li className={`page-item ${page === totalPages ? 'disabled' : ''}`}><button className="page-link" onClick={() => this.setPage(page + 1)}>下一頁</button></li>
+        </ul></nav>
 
         {/* Modal */}
         {showModal && (
           <Market_modal
-            condition="second"
-            modalState={ModalState}
+            condition="second" modalState={ModalState}
             product={this.findProduct(thisIndex)}
-            new={this.new}
-            edit={this.edit}
+            new={this.new} edit={this.edit}
             close={this.toggleModal}
           />
         )}
