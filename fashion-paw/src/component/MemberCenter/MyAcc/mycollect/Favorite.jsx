@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import cookie from "js-cookie";
 import axios from 'axios';
+import AddToMyFavorite from 'component/share/AddToMyFavorite';
 
 class FavoriteCard extends Component {
     constructor(props) {
@@ -12,7 +13,7 @@ class FavoriteCard extends Component {
 
     handleShow = () => {
         // console.log(this.props.cid);
-        
+
         this.setState({ show: true });
     }
 
@@ -24,27 +25,27 @@ class FavoriteCard extends Component {
         this.setState({ show: false });
         let uid = cookie.get("user_uid")
         let cid = this.props.cid
-                
+
         console.log(uid);
         console.log(this.props.cid);
-        
+
 
         axios.post(`http://localhost:8000/post/deletecollect/${uid}/${cid}`).then((response) => {
             console.log("刪除成功:", response.data);
-            
+
             // 刪除成功後重新獲取資料
             this.props.getcollect();
         })
-        .catch((error) => {
-            console.error("刪除失敗:", error);
-        });
+            .catch((error) => {
+                console.error("刪除失敗:", error);
+            });
 
         // this.props.onRemove();
         // this.props.getcollect();
     }
 
     render() {
-        const { img, pd_name, price , id, cid } = this.props;
+        const { img, pd_name, price, id, cid } = this.props;
         const { show } = this.state;
 
         return (
@@ -57,9 +58,8 @@ class FavoriteCard extends Component {
                         <a className="btn btn-outline-primary" href={`/product/${id}`}>
                             進入商品頁
                         </a>
-                        <button className="btn btn-outline-danger" onClick={this.handleShow}>
-                            ❤️ 取消收藏
-                        </button>
+                        <AddToMyFavorite type="text" onClick={this.handleShow} isFavorite={true} />
+
                     </div>
                 </div>
 

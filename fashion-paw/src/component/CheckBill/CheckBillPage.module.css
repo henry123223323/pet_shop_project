@@ -1,0 +1,87 @@
+/* CheckBillPage.module.css - 溫柔療癒風格（圓角 + 豆沙綠 / 奶茶色） */
+
+:root {
+  --soft-green: #8DAA91;
+  --milk-tea: #F1E4D1;
+  --light-brown: #C4A484;
+  --light-border: #E0DAD0;
+  --hover-shadow: rgba(0, 0, 0, 0.05);
+}
+
+.pageTitle {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 1rem 0;
+  color: var(--soft-green);
+}
+
+.sectionBlock {
+  background-color: #fff;
+  border: 1px solid var(--light-border);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.sectionTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  color: var(--soft-green);
+  background-color: var(--milk-tea);
+  border-radius: 0.75rem 0.75rem 0 0;
+  margin-bottom: 1rem;
+}
+
+.toggleButton {
+  background: none;
+  border: none;
+  color: var(--light-brown);
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  cursor: pointer;
+  text-align: left;
+}
+
+.toggleButton:hover {
+  text-decoration: underline;
+}
+
+.itemRow {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px dashed var(--light-border);
+}
+
+.itemImage {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 0.5rem;
+  border: 1px solid var(--light-border);
+}
+
+.itemDetails {
+  flex-grow: 1;
+  font-size: 0.95rem;
+  color: var(--soft-green);
+}
+
+.confirmButton {
+  background-color: var(--soft-green);
+  color: #fff;
+  border: none;
+  padding: 0.75rem;
+  border-radius: 0.75rem;
+  font-weight: bold;
+  width: 100%;
+  transition: 0.3s ease;
+}
+
+.confirmButton:hover {
+  background-color: #7d9b82;
+  box-shadow: 0 4px 8px var(--hover-shadow);
+}

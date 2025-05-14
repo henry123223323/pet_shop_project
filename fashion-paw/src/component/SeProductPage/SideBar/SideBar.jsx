@@ -7,22 +7,20 @@ const labels = {
   dog:   '狗狗專區',
   cat:   '貓貓專區',
   bird:  '鳥類專區',
-  mouse: '老鼠專區'
+  mouse: '倉鼠專區'
 };
 
-export default function Sidebar({ onSelectCategory = () => {} }) {
+export default function Sidebar({ onSelectCategory = () => {}, selectedType }) {
   return (
     <div className={styles.sidebar}>
       <ul className={styles.menu}>
         {types.map(type => (
           <li key={type}>
             <button
-              className="paw-bg-primary"
+              className={`${styles.itemBtn} ${selectedType === type ? styles.active : ''}`}
               onClick={() => onSelectCategory(type)}
             >
-              <span className="paw-bg-primary">
-                {labels[type]}
-              </span>
+              {labels[type]}
             </button>
           </li>
         ))}
@@ -30,3 +28,5 @@ export default function Sidebar({ onSelectCategory = () => {} }) {
     </div>
   );
 }
+
+

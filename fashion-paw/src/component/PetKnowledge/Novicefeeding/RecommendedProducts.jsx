@@ -2,19 +2,32 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import styles from './RecommendedProducts.module.css';
 import AddToCartBtn from '../../share/AddToCartBtn';
-import AddToMyFavorite from 'component/share/AddToMyFavorite';
+import AddToMyFavorite from '../../share/AddToMyFavorite';
 import cookie from 'js-cookie';
 
-export default function RecommendedProducts() {
+export default function RecommendedProducts({ pet_type, product_category }) {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [favorID, setFavorID] = useState([])
-  const user_id = cookie.get('user_uid')
+  const [favorID, setFavorID] = useState([]);
+  const user_id = cookie.get('user_uid');
 
   useEffect(() => {
-    axios.get('http://localhost:8000/get/recommend-products')
-      .then(res => setItems(res.data))
+    setLoading(true);
+    setError(null);
+
+    console.log('🔍 使用寵物類型 pet_type =', pet_type, '、功能分類 product_category =', product_category);
+
+    const params = {};
+    if (pet_type) params.pet_type = pet_type;
+    if (product_category) params.product_category = product_category;
+
+    axios.get('http://localhost:8000/get/recommend-products', { params })
+      .then(res => {
+      console.log('🐶 pet_type =', pet_type, '📂 product_category =', product_category);
+
+        setItems(res.data);
+      })
       .catch(err => {
         console.error('取得推薦商品失敗', err);
         setError('無法取得推薦商品');
@@ -26,36 +39,24 @@ export default function RecommendedProducts() {
       .catch(err => {
         console.error('取得收藏狀態失敗', err);
         setError('取得收藏狀態失敗');
-      })
-      .finally(() => setLoading(false));
-  }, [user_id]);
+      });
+  }, [pet_type, product_category, user_id]);
 
   if (loading) return <div>載入中…</div>;
   if (error) return <div className="text-danger">{error}</div>;
 
-
-  const Change_FavorState = (pid) => {
-    if (user_id) {
-      if (favorID.includes(pid)) {
-        axios.get(`http://localhost:8000/delete/collect/${user_id}/${pid}`)
-        setFavorID(prev => prev.filter(id => id !== pid));
-
-      }
-      else {
-        axios.get(`http://localhost:8000/insert/collect/${user_id}/${pid}`)
-
-        setFavorID(prev => [...prev, pid]);
-      }
-
+  const Change_FavorState = pid => {
+    if (!user_id) return alert('請先登入');
+    const base = 'http://localhost:8000';
+    if (favorID.includes(pid)) {
+      axios.get(`${base}/delete/collect/${user_id}/${pid}`)
+        .then(() => setFavorID(prev => prev.filter(id => id !== pid)));
+    } else {
+      axios.get(`${base}/insert/collect/${user_id}/${pid}`)
+        .then(() => setFavorID(prev => [...prev, pid]));
     }
-    else {
-      alert('請先登入')
-    }
+  };
 
-
-
-
-  }
   return (
     <div className={styles.container}>
       <h5>或許你適合…</h5>
@@ -67,13 +68,22 @@ export default function RecommendedProducts() {
               : <div className={styles.noImage}>暫無圖片</div>}
             <div className={styles.info}>
               <p>商品名稱：{item.name}</p>
-              <p>價格：{item.price} 元</p>
+              <p>NT${item.price} </p>
             </div>
             <div className={styles.btnContainer}>
-              <AddToMyFavorite type='text' isFavorite={favorID.includes(item.pid)} onClick={() => Change_FavorState(item.pid)} />
+              <AddToMyFavorite
+                type='icon'
+                isFavorite={favorID.includes(item.pid)}
+                onClick={() => Change_FavorState(item.pid)}
+              />
               <AddToCartBtn
                       type="icon"
-                      product={{ ...item,image: item.imageUrl }}
+                      product={{
+                        ...item,
+                        pd_name: item.name,
+                        images: [{ img_path: item.imageUrl }], // 給 normalizeCartItem 用
+                        unit_price: parseInt(item.price || 0, 10), // 保底
+                      }}
                       quantity={1}
                       aria-label="加入購物車"
                     />
@@ -81,8 +91,6 @@ export default function RecommendedProducts() {
           </div>
         ))}
       </div>
-
     </div>
-
   );
 }

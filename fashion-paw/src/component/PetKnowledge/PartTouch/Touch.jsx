@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkBreaks from 'remark-breaks';
+import LodingScreen from '../LoadingScreen'
 import styles from './Touch.module.css'
 import TouchDog from "../images/TouchDogv2.png"
 import TouchCat from "../images/TouchCat.png"
@@ -8,6 +9,7 @@ import TouchHamster from "../images/TouchHamsterv2.png"
 import TouchBird from "../images/TouchBirdv2.png"
 import PartDescription from "./PartDescription.json"
 import pawSvg from '../images/pawicon.svg';
+
 
 
 // 描述元件:根據props顯示部位標題和說明內容
@@ -54,16 +56,26 @@ function Touch() {
     // 再按「下一隻」會回到 0，實現 循環輪播。
     // 下一張圖片
     const nextPet = () => {
-        setCurrentIndex((currentIndex + 1) % PartDescription.length);
-        // 每次切換寵物前，都把 tooltip（也就是「哪個部位被點擊」的 state）設為 null，
-        // 避免上一隻寵物的提示框或說明遺留到下一隻上。
-        setTooltip(null);
+        // 步驟 1：先清空 class（觸發動畫 reset）
+        setSlideClass('');
+        // 步驟 2：等下一輪 event loop 再加入動畫 class
+        setTimeout(() => {
+            setSlideClass(styles.slideInRight);
+            setCurrentIndex((currentIndex + 1) % PartDescription.length);
+            setTooltip(null);
+        }, 10); // 這邊的延遲只需要一點點就好
     };
+
     // 上一張圖片
     const prevPet = () => {
-        setCurrentIndex((currentIndex - 1 + PartDescription.length) % PartDescription.length);
-        setTooltip(null);
+        setSlideClass('');
+        setTimeout(() => {
+            setSlideClass(styles.slideInLeft);
+            setCurrentIndex((currentIndex - 1 + PartDescription.length) % PartDescription.length);
+            setTooltip(null);
+        }, 10);
     };
+
 
     // PartDescription 這個變數（從你的 JSON 檔案匯入）本質上是一個陣列，裡面每個元素都代表一隻寵物的設定
     // （名稱、圖片路徑、各部位的熱區資料、描述文字等）
@@ -73,6 +85,18 @@ function Touch() {
     // 根據目前選中的寵物，動態取得對應的打包後圖片 URL。
     // 這是 JavaScript 的「Bracket Notation（中括號存取屬性）」用法，等同於imageMap['TouchDogv2.png']
     const imgModule = imageMap[touchPet.img];
+    const imgRef = useRef(null);
+
+    const [slideClass, setSlideClass] = useState('');
+    // 加入 state 控制 loading
+    const [loading, setLoading] = useState(true);
+    useEffect(() => {
+        const timer = setTimeout(() => setLoading(false), 1500);
+        return () => clearTimeout(timer);
+    }, []);
+
+    if (loading) return <LodingScreen />;
+
 
     // 點擊圖片部位事件處理函式
     const handleImageClick = (e) => {
@@ -83,7 +107,7 @@ function Touch() {
         const y = Math.round(e.clientY - rect.top);
         // 找出被點擊到的熱區
         // touchPet.hotspots 是一個陣列，裡面每個物件 h 都有 x, y, width, height，代表一個可點擊的區塊範圍
-        const { hotspots } = touchPet;
+        const { hotspots, originalWidth, originalHeight } = touchPet;
         // find 會找出第一個符合「點擊座標在這個區塊內」的熱區，若找不到就回傳 undefined
         const hit = hotspots.find(h =>
             x >= h.x && x <= h.x + h.width &&
@@ -105,7 +129,8 @@ function Touch() {
 
     // 網頁框架，放便回調函式的變數們
     return (
-        <div className="container-lg paw-bg-lightenbrown pb-3 mb-5">
+        <div className={`container-lg paw-bg-lightenbrown pb-3 mb-5 ${styles.fadeIn}`}>
+
             {/* 飄浮腳印 */}
             <img src={pawSvg} className={styles.floatingPaw} alt="" />
             <img src={pawSvg} className={styles.floatingPaw} alt="" />
@@ -128,20 +153,37 @@ function Touch() {
                     <div className={styles.imgWrapper}>
                         {/* 1. 圖片點擊區 & hotspots */}
                         <img
+                            ref={imgRef}
                             src={imgModule}
                             alt={touchPet.name}
+                            className={slideClass}
                             style={{ width: '100%', height: '100%', objectFit: 'contain' }}
                             onClick={handleImageClick}
                         />
-                        {touchPet.hotspots.map((h, i) => (
-                            <div
-                                key={i}
-                                className={styles.hotspot}
-                                data-label={h.label}
-                                style={{ top: h.y, left: h.x, width: h.width, height: h.height }}
-                                onClick={() => setTooltip({ label: h.label, paragraph: h.paragraph })}
-                            />
-                        ))}
+                        {touchPet.hotspots.map((h, i) => {
+                            const originalWidth = 500;
+                            const originalHeight = 600;
+
+                            const leftPercent = (h.x / originalWidth) * 100;
+                            const topPercent = (h.y / originalHeight) * 100;
+                            const widthPercent = (h.width / originalWidth) * 100;
+                            const heightPercent = (h.height / originalHeight) * 100;
+
+                            return (
+                                <div
+                                    key={i}
+                                    className={styles.hotspot}
+                                    data-label={h.label}
+                                    style={{
+                                        top: `${topPercent}%`,
+                                        left: `${leftPercent}%`,
+                                        width: `${widthPercent}%`,
+                                        height: `${heightPercent}%`,
+                                    }}
+                                    onClick={() => setTooltip({ label: h.label, paragraph: h.paragraph })}
+                                />
+                            );
+                        })}
                     </div>
                     <div onClick={nextPet} className={styles.triangleRight} />
                 </div>

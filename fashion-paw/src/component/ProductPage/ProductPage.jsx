@@ -14,7 +14,10 @@ import HotRanking from './HotRanking/HotRanking';
 
 export default function ProductPage() {
   const user_id = cookie.get('user_uid')
-
+  const [petType, setPetType] = useState('')
+  const handleFilterChange = opts => {
+    setFilters(opts)
+  }
   const location = useLocation();                     // ← 拿到 location
   const searchState = location.state || {};
   const searchProducts = searchState.products;
@@ -134,7 +137,7 @@ export default function ProductPage() {
           <FilterBar key={filterkey} onFilterChange={setFilters} />
         </div>
         <div className={styles.topBar}>
-          <button onClick={doclearsort} className='btn btn-outline-primary'>清除篩選</button>
+          {/* <button onClick={doclearsort} className='btn btn-outline-primary'>清除篩選</button> */}
           <SortBar onSortChange={setSortBy} />
           <SwitchBtn viewMode={viewMode} onViewChange={setViewMode} />
         </div>

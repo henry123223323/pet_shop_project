@@ -8,7 +8,7 @@
   justify-content: center;
   align-items: center;
   gap: .5rem;
-  color: #E1C599;
+  color: #87512D;
   margin-bottom: 1.5rem;
 }
 
@@ -79,7 +79,7 @@
 }
 
 .cta:hover {
-  color: #988450;
+  color: #87512D;
 }
 
 @media (max-width: 1200px) {

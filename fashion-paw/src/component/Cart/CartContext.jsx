@@ -19,7 +19,8 @@ export class CartProvider extends Component {
                     removeFromCart: this.removeFromCart,
                     clearCart: this.clearCart,
                     setSellers: this.setSellers,
-                    getSellerName: this.getSellerName
+                    getSellerName: this.getSellerName,
+                    normalizeCartItem: this.normalizeCartItem
                 }}
             >
                 {this.props.children}
@@ -97,27 +98,38 @@ export class CartProvider extends Component {
         }
     }
 
-    addToCart = (rawItem) => {
+    addToCart = (newItem) => {
+        const normalized = this.normalizeCartItem(newItem);
+        console.log("✅ addToCart 正規化後的 uid：", normalized.uid, "condition:", normalized.condition);
 
-        const newItem = this.normalizeCartItem(rawItem);
-        return new Promise((resolve) => {
-            this.setState((prev) => {
-                const exists = prev.cartList.find(item => item.cart_id === newItem.cart_id);
-                if (exists) {
-                    const updatedList = prev.cartList.map(item =>
-                        item.cart_id === newItem.cart_id
-                            ? { ...item, quantity: item.quantity + newItem.quantity }
-                            : item
-                    );
-                    resolve('updated');
-                    return { cartList: updatedList };
-                } else {
-                    resolve('new');
-                    return { cartList: [...prev.cartList, newItem] };
-                }
-            });
+        let result = 'new';
+
+        this.setState((prevState) => {
+            const existingIndex = prevState.cartList.findIndex(item =>
+                item.pid === normalized.pid &&
+                String(item.uid) === String(normalized.uid) &&
+                (item.spec || null) === (normalized.spec || null)
+            );
+
+            if (existingIndex !== -1) {
+                const updatedCartList = [...prevState.cartList];
+                const currentQty = updatedCartList[existingIndex].quantity || 0;
+                updatedCartList[existingIndex].quantity = currentQty + (normalized.quantity || 1);
+                result = 'updated';
+                return { cartList: updatedCartList };
+            } else {
+                return {
+                    cartList: [
+                        ...prevState.cartList,
+                        { ...normalized, quantity: normalized.quantity || 1 }
+                    ]
+                };
+            }
         });
+
+        return result;
     };
+
 
     updateQuantity = (cart_id, quantity) => {
         this.setState((prev) => ({
@@ -137,6 +149,8 @@ export class CartProvider extends Component {
 
     //統一不同地方的命名
     normalizeCartItem = (item) => {
+        if (item._normalized) return item;
+
 
         //  抓圖片路徑
         const rawPath =
@@ -154,14 +168,21 @@ export class CartProvider extends Component {
         //     final: fullImagePath,
         // });
         const cartId = String(item.cart_id || item.pid);
+        const priceSource = item.price !== undefined ? item.price : item.unit_price;
+        const parsedPrice = parseInt(priceSource, 10);
         return {
+            _normalized: true,
             cart_id: cartId,
             pid: item.pid,
+            // 🧑‍🛒 購物車擁有者（登入者 uid）→ 影響寫入資料庫
             uid: item.uid ? String(item.uid) : null,
+
+            // 🏪 商品賣家（影響顯示 SellerTitle 區分）
+            seller_uid: item.seller_uid ? String(item.seller_uid) : null,
             condition: item.condition || "new",
             quantity: item.quantity || 1,
             productName: item.pd_name || item.productName || item.name,
-            unit_price: parseInt(item.price || item.unit_price || 0),
+            unit_price: isNaN(parsedPrice) ? 0 : parsedPrice,
             image: fullImagePath,
             //   color: item.attribute?.color || item.color || "無",
         };

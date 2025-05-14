@@ -78,17 +78,38 @@ router.post('/return', express.urlencoded({ extended: false }), async (req, res)
       return res.status(400).send('CheckMacValue mismatch');
     }
   
+
+    const paymentTypeMap = {
+      "Credit_": "信用卡",
+      "TWQR_": "行動支付",
+      "Wechatpay_": "微信支付",
+      "WebATM_": "網路ATM",
+      "ATM_": "ATM虛擬帳號",
+      "BARCODE_": "超商條碼",
+      "CVS_": "超商代碼",
+      "ECPay_": "綠界Pay"
+    };
+    
+    function convertPaymentType(rawType) {
+      for (const prefix in paymentTypeMap) {
+        if (rawType.startsWith(prefix)) {
+          return paymentTypeMap[prefix];
+        }
+      }
+      return rawType; // 若沒有對應就回傳原始值
+    }
     if (RtnCode === '1') {
       try {
+        const readablePaymentType = convertPaymentType(PaymentType);
         // ✅ 更新訂單資料庫
         await q(
           `UPDATE orders 
            SET pay_way = ?, card_last4 = ?
            WHERE display_order_num = ?`,
-          [PaymentType, Card4No || null, MerchantTradeNo]
+          [readablePaymentType, Card4No || null, MerchantTradeNo]
         );
   
-        console.log(`✅ 訂單更新完成：訂單編號 ${MerchantTradeNo}，付款方式 ${PaymentType}，卡號末四碼 ${Card4No || '無'}`);
+        console.log(`✅ 訂單更新完成：訂單編號 ${MerchantTradeNo}，付款方式 ${readablePaymentType}，卡號末四碼 ${Card4No || '無'}`);
         return res.send('1|OK');
       } catch (err) {
         console.error('❌ 更新訂單時發生錯誤:', err);

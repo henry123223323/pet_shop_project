@@ -68,7 +68,7 @@ export default function HotRanking() {
 
   return (
     <div className={styles.container}>
-      <h3 className={styles.header}>熱銷排行</h3>
+      <h3 className={styles.header}>熱銷排行🔥</h3>
       <div className={styles.list}>
         {ranking.map(item => {
           const { pid, pd_name, price, imageUrl } = item;
@@ -83,24 +83,22 @@ export default function HotRanking() {
               </div>
               <p className={styles.name}>{pd_name}</p>
               <p className={styles.price}>
-                價格：{Number(price).toLocaleString('zh-TW', {
-                  style: 'currency',
-                  currency: 'TWD',
-                })}
+                NT${Number(price).toLocaleString()}
               </p>
+
               <div className={styles.actions}>
                 <AddToMyFavorite
                   isFavorite={isFav}
                   onClick={() => handleToggleFavorite(pid)}
-                  size="24px"
+                  size="20px"
                   aria-label="收藏"
                 />
-                  <AddToCartBtn
-                      type="icon"
-                      product={{ ...item,image: item.imageUrl }}
-                      quantity={1}
-                      aria-label="加入購物車"
-                    />
+                <AddToCartBtn
+                  type="icon"
+                  product={{ ...item, image: item.imageUrl }}
+                  quantity={1}
+                  aria-label="加入購物車"
+                />
               </div>
             </div>
           );

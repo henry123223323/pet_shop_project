@@ -181,39 +181,46 @@ export default function SeProductPage() {
   }
   return (
     <div className={styles.container}>
-      <aside className={styles.sidebar}>
-        <SideBar onSelectCategory={handleSelectCategory} />
-      </aside>
+      {/* 1. FilterBar */}
+      <div className={styles.filterBar}>
+        <FilterBar
+          key={fliterkey}
+          city_town={citytownarray}
+          locations={uniqueLocations}
+          onFilterChange={handleFilterChange}
+          SortProductbyTown={SortProductbyTown}
+        />
+      </div>
 
       <main className={styles.main}>
-        {/* 1. FilterBar */}
-        <div className={styles.filterBar}>
-          <FilterBar
-            key={fliterkey}
-            city_town={citytownarray}
-            locations={uniqueLocations}
-            onFilterChange={handleFilterChange}
-            SortProductbyTown={SortProductbyTown}
-          />
-        </div>
+
 
         <span >{mapselecttown}</span>
         {/* 2. SortBar + SwitchBtn 同列靠右 */}
         <div className={styles.topBar}>
-          <button onClick={doclearsort} className='btn btn-outline-primary'>清除篩選</button>
+          {/* <button onClick={doclearsort} className='btn btn-outline-primary'>清除篩選</button> */}
 
           <SortBar onSortChange={handleSortChange} />
           <SwitchBtn viewMode={viewMode} onViewChange={setViewMode} />
         </div>
-
-        {/* 3. ProductList，傳入 viewMode */}
-        <ProductList
-          products={filtered}
-          favoriteIds={favoriteIds}
-          onToggleFavorite={handleToggleFavorite}
-          onAddToCart={handleAddToCart}
-          viewMode={viewMode}
-        />
+        <div className={styles.mix}>
+          <aside className={styles.sidebar}>
+            <SideBar
+              selectedType={selectedType}
+              onSelectCategory={handleSelectCategory}
+            />
+          </aside>
+          {/* 3. ProductList，傳入 viewMode */}
+          <div className={styles.productWrapper}>
+          <ProductList
+            products={filtered}
+            favoriteIds={favoriteIds}
+            onToggleFavorite={handleToggleFavorite}
+            onAddToCart={handleAddToCart}
+            viewMode={viewMode}
+          />
+        </div>
+        </div>
       </main>
     </div>
   );

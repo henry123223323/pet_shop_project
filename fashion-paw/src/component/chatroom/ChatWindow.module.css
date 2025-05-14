@@ -69,6 +69,11 @@
   margin: 2px 0 0;
   font-size: 0.7rem;
   color: #777;
+  white-space: nowrap;       
+  overflow: hidden;           /* 超出隱藏 */
+  text-overflow: ellipsis;    /* 超出變 … */
+  max-width: 150px;            /* 可依容器限制寬度 */
+  display: inline-block;      
 }
 
 /* ---------------- 右側 ChatWindow ---------------- */
@@ -107,6 +112,9 @@
 .bot {
   background: #F5E1B0;
   align-self: flex-start;
+}
+.message>img{
+  width:10px
 }
 .user {
   background: #EEE;
@@ -167,4 +175,11 @@
   border: none;
   font-size: 1.4rem;
   cursor: pointer;
+}
+.ellipsis {
+  white-space: nowrap;        /* 不換行 */
+  overflow: hidden;           /* 超出隱藏 */
+  text-overflow: ellipsis;    /* 超出變 … */
+  max-width: 100%;            /* 可依容器限制寬度 */
+  display: inline-block;      /* 為了讓 max-width 生效 */
 }

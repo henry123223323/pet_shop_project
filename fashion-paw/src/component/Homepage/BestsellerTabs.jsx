@@ -55,7 +55,7 @@ export default function BestsellerTabs() {
     <section className={styles.section}>
       <div className="container-lg">
         <h2 className={styles.title}>
-          分類熱銷排行榜 <img src={pawicon} alt="paw" className={styles.icon} />
+          熱銷排行榜 <img src={pawicon} alt="paw" className={styles.icon} />
         </h2>
         <nav className={styles.tabNav}>
           {tabs.map(t => (
