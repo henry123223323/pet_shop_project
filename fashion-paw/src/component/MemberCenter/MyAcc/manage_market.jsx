@@ -3,7 +3,7 @@ import React, { Component } from 'react'
 import axios from 'axios'
 import Cookies from 'js-cookie'
 import Market_modal from './market_manage/Market_Modal'
-import PawDisplay from '../../ProductDetailPage/PawDisplay';
+import PawDisplay from '../../ProductDetailPage/PawDisplay'
 
 // 全域設定
 const BASE_URL = 'http://localhost:8000'
@@ -25,28 +25,28 @@ export default class ManageMarket extends Component {
     this.loadData()
   }
 
+ // 取得二手商品清單（含屬性）
   loadData = async () => {
     this.setState({ loading: true, error: null })
     try {
       const uid = Cookies.get('user_uid')
-      console.log('▶ uid:', uid);
       if (!uid) throw new Error('請先登入')
-      // 帶入 X-UID header 並自動帶 cookie
-      const res = await axios.get(
+      const { data } = await axios.get(
         `${BASE_URL}/get/my-second-products`,
         { headers: { 'X-UID': uid } }
       )
-      this.setState({ second_product: res.data, loading: false })
+      // 確保 attribute 和 images 欄位存在
+      const items = data.map(item => ({
+        ...item,
+        attribute: item.attribute || {},
+        images: item.images || []
+      }))
+      this.setState({ second_product: items, loading: false })
     } catch (err) {
-      console.error('讀取失敗：', err)
       let errorMsg = ''
-      if (err.response) {
-        errorMsg = `伺服器錯誤 (${err.response.status})`
-      } else if (err.request) {
-        errorMsg = '無法連線伺服器，請確認後端是否啟動'
-      } else {
-        errorMsg = err.message
-      }
+      if (err.response) errorMsg = `伺服器錯誤 (${err.response.status})`
+      else if (err.request) errorMsg = '無法連線伺服器，請確認後端是否啟動'
+      else errorMsg = err.message
       this.setState({ error: errorMsg, loading: false })
     }
   }
@@ -63,15 +63,13 @@ export default class ManageMarket extends Component {
     if (!pid || !window.confirm(`確定刪除 ${pd_name}？`)) return
     try {
       const uid = Cookies.get('user_uid')
-      // 刪除時也帶入 X-UID
       await axios.delete(
         `${BASE_URL}/get/my-second-products/${pid}`,
         { headers: { 'X-UID': uid } }
       )
       alert('刪除成功！')
       this.loadData()
-    } catch (err) {
-      console.error('刪除失敗：', err)
+    } catch {
       alert('刪除失敗，請稍後再試')
     }
   }
@@ -80,15 +78,32 @@ export default class ManageMarket extends Component {
     try {
       const uid = Cookies.get('user_uid')
       const form = new FormData()
+      // 基本欄位
       form.append('pd_name', product.pd_name)
       form.append('price', product.price)
       form.append('categories', product.categories)
       form.append('new_level', product.new_level)
       form.append('status', product.status)
+      // 新增欄位
+      form.append('pet_type', product.pet_type)
+      form.append('description', product.description)
+      form.append('stock', product.stock)
+      form.append('city', product.city)
+      form.append('district', product.district)
+      // 圖片
       product.images?.forEach(img => img.file && form.append('images', img.file))
-
+      // ── 商品屬性 ────────────────────────────────
+      form.append('attribute.brand', product.attribute.brand)
+      form.append('attribute.pattern', product.attribute.pattern)
+      form.append('attribute.name', product.attribute.name)
+      form.append('attribute.model', product.attribute.model)
+      form.append('attribute.buydate', product.attribute.buydate)
+      form.append('attribute.new_level', product.attribute.new_level)
+      form.append('attribute.size', product.attribute.size)
+      form.append('attribute.color', product.attribute.color)
+      form.append('attribute.weight', product.attribute.weight)
       await axios.post(
-        '/get/my-second-products',
+        `${BASE_URL}/get/my-second-products`,
         form,
         {
           headers: {
@@ -115,10 +130,24 @@ export default class ManageMarket extends Component {
       form.append('categories', product.categories)
       form.append('new_level', product.new_level)
       form.append('status', product.status)
+      form.append('pet_type', product.pet_type)
+      form.append('description', product.description)
+      form.append('stock', product.stock)
+      form.append('city', product.city)
+      form.append('district', product.district)
       product.images?.forEach(img => img.file && form.append('images', img.file))
-
+// ── 商品屬性 ────────────────────────────────
+      form.append('attribute.brand', product.attribute.brand)
+      form.append('attribute.pattern', product.attribute.pattern)
+      form.append('attribute.name', product.attribute.name)
+      form.append('attribute.model', product.attribute.model)
+      form.append('attribute.buydate', product.attribute.buydate)
+      form.append('attribute.new_level', product.attribute.new_level)
+      form.append('attribute.size', product.attribute.size)
+      form.append('attribute.color', product.attribute.color)
+      form.append('attribute.weight', product.attribute.weight)
       await axios.put(
-        `/get/my-second-products/${product.pid}`,
+        `${BASE_URL}/get/my-second-products/${product.pid}`,
         form,
         {
           headers: {
@@ -144,7 +173,6 @@ export default class ManageMarket extends Component {
       ? <span className="badge bg-success">上架</span>
       : <span className="badge bg-secondary">下架</span>
 
-
   renderCategory = cat => ({
     pet_food: "飼料",
     complementary_food: "副食",
@@ -161,14 +189,15 @@ export default class ManageMarket extends Component {
   render() {
     const { second_product, searchTerm, page, pageSize, loading, error, showModal, ModalState, thisIndex } = this.state
     const filtered = second_product.filter(p => p.pd_name.includes(searchTerm))
-    const total = filtered.length
-    const totalPages = Math.ceil(total / pageSize)
+    const totalPages = Math.ceil(filtered.length / pageSize)
     const start = (page - 1) * pageSize
     const paged = filtered.slice(start, start + pageSize)
 
     return (
       <div className="container-fluid mt-4">
         <h3 className="mb-3">二手商品管理</h3>
+
+        {/* 搜尋 & 新增 */}
         <div className="row mb-3">
           <div className="col-md-3">
             <input
@@ -179,16 +208,16 @@ export default class ManageMarket extends Component {
               onChange={this.handleSearchChange}
             />
           </div>
-        </div>
-        <div className="row mb-3">
           <div className="col-md-3">
             <button className="btn btn-outline-primary" onClick={this.OpenAdd}>上架二手商品</button>
           </div>
         </div>
 
+        {/* 狀態顯示 */}
         {loading && <div>載入中…</div>}
         {error && <div className="text-danger">{error}</div>}
 
+        {/* 商品列表 */}
         {!loading && !error && (
           <table className="table table-striped table-hover align-middle">
             <thead className="table-primary">
@@ -226,6 +255,7 @@ export default class ManageMarket extends Component {
           </table>
         )}
 
+        {/* 分頁 */}
         <nav aria-label="Page navigation">
           <ul className="pagination justify-content-center">
             <li className={`page-item ${page === 1 ? 'disabled' : ''}`}>
@@ -242,6 +272,7 @@ export default class ManageMarket extends Component {
           </ul>
         </nav>
 
+        {/* Modal */}
         {showModal && (
           <Market_modal
             condition="second"

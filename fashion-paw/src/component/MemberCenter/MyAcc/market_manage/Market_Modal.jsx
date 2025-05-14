@@ -31,22 +31,46 @@ export default class MarketModal extends Component {
   }
 
   componentDidMount() {
-    const { modalState, product } = this.props;
-    let pd = { ...this.state.productData };
-    if ((modalState === 'Edit' || modalState === 'Find') && product) {
-      pd = {
-        ...pd,
-        ...product,
-        attribute: { ...product.attribute },
-        images: pd.images.map((_, i) => ({
-          file: null,
-          img_value: product.images?.[i]?.img_value || '',
-          img_path: product.images?.[i]?.img_path || ''
-        }))
-      };
-    }
-    this.setState({ modalState, productData: pd });
+  const { modalState, product } = this.props;
+  // 先拿出原本的 productData
+  let pd = { ...this.state.productData };
+
+  // 如果是編輯或查看，且後端真的回傳了 product
+  if ((modalState === 'Edit' || modalState === 'Find') && product) {
+    pd = {
+      ...pd,
+      pid:         product.pid        ?? pd.pid,
+      condition:   product.condition  ?? pd.condition,
+      status:      product.status     ?? pd.status,
+      pet_type:    product.pet_type   ?? pd.pet_type,
+      categories:  product.categories ?? pd.categories,
+      pd_name:     product.pd_name    ?? pd.pd_name,
+      price:       product.price      ?? pd.price,
+      description: product.description?? pd.description,
+      city:        product.city       ?? pd.city,
+      district:    product.district   ?? pd.district,
+      new_level:   product.new_level  ?? pd.new_level,
+      stock:       product.stock      ?? pd.stock,
+      // 只有 product.attribute 存在時，才覆蓋原本的 attribute
+      attribute:   product.attribute
+                     ? { ...product.attribute }
+                     : { ...pd.attribute },
+      // 同理處理圖片陣列
+      images: Array(4).fill().map((_, i) => {
+        const img = product.images?.[i];
+        const path = img?.img_path || img?.imageUrl || '';
+        return {
+          file:      null,
+          img_value: img?.img_value || '',
+          img_path:  path
+        };
+      })
+    };
   }
+
+  // 最後把新的 pd push 回 state，並設定 modalState
+  this.setState({ productData: pd, modalState });
+}
 
   handleChange = e => {
     const { name, value } = e.target;
