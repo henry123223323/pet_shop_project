@@ -40,7 +40,7 @@ function App() {
     <BrowserRouter>
       <CartProvider>
         <Header />
-        <SyncCartOnLogin /> 
+        <SyncCartOnLogin />
         <main className={`mainContent ${styles.mainContent}`}>
           <Breadcrumbs />
           <Switch>
@@ -71,14 +71,14 @@ function App() {
               render={props => <KnowledgeLayout {...props} topic="HealthCheck" />}
             />
 
-            {/* 寵物小知識：詳細頁 */}
+            {/* 寵物小知識：詳細頁 (統一用 articleId) */}
             <Route
-              path="/Novicefeeding/:pet/:id"
+              path="/Novicefeeding/:pet/:articleId"
               exact
               render={props => <ArticleDetail {...props} topic="Novicefeeding" />}
             />
             <Route
-              path="/HealthCheck/:pet/:id"
+              path="/HealthCheck/:pet/:articleId"
               exact
               render={props => <ArticleDetail {...props} topic="HealthCheck" />}
             />
@@ -91,7 +91,7 @@ function App() {
         </main>
         <Footer />
       </CartProvider>
-      
+
       <Icon />
     </BrowserRouter>
   );

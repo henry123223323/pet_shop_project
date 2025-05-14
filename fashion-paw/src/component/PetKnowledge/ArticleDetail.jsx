@@ -1,72 +1,71 @@
 // src/component/PetKnowledge/ArticleDetail.jsx
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import Sidebar from './SideBar';
-import styles from './ArticleDetail.module.css';
-import axios from 'axios';
-import RecommendedProducts from './Novicefeeding/RecommendedProducts';  // ← 引入推薦商品
+import React, { useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom'
+import axios from 'axios'
+import styles from './ArticleDetail.module.css'
+import RecommendedProducts from './Novicefeeding/RecommendedProducts'  // 推薦商品
 
 export default function ArticleDetail({ topic }) {
-  const { pet, id } = useParams();
-  const [article, setArticle] = useState(null);
+  const { pet, articleId } = useParams()
+  const [art, setArt] = useState(null)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    axios.get(`/api/petknowarticle/${id}`)
-      .then(res => setArticle(res.data))
-      .catch(console.error);
-  }, [id]);
+    axios.get(`/api/articles/${articleId}`)
+      .then(({ data }) => {
+        let secs = data.sections
+        try {
+          secs = typeof secs === 'string' ? JSON.parse(secs) : secs
+        } catch {
+          secs = []
+        }
+        setArt({ ...data, sections: secs })
+      })
+      .catch(() => setArt(null))
+      .finally(() => setLoading(false))
+  }, [articleId])
 
-  if (!article) return <div className={styles.loading}>載入中…</div>;
-
-  let sections = [];
-  try { sections = JSON.parse(article.sections); }
-  catch { }
+  if (loading) return <p className={styles.loading}>載入中…</p>
+  if (!art)     return <p className={styles.loading}>找不到這篇文章</p>
 
   return (
     <div className={styles.container}>
-      {/* 側邊欄 */}
-      <Sidebar topic={topic} selected={pet} />
-
-      {/* 內文主區 */}
       <div className={styles.detailWrapper}>
-        {article.bannerUrl && (
-          <img src={article.bannerUrl}
-            alt={article.title}
-            className={styles.mainImage} />
+        {art.bannerUrl && (
+          <img
+            className={styles.mainImage}
+            src={art.bannerUrl}
+            alt={art.title}
+          />
         )}
-
         <div className={styles.header}>
-          <h1 className={styles.title}>{article.title}</h1>
-          <div className={styles.meta}>
-            <span className={styles.date}>
-              {new Date(article.date).toLocaleDateString()}
-            </span>
-            <span className={styles.type}>
-              {article.articleType === 'pet_feeding'
-                ? '新手飼養'
-                : '健康檢查'}
-            </span>
-          </div>
+          <h1 className={styles.title}>{art.title}</h1>
+          <p className={styles.meta}>
+            發表日期：{new Date(art.date).toLocaleDateString()} ｜ 分類：{topic}
+          </p>
         </div>
-
-        <p className={styles.summary}>{article.summary}</p>
-
+        {art.summary && (
+          <p className={styles.summary}>{art.summary}</p>
+        )}
         <div className={styles.sections}>
-          {sections.map((sec, i) => (
-            <section key={i} className={styles.section}>
-              {sec.heading &&
-                <h2 className={styles.secHeading}>{sec.heading}</h2>}
-              <p className={styles.secBody}>{sec.body}</p>
-            </section>
+          {art.sections.map((sec, i) => (
+            <div key={i} className={styles.section}>
+              {sec.heading && (
+                <h2 className={styles.secHeading}>{sec.heading}</h2>
+              )}
+              <div
+                className={styles.secBody}
+                dangerouslySetInnerHTML={{ __html: sec.body || '' }}
+              />
+            </div>
           ))}
         </div>
-
-        {/* ← 在這裡插入推薦商品元件 */}
-        <RecommendedProducts
-          pet_type={article.pet}
-          product_category={article.category}
-        />
+        {/* 推薦商品列表 */}
+        <div className={styles.recommendWrapper}>
+          <h2>推薦商品</h2>
+          <RecommendedProducts pet_type={pet} />
+        </div>
       </div>
     </div>
-  );
+  )
 }

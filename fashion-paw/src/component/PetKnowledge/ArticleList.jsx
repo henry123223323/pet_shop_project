@@ -18,14 +18,19 @@ export default function ArticleList({ topic, pet }) {
   const articleType = typeMap[topic];
 
   useEffect(() => {
-    axios.get('/api/petknowarticle', {
-      params: { type: articleType, pet, page, size: PAGE_SIZE }
+    axios.get('/api/articles', {
+      params: {
+        topic: articleType,   // 原本的 type 改成 topic
+        pet,
+        page,
+        size: PAGE_SIZE
+      }
     })
-      .then(res => {
-        setArticles(res.data.list);
-        setTotalPages(res.data.totalPages);
-      })
-      .catch(err => console.error('取得文章失敗', err));
+    .then(res => {
+      setArticles(res.data.list);
+      setTotalPages(res.data.totalPages);
+    })
+    .catch(err => console.error('取得文章失敗', err));
   }, [articleType, pet, page]);
 
   return (

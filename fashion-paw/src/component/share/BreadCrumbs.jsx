@@ -1,6 +1,8 @@
+// src/component/share/BreadCrumbs.jsx
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import styles from './BreadCrumbs.module.css';
+import CheckBillPage from 'component/CheckBill/CheckBillPage';
 
 const nameMap = {
   '': '首頁',
@@ -36,9 +38,10 @@ const nameMap = {
   Touch: '部位有話說',
   PetQuiz: '互動小專區',
   Quiz: '寵物小測驗',
-  ProductPage: '商品頁面',
-  SeProductPage: '二手商品頁面',
-  // ...其他路徑段對應
+  ProductPage: '拾毛百貨',
+  SeProductPage: '拾毛市場',
+  ShoppingCartPage: '購物車',
+  CheckBillPage:'填寫付款資料'
 };
 
 export default function Breadcrumbs() {
@@ -46,18 +49,30 @@ export default function Breadcrumbs() {
   const segments = pathname.split('/').filter(Boolean);
   const lastSeg = segments[segments.length - 1] || '';
 
-  // 把 hook 提到最上層
-  const [productName, setProductName] = useState('');
+  const [itemName, setItemName] = useState('');
+  const knowledgeRoutes = ['Novicefeeding', 'HealthCheck'];
+
   useEffect(() => {
     if (/^\d+$/.test(lastSeg)) {
-      fetch(`http://localhost:8000/productslist/${lastSeg}`)
-        .then(res => res.json())
-        .then(data => setProductName(data.pd_name || '商品'))
-        .catch(() => setProductName('商品'));
+      // 根據第一段路由決定抓文章 or 抓商品
+      if (knowledgeRoutes.includes(segments[0])) {
+        // 單篇文章：抓文章標題
+        fetch(`/api/articles/${lastSeg}`)
+          .then(res => res.json())
+          .then(data => setItemName(data.title || '文章'))
+          .catch(() => setItemName('文章'));
+      } else {
+        // 商品細節：抓商品名稱
+        fetch(`http://localhost:8000/productslist/${lastSeg}`)
+          .then(res => res.json())
+          .then(data => setItemName(data.pd_name || '商品'))
+          .catch(() => setItemName('商品'));
+      }
+    } else {
+      setItemName('');
     }
-  }, [lastSeg]);
+  }, [lastSeg, segments]);
 
-  // 早期 return 只處理空路徑
   if (segments.length === 0) return null;
 
   return (
@@ -70,8 +85,10 @@ export default function Breadcrumbs() {
         {segments.map((seg, i) => {
           const to = '/' + segments.slice(0, i + 1).join('/');
           const isLast = i === segments.length - 1;
-          const label = isLast && /^\d+$/.test(seg)
-            ? (productName || '載入中…')
+          const isNum = /^\d+$/.test(seg);
+
+          const label = isLast && isNum
+            ? (itemName || '載入中…')
             : (nameMap[seg] || seg);
 
           return (
