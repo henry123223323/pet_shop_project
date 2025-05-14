@@ -260,142 +260,96 @@ app.put(
     }
   }
 );
-
+//寵物小知識用
 // ── 取得所有文章清單（帶回 category 欄位） ─────────────────────
-app.get('/get/petknowarticles', async (req, res) => {
-  try {
-    const rows = await q(`
-      SELECT
-        ArticleID        AS id,
-        title            AS title,
-        banner_URL       AS bannerFile,
-        intro            AS summary,
-        pet_type         AS pet,
-        article_type     AS articleType,
-        product_category AS category,
-        sections         AS sections,
-        create_at        AS date
-      FROM article
-    `);
-    res.json({ list: rows });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: '伺服器錯誤' });
+// ── 取得文章列表（支援分頁與篩選） ─────────────────
+app.get('/api/articles', async (req, res) => {
+  const { topic, pet, page = 1, size = 5 } = req.query;
+  if (!topic || !pet) {
+    return res.status(400).json({ error: '缺少 topic 或 pet' });
   }
-});
-
-// ── 取得單篇文章 / 篩出 category 欄位 ───────────────────────────
-app.get('/api/petknowarticle/:id', async (req, res) => {
-  const id = Number(req.params.id);
-  try {
-    const rows = await q(
-      `
-      SELECT
-        ArticleID        AS id,
-        title            AS title,
-        banner_URL       AS bannerFile,
-        intro            AS summary,
-        pet_type         AS pet,
-        article_type     AS articleType,
-        product_category AS category,
-        sections         AS sections,
-        create_at        AS date
-      FROM article
-      WHERE ArticleID = ?
-      `,
-      [id]
-    );
-    if (!rows.length) return res.status(404).json({ error: 'Not Found' });
-
-    const row = rows[0];
-    const host = `${req.protocol}://${req.get('host')}`;
-    const fileName = path.basename(row.bannerFile || '');
-    const bannerUrl = fileName
-      ? `${host}/media/pet_know/${row.articleType}/${row.pet}/${fileName}`
-      : null;
-
-    res.json({
-      id: row.id,
-      title: row.title,
-      summary: row.summary,
-      pet: row.pet,
-      category: row.category,
-      articleType: row.articleType,
-      sections: row.sections,
-      date: row.date,
-      bannerUrl
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: '伺服器錯誤' });
-  }
-});
-
-// ── 分頁取得文章列表 / 帶回 category ────────────────────────────
-app.get('/api/petknowarticle', async (req, res) => {
-  const { type, pet, page = 1, size = 5 } = req.query;
   const pageNum = Math.max(1, Number(page));
   const pageSize = Math.max(1, Number(size));
   const offset = (pageNum - 1) * pageSize;
 
-  if (!type || !pet) {
-    return res.status(400).json({ error: '缺少必要參數 type 或 pet' });
-  }
-
   try {
-    // 1. 計算總筆數
-    const countRows = await q(
-      `SELECT COUNT(*) AS cnt
-         FROM article
-        WHERE article_type = ? AND pet_type = ?`,
-      [type, pet]
+    // 總筆數
+    const cntRes = await q(
+      'SELECT COUNT(*) AS cnt FROM article WHERE article_type=? AND pet_type=?',
+      [topic, pet]
     );
-    const cnt = countRows[0]?.cnt || 0;
-    const totalPages = Math.ceil(cnt / pageSize);
-    const host = `${req.protocol}://${req.get('host')}`;
+    const totalPages = Math.ceil((cntRes[0].cnt||0) / pageSize);
 
-    // 2. 取分頁資料
+    // 取分頁資料
     const rows = await q(
-      `
-      SELECT
-        ArticleID        AS id,
-        title            AS title,
-        banner_URL       AS bannerFile,
-        intro            AS summary,
-        pet_type         AS pet,
-        article_type     AS articleType,
-        product_category AS category,
-        create_at        AS date
-      FROM article
-      WHERE article_type = ? AND pet_type = ?
-      ORDER BY create_at DESC
-      LIMIT ?, ?
-      `,
-      [type, pet, offset, pageSize]
+      `SELECT
+         ArticleID AS id,
+         title     AS title,
+         banner_URL,
+         intro     AS summary,
+         pet_type  AS pet,
+         article_type AS articleType,
+         product_category AS category,
+         create_at AS date
+       FROM article
+       WHERE article_type=? AND pet_type=?
+       ORDER BY create_at DESC
+       LIMIT ?,?`,
+      [topic, pet, offset, pageSize]
     );
 
-    // 3. 處理 bannerUrl
+    // 處理 bannerUrl
+    const host = `${req.protocol}://${req.get('host')}`;
     const list = rows.map(r => {
-      const fileName = path.basename(r.bannerFile || '');
+      const fname = path.basename(r.banner_URL||'');
       return {
-        id: r.id,
-        title: r.title,
-        summary: r.summary,
-        pet: r.pet,
-        category: r.category,
-        articleType: r.articleType,
-        date: r.date,
-        bannerUrl: fileName
-          ? `${host}/media/pet_know/${r.articleType}/${r.pet}/${fileName}`
+        ...r,
+        bannerUrl: fname
+          ? `${host}/media/pet_know/${r.articleType}/${r.pet}/${fname}`
           : null
       };
     });
 
-    // 4. 回傳
-    res.json({ list, totalPages });
+    return res.json({ list, totalPages });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: '伺服器錯誤' });
+    return res.status(500).json({ error: '伺服器錯誤' });
+  }
+});
+
+// ── 取得單篇文章 ──────────────────────────────
+app.get('/api/articles/:articleId', async (req, res) => {
+  const articleId = Number(req.params.articleId);
+  try {
+    const rows = await q(
+      `SELECT
+         ArticleID AS id,
+         title     AS title,
+         banner_URL,
+         intro     AS summary,
+         pet_type  AS pet,
+         article_type AS articleType,
+         product_category AS category,
+         sections  AS sections,
+         create_at AS date
+       FROM article
+       WHERE ArticleID = ?`,
+      [articleId]
+    );
+    if (!rows.length) {
+      return res.status(404).json({ error: '文章不存在' });
+    }
+    const r = rows[0];
+    const host = `${req.protocol}://${req.get('host')}`;
+    const fname = path.basename(r.banner_URL||'');
+    const bannerUrl = fname
+      ? `${host}/media/pet_know/${r.articleType}/${r.pet}/${fname}`
+      : null;
+
+    return res.json({ ...r, bannerUrl });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: '伺服器錯誤' });
   }
 });
 
