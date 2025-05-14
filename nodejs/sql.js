@@ -797,26 +797,26 @@ app.post("/post/createuserinfo", function (req, res) {
 
   const { email, username, password, firstname, lastname, birthday, power, Aboutme, fullname } = req.body;
 
-const sql = "INSERT INTO userinfo (email, username, password, firstname, lastname, birthday, power, Aboutme ,photo, fullname) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+  const sql = "INSERT INTO userinfo (email, username, password, firstname, lastname, birthday, power, Aboutme ,photo, fullname) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-conn.query(sql, [
-  email,
-  username,
-  password,
-  firstname,
-  lastname,
-  birthday,
-  power,
-  Aboutme,
-  imageBuffer, // 預設圖片
-  fullname     // 從前端直接來的
-], (err, result) => {
-  if (err) {
-    console.error("資料庫錯誤:", err);
-    return res.status(500).send("新增失敗");
-  }
-  res.json({ message: "新增成功", result });
-});
+  conn.query(sql, [
+    email,
+    username,
+    password,
+    firstname,
+    lastname,
+    birthday,
+    power,
+    Aboutme,
+    imageBuffer, // 預設圖片
+    fullname     // 從前端直接來的
+  ], (err, result) => {
+    if (err) {
+      console.error("資料庫錯誤:", err);
+      return res.status(500).send("新增失敗");
+    }
+    res.json({ message: "新增成功", result });
+  });
 })
 
 
@@ -848,64 +848,103 @@ app.get("/get/useruid/:email", function (req, res) {
 
 
 
-app.post("/post/newusercoupon/:uid",function(req,res){
+app.post("/post/newusercoupon/:uid", function (req, res) {
   const uid = req.params.uid
   const discount_ratio = "0.85"
   const coupon_code = "meow2025"
   const overdate = "2026-10-13"
-  const description	= "折扣直送毛孩圈，每一件都超值"
+  const description = "折扣直送毛孩圈，每一件都超值"
 
 
 
-  conn.query("INSERT INTO coupon (uid,discount_ratio,coupon_code,overdate,description) VALUES (?,?,?,?,?)",[uid,discount_ratio,coupon_code,overdate,description],(err, result) => {
-  if (err) {
-    console.error("資料庫錯誤:", err);
-    return res.status(500).send("新增失敗");
-  }
-  res.json({ message: "新增成功", result });
+  conn.query("INSERT INTO coupon (uid,discount_ratio,coupon_code,overdate,description) VALUES (?,?,?,?,?)", [uid, discount_ratio, coupon_code, overdate, description], (err, result) => {
+    if (err) {
+      console.error("資料庫錯誤:", err);
+      return res.status(500).send("新增失敗");
+    }
+    res.json({ message: "新增成功", result });
+  });
+})
+
+
+app.post("/post/calladmin/:speakerID/:message", function (req, res) {
+  console.log('收到請求：', req.params);  // 打印 speakerID 和 message 參數
+  let speakerID = req.params.speakerID;
+  let message = decodeURIComponent(req.params.message);
+
+  conn.query("INSERT INTO chatmessage (speakerID,message) VALUES (?,?);", [speakerID, message], function (err, results) {
+    if (err) {
+      console.error("資料庫錯誤:", err);
+      return res.status(500).send("新增失敗");
+    }
+    res.json({ message: "新增成功", result: results });
+  });
 });
+
+
+
+app.post("/post/newuseraddress", function (req, res) {
+
+  const { uid, City, District, address, AdressName, AdressPhone } = req.body;
+
+  const sql = "INSERT INTO address (uid, City, District, address, AdressName, AdressPhone) VALUES (?, ?, ?, ?, ?, ?)";
+
+  conn.query(sql,[uid,City,District,address,AdressName,AdressPhone], (err, result) => {
+    if (err) {
+      console.error("資料庫錯誤:", err);
+      return res.status(500).send("新增失敗");
+    }
+    res.json({ message: "新增成功", result });
+  });
+
+
+
+
 })
 
 
 
 
-app.post("/post/newusercoupon2/:uid",function(req,res){
+
+
+
+app.post("/post/newusercoupon2/:uid", function (req, res) {
   const uid = req.params.uid
   const discount_ratio = "0.77"
   const coupon_code = "wow2025"
   const overdate = "2026-10-13"
-  const description	= "毛孩生活用品限時優惠，通通抱回家不手軟~"
+  const description = "毛孩生活用品限時優惠，通通抱回家不手軟~"
 
 
 
-  conn.query("INSERT INTO coupon (uid,discount_ratio,coupon_code,overdate,description) VALUES (?,?,?,?,?)",[uid,discount_ratio,coupon_code,overdate,description],(err, result) => {
-  if (err) {
-    console.error("資料庫錯誤:", err);
-    return res.status(500).send("新增失敗");
-  }
-  res.json({ message: "新增成功", result });
-});
+  conn.query("INSERT INTO coupon (uid,discount_ratio,coupon_code,overdate,description) VALUES (?,?,?,?,?)", [uid, discount_ratio, coupon_code, overdate, description], (err, result) => {
+    if (err) {
+      console.error("資料庫錯誤:", err);
+      return res.status(500).send("新增失敗");
+    }
+    res.json({ message: "新增成功", result });
+  });
 })
 
 
 
 
-app.post("/post/newusercoupon3/:uid",function(req,res){
+app.post("/post/newusercoupon3/:uid", function (req, res) {
   const uid = req.params.uid
   const discount_ratio = "0.88"
   const coupon_code = "wowmeow2025"
   const overdate = "2026-10-13"
-  const description	= "毛小孩用品大採購，現在就是最佳時機!"
+  const description = "毛小孩用品大採購，現在就是最佳時機!"
 
 
 
-  conn.query("INSERT INTO coupon (uid,discount_ratio,coupon_code,overdate,description) VALUES (?,?,?,?,?)",[uid,discount_ratio,coupon_code,overdate,description],(err, result) => {
-  if (err) {
-    console.error("資料庫錯誤:", err);
-    return res.status(500).send("新增失敗");
-  }
-  res.json({ message: "新增成功", result });
-});
+  conn.query("INSERT INTO coupon (uid,discount_ratio,coupon_code,overdate,description) VALUES (?,?,?,?,?)", [uid, discount_ratio, coupon_code, overdate, description], (err, result) => {
+    if (err) {
+      console.error("資料庫錯誤:", err);
+      return res.status(500).send("新增失敗");
+    }
+    res.json({ message: "新增成功", result });
+  });
 })
 
 
@@ -1108,10 +1147,10 @@ app.get('/get/recommend-products', (req, res) => {
     params.push(pet_type);
   }
 
- if (product_category) {
-  sql += ` AND FIND_IN_SET(?, p.categories)`;
-  params.push(product_category);
- }
+  if (product_category) {
+    sql += ` AND FIND_IN_SET(?, p.categories)`;
+    params.push(product_category);
+  }
 
   // 隨機取三筆
   sql += ` AND p.condition = 'new'`;
@@ -1272,7 +1311,7 @@ WHERE p.condition = 'second'
     } else {
       console.log("http://localhost:8000/post/productsreach/second 被post連線");
       // console.log(JSON.parse(rows[0].images)[0].img_path );
-      
+
       res.json(rows); // 正確回傳結果給前端
     }
   })
@@ -2525,7 +2564,7 @@ app.get('/channel/:uid', (req, res) => {
       // 格式化成「上午10:22」这种 zh-TW 时间
       lastTime: room.lastTime
         ? new Date(room.lastTime)
-            .toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' })
+          .toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' })
         : null,
       snippet: room.snippet
     }));
@@ -2765,4 +2804,4 @@ app.post("/cart/add", async (req, res) => {
   }
 });
 
-  module.exports = { q };//匯出q給payment使用
+module.exports = { q };//匯出q給payment使用

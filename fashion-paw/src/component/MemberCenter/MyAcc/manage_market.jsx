@@ -9,18 +9,21 @@ import PawDisplay from '../../ProductDetailPage/PawDisplay';
 const BASE_URL = 'http://localhost:8000'
 
 export default class ManageMarket extends Component {
-  state = {
-    second_product: [],
-    searchTerm: '',
-    page: 1,
-    pageSize: 5,
-    loading: false,
-    error: null,
-    showModal: false,
-    ModalState: 'Add', // 'Add' | 'Find' | 'Edit'
-    thisIndex: -1
+  constructor(props) {
+    super(props)
+    this.selectRef = React.createRef(); 
+    this.state = {
+      second_product: [],
+      searchTerm: '',
+      page: 1,
+      pageSize: 5,
+      loading: false,
+      error: null,
+      showModal: false,
+      ModalState: 'Add', // 'Add' | 'Find' | 'Edit'
+      thisIndex: -1
+    }
   }
-
   componentDidMount() {
     this.loadData()
   }
@@ -137,6 +140,33 @@ export default class ManageMarket extends Component {
     }
   }
 
+  calladmin = (value) => {
+  let speakerID = Cookies.get("user_uid");
+  
+  // 確保 selectRef.current 存在且有值
+  if (this.selectRef.current) {
+    let message = encodeURIComponent(value + " " + this.selectRef.current.value);
+
+    axios.post(`http://localhost:8000/post/calladmin/${speakerID}/${message}`)
+      .then((response) => {
+        console.log("發送成功:", response.data);
+      })
+      .catch((error) => {
+        console.error("查詢失敗:", error);
+      });
+  } else {
+    console.error("選擇框尚未渲染，無法獲取選中的值");
+  }
+}
+
+
+
+
+
+
+
+
+
   handleSearchChange = e =>
     this.setState({ searchTerm: e.target.value })
 
@@ -219,19 +249,19 @@ export default class ManageMarket extends Component {
                   <td><PawDisplay rating={Number(p.new_level)} /></td>
                   <td>{this.renderStatus(p.status)}</td>
                   <td>
-                    <button className="btn btn-primary btn-sm me-1" onClick={() => this.OpenFound(start+idx)}>查看</button>
-                    <button className="btn btn-warning btn-sm me-1" onClick={() => this.OpenEdit(start+idx)}>編輯</button>
-                    <button className="btn btn-danger btn-sm" onClick={() => this.Delete(start+idx)}>刪除</button>
+                    <button className="btn btn-primary btn-sm me-1" onClick={() => this.OpenFound(start + idx)}>查看</button>
+                    <button className="btn btn-warning btn-sm me-1" onClick={() => this.OpenEdit(start + idx)}>編輯</button>
+                    <button className="btn btn-danger btn-sm" onClick={() => this.Delete(start + idx)}>刪除</button>
                   </td>
                   <td>
-                    <select>
+                    <select ref={this.selectRef}>
                       <option value="">----選擇----</option>
-                      <option value="">無法出貨</option>
-                      <option value="">貨物損毀</option>
-                      <option value="">重複上架</option>
+                      <option value="無法出貨">無法出貨</option>
+                      <option value="貨物損毀">貨物損毀</option>
+                      <option value="重複上架">重複上架</option>
                     </select>
                     <p></p>
-                    <button className='btn btn-danger'>回報</button>
+                    <button className='btn btn-danger' onClick={() => this.calladmin(p.pd_name)}>回報</button>
                   </td>
                 </tr>
               ))}

@@ -112,7 +112,7 @@ class Register_Compute extends Component {
             });
     }
 
-    newusercoupon2=()=>{
+    newusercoupon2 = () => {
         let uid = this.state.uid;
 
         // 確保 uid 有被正確設置
@@ -130,7 +130,7 @@ class Register_Compute extends Component {
             });
     }
 
-    newusercoupon3=()=>{
+    newusercoupon3 = () => {
         let uid = this.state.uid;
 
         // 確保 uid 有被正確設置
@@ -141,13 +141,42 @@ class Register_Compute extends Component {
 
         axios.post(`http://localhost:8000/post/newusercoupon3/${uid}`).then(response => {
             console.log("新增成功！", response.data);
-            window.location.href = "/Login"
+            this.newuseraddress()
+            // window.location.href = "/Login"
         })
             .catch(error => {
                 console.error("新增失敗", error);
             });
 
     }
+
+
+    newuseraddress = () => {
+    const newuseraddress = {
+        uid: this.state.uid,
+        City: this.state.userinfo.city,
+        District: this.state.userinfo.district,
+        address: this.state.userinfo.adress,
+        AdressName: this.state.userinfo.userfullname,
+        AdressPhone: this.state.userinfo.phone
+    };
+
+    axios.post("http://localhost:8000/post/newuseraddress", newuseraddress)
+        .then(response => {
+            console.log("新增成功！", response.data);
+            window.location.href = "/Login";  // 成功後重定向
+        })
+        .catch(error => {
+            console.error("新增失敗", error);
+        });
+}
+
+
+
+
+
+
+
 
 
 
