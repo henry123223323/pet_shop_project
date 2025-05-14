@@ -64,6 +64,12 @@ var conn = mysql.createConnection({
 });
 conn.connect(err => console.log(err || 'DB connected'));
 const q = util.promisify(conn.query).bind(conn);
+// 2. helper：把屬性物件轉成二維陣列
+function buildAttrValues(pid, attrs) {
+  return Object.entries(attrs)
+    .filter(([_, v]) => v != null && v !== '')   // 可選：只插有值的屬性
+    .map(([k, v]) => [pid, k, v]);
+}
 app.use('/verify', verifyRoutes);
 
 //付款綠界API
@@ -1372,52 +1378,62 @@ app.get('/delete/collect/:uid/:pid', function (req, res) {
 })
 
 //後台管理 賣家個人商場api
+// --- 取得二手商品（含所有圖片） ---
 app.get('/get/my-second-products', async (req, res) => {
   const uid = req.get('X-UID')
   if (!uid) return res.status(400).json({ error: '請帶入 X-UID' })
 
-  const sql = `
-    SELECT
-      p.uid,
-      p.pid,
-      p.pd_name,
-      p.price,
-      p.categories,
-      p.new_level       AS p_new_level,
-      p.status,
-      p.description,
-      p.city,
-      p.district,
-      p.pet_type,
-      p.stock,
-      -- Pivot 方式取出屬性
-      MAX(CASE WHEN pa.attr = 'brand' THEN pa.attr_value END)        AS brand,
-      MAX(CASE WHEN pa.attr = 'pattern' THEN pa.attr_value END)      AS pattern,
-      MAX(CASE WHEN pa.attr = 'name' THEN pa.attr_value END)         AS name,
-      MAX(CASE WHEN pa.attr = 'model' THEN pa.attr_value END)        AS model,
-      MAX(CASE WHEN pa.attr = 'buydate' THEN pa.attr_value END)      AS buydate,
-      MAX(CASE WHEN pa.attr = 'new_level' THEN pa.attr_value END)    AS attr_new_level,
-      MAX(CASE WHEN pa.attr = 'size' THEN pa.attr_value END)         AS size,
-      MAX(CASE WHEN pa.attr = 'color' THEN pa.attr_value END)        AS color,
-      MAX(CASE WHEN pa.attr = 'weight' THEN pa.attr_value END)       AS weight,
-      MIN(pi.img_path)                                               AS img_path
-    FROM productslist p
-    LEFT JOIN product_attribute pa ON p.pid = pa.pid
-    LEFT JOIN(
-      SELECT pid, MIN(img_path) AS img_path
-      FROM product_image
-      GROUP BY pid
-    ) pi ON p.pid = pi.pid
-    WHERE p.uid = ? AND p.\`condition\` = 'second'
-    GROUP BY p.uid, p.pid, p.pd_name, p.price, p.categories,
-             p.new_level, p.status, p.description, p.city,
-             p.district, p.pet_type, p.stock;
-  `;
-
   try {
-    const rows = await q(sql, [uid]);
-    const host = `${req.protocol}://${req.get('host')}`;
-    const data = rows.map(r => ({
+    // a. 先撈商品本體＋屬性（Pivot）
+    const sqlProd = `
+      SELECT
+        p.uid, p.pid, p.pd_name, p.price, p.categories,
+        p.new_level AS p_new_level, p.status, p.description,
+        p.city, p.district, p.pet_type, p.stock,
+        MAX(CASE WHEN pa.attr='brand'      THEN pa.attr_value END) AS brand,
+        MAX(CASE WHEN pa.attr='pattern'    THEN pa.attr_value END) AS pattern,
+        MAX(CASE WHEN pa.attr='name'       THEN pa.attr_value END) AS name,
+        MAX(CASE WHEN pa.attr='model'      THEN pa.attr_value END) AS model,
+        MAX(CASE WHEN pa.attr='buydate'    THEN pa.attr_value END) AS buydate,
+        MAX(CASE WHEN pa.attr='new_level'  THEN pa.attr_value END) AS attr_new_level,
+        MAX(CASE WHEN pa.attr='size'       THEN pa.attr_value END) AS size,
+        MAX(CASE WHEN pa.attr='color'      THEN pa.attr_value END) AS color,
+        MAX(CASE WHEN pa.attr='weight'     THEN pa.attr_value END) AS weight
+      FROM productslist p
+      LEFT JOIN product_attribute pa ON p.pid=pa.pid
+      WHERE p.uid=? AND p.\`condition\`='second'
+      GROUP BY p.pid;
+    `
+    const prods = await q(sqlProd, [uid])
+
+    // b. 撈出這些 pid 所有對應的圖片
+    const pids = prods.map(r => r.pid)
+    const imgRows = pids.length
+      ? await q(
+        `SELECT pd_img_id AS id, pid, img_path, img_value
+             FROM product_image
+            WHERE pid IN (?)`,
+        [pids]
+      )
+      : []
+
+    // c. 把同一個 pid 的圖片聚合成陣列
+    const host = `${req.protocol}://${req.get('host')}`
+    const imagesMap = {}
+    imgRows.forEach(img => {
+      // 清掉 ../，加上 host
+      const clean = img.img_path.replace(/^\.\.\//, '')
+      const url = clean.startsWith('http') ? clean : `${host}${clean}`
+      imagesMap[img.pid] = imagesMap[img.pid] || []
+      imagesMap[img.pid].push({
+        id: img.id,
+        img_value: img.img_value,
+        img_path: url
+      })
+    })
+
+    // d. 最後組成前端要的格式
+    const data = prods.map(r => ({
       uid: r.uid,
       pid: r.pid,
       pd_name: r.pd_name,
@@ -1441,176 +1457,166 @@ app.get('/get/my-second-products', async (req, res) => {
         color: r.color || '',
         weight: r.weight || ''
       },
-      imageUrl: r.img_path ? `${host}${r.img_path}` : null
-    }));
-    res.json(data);
+      images: imagesMap[r.pid] || []   // ← 這裡回傳所有圖片
+    }))
+
+    res.json(data)
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: err.message });
+    console.error(err)
+    res.status(500).json({ error: err.message })
   }
-});
+})
 
-// ── (2) 新增二手商品 ─────────────────────────────────────────
-app.post('/get/my-second-products', upload, async (req, res) => {
-  const uid = req.get('X-UID');
-  if (!uid) return res.status(400).json({ error: '請帶入 X-UID' });
+app.post(
+  '/get/my-second-products',
+  upload,
+  async (req, res) => {
+    const uid = req.get('X-UID');
+    if (!uid) return res.status(400).json({ error: '請帶入 X-UID' });
 
-  // 解析基本欄位與屬性
-  const {
-    pd_name, price, categories, new_level, status,
-    pet_type, description, stock, city, district,
-    'attribute.brand': brand = '',
-    'attribute.pattern': pattern = '',
-    'attribute.name': nameAttr = '',
-    'attribute.model': model = '',
-    'attribute.buydate': buydate = '',
-    'attribute.new_level': attrNewLevel = '',
-    'attribute.size': size = '',
-    'attribute.color': color = '',
-    'attribute.weight': weight = ''
-  } = req.body;
-
-  // 插入 productslist
-  const insertSql = `
-    INSERT INTO productslist
-      (uid, pd_name, price, categories, new_level, status, \`condition\`, pet_type, description, stock, city, district)
-    VALUES (?, ?, ?, ?, ?, ?, 'second', ?, ?, ?, ?, ?)
-  `;
-
-  try {
-    const { insertId: pid } = await q(insertSql, [
-      uid, pd_name, price, categories, new_level, status,
-      pet_type, description, stock, city, district
-    ]);
-    console.log('新增後 pid=', pid);
-
-    // 處理屬性：EAV 批次 insert
-    const attrs = [
-      ['brand', brand],
-      ['pattern', pattern],
-      ['name', nameAttr],
-      ['model', model],
-      ['buydate', buydate],
-      ['new_level', attrNewLevel],
-      ['size', size],
-      ['color', color],
-      ['weight', weight]
-    ];
-    const attrRows = attrs
-      .filter(([, val]) => val !== undefined && val !== '')
-      .map(([attr, val]) => [pid, attr, val]);
-
-    if (attrRows.length) {
-      await q(
-        'INSERT INTO product_attribute (pid, attr, attr_value) VALUES ?',
-        [attrRows]
-      );
-      console.log('成功寫入', attrRows.length, '筆 product_attribute');
-    }
-
-    // 處理圖片：先刪舊再批次新增
-    await q('DELETE FROM product_image WHERE pid = ?', [pid]);
-    let rawValues = req.body['img_value[]'] || req.body.img_value || [];
-    if (!Array.isArray(rawValues)) rawValues = [rawValues];
-
-    const imgRows = (req.files || []).map((file, i) => [
-      pid,
-      `/media/second_pd/${file.filename}`,
-      rawValues[i] || ''
-    ]);
-    if (imgRows.length) {
-      await q(
-        'INSERT INTO product_image (pid, img_path, img_value) VALUES ?',
-        [imgRows]
-      );
-      console.log('成功寫入', imgRows.length, '筆圖片資料');
-    }
-
-    res.status(201).json({ pid });
-  } catch (e) {
-    console.error('上傳失敗：', e);
-    res.status(500).json({ error: e.message });
-  }
-});
-
-// ── (3) 編輯二手商品 ─────────────────────────────────────────
-app.put('/get/my-second-products/:pid', upload, async (req, res) => {
-  const uid = req.get('X-UID');
-  const pid = Number(req.params.pid);
-  if (!uid) return res.status(400).json({ error: '請帶入 X-UID' });
-
-  const {
-    pd_name, price, categories, new_level, status,
-    pet_type, description, stock, city, district,
-    'product_attribute.brand': brand,
-    'product_attribute.pattern': pattern,
-    'product_attribute.name': attrName,
-    'product_attribute.model': model,
-    'product_attribute.buydate': buydate,
-    'product_attribute.new_level': attrNewLevel,
-    'product_attribute.size': size,
-    'product_attribute.color': color,
-    'product_attribute.weight': weight
-  } = req.body;
-
-  try {
-    // 驗證
-    const exists = await q(
-      'SELECT 1 FROM productslist WHERE pid=? AND uid=? AND `condition`=?',
-      [pid, uid, 'second']
+    // 1. 插主表
+    const { pd_name, price, categories, new_level, status, pet_type, description, stock, city, district } = req.body;
+    const result = await q(
+      `INSERT INTO productslist 
+         (uid,pd_name,price,categories,new_level,status,pet_type,description,stock,city,district,\`condition\`)
+       VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`,
+      [uid, pd_name, price, categories, new_level, status, pet_type, description, stock, city, district, 'second']
     );
-    if (!exists.length) return res.status(404).json({ error: '找不到商品' });
+    const pid = result.insertId;
 
-    // 更新主表
+    // 2. 插屬性
+    const attrs = {
+      brand: req.body['attribute.brand'],
+      pattern: req.body['attribute.pattern'],
+      name: req.body['attribute.name'],
+      model: req.body['attribute.model'],
+      buydate: req.body['attribute.buydate'],
+      new_level: req.body['attribute.new_level'],
+      size: req.body['attribute.size'],
+      color: req.body['attribute.color'],
+      weight: req.body['attribute.weight']
+    };
+    const attrValues = buildAttrValues(pid, attrs);
+    if (attrValues.length) {
+      await q(
+        `INSERT INTO product_attribute (pid,attr,attr_value) VALUES ?`,
+        [attrValues]
+      );
+    }
+
+    // 3. 图片：有 ID 的更新、没 ID 的新增
+    const files = req.files || [];
+    const imageIdsArr = [].concat(req.body.image_id || []);   // 前端传回来的 pd_img_id 列表
+    const imgValuesArr = [].concat(req.body.img_value || []); // 前端传回来的 img_value 列表
+    const relRoot = 'public';
+
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const id = imageIdsArr[i];      // 如果是已有的 pd_img_id，就 UPDATE
+      const val = imgValuesArr[i] || '';
+      // 拼出你存到 DB 的路径
+      const rel = file.path.split(new RegExp(`[\\\\/]${relRoot}[\\\\/]`)).pop();
+      const img_path = '/' + rel.replace(/\\/g, '/');
+
+      if (id) {
+        // 有 ID → UPDATE
+        await q(
+          `UPDATE product_image
+         SET img_path=?, img_value=?
+       WHERE pd_img_id=?`,
+          [img_path, val, id]
+        );
+      } else {
+        // 没有 ID → INSERT
+        await q(
+          `INSERT INTO product_image (pid, img_path, img_value) VALUES (?, ?, ?)`,
+          [pid, img_path, val]
+        );
+      }
+    }
+
+    res.json({ success: true, pid });
+  }
+);
+
+app.put(
+  '/get/my-second-products/:pid',
+  upload,
+  async (req, res) => {
+    const uid = req.get('X-UID');
+    const pid = Number(req.params.pid);
+    if (!uid) return res.status(400).json({ error: '請帶入 X-UID' });
+    console.log('files:', req.files.map(f => f.filename))
+    console.log('body.image_id:', req.body['image_id[]'] || req.body.image_id)
+    console.log('body.img_value:', req.body['img_value[]'] || req.body.img_value)
+    // 1. 更新主表
+    const {
+      pd_name, price, categories, new_level, status,
+      pet_type, description, stock, city, district
+    } = req.body;
     await q(
       `UPDATE productslist SET
          pd_name=?, price=?, categories=?, new_level=?, status=?,
          pet_type=?, description=?, stock=?, city=?, district=?
-       WHERE pid=?`,
-      [
-        pd_name, price, categories, new_level, status,
+       WHERE pid=? AND uid=?`,
+      [pd_name, price, categories, new_level, status,
         pet_type, description, stock, city, district,
-        pid
-      ]
+        pid, uid]
     );
 
-    // 更新屬性表
-    const attrExists = await q('SELECT 1 FROM product_attribute WHERE pid=?', [pid]);
-    if (attrExists.length) {
+    // 2. 重插屬性
+    await q(`DELETE FROM product_attribute WHERE pid=?`, [pid]);
+    const attrs = {
+      brand: req.body['attribute.brand'],
+      pattern: req.body['attribute.pattern'],
+      name: req.body['attribute.name'],
+      model: req.body['attribute.model'],
+      buydate: req.body['attribute.buydate'],
+      new_level: req.body['attribute.new_level'],
+      size: req.body['attribute.size'],
+      color: req.body['attribute.color'],
+      weight: req.body['attribute.weight']
+    };
+    const attrValues = Object.entries(attrs).map(([k, v]) => [pid, k, v || '']);
+    if (attrValues.length) {
       await q(
-        `UPDATE product_attribute SET
-           brand=?, pattern=?, name=?, model=?, buydate=?, new_level=?, size=?, color=?, weight=?
-         WHERE pid=?`,
-        [brand, pattern, attrName, model, buydate, attrNewLevel, size, color, weight, pid]
-      );
-    } else {
-      await q(
-        `INSERT INTO product_attribute
-           (pid, brand, pattern, name, model, buydate, new_level, size, color, weight)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [pid, brand, pattern, attrName, model, buydate, attrNewLevel, size, color, weight]
+        `INSERT INTO product_attribute (pid,attr,attr_value) VALUES ?`,
+        [attrValues]
       );
     }
 
-    // 圖片處理
-    await q('DELETE FROM product_image WHERE pid=?', [pid]);
-    let rawValues = req.body['img_value[]'] || req.body.img_value || [];
-    if (!Array.isArray(rawValues)) rawValues = [rawValues];
-    const imgRows = (req.files || []).map((file, i) => [
-      pid, `/media/second_pd/${file.filename}`, rawValues[i] || ''
-    ]);
-    if (imgRows.length) {
-      await q('INSERT INTO product_image (pid, img_path, img_value) VALUES ?', [imgRows]);
+    // 3. 圖片：依 pd_img_id 判斷 UPDATE 或 INSERT
+    const imageIds = [].concat(req.body.image_id || []);
+    const imgValues = [].concat(req.body.img_value || []);
+    const files = req.files || [];
+    const relRoot = 'public';
+
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const id = imageIds[i];           // '' 或 pd_img_id
+      const val = imgValues[i] || '';    // <- 這裡預設空字串
+      const rel = file.path
+        .split(new RegExp(`[\\\\/]${relRoot}[\\\\/]`)).pop();
+      const img_path = '/' + rel.replace(/\\/g, '/');
+
+      if (id) {
+        await q(
+          `UPDATE product_image
+         SET img_path=?, img_value=?
+       WHERE pd_img_id=?`,
+          [img_path, val, id]
+        );
+      } else {
+        await q(
+          `INSERT INTO product_image (pid, img_path, img_value) VALUES (?, ?, ?)`,
+          [pid, img_path, val]
+        );
+      }
     }
 
-    // 回傳
-    res.json({ pid });
-  } catch (e) {
-    console.error('更新失敗：', e);
-    res.status(500).json({ error: e.message });
+    res.json({ success: true, pid });
   }
-});
-
+);
 
 
 
