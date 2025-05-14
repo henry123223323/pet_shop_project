@@ -141,7 +141,7 @@ class Register_Compute extends Component {
 
         axios.post(`http://localhost:8000/post/newusercoupon3/${uid}`).then(response => {
             console.log("新增成功！", response.data);
-            
+            window.location.href = "/Login"
         })
             .catch(error => {
                 console.error("新增失敗", error);
