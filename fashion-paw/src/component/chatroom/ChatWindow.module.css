@@ -177,9 +177,45 @@
   cursor: pointer;
 }
 .ellipsis {
-  white-space: nowrap;        /* 不換行 */
-  overflow: hidden;           /* 超出隱藏 */
-  text-overflow: ellipsis;    /* 超出變 … */
-  max-width: 100%;            /* 可依容器限制寬度 */
-  display: inline-block;      /* 為了讓 max-width 生效 */
+  display: block;
+  max-width: 100%;       /* 或設固定寬度例如 100px */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.typingBubble {
+  display: flex;
+  
+  align-items: center;
+  padding: 12px 12px;
+  background-color: #F5E1B0;
+  border-radius: 16px;
+  width: fit-content;
+  margin-left: 10px;
+}
+/* -------------------聊天室動畫 */
+.typingBubble span {
+  width: 10px;
+  height: 10px;
+  margin: 0 2px;
+  background: #888;
+  border-radius: 50%;
+  display: inline-block;
+  animation: bounce 1.2s infinite ease-in-out;
+}
+
+.typingBubble span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.typingBubble span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes bounce {
+  0%, 80%, 100% {
+    transform: scale(0.8);
+  }
+  40% {
+    transform: scale(1.4);
+  }
 }
