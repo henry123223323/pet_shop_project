@@ -1,5 +1,6 @@
 // src/context/CartContext.jsx
 import React, { Component, createContext } from 'react';
+import cookie from 'js-cookie';
 
 export const CartContext = createContext();
 
@@ -99,16 +100,25 @@ export class CartProvider extends Component {
     }
 
     addToCart = (newItem) => {
+        // const normalized = this.normalizeCartItem(newItem);
+        // console.log("🧪 加入購物車 normalized：", normalized);
         const normalized = this.normalizeCartItem(newItem);
-        console.log("✅ addToCart 正規化後的 uid：", normalized.uid, "condition:", normalized.condition);
+
+        // 比對 cartList 裡每一筆 pid=》字串vs數字
+        // this.state.cartList.forEach(item => {
+        //     console.log("🧪 比對中：", {
+        //         cart_pid: item.pid,
+        //         new_pid: normalized.pid,
+        //         equal: item.pid === normalized.pid
+        //     });
+        // });
+
 
         let result = 'new';
 
         this.setState((prevState) => {
             const existingIndex = prevState.cartList.findIndex(item =>
-                item.pid === normalized.pid &&
-                String(item.uid) === String(normalized.uid) &&
-                (item.spec || null) === (normalized.spec || null)
+                String(item.pid) === String(normalized.pid)
             );
 
             if (existingIndex !== -1) {
@@ -147,46 +157,42 @@ export class CartProvider extends Component {
 
     clearCart = () => this.setState({ cartList: [] });
 
-    //統一不同地方的命名
+
+
     normalizeCartItem = (item) => {
         if (item._normalized) return item;
 
-
-        //  抓圖片路徑
+        // 取圖路徑
         const rawPath =
-            (Array.isArray(item.images) && item.images[0]?.img_path) || // 圖片陣列（前端用）
-            item.img_path || // ✅ 後端撈出來的資料庫欄位
-            item.image || // 備援欄位
+            (Array.isArray(item.images) && item.images[0]?.img_path) ||
+            item.img_path ||
+            item.image ||
             null;
 
-
-        //  不加 IMAGE_HOST，直接用相對路徑
         const fullImagePath = rawPath || "/media/default/no-image.png";
-
-        // console.log("🧪 圖片處理", {
-        //     img_path: rawPath,
-        //     final: fullImagePath,
-        // });
         const cartId = String(item.cart_id || item.pid);
         const priceSource = item.price !== undefined ? item.price : item.unit_price;
         const parsedPrice = parseInt(priceSource, 10);
+
+        // ✨ 修正：買家 uid 從 cookie 抓，賣家 uid 從 item 中抓
+        const buyerUid = cookie.get('user_uid') || null;
+        const sellerUid = item.seller_uid || item.uid || null;
+        if (!item.image && item.img_path) {
+            item.image = item.img_path; // 確保至少一張圖片有值
+        }
         return {
             _normalized: true,
             cart_id: cartId,
             pid: item.pid,
-            // 🧑‍🛒 購物車擁有者（登入者 uid）→ 影響寫入資料庫
-            uid: item.uid ? String(item.uid) : null,
-
-            // 🏪 商品賣家（影響顯示 SellerTitle 區分）
-            seller_uid: item.seller_uid ? String(item.seller_uid) : null,
+            uid: buyerUid ? String(buyerUid) : null,         // 👉 買家
+            seller_uid: sellerUid ? String(sellerUid) : null, // 👉 賣家
             condition: item.condition || "new",
             quantity: item.quantity || 1,
             productName: item.pd_name || item.productName || item.name,
             unit_price: isNaN(parsedPrice) ? 0 : parsedPrice,
             image: fullImagePath,
-            //   color: item.attribute?.color || item.color || "無",
+            images: item.images || [],
         };
     };
-
 
 }

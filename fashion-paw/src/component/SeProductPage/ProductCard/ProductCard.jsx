@@ -43,10 +43,11 @@ export default function ProductCard(props) {
     pd_name: name,
     price,
     image: firstImg,
+    images:safeImages,
     condition: 'second',
     uid: String(uid),
   };
-
+ console.log("🛒 準備加入購物車的 product：", product)
   return (
     <div className={cls}>
       <div className={styles.imageWrapper}>
@@ -68,6 +69,7 @@ export default function ProductCard(props) {
           onClick={() => onToggleFavorite(id)}
           aria-label="切換收藏"
         />
+       
         <AddToCartBtn
           type="icon"
           product={product}

@@ -27,12 +27,20 @@ export default function ProductCard({
   //   onAddToCart(id);
   // };
 
-  const product = {
-    pid: id,
+const safeImages = Array.isArray(images) ? images : [];
+  const firstImg = safeImages[0]?.img_path || "/media/default/no-image.png";
+
+const product = {
+    pid: String(id),
     pd_name: name,
     price,
-    image: images?.[0]?.img_path
+    condition: 'new',            // ✅ 新品固定 condition
+    image: firstImg,             // ✅ 顯示用
+    images: safeImages,          // ✅ 提供 normalizeCartItem 判斷
+    quantity: 1
   };
+
+  
 
   return (
     <div className={cls} >
