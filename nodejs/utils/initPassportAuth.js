@@ -1,7 +1,6 @@
 const session = require('express-session');
 const passport = require('passport');
-const authGoogle = require('../routes/authGoogle'); 
-const authFacebook = require('../routes/authFacebook'); 
+
 
 require('./passportGoogle'); // 讀取 passport 策略設定
 require('./passportFacebook');
@@ -24,6 +23,10 @@ function initPassportAuth(app) {
   app.use(passport.session());
 
   // 3. 掛載 Google 登入路由
+  // ✅ 3. 延遲載入登入路由
+  const authGoogle = require('../routes/authGoogle');
+  const authFacebook = require('../routes/authFacebook');
+
   app.use('/auth', authGoogle);
   app.use('/auth', authFacebook);
 }
