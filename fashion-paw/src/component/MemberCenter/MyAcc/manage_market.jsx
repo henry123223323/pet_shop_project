@@ -10,7 +10,7 @@ const BASE_URL = 'http://localhost:8000'
 export default class ManageMarket extends Component {
   constructor(props) {
     super(props)
-    this.selectRef = React.createRef(); 
+    this.selectRef = React.createRef();
     this.state = {
       second_product: [],
       searchTerm: '',
@@ -123,23 +123,23 @@ export default class ManageMarket extends Component {
   }
 
   calladmin = (value) => {
-  let speakerID = Cookies.get("user_uid");
-  
-  // 確保 selectRef.current 存在且有值
-  if (this.selectRef.current) {
-    let message = encodeURIComponent(value + " " + this.selectRef.current.value);
+    let speakerID = Cookies.get("user_uid");
 
-    axios.post(`http://localhost:8000/post/calladmin/${speakerID}/${message}`)
-      .then((response) => {
-        console.log("發送成功:", response.data);
-      })
-      .catch((error) => {
-        console.error("查詢失敗:", error);
-      });
-  } else {
-    console.error("選擇框尚未渲染，無法獲取選中的值");
+    // 確保 selectRef.current 存在且有值
+    if (this.selectRef.current) {
+      let message = encodeURIComponent(value + " " + this.selectRef.current.value);
+
+      axios.post(`http://localhost:8000/post/calladmin/${speakerID}/${message}`)
+        .then((response) => {
+          console.log("發送成功:", response.data);
+        })
+        .catch((error) => {
+          console.error("查詢失敗:", error);
+        });
+    } else {
+      console.error("選擇框尚未渲染，無法獲取選中的值");
+    }
   }
-}
 
 
 
@@ -180,11 +180,20 @@ export default class ManageMarket extends Component {
         {/* 搜尋 & 新增 */}
         <div className="row mb-3">
           <div className="col-md-3">
-            <input type="search" className="form-control" placeholder="搜尋商品名稱"
-              value={searchTerm} onChange={this.handleSearchChange} />
-          </div>
-          <div className="col-md-3">
-            <button className="btn btn-outline-primary" onClick={this.OpenAdd}>上架二手商品</button>
+            <input
+              type="search"
+              className="form-control"
+              placeholder="搜尋商品名稱"
+              value={searchTerm}
+              onChange={this.handleSearchChange}
+            />
+            {/* 按鈕放同一 col，並加上 mt-2 */}
+            <button
+              className="btn btn-outline-primary mt-2 "
+              onClick={this.OpenAdd}
+            >
+              上架二手商品
+            </button>
           </div>
         </div>
 
