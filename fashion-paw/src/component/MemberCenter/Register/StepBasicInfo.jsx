@@ -95,7 +95,8 @@ class StepBasicInfo extends Component {
         const newState = {
             ... this.state.inputinfo, firstname: inputfirstname, username: inputusername,
             userfullname: fullname, lastname: inputlastname, adress: inputaddress, phone: inputphone,
-            birthday: inputbirthday, power: inputpower, syoukai: inputsyoukai
+            birthday: inputbirthday, power: inputpower, syoukai: inputsyoukai, provider: this.props.provider,
+            provider_id: this.props.provider_id
         }
         this.setState({
             inputinfo: newState
@@ -109,18 +110,15 @@ class StepBasicInfo extends Component {
 
     }
 
-
-
-
-
-
-
-
-
-
     render() {
+        const { provider } = this.props;
         return (
             <div className={styles.Wrapper}>
+                {provider && (
+                    <div style={{ color: "green", fontSize: "0.9rem" }}>
+                        系統偵測到您已使用 {provider} 登入，請完成資料以完成註冊。
+                    </div>
+                )}
                 <div className={styles.formRow}>
                     <label className={styles.label}>暱稱：</label>
                     <input name="username" className={styles.input} ref={this.inputusername} />
