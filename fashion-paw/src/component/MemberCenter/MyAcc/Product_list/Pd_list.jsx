@@ -7,17 +7,10 @@ import axios from 'axios';
 class PD_list extends Component {
     constructor(props) {
         super(props);
-        super(props);
         this.state = {
             showDetail: false,
             hasFetchedImage: false,
-            hasFetchedImage: false,
             order: {
-                ...props.product,
-                order_item: [],
-                pd_img: "../media/default.jpg"
-            }
-        };
                 ...props.product,
                 order_item: [],
                 pd_img: "../media/default.jpg"
@@ -60,21 +53,6 @@ class PD_list extends Component {
                 console.error("主圖查詢失敗:", error);
             });
     };
-        axios
-            .get(`http://localhost:8000/get/orderitemfirstpig/${this.props.product.order_id}`)
-            .then((response) => {
-                console.log("主圖查詢成功:", response.data);
-                this.setState(prevState => ({
-                    order: {
-                        ...prevState.order,
-                        pd_img: response.data[0]?.pd_img || "../media/default.jpg"
-                    }
-                }));
-            })
-            .catch((error) => {
-                console.error("主圖查詢失敗:", error);
-            });
-    };
 
 
 
@@ -86,13 +64,7 @@ class PD_list extends Component {
             this.props.product?.display_order_num !== prevProps.product?.display_order_num;
 
         if (changed) {
-        const changed =
-            this.props.product?.order_id !== prevProps.product?.order_id ||
-            this.props.product?.display_order_num !== prevProps.product?.display_order_num;
-
-        if (changed) {
             this.setState({ order: this.props.product }, () => {
-                this.getorderitem();
                 this.getorderitem();
                 this.getorderitemfirstpig();
                 console.log("更新 order 為:", this.props.product);
@@ -106,7 +78,6 @@ class PD_list extends Component {
             this.setState({ hasFetchedImage: true });
         }
         return (<>
-
 
 
             <div className="card p-4 mb-4 shadow-sm">
