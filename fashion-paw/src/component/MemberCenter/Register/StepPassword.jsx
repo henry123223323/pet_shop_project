@@ -40,16 +40,16 @@ class StepPassword extends Component {
             <div className={styles.Wrapper}>
                 <div className={styles.formRow}>
                     <label className={styles.label}>密碼：</label>
-                    <input name="password" className={styles.input} onInput={this.passwordinput} ref={this.inputpassword} />
+                    <input type='password' name="password" className={styles.input} onInput={this.passwordinput} ref={this.inputpassword} />
                 </div>
                 <div className={styles.formRow}>
                     <label className={styles.label}>確認密碼：</label>
-                    <input name="c_pwd" className={styles.input} onInput={this.cwdinput} />
+                    <input type='password' name="c_pwd" className={styles.input} onInput={this.cwdinput} />
                 </div>
                 <div className="text-center">
-                <button className={styles.nextBtn}
-                    onClick={this.PasswordComfirm} >下一步
-                </button>
+                    <button className={styles.nextBtn}
+                        onClick={this.PasswordComfirm} >下一步
+                    </button>
                 </div>
             </div>
         );

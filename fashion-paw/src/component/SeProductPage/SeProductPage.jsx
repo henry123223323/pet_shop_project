@@ -33,6 +33,12 @@ export default function SeProductPage() {
   useEffect(() => {
     const fetchData = async () => {
       if (SearchProducts) {
+        console.log(typeof (SearchProducts[0].images));
+        SearchProducts.forEach(element => {
+          element.images = JSON.parse(element.images)
+        });
+        console.log(typeof (SearchProducts[0].images));
+
         // 1. 有搜尋結果：直接塞入
         setProducts(SearchProducts);
         setcitytownarray(
@@ -70,7 +76,7 @@ export default function SeProductPage() {
 
     // **⚠️ 這裡要在外層呼叫一次**，才會每次 SearchProducts 變動就執行
     fetchData();
-  }, [SearchProducts]);
+  }, [location.state]);
 
   useEffect(() => {
     async function fetchData() {
