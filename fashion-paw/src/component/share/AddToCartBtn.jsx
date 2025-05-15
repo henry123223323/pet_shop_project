@@ -10,17 +10,24 @@ class AddToCartBtn extends Component {
     const { type } = this.props;
 
     return (
-      <div className='d-flex align-items-center my-3'>
-        <button
-          className={`btn paw-btn-pink paw-text-lightorange rounded-pill mx-3 ${styles.textShadow} ${styles.cartBtn}`}
-          onClick={this.addToCart}
-        >
-          {type === "text" ? "加入購物車" : (
+      <div className='d-flex align-items-center mt-1 mr-3'>
+        {type === "text" ? (
+          <button
+            className={` ${styles.cartBtn} ${styles.bgbtn}`}
+            onClick={this.addToCart}
+          >
+            加入購物車
+          </button>
+        ) : (
+          <button
+            className={`mx-3 ${styles.iconBtn}`}
+            onClick={this.addToCart}
+          >
             <i className="bi bi-cart" style={{ fontSize: this.props.size || "20px" }}></i>
-          )}
-
-        </button>
+          </button>
+        )}
       </div>
+
     );
   }
 

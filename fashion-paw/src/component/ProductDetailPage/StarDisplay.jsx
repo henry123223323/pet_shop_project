@@ -1,6 +1,6 @@
 // PawDisplay.jsx
 import React, { Component } from 'react';
-import star_yellow from './image/star_yellow.svg'; // 黃色星星
+import star_yellow from './image/Star y 6 .svg'; // 黃色星星
 import star_grey from './image/star_grey.svg';    // 灰色星星
 
 class StarDisplay extends Component {

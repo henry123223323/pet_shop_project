@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Switch, Link } from 'react-router-dom';
 import ThirdLogin from './Third_login';
 import cookie from "js-cookie";
 import axios from 'axios';
+import styles from './Login_Compute.module.css'
 
 class Login_Compute extends Component {
     constructor(props) {
@@ -15,7 +16,7 @@ class Login_Compute extends Component {
                 minHeight: '550px',
                 textAlign: 'center',
                 marginTop: '100px',
-                uid:''
+                uid: ''
             }
         }
         this.logintest = this.logintest.bind(this);
@@ -28,64 +29,62 @@ class Login_Compute extends Component {
             alert("請輸入資料")
         } else if (email === "") {
             alert("請輸入帳號")
-        } else if(password === "") {
+        } else if (password === "") {
             alert("請輸入密碼")
-        }else
-        {
+        } else {
             axios.get("http://localhost:8000/get/userinfo")
-            .then(response => {
-                //response.data 是陣列，遍歷每一個使用者
-                const user = response.data.find(user => user.email === email);
-                
-                if (user) {
-                    // console.log(user.power);
-                    this.state.power = user.power
-                    
-                    
-                    this.state.uid = user.uid
-                    this.setState({})
-                    console.log(this.state.uid);
-                    console.log(this.state.power);
-                    cookie.set('user_uid', user.uid, { expires: 1 ,SameSite:'Lax'})
-                    cookie.set('user_power', user.power, { expires: 1 ,SameSite:'Lax'})
-                    console.log('成功設置cookie',cookie.get('user_uid'));
-                    console.log('成功設置cookie',cookie.get('user_power'));
-                    window.location.href = "/";
-                    
-                } else {
-                    alert("email或密碼錯誤")
-                }
-            })
-            .catch(error => {
-                console.error('錯誤:', error);
-            });
+                .then(response => {
+                    //response.data 是陣列，遍歷每一個使用者
+                    const user = response.data.find(user => user.email === email);
+
+                    if (user) {
+                        // console.log(user.power);
+                        this.state.power = user.power
+
+
+                        this.state.uid = user.uid
+                        this.setState({})
+                        console.log(this.state.uid);
+                        console.log(this.state.power);
+                        cookie.set('user_uid', user.uid, { expires: 1, SameSite: 'Lax' })
+                        cookie.set('user_power', user.power, { expires: 1, SameSite: 'Lax' })
+                        console.log('成功設置cookie', cookie.get('user_uid'));
+                        console.log('成功設置cookie', cookie.get('user_power'));
+                        window.location.href = "/";
+
+                    } else {
+                        alert("email或密碼錯誤")
+                    }
+                })
+                .catch(error => {
+                    console.error('錯誤:', error);
+                });
+        }
     }
-}
 
     render() {
         let { show } = this.state
         return (
             <React.Fragment>
-                <div style={this.state.stylelist} className='col-md-6 col-12'>
-                    <h1 className="text-center">登入</h1>
-                    <div className="fs-2 text-center">
-                        <form onSubmit={this.logintest}>
-                            <label htmlFor="email">帳號(email):</label>
-                            <input type="email" id="email" ref={this.email} />
-                            <p></p>
-                            <label htmlFor="password">密碼:</label>
-                            <input type="password" id="password" ref={this.password}/>
-                            <p></p>
-                            <input type="submit" className="btn paw-btn-primary" value="登入" />
-                        </form>
+                <div className={styles.loginCard}>
+                    <h1 className={styles.loginTitle}>登入</h1>
+                    <form className={styles.loginForm} onSubmit={this.logintest}>
+                        <label htmlFor="email" className={styles.textAP}>Email帳號：</label>
+                        <input type="email" id="email" ref={this.email} className={styles.inputField} />
+
+                        <label htmlFor="password" className={styles.textAP}>密碼：</label>
+                        <input type="password" id="password" ref={this.password} className={styles.inputField} />
+
+                        <input type="submit" value="登入" className={styles.submitButton} />
+                    </form>
+                    <div className={styles.forgetunregi}>
+                        <a href="#" onClick={() => this.setState({ show: true })} className={styles.link}>忘記密碼</a>
+                        <a href="/Register" className={styles.link}>註冊帳號</a>
                     </div>
 
-                    <a href='#' onClick={() => this.setState({ show: true })}>忘記密碼</a>
-                    <br />
-                    <a href="/Register">我還沒註冊帳號</a><br /><br />
-                    <hr />
                     <ThirdLogin />
                 </div>
+
                 {show && (
                     <div className="modal show fade d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
                         <div className="modal-dialog modal-dialog-scrollable" style={{ maxHeight: '80vh' }}>

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
+import styles from './StepEmail.module.css'
 
 class StepEmail extends Component {
     constructor(props) {
@@ -23,7 +24,7 @@ class StepEmail extends Component {
         this.timer = setInterval(() => {
             this.setState({ timeNow: Date.now() });
         }, 1000);
-        
+
     }
 
     componentWillUnmount() {
@@ -108,7 +109,7 @@ class StepEmail extends Component {
                 this.setState({ status: '❌ 驗證失敗：' + response.data.message });
             }
         } catch (error) {
-            this.setState({ status: '❌ 驗證失敗（伺服器錯誤）'})
+            this.setState({ status: '❌ 驗證失敗（伺服器錯誤）' })
             console.log(error);
             ;
         } finally {
@@ -129,34 +130,30 @@ class StepEmail extends Component {
         //         : `❌ 驗證碼已過期`
         //     : null;
         return (
-            <fieldset className="border mt-3">
-                <legend>Email</legend>
-
-                {/* Email 輸入 */}
-                <div className='d-flex justify-content-center align-items-center m-2'>
-                    <label>電子郵件(email)</label>
+            <div className={styles.Wrapper}>
+                <div className={styles.formRow}>
+                    <label className={styles.label}>Email：</label>
                     <input
                         name="email"
                         type="email"
-                        className="form-control w-50 m-2"
+                        className={styles.input}
                         value={email}
                         onChange={(e) => this.setState({ email: e.target.value })}
                         ref={this.gotoemail}
                     />
                 </div>
 
-                {/* 驗證碼輸入 + 按鈕 */}
-                <div className='d-flex justify-content-center align-items-center m-2'>
-                    <label htmlFor="verify" className='mx-3'>驗證碼</label>
+                <div className={styles.formRow}>
+                    <label htmlFor="verify" className={styles.label}>驗證碼：</label>
                     <input
                         type="text"
                         name="verify"
-                        className="form-control w-25 mx-4"
+                        className={`${styles.input} ${styles.verifyInput}`}
                         value={code}
                         onChange={(e) => this.setState({ code: e.target.value })}
                     />
                     <button
-                        className="btn btn-outline-primary me-2"
+                        className={styles.verifyBtn}
                         onClick={this.sendVerifyCode}
                         disabled={sending || cooldown > 0}
                     >
@@ -164,10 +161,9 @@ class StepEmail extends Component {
                     </button>
                 </div>
 
-                {/* 驗證按鈕 */}
-                <div className="mt-3">
+                <div className="text-center">
                     <button
-                        className="btn btn-primary"
+                        className={styles.nextBtn}
                         onClick={this.checkVerifyCode}
                         disabled={verifying}
                     >
@@ -175,10 +171,10 @@ class StepEmail extends Component {
                     </button>
                 </div>
 
-                {/* 狀態顯示 */}
-                {status && <p className="text-secondary mt-2">{status}</p>}
+                {status && <p className={styles.status}>{status}</p>}
+
                 {/* {expireDisplay && <p className="text-danger">{expireDisplay}</p>} */}
-            </fieldset>
+            </div>
         );
     }
 }
