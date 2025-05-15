@@ -323,7 +323,7 @@ export default function ChatApp() {
 
         <div className={styles.quickBtns}>
           <button onClick={() => setInput('熱門商品TOP3')}>熱門商品TOP3</button>
-          <button onClick={() => setInput('尋找商品:')}>尋找商品</button>
+          <button onClick={() => setInput('尋找商品 ')}>尋找商品</button>
         </div>
 
         <div className={styles.inputArea}>
