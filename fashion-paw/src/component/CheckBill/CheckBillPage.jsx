@@ -11,8 +11,10 @@ import CBstyles from './CheckBillPage.module.css';
 
 
 
+
 class CheckBillPage extends Component {
   state = {
+    uid: cookie.get('user_uid'),
     selectedItems: [],
     discountAmount: 0,
     showDetails: false,
@@ -20,7 +22,6 @@ class CheckBillPage extends Component {
     payMethod: '',        // 來自 PayWay
     receiptData: {},      // 來自 Receipt
   }
-
   render() {
 
     const selectedItems = JSON.parse(localStorage.getItem('selectedItems') || '[]');
@@ -148,6 +149,8 @@ class CheckBillPage extends Component {
   componentDidMount() {
     const fromCart = localStorage.getItem("fromCart") === "true";
     const selectedItems = JSON.parse(localStorage.getItem('selectedItems')) || [];
+    const uid = cookie.get("user_uid");
+      console.log("目前使用者",uid)
 
     if (!fromCart || selectedItems.length === 0) {
       alert("請先從購物車選擇商品");
@@ -204,6 +207,8 @@ class CheckBillPage extends Component {
 
 
     const uid = cookie.get("user_uid");
+      console.log("目前使用者",uid)
+
     //更新載具
     if (receiptData.rememberCarrier && receiptData.phoneCarrier) {
       await axios.post('http://localhost:8000/updateDevice', {
@@ -251,7 +256,7 @@ class CheckBillPage extends Component {
 
     const orderId = "HSM" + Date.now();
     const orderData = {
-      uid: 205, // 模擬登入用戶
+      uid: uid, 
       order_type: selectedItems[0]?.condition,
       display_order_num: orderId,
       total_price: finalTotal,
