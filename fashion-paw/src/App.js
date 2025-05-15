@@ -48,10 +48,10 @@ function App() {
             <Route path="/MemberCenter" component={MemberCenter} />
             <Route path="/Login" component={Login} />
             <Route path="/Register" component={Register} />
-            <Route path="/ProductPage" component={ProductPage} exact />
+            <Route path="/ProductPage/:pid" component={NewPdDetail} exact/>
+            <Route path="/ProductPage" component={ProductPage} />
             <Route path="/SeProductPage" component={SeProductPage} exact />
             <Route path="/product/:pid" component={ProductRouter} exact />
-            <Route path="/ProductPage/:pid" component={NewPdDetail} exact />
             <Route path="/SeProductPage/:pid" component={SecondPdDetail} exact />
             <Route path="/ShoppingCartPage" component={ShoppingCartPage} exact />
             <Route path="/CheckBillPage" component={CheckBillPage} exact />

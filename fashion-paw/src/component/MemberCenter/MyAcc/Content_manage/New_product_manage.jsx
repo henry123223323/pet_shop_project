@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import MarketModal from '../market_manage/Market_Modal';
 import Pagination from './Page_manage';
-
+import { Link } from 'react-router-dom';
 export default class New_Products_Manage extends Component {
   state = {
     showModal: false,
@@ -134,14 +134,14 @@ export default class New_Products_Manage extends Component {
 
   // 顯示類別
   renderCategory = cat =>
-    ({
-      pet_food: '飼料',
-      complementary_food: '副食',
-      snacks: '零食',
-      Health_Supplements: '保健食品',
-      Living_Essentials: '生活家居',
-      toys: '玩具'
-    }[cat] || cat);
+  ({
+    pet_food: '飼料',
+    complementary_food: '副食',
+    snacks: '零食',
+    Health_Supplements: '保健食品',
+    Living_Essentials: '生活家居',
+    toys: '玩具'
+  }[cat] || cat);
 
   render() {
     const {
@@ -195,15 +195,15 @@ export default class New_Products_Manage extends Component {
                 <td>
                   {p.imageUrl
                     ? <img
-                        src={p.imageUrl}
-                        alt={p.pd_name}
-                        style={{
-                          width: 80,
-                          height: 80,
-                          objectFit: 'cover',
-                          borderRadius: 4
-                        }}
-                      />
+                      src={p.imageUrl}
+                      alt={p.pd_name}
+                      style={{
+                        width: 80,
+                        height: 80,
+                        objectFit: 'cover',
+                        borderRadius: 4
+                      }}
+                    />
                     : <span className="text-muted">無圖</span>
                   }
                 </td>
@@ -212,20 +212,20 @@ export default class New_Products_Manage extends Component {
                 <td>{this.renderCategory(p.categories)}</td>
                 <td>{this.renderStatus(p.status)}</td>
                 <td>
-                  <button
-                    className="btn btn-primary btn-sm me-1"
-                    onClick={() => this.OpenFound(startIndex + idx)}
+                  <a
+                    href={`/product/${p.pid}`}        // 原生 a 會整頁載入
+                    className="btn btn-primary btn-sm ml-1"
                   >
                     查看
-                  </button>
+                  </a>
                   <button
-                    className="btn btn-warning btn-sm me-1"
+                    className="btn btn-warning btn-sm ml-1"
                     onClick={() => this.OpenEdit(startIndex + idx)}
                   >
                     編輯
                   </button>
                   <button
-                    className="btn btn-danger btn-sm"
+                    className="btn btn-danger btn-sm ml-1"
                     onClick={() => this.Delete(startIndex + idx)}
                   >
                     刪除
