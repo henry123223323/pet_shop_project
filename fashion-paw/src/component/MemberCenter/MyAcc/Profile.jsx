@@ -168,7 +168,16 @@ class Profile extends Component {
                     )}<br />
 
                     <label className='pb2'>生日:</label>
-                    <span className='p2'>{this.state.birthday}</span>
+                    <span className='p2'>{new Date(this.state.birthday).toLocaleString('zh-TW', {
+                                    timeZone: 'Asia/Taipei',
+                                    year: 'numeric',
+                                    month: '2-digit',
+                                    day: '2-digit',
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                    second: '2-digit',
+                                    hour12: false
+                                }).replace(/\//g, '-')}</span>
 
                 </div>
 

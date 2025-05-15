@@ -6,34 +6,16 @@ import axios from 'axios';
 
 class PD_list extends Component {
     constructor(props) {
-        super(props)
+        super(props);
         this.state = {
             showDetail: false,
+            hasFetchedImage: false,
             order: {
-                ordernum: "000000002",
-                neworsecond: "second",
-                orderdate: new Date().toLocaleDateString() + new Date().toLocaleTimeString(),
-                orderstate: "已寄件",
-                price: 25500,
-                pd_img: "/media/member_center/catfood.jpg",
-                order_item: [
-                    {
-                        pid: "3",
-                        pd_name: "health",
-                        quantity: 2,
-                        unit_price: 100,
-                        img_path: "/media/member_center/catfood.jpg"
-                    },
-                    {
-                        pid: "4",
-                        pd_name: "snacks",
-                        quantity: 2,
-                        unit_price: 100,
-                        img_path: "/media/member_center/catfood.jpg"
-                    }
-                ]
+                ...props.product,
+                order_item: [],
+                pd_img: "../media/default.jpg"
             }
-        }
+        };
     }
 
     getorderitem = () => {
@@ -56,34 +38,34 @@ class PD_list extends Component {
 
 
     getorderitemfirstpig = () => {
-  axios
-    .get(`http://localhost:8000/get/orderitemfirstpig/${this.props.product.order_id}`)
-    .then((response) => {
-      console.log("主圖查詢成功:", response.data);
-      this.setState(prevState => ({
-        order: {
-          ...prevState.order,
-          pd_img: response.data[0]?.pd_img || "../media/default.jpg"
-        }
-      }));
-    })
-    .catch((error) => {
-      console.error("主圖查詢失敗:", error);
-    });
-};
+        axios
+            .get(`http://localhost:8000/get/orderitemfirstpig/${this.props.product.order_id}`)
+            .then((response) => {
+                console.log("主圖查詢成功:", response.data);
+                this.setState(prevState => ({
+                    order: {
+                        ...prevState.order,
+                        pd_img: response.data[0]?.pd_img || "../media/default.jpg"
+                    }
+                }));
+            })
+            .catch((error) => {
+                console.error("主圖查詢失敗:", error);
+            });
+    };
 
 
 
 
 
     componentDidUpdate(prevProps) {
-        // 只有在 order_id 改變時才呼叫 getorderitem()
-        if (
-            this.props.product &&
-            (!prevProps.product || this.props.product.order_id !== prevProps.product.order_id)
-        ) {
+        const changed =
+            this.props.product?.order_id !== prevProps.product?.order_id ||
+            this.props.product?.display_order_num !== prevProps.product?.display_order_num;
+
+        if (changed) {
             this.setState({ order: this.props.product }, () => {
-                this.getorderitem(); // 在 setState 完成後才執行，避免競爭狀態
+                this.getorderitem();
                 this.getorderitemfirstpig();
                 console.log("更新 order 為:", this.props.product);
             });
@@ -91,7 +73,12 @@ class PD_list extends Component {
     }
 
     render() {
+        if (!this.state.hasFetchedImage && this.props.product?.order_id) {
+            this.getorderitemfirstpig();
+            this.setState({ hasFetchedImage: true });
+        }
         return (<>
+
 
             <div className="card p-4 mb-4 shadow-sm">
                 <div className="row align-items-center">
@@ -110,7 +97,18 @@ class PD_list extends Component {
                             </div>
                             <div className="col-md-3 col-6">
                                 <strong>訂單日期</strong><br />
-                                {this.state.order.orderdate}
+                                {new Date(this.state.order.orderdate).toLocaleString('zh-TW', {
+                                    timeZone: 'Asia/Taipei',
+                                    year: 'numeric',
+                                    month: '2-digit',
+                                    day: '2-digit',
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                    second: '2-digit',
+                                    hour12: false
+                                }).replace(/\//g, '-')}
+
+
                             </div>
                             <div className="col-md-2 col-6">
                                 <strong>訂單狀態</strong><br />
@@ -141,9 +139,16 @@ class PD_list extends Component {
         </>
         );
     }
-    WatchDetail = (event) => {
-        this.setState({ showDetail: !this.state.showDetail })
-    }
+    WatchDetail = () => {
+        const toggle = !this.state.showDetail;
+
+        this.setState({ showDetail: toggle }, () => {
+            if (toggle) {
+                this.getorderitem();
+                this.getorderitemfirstpig();
+            }
+        });
+    };
 }
 
 export default PD_list;

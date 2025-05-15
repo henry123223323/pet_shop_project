@@ -811,7 +811,7 @@ app.get("/get/useruid/:email", function (req, res) {
 app.post("/post/newusercoupon/:uid", function (req, res) {
   const uid = req.params.uid
   const discount_ratio = "0.85"
-  const coupon_code = "meow2025"
+  const coupon_code = "汪喵放送中"
   const overdate = "2026-10-13"
   const description = "折扣直送毛孩圈，每一件都超值"
 
@@ -871,7 +871,7 @@ app.post("/post/newuseraddress", function (req, res) {
 app.post("/post/newusercoupon2/:uid", function (req, res) {
   const uid = req.params.uid
   const discount_ratio = "0.77"
-  const coupon_code = "wow2025"
+  const coupon_code = "抱緊處理"
   const overdate = "2026-10-13"
   const description = "毛孩生活用品限時優惠，通通抱回家不手軟~"
 
@@ -892,7 +892,7 @@ app.post("/post/newusercoupon2/:uid", function (req, res) {
 app.post("/post/newusercoupon3/:uid", function (req, res) {
   const uid = req.params.uid
   const discount_ratio = "0.88"
-  const coupon_code = "wowmeow2025"
+  const coupon_code = "毛起來買"
   const overdate = "2026-10-13"
   const description = "毛小孩用品大採購，現在就是最佳時機!"
 
