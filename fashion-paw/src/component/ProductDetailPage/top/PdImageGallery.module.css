@@ -1,8 +1,11 @@
-
+.gallery{
+  /* background-color: aliceblue; */
+  margin-top: -15px;
+}
   
   .main {
     display: flex;
-    margin-bottom: 8px;
+    margin-bottom: 20px;
     width: 100%;
   }
 

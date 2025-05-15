@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios'
+import styles from './StepBasicInfo.module.css'
 class StepBasicInfo extends Component {
     constructor(props) {
         super(props)
@@ -81,20 +82,20 @@ class StepBasicInfo extends Component {
         const inputbirthday = this.inputbirthday.current.value
 
         let inputpower = "";
-        if(this.inputpower.current.checked){
-             inputpower = "seller"
+        if (this.inputpower.current.checked) {
+            inputpower = "seller"
         } else {
-             inputpower = "buyer"
+            inputpower = "buyer"
         }
 
-        const inputsyoukai = this.inputsyoukai.current.value
+        const inputsyoukai = this.inputsyoukai.current ? this.inputsyoukai.current.value : "";
 
 
 
         const newState = {
             ... this.state.inputinfo, firstname: inputfirstname, username: inputusername,
             userfullname: fullname, lastname: inputlastname, adress: inputaddress, phone: inputphone,
-            birthday: inputbirthday,power: inputpower,syoukai:inputsyoukai
+            birthday: inputbirthday, power: inputpower, syoukai: inputsyoukai
         }
         this.setState({
             inputinfo: newState
@@ -119,41 +120,54 @@ class StepBasicInfo extends Component {
 
     render() {
         return (
-            <>
-                <fieldset className="border">
-                    <legend>基本資料</legend>
-                    <label>暱稱:</label> <input name="username" ref={this.inputusername} />
-                    <p></p>
-                    <label>姓:</label> <input name="firstname" ref={this.inputfirstname} />
-                    <label>名:</label> <input name="lastname" ref={this.inputlastname} />
-
-                    <p></p>
-                    <label>地址:</label>
-                    <select name="city" id="city" onChange={this.Citychange}>
+            <div className={styles.Wrapper}>
+                <div className={styles.formRow}>
+                    <label className={styles.label}>暱稱：</label>
+                    <input name="username" className={styles.input} ref={this.inputusername} />
+                </div>
+                <div>
+                    <div className={styles.formRow}>
+                        <label className={styles.label}>姓：</label>
+                        <input name="firstname" className={styles.input} ref={this.inputfirstname} />
+                    </div>
+                    <div className={styles.formRow}>
+                        <label className={styles.label}>名：</label>
+                        <input name="lastname" className={styles.input} ref={this.inputlastname} />
+                    </div>
+                </div>
+                <div className={styles.formRow}>
+                    <label className={styles.label}>地址：</label>
+                    <select name="city" id="city" className={styles.addselectcity} onChange={this.Citychange}>
                         {this.state.city.map((cities, index) => {
                             return <option key={index} value={cities.name}>{cities.name}</option>
                         })}
                     </select>
-                    <select name="district" onChange={this.getdistrict}>
+                    <select name="district" className={styles.addselectregion} onChange={this.getdistrict}>
                         {this.state.district.map((dist, idx) => {
                             return <option key={idx} value={dist.name}>{dist.name}</option>
                         })}
                     </select>
-                    <input type="text" name='address' ref={this.inputaddress} />
-                    <p></p>
-                    <label>電話:</label>
-                    <input type="text" name='phone' ref={this.inputphone} />
-                    <p></p>
-                    <label >生日</label>
-                    <input type="date" name="birthday" ref={this.inputbirthday} />
-                    <p></p>
-                    <p></p><input type="checkbox" name="" id="confirmuse" onChange={this.BeSeller} ref={this.inputpower}/>
-                    <label htmlFor="confirmuse" >是否成為賣家?</label>
-                    <p></p>
-                    {this.state.show && <textarea placeholder='自我介紹' ref={this.inputsyoukai}></textarea>}
-                    <p></p>
-                    <button type="submit" className="btn btn-primary" onClick={this.timetogo}>送出</button>
-                </fieldset></>
+                    <input type="text" name='address' className={styles.input} ref={this.inputaddress} />
+                </div>
+                <div className={styles.formRow}>
+                    <label className={styles.label}>電話：</label>
+                    <input type="text" name='phone' className={styles.input} ref={this.inputphone} />
+                </div>
+                <div className={styles.formRow}>
+                    <label className={styles.label}>生日：</label>
+                    <input type="date" name="birthday" className={styles.input} ref={this.inputbirthday} />
+                </div>
+                <div className={styles.formRow}>
+                    <input type="checkbox" name="" id="confirmuse" onChange={this.BeSeller} className={styles.checkbox} ref={this.inputpower} />
+                    <label htmlFor="confirmuse" className={styles.labeltext} >是否成為賣家?</label>
+                </div>
+                <div className={styles.introtextarea}>
+                    {this.state.show && <textarea placeholder='自我介紹' className={styles.textarea} ref={this.inputsyoukai}></textarea>}
+                </div>
+                <div className="text-center">
+                    <button type="submit" className={styles.nextBtn} onClick={this.timetogo}>送出</button>
+                </div>
+            </div>
         );
     }
     BeSeller = (e) => {

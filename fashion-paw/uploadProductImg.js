@@ -33,9 +33,10 @@ module.exports = multer({
       fs.mkdirSync(destDir, { recursive: true });
       cb(null, destDir);
     },
-    filename: (req, file, cb) => {
-      // 保持原有的 timestamp+副檔名命名
-      cb(null, `${Date.now()}${path.extname(file.originalname)}`);
-    }
-  })
+   filename: (req, file, cb) => {
+    const uniqueSuffix = `${Date.now()}-${Math.round(Math.random()*1e9)}`;
+    const ext = path.extname(file.originalname);
+    cb(null, uniqueSuffix + ext);
+  }
+})
 }).array('images', 4);

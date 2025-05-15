@@ -13,7 +13,6 @@ import { useLocation } from "react-router-dom";
 
 function Header() {
     const { clearCart } = useContext(CartContext);
-
     const history = useHistory()
     // 設隱藏導覽列的初始值
     const [hideHeader, setHideHeader] = useState(false);

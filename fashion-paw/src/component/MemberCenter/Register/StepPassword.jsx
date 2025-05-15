@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import styles from './StepPassword.module.css'
 class StepPassword extends Component {
     constructor(props) {
         super(props)
@@ -36,17 +37,21 @@ class StepPassword extends Component {
 
     render() {
         return (
-            <>
-                <fieldset className=" border">
-                    <legend>密碼</legend>
-                    <label>密碼:</label> <input name="password" onInput={this.passwordinput} ref={this.inputpassword} />
-                    <p></p>
-                    <label>確認密碼</label> <input name="c_pwd" onInput={this.cwdinput} />
-                    <p></p>
-                    <button className="btn btn-primary"
-                        onClick={this.PasswordComfirm} >下一步</button>
-                </fieldset>
-            </>
+            <div className={styles.Wrapper}>
+                <div className={styles.formRow}>
+                    <label className={styles.label}>密碼：</label>
+                    <input name="password" className={styles.input} onInput={this.passwordinput} ref={this.inputpassword} />
+                </div>
+                <div className={styles.formRow}>
+                    <label className={styles.label}>確認密碼：</label>
+                    <input name="c_pwd" className={styles.input} onInput={this.cwdinput} />
+                </div>
+                <div className="text-center">
+                <button className={styles.nextBtn}
+                    onClick={this.PasswordComfirm} >下一步
+                </button>
+                </div>
+            </div>
         );
     }
 }
