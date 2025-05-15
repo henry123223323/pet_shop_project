@@ -849,7 +849,7 @@ app.post("/post/newuseraddress", function (req, res) {
 
   const sql = "INSERT INTO address (uid, City, District, address, AdressName, AdressPhone) VALUES (?, ?, ?, ?, ?, ?)";
 
-  conn.query(sql,[uid,City,District,address,AdressName,AdressPhone], (err, result) => {
+  conn.query(sql, [uid, City, District, address, AdressName, AdressPhone], (err, result) => {
     if (err) {
       console.error("資料庫錯誤:", err);
       return res.status(500).send("新增失敗");
