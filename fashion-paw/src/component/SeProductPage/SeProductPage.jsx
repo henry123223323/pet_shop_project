@@ -212,14 +212,14 @@ export default function SeProductPage() {
           </aside>
           {/* 3. ProductList，傳入 viewMode */}
           <div className={styles.productWrapper}>
-          <ProductList
-            products={filtered}
-            favoriteIds={favoriteIds}
-            onToggleFavorite={handleToggleFavorite}
-            onAddToCart={handleAddToCart}
-            viewMode={viewMode}
-          />
-        </div>
+            <ProductList
+              products={filtered}
+              favoriteIds={favoriteIds}
+              onToggleFavorite={handleToggleFavorite}
+              onAddToCart={handleAddToCart}
+              viewMode={viewMode}
+            />
+          </div>
         </div>
       </main>
     </div>
