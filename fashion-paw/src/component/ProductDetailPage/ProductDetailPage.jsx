@@ -21,7 +21,7 @@ import cookie from 'js-cookie';
 
 class PdDetailPage extends Component {
   static contextType = CartContext;
-  
+
   constructor(props) {
     super(props);
     this.state = {
@@ -68,7 +68,7 @@ class PdDetailPage extends Component {
         <div className="container-fluid">
           <div className="row">
             {/* 左 */}
-            <div className='col-md-2 border border-primary d-none d-md-block'>
+            <div className='col-md-2 d-none d-md-block'>
               {/* 導入動物+商品種類篩選 */}
               {currentPd.condition === "new" ? <NewSideBar /> : <SeSideBar />}
 
@@ -77,21 +77,21 @@ class PdDetailPage extends Component {
             {/* 中 */}
             <div className={currentPd.condition === "new" ? "col-md-8" : "col-md-10"}>
               {/* 上半部 */}
-              <div className='paw-bg-lightenbrown p-2'>
-                <div className='mx-4'>
-                  <PdTitle
-                    pdname={currentPd.pd_name} />
-                </div>
-                <div className='d-flex flex-column flex-md-row '>
-                  <div className='d-flex align-items-center col-md-5'>
+              <div className='p-2 mb-4'>
+                <div className='d-flex flex-column flex-md-row align-items-center'>
+                  <div className='d-flex align-items-center col-md-6 mr-2'>
                     {/* 左邊圖片 */}
                     <PdImageGallery
                       images={currentPd.images}
                       condition={currentPd.condition} />
                   </div>
-                  <div className='col-md-7 my-4'>
+                  <div className='col-md-6 my-4'>
                     {/* 右邊說明 */}
                     <div>
+                      <div className=''>
+                        <PdTitle
+                          pdname={currentPd.pd_name} />
+                      </div>
                       <PdTitleMessage
                         condition={currentPd.condition}
                         pid={currentPd.pid}
@@ -112,9 +112,11 @@ class PdDetailPage extends Component {
                         quantity={this.state.count}
                         max={parseInt(currentPd.stock)}
                         onQuantityChange={(newQty) => this.setState({ count: newQty })} />
-                      {/* 加入購物車、收藏、分享 */}
+                      
+                    </div>
+                    {/* 加入購物車、收藏、分享 */}
                       <div className='d-flex align-items-center'>
-                        <AddToCartBtn aria-label="加入購物車" type="text" product={currentPd} quantity={this.state.count} aria-label="加入購物車"/>
+                        <AddToCartBtn aria-label="加入購物車" type="text" product={currentPd} quantity={this.state.count} />
                         <AddToMyFavorite
                           onClick={this.favBtnClick}
                           isFavorite={this.state.isFavorite}
@@ -124,10 +126,8 @@ class PdDetailPage extends Component {
                           onClick={this.shareOthers}
                           isShare={this.state.isShare} />
                       </div>
-                    </div>
                   </div>
                 </div>
-
               </div>
               {/* 下半部 */}
               <div>
@@ -155,7 +155,7 @@ class PdDetailPage extends Component {
             </div>
 
             {/* 右，商品是新品時顯示熱門排行 */}
-            {currentPd.condition === "new" ? <><div className='border border-secondary col-md-2 d-none d-md-block'><HotRanking /></div></> : ""}
+            {currentPd.condition === "new" ? <><div className='col-md-2 d-none d-md-block'><HotRanking /></div></> : ""}
 
           </div>
 

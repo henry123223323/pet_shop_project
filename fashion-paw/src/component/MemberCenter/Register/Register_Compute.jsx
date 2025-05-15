@@ -4,6 +4,8 @@ import StepEmail from './StepEmail';
 import StepPassword from './StepPassword';
 import StepBasicInfo from './StepBasicInfo';
 import axios from 'axios';
+import styles from './Register_Compute.module.css'
+import ThirdLogin from '../Login/Third_login';
 class Register_Compute extends Component {
     constructor(props) {
         super(props)
@@ -205,25 +207,23 @@ class Register_Compute extends Component {
         console.log(currentStep);
 
         return (
-            <div className='col-md-6 text-center mb-3'>
-                <div className="container mx-auto my-2 col-6">
-                    <div className="row">
-                        {//建立註冊表單商方的步驟圈圈 statement判斷是否完成該步驟true為完成
-                            steps.map((step, index) => (
-                                <Step
-                                    key={index}
-                                    number={step.number}
-                                    content={step.content}
-                                    statement={currentStep >= index + 1}
-                                />
-                            ))}
-                    </div>
+            <div className={styles.register}>
+                <h1 className={styles.registerTitle}>會員註冊</h1>
+                <div className={styles.registercircle}>
+                    {//建立註冊表單商方的步驟圈圈 statement判斷是否完成該步驟true為完成
+                        steps.map((step, index) => (
+                            <Step
+                                key={index}
+                                number={step.number}
+                                content={step.content}
+                                statement={currentStep >= index + 1}
+                            />
+                        ))}
                 </div>
-                <form>
+                <form className={styles.registerfrom}>
                     {this.renderStepContent()}
                 </form>
-                <br />
-                <br />
+                <ThirdLogin />
             </div>
         );
     }

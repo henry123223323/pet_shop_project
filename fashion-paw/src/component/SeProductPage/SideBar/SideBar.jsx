@@ -28,5 +28,3 @@ export default function Sidebar({ onSelectCategory = () => {}, selectedType }) {
     </div>
   );
 }
-
-

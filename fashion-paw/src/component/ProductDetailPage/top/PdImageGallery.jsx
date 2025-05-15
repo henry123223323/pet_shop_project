@@ -23,7 +23,7 @@ class PdImageGallery extends Component {
     return (
       <>
         {/* <h1>這是商品圖片窗</h1> */}
-        <div>
+        <div className={styles.gallery}>
           {/* 大圖區 */}
           <div className={styles.main}>
             <div className="d-flex justify-content-center align-items-center">
@@ -33,7 +33,7 @@ class PdImageGallery extends Component {
               ></i>
             </div>
 
-            <div className={`m-2 ${styles.mainImageWrapper}`} >
+            <div className={`m-1 ${styles.mainImageWrapper}`} >
               <img
                 src={currentImage ? `${currentImage}` : "/media/default/no-image.png"}
                 alt="商品瀏覽圖"

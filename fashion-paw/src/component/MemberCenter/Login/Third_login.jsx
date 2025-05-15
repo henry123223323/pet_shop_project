@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import styles from './Third_login.module.css'
 class Third_Login extends Component {
     state = {
         stylelist: {
@@ -8,14 +9,13 @@ class Third_Login extends Component {
     }
     render() {
         return (
-            <React.Fragment>
-                <h3>第三方登入</h3>
-                <div style={this.state.stylelist}>
-                    <a className="btn btn-danger" href='http://google.com'><i className="bi bi-google"></i></a>
-                    <a className="btn btn-primary" href='http://google.com'><i className="bi bi-facebook"></i></a>
-                    <a className="btn btn-dark" href='http://google.com'><i className="bi bi-twitter-x"></i></a>
+            <div className={styles.thirdlogin}>
+                <div className={styles.thirdtitle}>第三方登入</div>
+                <div className={styles.thirdbtnGroup}>
+                    <a className={styles.thirdIcon} href='http://google.com'><img src="/media/icon/Googlelogin.png" alt="Google login" className={styles.iconImg} /></a>
+                    <a className={styles.thirdIcon} href='http://google.com'><img src="/media/icon/FBlogin.png" alt="FB login" className={styles.iconImg} /></a>
                 </div>
-            </React.Fragment>
+            </div>
         );
     }
 }
