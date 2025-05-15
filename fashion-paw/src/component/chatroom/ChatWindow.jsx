@@ -67,6 +67,23 @@ export default function ChatApp() {
 
   }, [])
 
+
+  useEffect(() => {
+  const handleDevReport = e => {
+    const { text, from } = e.detail;
+    const now = new Date().toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'});
+    setMessagesMap(prev => ({
+      ...prev,
+      ['2']: [                   // '2' 就是開發者聊天室 ID
+        ...(prev['2'] || []),
+        { id: Date.now(), from, text, time: now }
+      ]
+    }));
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+  window.addEventListener('newChatMessage', handleDevReport);
+  return () => window.removeEventListener('newChatMessage', handleDevReport);
+}, []);
   // 5. 送出訊息要更新對應那位使用者的陣列
   const handleSend = () => {
     console.log('>> send to bot? selected.uid =', selected.uid, typeof selected.uid);

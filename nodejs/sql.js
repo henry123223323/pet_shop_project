@@ -2900,3 +2900,60 @@ app.post("/cart/add", async (req, res) => {
 });
 
 module.exports = { q };//匯出q給payment使用
+
+
+
+app.post(
+  "/post/calladmin/:chatroomID/:speakerID/:message",
+  function (req, res) {
+    const { chatroomID, speakerID } = req.params;
+    const origMsg = decodeURIComponent(req.params.message);
+    // 罐頭回覆
+    const botReply = '客服已收到通知囉，會儘快幫您處理！';
+    // SQL：先 insert 原始回報，再 insert 罐頭回覆
+    const sql = `
+      INSERT INTO chatmessage (ChatroomID, speakerID, message, isRead)
+      VALUES (?, ?, ?, 0),
+             (?, ?, ?, 0);
+    `;
+    conn.query(
+      sql,
+      [
+        chatroomID,       speakerID,    origMsg,
+        chatroomID,       '0',          botReply
+      ],
+      (err, results) => {
+        if (err) {
+          console.error("插入失敗：", err);
+          return res.status(500).send("新增失敗");
+        }
+        // 回傳成功
+        res.json({ ok: true });
+      }
+    );
+  }
+);
+
+// 管理者去後臺撈資料
+app.get('/admin/reports/:chatroomID', (req, res) => {
+  const { chatroomID } = req.params;
+  const sql = `
+    SELECT
+      speakerID,
+      message   AS text,
+      create_time AS time
+    FROM chatmessage
+    WHERE ChatroomID = ?
+    ORDER BY create_time
+  `;
+  conn.query(sql, [chatroomID], (err, rows) => {
+    if (err) return res.status(500).json({ error: '伺服器錯誤' });
+    const list = rows.map(r => ({
+      speakerID: r.speakerID,
+      text:      r.text,
+      time:      new Date(r.time)
+                   .toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'})
+    }));
+    res.json(list);
+  });
+});
