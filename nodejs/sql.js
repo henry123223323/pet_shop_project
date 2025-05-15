@@ -2900,7 +2900,7 @@ app.post(
   }
 );
 
-// 管理者去後臺撈資料
+// 聊天室管理者去後臺撈資料
 app.get('/admin/reports/:chatroomID', (req, res) => {
   const { chatroomID } = req.params;
   const sql = `
