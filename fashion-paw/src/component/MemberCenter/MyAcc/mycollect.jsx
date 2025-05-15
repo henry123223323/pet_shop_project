@@ -27,21 +27,21 @@ class mycollect extends Component {
     }
 
 
-    componentDidMount(){
+    componentDidMount() {
         this.getcollect()
     }
 
-    getcollect=()=>{
+    getcollect = () => {
         const uid = cookie.get("user_uid")
         axios.get(`http://localhost:8000/get/getcollect/${uid}`).then(response => {
-            
+
             console.log(response.data);
-             
+
             this.setState({
                 favorites: response.data
             })
-            
-            
+
+
         }).catch(error => {
             console.error("發送請求錯誤:", error);
         });
@@ -65,7 +65,7 @@ class mycollect extends Component {
                         id={fav.id}
                         cid={fav.cid}
                         onRemove={() => this.removeFavorite(fav.id)}
-                        getcollect={()=>this.getcollect()}
+                        getcollect={() => this.getcollect()}
                     />
                 ))}
             </div></>

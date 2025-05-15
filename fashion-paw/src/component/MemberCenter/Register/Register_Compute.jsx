@@ -48,18 +48,139 @@ class Register_Compute extends Component {
             userinfo
         }, () => {
             console.log(this.state);
-
             console.log(this.state.userinfo);
+            const newuserinfo = {
 
+                email: this.state.email,
+                username: this.state.userinfo.username,
+                password: this.state.password,
+                firstname: this.state.userinfo.firstname,
+                lastname: this.state.userinfo.lastname,
+                birthday: this.state.userinfo.birthday,
+                power: this.state.userinfo.power,
+                Aboutme: this.state.userinfo.syoukai,
+                fullname: this.state.userinfo.userfullname
+            }
 
+            axios.post("http://localhost:8000/post/createuserinfo", newuserinfo).then(response => {
+                console.log("新增成功！", response.data);
+            })
+                .catch(error => {
+                    console.error("新增失敗", error);
+                });
 
-
-
-
-
+            this.getcoupon()
 
         })
     }
+
+
+    getcoupon = () => {
+        const email = encodeURIComponent(this.state.email);
+
+        axios.get(`http://localhost:8000/get/useruid/${email}`).then(response => {
+            console.log("查詢成功！", response.data);
+
+            this.setState({
+                uid: response.data
+            }, () => {
+                // 確保 uid 更新後再呼叫 newusercoupon
+                this.newusercoupon();
+            });
+
+        })
+            .catch(error => {
+                // 處理錯誤
+            });
+    }
+
+
+
+    newusercoupon = () => {
+        let uid = this.state.uid;
+
+        // 確保 uid 有被正確設置
+        if (uid === 0 || !uid) {
+            console.error("UID 不存在或為 0");
+            return;
+        }
+
+        axios.post(`http://localhost:8000/post/newusercoupon/${uid}`).then(response => {
+            console.log("新增成功！", response.data);
+            this.newusercoupon2()
+        })
+            .catch(error => {
+                console.error("新增失敗", error);
+            });
+    }
+
+    newusercoupon2 = () => {
+        let uid = this.state.uid;
+
+        // 確保 uid 有被正確設置
+        if (uid === 0 || !uid) {
+            console.error("UID 不存在或為 0");
+            return;
+        }
+
+        axios.post(`http://localhost:8000/post/newusercoupon2/${uid}`).then(response => {
+            console.log("新增成功！", response.data);
+            this.newusercoupon3()
+        })
+            .catch(error => {
+                console.error("新增失敗", error);
+            });
+    }
+
+    newusercoupon3 = () => {
+        let uid = this.state.uid;
+
+        // 確保 uid 有被正確設置
+        if (uid === 0 || !uid) {
+            console.error("UID 不存在或為 0");
+            return;
+        }
+
+        axios.post(`http://localhost:8000/post/newusercoupon3/${uid}`).then(response => {
+            console.log("新增成功！", response.data);
+            this.newuseraddress()
+            // window.location.href = "/Login"
+        })
+            .catch(error => {
+                console.error("新增失敗", error);
+            });
+
+    }
+
+
+    newuseraddress = () => {
+    const newuseraddress = {
+        uid: this.state.uid,
+        City: this.state.userinfo.city,
+        District: this.state.userinfo.district,
+        address: this.state.userinfo.adress,
+        AdressName: this.state.userinfo.userfullname,
+        AdressPhone: this.state.userinfo.phone
+    };
+
+    axios.post("http://localhost:8000/post/newuseraddress", newuseraddress)
+        .then(response => {
+            console.log("新增成功！", response.data);
+            window.location.href = "/Login";  // 成功後重定向
+        })
+        .catch(error => {
+            console.error("新增失敗", error);
+        });
+}
+
+
+
+
+
+
+
+
+
 
 
     // getemail={this.getemail}

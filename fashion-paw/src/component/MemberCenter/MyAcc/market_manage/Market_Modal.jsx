@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
+import Cookies from 'js-cookie'; // 新增引入 Cookies
 
 export default class MarketModal extends Component {
   constructor(props) {
@@ -18,7 +19,8 @@ export default class MarketModal extends Component {
         description: '',
         city: '',
         district: '',
-        uid: '',
+        // uid 從 Cookie 取得，避免手動維護
+        uid: Cookies.get('user_uid') || '',
         new_level: '',
         stock: 0,
         sale_count: 0,
@@ -30,27 +32,49 @@ export default class MarketModal extends Component {
 
   componentDidMount() {
     const { modalState, product } = this.props;
+    // 先拿出原本的 productData
     let pd = { ...this.state.productData };
+
+    // 如果是編輯或查看，且後端真的回傳了 product
     if ((modalState === 'Edit' || modalState === 'Find') && product) {
       pd = {
         ...pd,
-        ...product,
-        attribute: { ...product.attribute },
-        images: pd.images.map((_, i) => ({
-          file: null,
-          img_value: product.images?.[i]?.img_value || '',
-          img_path: product.images?.[i]?.img_path || ''
-        }))
+        pid: product.pid ?? pd.pid,
+        condition: product.condition ?? pd.condition,
+        status: product.status ?? pd.status,
+        pet_type: product.pet_type ?? pd.pet_type,
+        categories: product.categories ?? pd.categories,
+        pd_name: product.pd_name ?? pd.pd_name,
+        price: product.price ?? pd.price,
+        description: product.description ?? pd.description,
+        city: product.city ?? pd.city,
+        district: product.district ?? pd.district,
+        new_level: product.new_level ?? pd.new_level,
+        stock: product.stock ?? pd.stock,
+        // 只有 product.attribute 存在時，才覆蓋原本的 attribute
+        attribute: product.attribute
+          ? { ...product.attribute }
+          : { ...pd.attribute },
+        // 同理處理圖片陣列
+        images: Array(4).fill().map((_, i) => {
+          const img = product.images?.[i];
+          const path = img?.img_path || img?.imageUrl || '';
+          return {
+            file: null,
+            img_value: img?.img_value || '',
+            img_path: path
+          };
+        })
       };
     }
-    this.setState({ modalState, productData: pd });
+
+    // 最後把新的 pd push 回 state，並設定 modalState
+    this.setState({ productData: pd, modalState });
   }
 
   handleChange = e => {
     const { name, value } = e.target;
-    this.setState(({ productData }) => ({
-      productData: { ...productData, [name]: value }
-    }));
+    this.setState(({ productData }) => ({ productData: { ...productData, [name]: value } }));
   };
 
   handleAttrChange = e => {
@@ -84,52 +108,59 @@ export default class MarketModal extends Component {
 
   handleSubmit = async () => {
     const { modalState, productData } = this.state;
-    const { condition, new: onNew, edit: onEdit, close } = this.props;
-    // 可以依需求檢查狀態或其他欄位
+    const { onEdit, close } = this.props;
     const fd = new FormData();
-    [
-      'pd_name', 'price', 'description',
-      'pet_type', 'categories',
-      'city', 'district', 'new_level',
-      'stock', 'condition', 'status'
-    ].forEach(key => fd.append(key, productData[key]));
-    Object.entries(productData.attribute)
-      .forEach(([k, v]) => fd.append(`attribute.${k}`, v));
-    productData.images.forEach(img => {
-      if (img.file) {
-        fd.append('images', img.file);
-        fd.append('img_value', img.img_value);
-      }
+
+    ['pd_name', 'price', 'description', 'pet_type', 'categories', 'city', 'district', 'new_level', 'status', 'condition', 'stock', 'delivery_method', 'pid']
+      .forEach(key => { if (productData[key] !== undefined) fd.append(key, productData[key]); });
+
+    Object.entries(productData.attribute).forEach(([k, v]) => fd.append(`attribute.${k}`, v));
+    productData.images.forEach((img, idx) => {
+      fd.append('image_id[]', img.id || '');
+      // 这里 img.img_value 需要是唯一的，比如 '主图'、'副图1'、'副图2'……
+      fd.append('img_value[]', img.img_value || `slot${idx}`);
+      if (img.file) fd.append('images', img.file);
     });
 
+
+    // 根據 condition 選擇後端路由
+    const base = 'http://localhost:8000';
+    const endpoint = productData.condition === 'new'
+      ? '/get/new-products'
+      : '/get/my-second-products';
+    const url = modalState === 'Edit'
+      ? `${base}${endpoint}/${productData.pid}`
+      : `${base}${endpoint}`;
+    const method = modalState === 'Edit' ? 'put' : 'post';
+
+    console.log('Request:', method.toUpperCase(), url);
+    for (let [k, v] of fd.entries()) console.log('FormData', k, v);
+
     try {
-      const base = 'http://localhost:8000';
-      const url = modalState === 'Edit'
-        ? `${base}/get/${condition}-products/${productData.pid}`
-        : `${base}/get/${condition}-products`;
-      const method = modalState === 'Edit' ? 'put' : 'post';
-      await axios[method](url, fd, { headers: { 'Content-Type': 'multipart/form-data' } });
+      const res = await axios[method](url, fd, {
+        headers: { 'Content-Type': 'multipart/form-data', 'X-UID': productData.uid }
+      });
+      console.log('Response:', res.status, res.data);
       alert(modalState === 'Add' ? '新增成功' : '修改成功');
       if (modalState === 'Edit') onEdit && onEdit(productData);
       else window.location.reload();
       close();
     } catch (err) {
-      console.error('上傳失敗:', err.response || err);
-      alert('上傳失敗，請稍後再試');
+      console.error('Upload failed:', err.response?.status, err.response?.data || err.message);
+      alert(`上傳失敗 [${err.response?.status}]: ${err.response?.data?.error || err.message}`);
     }
   };
+
+
 
   render() {
     const { modalState, productData } = this.state;
     const { close } = this.props;
     const readOnly = modalState === 'Find';
-    // 計算要顯示的屬性 keys：如果是新品就排除 new_level
-       const attrKeys = Object
-           .keys(productData.attribute)
-           .filter(key => !(productData.condition === 'new' && key === 'new_level'));
 
+    const attrKeys = Object.keys(productData.attribute)
+      .filter(key => !(productData.condition === 'new' && key === 'new_level'));
 
-    // 所有欄位設定（包含狀態）
     const allFields = [
       {
         key: 'status', label: '商品狀態', type: 'select', options: [
@@ -150,19 +181,19 @@ export default class MarketModal extends Component {
           { value: '4', label: '近新' },
           { value: '3', label: '普通' },
           { value: '2', label: '使用痕跡' },
-          { value: '1', label: '明顯磨損' },
+          { value: '1', label: '明顯磨損' }
         ]
       },
-      { key: 'stock', label: '庫存數量', type: 'number' },
+      { key: 'stock', label: '庫存數量', type: 'number' }
     ];
-    // 新品不顯示 city/district/new_level
+
     const fieldsToShow = allFields.filter(f => {
       if (productData.condition === 'new') {
         return !['city', 'district', 'new_level'].includes(f.key);
       }
       return true;
     });
-    // 值轉中文
+
     const optionLabels = {
       dog: '狗狗', cat: '貓咪', bird: '鳥類', mouse: '鼠類',
       pet_food: '飼料', complementary_food: '副食', snacks: '零食',
@@ -202,7 +233,6 @@ export default class MarketModal extends Component {
                   </div>
                 );
               })}
-              {/* 屬性 Section */}
               <hr />
               <h5>商品屬性</h5>
               {attrKeys.map(attr => (
@@ -211,23 +241,26 @@ export default class MarketModal extends Component {
                   <input type="text" name={`attribute.${attr}`} className="form-control" value={productData.attribute[attr]} onChange={this.handleAttrChange} disabled={readOnly} />
                 </div>
               ))}
-              {/* 圖片 Section */}
               <hr />
               <h5>商品圖片與描述</h5>
-              {productData.images.map((img, idx) => {
-                const src = img.file ? URL.createObjectURL(img.file) : img.img_path;
-                return (
-                  <div className="d-flex mb-3" key={idx}>
-                    <div style={{ width: 80, height: 80, marginRight: 8 }}>
-                      {src && <img src={src} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
-                    </div>
-                    <div className="flex-grow-1">
-                      <input type="file" accept="image/*" className="form-control form-control-sm mb-1" onChange={e => this.uploadImageAtIndex(idx, e)} disabled={readOnly} />
-                      <input type="text" placeholder="輸入圖片描述" className="form-control form-control-sm" value={img.img_value} onChange={e => this.handleValueChange(idx, e)} disabled={readOnly} />
-                    </div>
+              {productData.images.map((img, idx) => (
+                <div className="d-flex mb-3" key={idx}>
+                  <div style={{ width: 80, height: 80, marginRight: 8 }}>
+                    {img.file ?
+                      <img src={URL.createObjectURL(img.file)} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      : img.img_path ?
+                        <img src={img.img_path.startsWith('http') ? img.img_path : `http://localhost:8000${img.img_path}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        : <span className="text-muted">無圖</span>
+                    }
                   </div>
-                );
-              })}
+                  <div className="flex-grow-1">
+                    <input type="hidden" name="slot[]" value={`slot${idx}`} />
+                    <input type="hidden" name="image_id[]" value={img.id || ''} />
+                    <input type="file" name={`images[${idx}]`} accept="image/*" className="form-control form-control-sm mb-1" onChange={e => this.uploadImageAtIndex(idx, e)} disabled={readOnly} />
+                    <input type="text" name="img_value[]" className="form-control form-control-sm" placeholder="輸入圖片描述" value={img.img_value} onChange={e => this.handleValueChange(idx, e)} disabled={readOnly} />
+                  </div>
+                </div>
+              ))}
             </div>
             <div className="modal-footer">
               <button className="btn btn-secondary" onClick={close}>取消</button>

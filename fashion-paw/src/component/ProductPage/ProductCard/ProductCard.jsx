@@ -1,7 +1,7 @@
 // src/component/ProductCard/ProductCard.jsx
 import React from 'react';
 import styles from './ProductCard.module.css';
-
+import { Link } from 'react-router-dom';
 // 引入 Share 底下的通用按鈕元件
 import AddToCartBtn from '../../share/AddToCartBtn';
 import AddToMyFavorite from '../../share/AddToMyFavorite';
@@ -31,14 +31,21 @@ export default function ProductCard({
     pid: id,
     pd_name: name,
     price,
-    image: images?.[0]?.img_path 
+    image: images?.[0]?.img_path
   };
 
   return (
     <div className={cls} >
       <div className={styles.imageWrapper}>
-        <img src={images[0].img_path} alt={name} />
+        <Link to={`/product/${id}`}>
+          <img
+            src={images[0].img_path}
+            alt={name}
+            style={{ cursor: 'pointer' }}  // ← 可選，讓滑鼠有點擊感
+          />
+        </Link>
       </div>
+
       <div className={styles.content}>
         <h3 className={styles.name}>{name}</h3>
         <p className={styles.price}>NT${price}</p>
@@ -54,11 +61,11 @@ export default function ProductCard({
         {/* 用引入的 AddToCartBtn 取代原生加入購物車按鈕，並彈跳提示 */}
 
         <AddToCartBtn
-                      type="icon"
-                      product={product}
-                      quantity={1}
-                      aria-label="加入購物車"
-                    />
+          type="icon"
+          product={product}
+          quantity={1}
+          aria-label="加入購物車"
+        />
       </div>
     </div>
   );

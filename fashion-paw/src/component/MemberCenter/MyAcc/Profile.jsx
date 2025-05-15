@@ -12,6 +12,7 @@ class Profile extends Component {
         this.inputbirthday = React.createRef();
         // this.inputphone = React.createRef();
         this.inputphoto = React.createRef();
+        this.inputpassword = React.createRef();
 
         this.state = {
             showModal: false,
@@ -107,6 +108,28 @@ class Profile extends Component {
 
 
 
+    editpassword = () => {
+    const password = this.inputpassword.current?.value;
+    const uid = cookie.get("user_uid");
+
+    if (!password) {
+        alert("請輸入密碼！");
+        return;
+    }
+
+    axios.post("http://localhost:8000/post/editpassword", {
+        uid,
+        password
+    })
+    .then((response) => {
+        console.log("密碼更新成功:", response.data);
+        this.getuserinfo();
+        this.tooglePasswordModal();
+    })
+    .catch((error) => {
+        console.error("密碼更新失敗:", error);
+    });
+};
 
 
 
@@ -164,12 +187,12 @@ class Profile extends Component {
                                     <label htmlFor="">輸入密碼:</label>
                                     <input type="text" />
                                     <p></p>
-                                    <label htmlFor="">再次輸入密碼:</label>
-                                    <input type="text" />
+                                    <label htmlFor=""  >再次輸入密碼:</label>
+                                    <input type="text" ref={this.inputpassword} />
                                 </div>
                                 <div className="modal-footer">
                                     <button type="button" className="btn btn-secondary" onClick={this.tooglePasswordModal}>取消</button>
-                                    <button type="button" className="btn btn-primary">儲存變更</button>
+                                    <button type="button" className="btn btn-primary" onClick={this.editpassword} >儲存變更</button>
                                 </div>
                             </div>
                         </div>

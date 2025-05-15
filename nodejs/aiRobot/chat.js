@@ -48,13 +48,18 @@ async function HOTRANKING(limit) {
 
 
 async function searchProducts(keyword) {
-  let result = await axios.post('http://localhost:8000/post/productsreach/second', { 'keyword': keyword })
+  let result = await axios.post('http://localhost:8000/post/productsreach/new', { 'keyword': keyword })
   if (result.data.length !== 0) {
-    res_json = {
-      url: `http://localhost:3000/product/${result.data[0].id}`,
-      pd_name: result.data[0].name,
-      img:`http://localhost:3000/${JSON.parse(result.data[0].images)[0].img_path}`
-    }
+    let res_json = []
+    result.data.map(pd => {
+      res_json.push({
+        url: `http://localhost:3000/product/${pd.id}`,
+        pd_name: pd.name,
+        price:pd.price,
+        img:`http://localhost:3000/${JSON.parse(pd.images)[0].img_path}`
+      })
+      
+    })
     return res_json
   }
   else {
@@ -77,7 +82,7 @@ router.post('/', async (req, res) => {
     const userVec = await embed(message);
     const queryRes = await index.query({
       vector: userVec,
-      topK: 4,
+      topK: 3,
       includeMetadata: true
     });
     const contexts = queryRes.matches

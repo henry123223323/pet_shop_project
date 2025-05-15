@@ -88,7 +88,7 @@ class StepBasicInfo extends Component {
             inputpower = "buyer"
         }
 
-        const inputsyoukai = this.inputsyoukai.current.value
+        const inputsyoukai = this.inputsyoukai.current ? this.inputsyoukai.current.value : "";
 
 
 
