@@ -7,7 +7,7 @@ import axios from 'axios';
 
 export default function ChatApp() {
   const user_id = cookie.get('user_uid')
-  const [users, setusers] = useState(
+  const [users, setUsers] = useState(
     [//api多uid欄位
       { id: 'u3', name: '好拾汪', avatar: userAvatar, lastTime: '前天 09:20', snippet: '嗨(好)嗨(的)～本週熱門商…' },
       { id: 'u2', name: '好拾啾', avatar: userAvatar, lastTime: '昨天 09:20', snippet: '感謝主人在好拾毛成功完成購…' },
@@ -19,7 +19,12 @@ export default function ChatApp() {
   const [typing, settyping] = useState(false)
   // 2. selected user
   const [selected, setSelected] = useState(users[0]);
-
+  // 1. 把「自己」獨立出來
+  const [me, setMe] = useState({
+    avatar: userAvatar,
+    name: 'WAKA',
+    lastTime: '剛上線'
+  });
   // 3. 把訊息依 user.id 分開
   const [messagesMap, setMessagesMap] = useState({
     u1: [
@@ -32,6 +37,7 @@ export default function ChatApp() {
     u3: [
       { id: 1, from: 'bot', text: '我是AI客服機器人,你需要甚麼幫忙嗎?', time: '09:20' },
     ],
+
   });
 
   // 4. 當下顯示的訊息
@@ -46,10 +52,23 @@ export default function ChatApp() {
 
   useEffect(() => {
 
+    //拿「我」的檔案
+    axios.get(`http://localhost:8000/get/back-userinfo/${user_id}`)
+      .then(res => {
+        // res.data 就是單一物件 { uid, email, username, photo, fullname, birthday, power, lastTime, aboutMe, device }
+        setMe({
+          avatar: res.data.photo,    // 假設 photo 是 Buffer 物件
+          name: res.data.username,   // 或 fullname
+          lastTime: res.data.last_time_login
+        });
+      })
+      .catch(err => console.error('profile 讀取失敗', err));
+
+
     axios.get(`http://localhost:8000/channel/${user_id}`)
       .then(res => {
         console.log(users);
-        setusers(res.data)
+        setUsers(res.data)
         console.log(users);
         if (res.data.length > 0) {
           setSelected(res.data[0]); // 只有在拿到数据后才设 selected
@@ -68,22 +87,24 @@ export default function ChatApp() {
   }, [])
 
 
+
+
   useEffect(() => {
-  const handleDevReport = e => {
-    const { text, from } = e.detail;
-    const now = new Date().toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'});
-    setMessagesMap(prev => ({
-      ...prev,
-      ['2']: [                   // '2' 就是開發者聊天室 ID
-        ...(prev['2'] || []),
-        { id: Date.now(), from, text, time: now }
-      ]
-    }));
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
-  window.addEventListener('newChatMessage', handleDevReport);
-  return () => window.removeEventListener('newChatMessage', handleDevReport);
-}, []);
+    const handleDevReport = e => {
+      const { text, from } = e.detail;
+      const now = new Date().toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' });
+      setMessagesMap(prev => ({
+        ...prev,
+        ['2']: [                   // '2' 就是開發者聊天室 ID
+          ...(prev['2'] || []),
+          { id: Date.now(), from, text, time: now }
+        ]
+      }));
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    };
+    window.addEventListener('newChatMessage', handleDevReport);
+    return () => window.removeEventListener('newChatMessage', handleDevReport);
+  }, []);
   // 5. 送出訊息要更新對應那位使用者的陣列
   const handleSend = () => {
     console.log('>> send to bot? selected.uid =', selected.uid, typeof selected.uid);
@@ -265,10 +286,10 @@ export default function ChatApp() {
       {/* 左側 Sidebar */}
       <aside className={styles.sidebar}>
         <header className={styles.sidebarHeader}>
-          <img src={blobtoURL(selected.avatar)} alt={selected.name} className={styles.avatar} />
+          <img src={blobtoURL(me.avatar)} alt={me.name} className={styles.avatar} />
           <div>
-            <p className={styles.name}>{selected.name}</p>
-            <p className={styles.sub}>上次上線時間：{selected.lastTime}</p>
+            <p className={styles.name}>{me.name}</p>
+            <p className={styles.sub}>上次上線時間：{new Date(me.lastTime).toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' })}</p>
           </div>
         </header>
         <ul className={styles.userList}>
@@ -299,7 +320,7 @@ export default function ChatApp() {
         </header>
 
         <div key={selected.id} className={styles.messages}>
-          <div className={styles.dateSep}>前天</div>
+          <div className={styles.dateSep}>今天</div>
           {messages.map((m, idx) => (
             <div key={idx} className={`${styles.message} ${m.from === 'bot' ? styles.bot : styles.user}`}>
               <div className={styles.text} dangerouslySetInnerHTML={{ __html: m.text }}></div>

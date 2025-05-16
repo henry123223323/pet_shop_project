@@ -122,42 +122,53 @@ export default class ManageMarket extends Component {
     }
   }
 
-  calladmin = (pd_name, chatroomID) => {
+  calladmin = (pd_name) => {
     const speakerID = Cookies.get("user_uid");
     const selectVal = this.selectRef.current?.value || '';
-    if (!selectVal) {
-      return alert('請先選擇回報原因');
-    }
     const text = `${pd_name}：${selectVal}`;
     const enc = encodeURIComponent(text);
 
-    // 1. 存原始回報到後端
-    axios.post(`${BASE_URL}/post/calladmin/${chatroomID}/${speakerID}/${enc}`)
-      .then(res => {
-        // 先跳個前端提示
-        alert("回報已送出，感謝您的回饋！");
+    if (!selectVal) {
+      return alert('請先選擇回報原因');
+    }
+    axios.get(`http://localhost:8000/check/${speakerID}`)
+      .then(
+        (response) => {
+          console.log(response.data);
+          if (response.data === false) {
+            //建立新聊天室(使用者跟0號管理員)
 
-        // 2. 立刻把「客服已收到通知囉，會盡快幫您處理！」也存到 message table
-        axios.post('http://localhost:8000/post/insert/message', {
-          ChatroomID: chatroomID,
-          speakerID: '0', // 假設你的機器人 ID 是 0
-          message: '客服已收到通知囉，會盡快幫您處理！',
-          isRead: 1
-        }).catch(err => console.error('[DB] 插入客服回覆失敗', err));
+          } else {
+            // 1. 存原始回報到後端
+            axios.post(`${BASE_URL}/post/calladmin/${response.data.chatroomID}/${speakerID}/${enc}`)
+              .then(res => {
+                // 先跳個前端提示
+                alert("回報已送出，感謝您的回饋！");
 
-        // 3. 再廣播給前端，畫面立刻更新
-        window.dispatchEvent(new CustomEvent('newChatMessage', {
-          detail: {
-            chatroomID,
-            text: '客服已收到通知囉，會盡快幫您處理！',
-            from: 'bot'
+                // 2. 立刻把「客服已收到通知囉，會盡快幫您處理！」也存到 message table
+                axios.post('http://localhost:8000/post/insert/message', {
+                  ChatroomID: response.data.chatroomID,
+                  speakerID: '0', // 假設你的機器人 ID 是 0
+                  message: '客服已收到通知囉，會盡快幫您處理！',
+                  isRead: 1
+                }).catch(err => console.error('[DB] 插入客服回覆失敗', err));
+
+                // 3. 再廣播給前端，畫面立刻更新
+                window.dispatchEvent(new CustomEvent('newChatMessage', {
+                  detail: {
+                    chatroomID:response.data.chatroomID,
+                    text: '客服已收到通知囉，會盡快幫您處理！',
+                    from: 'bot'
+                  }
+                }));
+              })
+              .catch(err => {
+                console.error(err);
+                alert("回報失敗，請稍後再試");
+              });
           }
-        }));
-      })
-      .catch(err => {
-        console.error(err);
-        alert("回報失敗，請稍後再試");
-      });
+        }
+      )
   }
 
 
@@ -276,7 +287,7 @@ export default class ManageMarket extends Component {
                       <option value="重複上架">重複上架</option>
                     </select>
                     <p></p>
-                    <button className='btn btn-danger' onClick={() => this.calladmin(p.pd_name, 1)}>回報</button>
+                    <button className='btn btn-danger' onClick={() => this.calladmin(p.pd_name)}>回報</button>
                   </td>
                 </tr>
               ))}

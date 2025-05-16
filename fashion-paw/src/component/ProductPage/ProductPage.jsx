@@ -18,14 +18,14 @@ export default function ProductPage() {
   const searchProducts = searchState.products;
 
   const [filters, setFilters] = useState({ functions: [], brands: [], price: '', hotRanking: '' });
-  const [sortBy, setSortBy]       = useState('');
-  const [viewMode, setViewMode]   = useState('grid');
-  const [products, setProducts]   = useState([]);
+  const [sortBy, setSortBy] = useState('');
+  const [viewMode, setViewMode] = useState('grid');
+  const [products, setProducts] = useState([]);
   const [displayItems, setDisplay] = useState([]);
   const [favoriteIds, setFavoriteIds] = useState([]);
   const [filterKey, setFilterKey] = useState(1);
   // Sidebar 篩選 state
-  const [typeFilter, setTypeFilter]       = useState('');
+  const [typeFilter, setTypeFilter] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('');
 
   // 讀取收藏
@@ -81,24 +81,42 @@ export default function ProductPage() {
     let items = [...products];
 
     // Sidebar 篩選
-    if (typeFilter)       items = items.filter(p => p.pet_type === typeFilter);
-    if (categoryFilter)   items = items.filter(p => p.categories_key === categoryFilter);
+    if (typeFilter) items = items.filter(p => p.pet_type === typeFilter);
+    if (categoryFilter) items = items.filter(p => p.categories_key === categoryFilter);
 
     // FilterBar 篩選
     const { functions: funcs, brands, price, hotRanking } = filters;
-    if (funcs.length)     items = items.filter(p => funcs.includes(p.categories_key));
-    if (brands.length)    items = items.filter(p => brands.includes(p.attributes_object.brand));
+    if (funcs.length) items = items.filter(p => funcs.includes(p.categories_key));
+    if (brands.length) items = items.filter(p => brands.includes(p.attributes_object.brand));
+
+    // 價格
     if (price) {
-      const [min, max] = price.includes('+') ? [Number(price), Infinity] : price.split('-').map(Number);
+      let min, max;
+
+      if (price === '100以下') {
+        // 只要 ≤100
+        min = 0;
+        max = 100;
+      }
+      else if (price.includes('+')) {
+        // 例如 '1000+' → [1000, ∞]
+        min = Number(price);
+        max = Infinity;
+      }
+      else {
+        // 區間 '101-300'
+        [min, max] = price.split('-').map(Number);
+      }
+
       items = items.filter(p => p.price >= min && p.price <= max);
     }
     if (hotRanking === 'hot_desc') items.sort((a, b) => b.hotranking - a.hotranking);
-    if (hotRanking === 'hot_asc')  items.sort((a, b) => a.hotranking - b.hotranking);
+    if (hotRanking === 'hot_asc') items.sort((a, b) => a.hotranking - b.hotranking);
 
     // 最終排序
-    if (sortBy === 'price_asc')  items.sort((a, b) => a.price - b.price);
+    if (sortBy === 'price_asc') items.sort((a, b) => a.price - b.price);
     if (sortBy === 'price_desc') items.sort((a, b) => b.price - a.price);
-    if (sortBy === 'createdAt')  items.sort((a, b) => b.created_at - a.created_at);
+    if (sortBy === 'createdAt') items.sort((a, b) => b.created_at - a.created_at);
 
     setDisplay(items);
   }, [products, filters, sortBy, typeFilter, categoryFilter]);
@@ -125,7 +143,7 @@ export default function ProductPage() {
           <SwitchBtn viewMode={viewMode} onViewChange={setViewMode} />
         </div>
         <div className={styles.content}>
-          <aside className={styles.sidebar}>           
+          <aside className={styles.sidebar}>
             <Sidebar onSelectCategory={(type, cat) => {
               setTypeFilter(type);
               setCategoryFilter(cat);
