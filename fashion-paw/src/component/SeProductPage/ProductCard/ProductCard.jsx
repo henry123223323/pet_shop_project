@@ -1,5 +1,5 @@
 // src/component/ProductCard/ProductCard.jsx
-import React from 'react';
+import React, { useEffect } from 'react';
 import styles from './ProductCard.module.css';
 import { Link } from 'react-router-dom';
 import AddToCartBtn from '../../share/AddToCartBtn';
@@ -23,6 +23,11 @@ export default function ProductCard(props) {
 
   // 1. 安全地处理 images，保证是一个数组
   const safeImages = Array.isArray(images) ? images : [];
+  {
+    console.log(safeImages);
+    console.log(images);
+
+  }
 
   // 2. 取第一张，如果没有就用占位图
   const firstImg = safeImages.length > 0 && safeImages[0].img_path
@@ -38,10 +43,11 @@ export default function ProductCard(props) {
     pd_name: name,
     price,
     image: firstImg,
+    images:safeImages,
     condition: 'second',
     uid: String(uid),
   };
-
+ console.log("🛒 準備加入購物車的 product：", product)
   return (
     <div className={cls}>
       <div className={styles.imageWrapper}>
@@ -63,6 +69,7 @@ export default function ProductCard(props) {
           onClick={() => onToggleFavorite(id)}
           aria-label="切換收藏"
         />
+       
         <AddToCartBtn
           type="icon"
           product={product}

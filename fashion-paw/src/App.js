@@ -11,6 +11,7 @@ import Icon from './component/Homepage/Icon';
 import Homepage from './component/Homepage/Homepage';
 import MemberCenter from './component/MemberCenter/MyAccount';
 import Login from './component/MemberCenter/Login';
+import Third_SetCookie from './component/MemberCenter/Login/Third_SetCookie';
 import Register from './component/MemberCenter/Register';
 import ProductPage from './component/ProductPage/ProductPage';
 import SeProductPage from './component/SeProductPage/SeProductPage';
@@ -24,7 +25,6 @@ import SyncCartOnLogin from './component/Cart/SyncCartOnLogin';
 import CheckBillPage from './component/CheckBill/CheckBillPage';
 import Helpme from './component/Aboutus/helpme';
 import Needhelp from './component/Aboutus/needhelp';
-import Chatroom from './component/Aboutus/chatroom';
 import ChatWindow from 'component/chatroom/ChatWindow';
 
 
@@ -47,6 +47,7 @@ function App() {
             <Route path="/" component={Homepage} exact />
             <Route path="/MemberCenter" component={MemberCenter} />
             <Route path="/Login" component={Login} />
+            <Route path="/Third_SetCookie" component={Third_SetCookie} />
             <Route path="/Register" component={Register} />
             <Route path="/ProductPage" component={ProductPage} exact />
             <Route path="/SeProductPage" component={SeProductPage} exact />
@@ -57,8 +58,8 @@ function App() {
             <Route path="/CheckBillPage" component={CheckBillPage} exact />
             <Route path="/Aboutus" component={Helpme} exact />
             <Route path="/Help" component={Needhelp} exact />
-            <Route path="/Chatroom" component={Chatroom} exact />
-
+            {/* 動態路由：:chatroomID */}
+            <Route path="/chat/:chatroomID" component={ChatWindow} exact />
             {/* 寵物小知識：列表頁 */}
             <Route
               path="/Novicefeeding/:pet"

@@ -76,6 +76,17 @@ export default function HotRanking() {
           // 直接使用後端的完整 imageUrl，否則顯示預設圖
           const imgSrc = imageUrl || '/placeholder.png';
 
+          const safeImagePath = imageUrl || '/media/default/no-image.png';
+          const product = {
+            pid: String(pid),
+            pd_name,
+            price,
+            condition: 'new',
+            image: safeImagePath,
+            images: [{ img_path: safeImagePath }], // 🔸 給 normalizeCartItem 用
+            quantity: 1,
+          };
+
           return (
             <div key={pid} className={styles.card}>
               <div className={styles.imageWrapper}>
@@ -95,7 +106,7 @@ export default function HotRanking() {
                 />
                 <AddToCartBtn
                   type="icon"
-                  product={{ ...item, image: item.imageUrl }}
+                  product={product}
                   quantity={1}
                   aria-label="加入購物車"
                 />

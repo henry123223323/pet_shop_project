@@ -85,8 +85,14 @@ class TaiwanMap extends Component {
                 this.townshipLayer = L.geoJSON(null, {
                     onEachFeature: (feature, layer) => {
                         const town = feature.properties.town || "未知鄉鎮";
+                        let count = 0
+                        this.state.highlighTown.forEach((city, idx) => {
+                            if (city == town) {
+                                count++
+                            }
+                        })
                         layer.on('mouseover', () => {
-                            layer.bindTooltip(`鄉鎮：${town}`)
+                            layer.bindTooltip(`${town}(${count})`)
                         })
                         layer.on('click', (event) => {
                             let Click_Town = event.target.feature.properties.town

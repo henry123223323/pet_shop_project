@@ -10,7 +10,7 @@ const BASE_URL = 'http://localhost:8000'
 export default class ManageMarket extends Component {
   constructor(props) {
     super(props)
-    this.selectRef = React.createRef(); 
+    this.selectRef = React.createRef();
     this.state = {
       second_product: [],
       searchTerm: '',
@@ -122,23 +122,42 @@ export default class ManageMarket extends Component {
     }
   }
 
-  calladmin = (value) => {
-  let speakerID = Cookies.get("user_uid");
-  
-  // 確保 selectRef.current 存在且有值
-  if (this.selectRef.current) {
-    let message = encodeURIComponent(value + " " + this.selectRef.current.value);
-
-    axios.post(`http://localhost:8000/post/calladmin/${speakerID}/${message}`)
-      .then((response) => {
-        console.log("發送成功:", response.data);
-      })
-      .catch((error) => {
-        console.error("查詢失敗:", error);
-      });
-  } else {
-    console.error("選擇框尚未渲染，無法獲取選中的值");
+  calladmin = (pd_name, chatroomID) => {
+  const speakerID = Cookies.get("user_uid");
+  const selectVal = this.selectRef.current?.value || '';
+  if (!selectVal) {
+    return alert('請先選擇回報原因');
   }
+  const text = `${pd_name}：${selectVal}`;
+  const enc  = encodeURIComponent(text);
+
+  // 1. 存原始回報到後端
+  axios.post(`${BASE_URL}/post/calladmin/${chatroomID}/${speakerID}/${enc}`)
+    .then(res => {
+      // 先跳個前端提示
+      alert("回報已送出，感謝您的回饋！");
+
+      // 2. 立刻把「客服已收到通知囉，會盡快幫您處理！」也存到 message table
+      axios.post('http://localhost:8000/post/insert/message', {
+        ChatroomID: chatroomID,
+        speakerID: '0', // 假設你的機器人 ID 是 0
+        message: '💁‍客服已收到通知囉，會盡快幫您處理！',
+        isRead: 1
+      }).catch(err => console.error('[DB] 插入客服回覆失敗', err));
+
+      // 3. 再廣播給前端，畫面立刻更新
+      window.dispatchEvent(new CustomEvent('newChatMessage', {
+        detail: {
+          chatroomID,
+          text: '💁‍客服已收到通知囉，會盡快幫您處理！',
+          from: 'bot'
+        }
+      }));
+    })
+    .catch(err => {
+      console.error(err);
+      alert("回報失敗，請稍後再試");
+    });
 }
 
 
@@ -243,7 +262,7 @@ export default class ManageMarket extends Component {
                       <option value="重複上架">重複上架</option>
                     </select>
                     <p></p>
-                    <button className='btn btn-danger' onClick={() => this.calladmin(p.pd_name)}>回報</button>
+                    <button className='btn btn-danger' onClick={() => this.calladmin(p.pd_name, 1)}>回報</button>
                   </td>
                 </tr>
               ))}
