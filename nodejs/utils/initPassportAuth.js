@@ -3,7 +3,7 @@ const passport = require('passport');
 
 
 require('./passportGoogle'); // 讀取 passport 策略設定
-require('./passportFacebook');
+require('./passportLine');
 
 function initPassportAuth(app) {
   // 1. 啟用 session
@@ -25,10 +25,10 @@ function initPassportAuth(app) {
   // 3. 掛載 Google 登入路由
   // ✅ 3. 延遲載入登入路由
   const authGoogle = require('../routes/authGoogle');
-  const authFacebook = require('../routes/authFacebook');
+  const authLine = require('../routes/authLine');
 
   app.use('/auth', authGoogle);
-  app.use('/auth', authFacebook);
+  app.use('/auth', authLine);
 }
 
 module.exports = initPassportAuth;
