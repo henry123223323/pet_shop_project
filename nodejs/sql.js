@@ -2361,7 +2361,28 @@ app.get('/get/recommend-products', (req, res) => {
     res.json(data);
   });
 });
+//撈單筆使用者資料的API
+app.get("/get/back-userinfo/:uid", (req, res) => {
+  const { uid } = req.params;
+  if (!uid) return res.status(400).json({ error: "需要帶入 UID" });
 
+  conn.query(
+    `SELECT uid, email, username, photo, power, last_time_login 
+     FROM userinfo
+     WHERE uid = ?`,
+    [uid],
+    (err, results) => {
+      if (err) {
+        console.error("DB 查詢錯誤:", err);
+        return res.status(500).send("伺服器錯誤");
+      }
+      if (results.length === 0) {
+        return res.status(404).json({ error: "找不到此使用者" });
+      }
+      res.json(results[0]);
+    }
+  );
+});
 
 
 
@@ -2485,6 +2506,17 @@ app.get('/build_AIchatroom/:user_id', async (req, res) => {
 
   })
 })
+
+app.get('/build_chatroom/:user_id', async (req, res) => {
+  let { user_id } = req.params;
+  let sql = `
+  INSERT INTO chatroomuser (uidX,uidY) VALUES(?,0)
+  `
+  conn.query(sql, [user_id], function (err, rows) {
+
+  })
+})
+
 app.get('/AI_check/:userid', async (req, res) => {
   let { userid } = req.params;
   let sql = `
@@ -2501,6 +2533,24 @@ app.get('/AI_check/:userid', async (req, res) => {
     }
   })
 })
+
+app.get('/check/:userid', async (req, res) => {
+  let { userid } = req.params;
+  let sql = `
+  SELECT chatroomID 
+  FROM chatroomuser
+  WHERE uidX=? and uidY=0;
+  `
+  conn.query(sql, [userid], function (err, rows) {
+    if (rows.length > 0) {
+      res.json(rows)
+    }
+    else {
+      res.json(false)
+    }
+  })
+})
+
 // 從資料庫讀出購物車資料
 app.get("/cart/:uid", async (req, res) => {
   const uid = Number(req.params.uid);
@@ -2885,8 +2935,8 @@ app.post(
     conn.query(
       sql,
       [
-        chatroomID,       speakerID,    origMsg,
-        chatroomID,       '0',          botReply
+        chatroomID, speakerID, origMsg,
+        chatroomID, '0', botReply
       ],
       (err, results) => {
         if (err) {
@@ -2916,9 +2966,9 @@ app.get('/admin/reports/:chatroomID', (req, res) => {
     if (err) return res.status(500).json({ error: '伺服器錯誤' });
     const list = rows.map(r => ({
       speakerID: r.speakerID,
-      text:      r.text,
-      time:      new Date(r.time)
-                   .toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'})
+      text: r.text,
+      time: new Date(r.time)
+        .toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' })
     }));
     res.json(list);
   });
