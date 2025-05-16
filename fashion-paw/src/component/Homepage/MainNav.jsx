@@ -81,7 +81,14 @@ export default function MainNav() {
             onMouseLeave={() => setOpenKey(null)}
           >
 
-            <span className={navstyles.menuLink}>{pageNames[path]}</span>
+            <NavLink
+              to={path}
+              className={navstyles.menuLink}
+              activeClassName={navstyles.activeLink}
+            >
+              {pageNames[path]}
+            </NavLink>
+
 
             {/* 這裡渲染 MegaMenu */}
             <MegaMenu

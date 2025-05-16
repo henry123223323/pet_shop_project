@@ -11,7 +11,7 @@ class Content_manage extends Component {
         return (
             <>
                 <Router>
-                    <h1>後臺管理</h1>
+                    <h4 style={{color:"#333"}}>後臺管理</h4>
                     <span className='btn btn-outline-primary'><Link to="/MemberCenter/Content-manage/New_Products">新品管理</Link></span>
                     <span className='btn btn-outline-primary'><Link to="/MemberCenter/Content-manage/Second_Products">二手商品管理</Link></span>
                     <span className='btn btn-outline-primary'><Link to="/MemberCenter/Content-manage/User">使用者管理</Link></span>

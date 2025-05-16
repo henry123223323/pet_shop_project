@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import cookie from "js-cookie";
+import styles from './Sidebar.module.css'
 
 class Sidebar extends Component {
     state = {
         list: [
             { link: "profile", content: "個人檔案", auth: 1 },
-            { link: "orders", content: "購物清單", auth: 1 },
+            { link: "orders", content: "購物紀錄", auth: 1 },
             { link: "credit-card", content: "綁定信用卡", auth: 1 },
             { link: "mycollect", content: "我的收藏", auth: 1 },
             { link: "mycoupon", content: "我的優惠券", auth: 1 },
@@ -23,7 +24,7 @@ class Sidebar extends Component {
             case 'seller':
                 list = [
                     { link: "profile", content: "個人檔案", auth: 1 },
-                    { link: "orders", content: "購物清單", auth: 1 },
+                    { link: "orders", content: "購物紀錄", auth: 1 },
                     { link: "credit-card", content: "綁定信用卡", auth: 1 },
                     { link: "mycollect", content: "我的收藏", auth: 1 },
                     { link: "mycoupon", content: "我的優惠券", auth: 1 },
@@ -34,7 +35,7 @@ class Sidebar extends Component {
             case 'buyer':
                 list = [
                     { link: "profile", content: "個人檔案", auth: 1 },
-                    { link: "orders", content: "購物清單", auth: 1 },
+                    { link: "orders", content: "購物紀錄", auth: 1 },
                     { link: "credit-card", content: "綁定信用卡", auth: 1 },
                     { link: "mycollect", content: "我的收藏", auth: 1 },
                     { link: "mycoupon", content: "我的優惠券", auth: 1 },
@@ -44,7 +45,7 @@ class Sidebar extends Component {
             case 'developer':
                 list = [
                     { link: "profile", content: "個人檔案", auth: 1 },
-                    { link: "orders", content: "購物清單", auth: 1 },
+                    { link: "orders", content: "購物紀錄", auth: 1 },
                     { link: "credit-card", content: "綁定信用卡", auth: 1 },
                     { link: "mycollect", content: "我的收藏", auth: 1 },
                     { link: "mycoupon", content: "我的優惠券", auth: 1 },
@@ -70,11 +71,11 @@ class Sidebar extends Component {
 
     render() {
         return (
-            <div className="paw-bg-lighteorange p-3" style={{ width: "200px" }}>
+            <div className={styles.wrapper}>
                 <ul className="list-unstyled">
                     {this.state.list.map((obj, index) => {
                         return (
-                            <li key={index} className="btn btn-outline-warning">
+                            <li key={index} className={styles.btn}>
                                 <Link to={`/MemberCenter/${obj.link}`}>{obj.content}</Link>
                             </li>
                         );

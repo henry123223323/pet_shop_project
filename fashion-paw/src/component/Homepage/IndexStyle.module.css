@@ -74,7 +74,12 @@
   display: flex;
   align-items: center;
   white-space: nowrap;
+  color: black;
 }
+
+/* .hello{
+color: black;
+} */
 
 .logoutBtn {
   background: none;
@@ -154,7 +159,7 @@
 
 .greeting {
   font-weight: 500;
-  color: #DDB227;
+  color: #87512D;
   transition: color .2s;
 }
 

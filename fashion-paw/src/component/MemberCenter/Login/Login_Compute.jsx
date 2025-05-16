@@ -69,11 +69,11 @@ class Login_Compute extends Component {
                 <div className={styles.loginCard}>
                     <h1 className={styles.loginTitle}>登入</h1>
                     <form className={styles.loginForm} onSubmit={this.logintest}>
-                        <label htmlFor="email" className={styles.textAP}>Email帳號：</label>
-                        <input type="email" id="email" ref={this.email} className={styles.inputField} />
+                        <label htmlFor="email" className={styles.textAP}>帳號：</label>
+                        <input type="email" id="email" ref={this.email} className={styles.inputField} placeholder='請輸入Email帳號' />
 
                         <label htmlFor="password" className={styles.textAP}>密碼：</label>
-                        <input type="password" id="password" ref={this.password} className={styles.inputField} />
+                        <input type="password" id="password" ref={this.password} className={styles.inputField} placeholder='請填寫密碼' />
 
                         <input type="submit" value="登入" className={styles.submitButton} />
                     </form>

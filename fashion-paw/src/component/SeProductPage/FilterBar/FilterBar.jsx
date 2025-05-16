@@ -86,7 +86,7 @@ export default function FilterBar({
           </div>
 
 
-           {/* 折舊程度 (改用 PawDisplay 圖案) */}
+          {/* 折舊程度 (改用 PawDisplay 圖案) */}
           <div className={`${styles.row} ${styles.depreciationRow}`}>
             <span className={styles.label}>折舊程度</span>
             <div className={styles.options}>
@@ -125,6 +125,15 @@ export default function FilterBar({
                 </label>
               ))}
             </div>
+          </div>
+          <div className={styles.actions}>
+            <button className={styles.clearBtn} onClick={() => {
+              setSelFuncs([]);
+              setSelBrands([]);
+              setSelPrice('');
+            }}>
+              清除篩選
+            </button>
           </div>
         </div>
       )}

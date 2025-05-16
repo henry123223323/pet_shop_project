@@ -9,6 +9,7 @@ import SearchBar from './SearchBar';
 import cookie from 'js-cookie';
 import { CartContext } from 'component/Cart/CartContext';
 import { useLocation } from "react-router-dom";
+import axios from 'axios'
 
 
 function Header() {
@@ -22,8 +23,8 @@ function Header() {
     const [openMobileNav, setOpenMobileNav] = useState(false);
     // uid、username、photo
     const [uid, setuid] = useState(null)
-    const [username, setusername] = useState(null)
-    const [photo, setphoto] = useState(null)
+    const [username, setusername] = useState('')
+    const [photo, setphoto] = useState('')
     const [showSolidHeader, setShowSolidHeader] = useState(false);
     const location = useLocation();
     const isHome = location.pathname === "/";
@@ -52,13 +53,49 @@ function Header() {
         return () => observer.disconnect();
     }, [location.pathname, showSolidHeader]);
 
-
-
     useEffect(() => {
-        setuid(cookie.get('user_uid') || null)
-        setusername(cookie.get('user_name') || null)
-        setphoto(cookie.get('user_photo') || null)
-    }, [])
+        const uidFromCookie = cookie.get('user_uid');
+        const nameFromCookie = cookie.get('user_name');
+        const photoFromCookie = cookie.get('user_photo');
+
+        setuid(uidFromCookie || null);
+        setusername(nameFromCookie || '');
+        setphoto(photoFromCookie || '');
+    }, []);
+
+    // ✅ 關鍵：等 uid 有值才打 API
+    useEffect(() => {
+        if (!uid) return; // ✅ 沒 uid 不打
+
+        axios.get(`http://localhost:8000/get/userinfo/${uid}`)
+            .then(res => {
+                const user = res.data;
+                setusername(user.username);
+                setphoto(user.photo);
+            })
+            .catch(err => {
+                console.error('會員資料載入失敗', err);
+            });
+    }, [uid]); // ✅ 記得把 uid 放進依賴陣列
+    console.log('uid:', uid);
+    console.log('photo:', photo);
+
+    // 清洗photo字串
+    const getSafePhoto = (rawPhoto) => {
+        if (!rawPhoto) return '/images/avatar.png';
+
+        if (rawPhoto.startsWith('data:image')) {
+            return rawPhoto; // ✔️ 是完整格式，直接用
+        }
+
+        if (rawPhoto.startsWith('data:undefined;base64,')) {
+            // ❗修正 imageType 缺失
+            return rawPhoto.replace('data:undefined', 'data:image/jpeg');
+        }
+
+        // ⛑️ 其他情況就當成純 base64 字串補前綴
+        return `data:image/jpeg;base64,${rawPhoto}`;
+    };
 
     // 向下滑隱藏導覽列的判斷
     useEffect(() => {
@@ -149,12 +186,15 @@ function Header() {
                             <Link to='/ShoppingCartPage' className={styles.iconBtn}><i className="bi bi-cart"></i></Link>
                             {uid ? (
                                 <div className={styles.userInfoWrapper}>
-                                    <img src={photo || '/media/default/avatar.png'} alt="avatar" className={styles.avatar} />
+                                    <img
+                                        src={getSafePhoto(photo)}
+                                        alt="avatar"
+                                        className={styles.avatar}
+                                    />
                                     <span className={styles.greetingText}>
                                         <Link to="/MemberCenter" className={styles.greeting}>
                                             {username || '拾毛會員'}
-                                        </Link>
-                                        ，你好！
+                                        </Link>，你好！
                                     </span>
                                     <button className={styles.logoutBtn} onClick={logout}>登出</button>
                                 </div>
@@ -165,6 +205,7 @@ function Header() {
                                     <Link to="/Register" className={styles.link}>註冊</Link>
                                 </span>
                             )}
+
                         </div>
                     </div>
                 ) : (
@@ -176,7 +217,7 @@ function Header() {
                             {uid ? (
                                 <>
                                     <img src={photo || '/media/default/avatar.png'} alt="avatar" className={styles.avatar} />
-                                    <span>
+                                    <span className={styles.greetingText}>
                                         <Link to="/MemberCenter" className={styles.greeting}>
                                             {username || '拾毛會員'}
                                         </Link>，你好！

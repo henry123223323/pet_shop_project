@@ -53,9 +53,10 @@ class mycollect extends Component {
 
 
     render() {
-        return (<>
-            <h3>我的收藏</h3>
-            <div className="d-flex flex-wrap gap-3">
+        return (
+        <>
+            <h4 style={{color:"#333"}}>我的收藏</h4>
+            <div className="d-flex flex-wrap">
                 {this.state.favorites.map(fav => (
                     <FavoriteCard
                         key={fav.id}

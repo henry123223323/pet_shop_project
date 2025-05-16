@@ -176,7 +176,7 @@ export default class ManageMarket extends Component {
 
     return (
       <div className="container-fluid mt-4">
-        <h3 className="mb-3">二手商品管理</h3>
+        <h4 style={{color:"#333"}}>二手商品管理</h4>
         {/* 搜尋 & 新增 */}
         <div className="row mb-3">
           <div className="col-md-3">

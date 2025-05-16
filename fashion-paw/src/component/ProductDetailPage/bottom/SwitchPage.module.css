@@ -4,19 +4,9 @@
     height: 40px;
 }
 
-.btndesc {
-    text-align: center;
-    border-right: 1px solid black;
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.btnseller {
+.switchbtn {
     text-align: center;
     cursor: pointer;
-
     display: flex;
     justify-content: center;
     align-items: center;

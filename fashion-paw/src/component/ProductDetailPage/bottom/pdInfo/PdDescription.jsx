@@ -19,8 +19,9 @@ class PdDescription extends Component {
                     <div className="row">
                         {images.map((img, index) => (
                             <div className="col-12 col-md-12 mb-2 text-center" key={index}>
-                                <img src={img.img_path ? `${img.img_path}` : "/media/default/no-image.png"} alt={`商品圖片 ${index + 1}`} className="img-fluid mb-2" />
-                                <p>{img.img_value}</p>
+                                
+                                <img src={img.img_path ? `${img.img_path}` : "/media/default/no-image.png"} alt={`商品圖片 ${index + 1}`} className="img-fluid shadow-sm" />
+                                <p className='mt-3'>{img.img_value}</p>
                             </div>
                         ))}
                     </div>
