@@ -72,6 +72,10 @@ function buildAttrValues(pid, attrs) {
 }
 app.use('/verify', verifyRoutes);
 
+// 啟用 Google 登入與 session
+const initPassportAuth = require('./utils/initPassportAuth');
+initPassportAuth(app);
+
 //付款綠界API
 app.use('/payment', paymentRouter);
 app.use('/', cvsRoute);
@@ -755,7 +759,7 @@ app.post("/post/createuserinfo", function (req, res) {
   const imagePath = path.join(__dirname, 'media/userphoto.png'); // 圖片路徑
   const imageBuffer = fs.readFileSync(imagePath); // 把圖片讀進來成 buffer
 
-  const { email, username, password, firstname, lastname, birthday, power, Aboutme, fullname } = req.body;
+  const { email, username, password, firstname, lastname, birthday, power, Aboutme, fullname, provider, provider_id } = req.body;
 
   const sql = "INSERT INTO userinfo (email, username, password, firstname, lastname, birthday, power, Aboutme ,photo, fullname) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
@@ -775,9 +779,39 @@ app.post("/post/createuserinfo", function (req, res) {
       console.error("資料庫錯誤:", err);
       return res.status(500).send("新增失敗");
     }
-    res.json({ message: "新增成功", result });
+    const uid = result.insertId;
+
+    // ➕ 如果有第三方登入資料，就插入 third_user
+    if (provider && provider_id) {
+      const thirdSql = `
+        INSERT INTO third_user (uid, provider, provider_id)
+        VALUES (?, ?, ?)
+      `;
+
+      conn.query(thirdSql, [uid, provider, provider_id], (thirdErr) => {
+        if (thirdErr) {
+          console.error("third_user 插入錯誤:", thirdErr);
+          return res.status(500).json({
+            message: "註冊失敗，請稍後再試（third_user 綁定失敗）",
+            error: thirdErr
+          });
+        }
+
+        // 全部成功
+        res.json({
+          message: "會員建立與第三方綁定成功",
+          result
+        });
+      });
+    } else {
+      // 一般註冊情況
+      res.json({
+        message: "會員建立成功",
+        result
+      });
+    }
   });
-})
+});
 
 
 
@@ -2881,3 +2915,60 @@ app.post("/cart/add", async (req, res) => {
 });
 
 module.exports = { q };//匯出q給payment使用
+
+
+
+app.post(
+  "/post/calladmin/:chatroomID/:speakerID/:message",
+  function (req, res) {
+    const { chatroomID, speakerID } = req.params;
+    const origMsg = decodeURIComponent(req.params.message);
+    // 罐頭回覆
+    const botReply = '客服已收到通知囉，會儘快幫您處理！';
+    // SQL：先 insert 原始回報，再 insert 罐頭回覆
+    const sql = `
+      INSERT INTO chatmessage (ChatroomID, speakerID, message, isRead)
+      VALUES (?, ?, ?, 0),
+             (?, ?, ?, 0);
+    `;
+    conn.query(
+      sql,
+      [
+        chatroomID,       speakerID,    origMsg,
+        chatroomID,       '0',          botReply
+      ],
+      (err, results) => {
+        if (err) {
+          console.error("插入失敗：", err);
+          return res.status(500).send("新增失敗");
+        }
+        // 回傳成功
+        res.json({ ok: true });
+      }
+    );
+  }
+);
+
+// 管理者去後臺撈資料
+app.get('/admin/reports/:chatroomID', (req, res) => {
+  const { chatroomID } = req.params;
+  const sql = `
+    SELECT
+      speakerID,
+      message   AS text,
+      create_time AS time
+    FROM chatmessage
+    WHERE ChatroomID = ?
+    ORDER BY create_time
+  `;
+  conn.query(sql, [chatroomID], (err, rows) => {
+    if (err) return res.status(500).json({ error: '伺服器錯誤' });
+    const list = rows.map(r => ({
+      speakerID: r.speakerID,
+      text:      r.text,
+      time:      new Date(r.time)
+                   .toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'})
+    }));
+    res.json(list);
+  });
+});
