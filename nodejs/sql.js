@@ -2664,7 +2664,6 @@ app.get('/chatroom/message/:room', (req, res) => {
       text: msg.text,
       // 4. 格式化時間為 zh-TW 兩位小時兩位分鐘
       time: new Date(msg.time)
-        .toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' })
     })) : [];
 
     console.log(`聊天室 ${roomid} 訊息：`, messages);
@@ -2826,6 +2825,22 @@ app.post("/newAddress", function (req, res) {
     });
   });
 });
+
+app.post('/post/update_login_time', async (req, res) => {
+  let { lastTime, uid } = req.body;
+  const formatted = new Date(lastTime + 8 * 60 * 60 * 1000).toISOString().slice(0, 19).replace('T', ' ');
+  let sql = `
+  UPDATE userinfo SET last_time_login =?
+  WHERE uid=?
+  `
+  conn.query(sql, [formatted, uid], function (err, results) {
+    console.log(`登入時間更新:${formatted}`);
+
+
+  })
+
+})
+
 
 //增加商品
 app.post("/cart/add", async (req, res) => {

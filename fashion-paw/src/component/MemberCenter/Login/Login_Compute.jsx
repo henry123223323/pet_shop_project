@@ -50,6 +50,8 @@ class Login_Compute extends Component {
                         cookie.set('user_power', user.power, { expires: 1, SameSite: 'Lax' })
                         console.log('成功設置cookie', cookie.get('user_uid'));
                         console.log('成功設置cookie', cookie.get('user_power'));
+                        //更改最後登入時間
+                        axios.post('http://localhost:8000/post/update_login_time', { lastTime: Date.now(), uid: user.uid })
                         window.location.href = "/";
 
                     } else {

@@ -71,7 +71,7 @@ export default function ChatApp() {
   useEffect(() => {
     const handleDevReport = e => {
       const { text, from } = e.detail;
-      const now = new Date().toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' });
+      const now = new Date().toLocaleDateString();
       setMessagesMap(prev => ({
         ...prev,
         ['2']: [                   // '2' 就是開發者聊天室 ID
@@ -93,7 +93,7 @@ export default function ChatApp() {
       id: user_id,
       from: 'user',
       text: input.trim(),
-      time: new Date().toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' })
+      time: Date.now()
     };
     setMessagesMap(prev => ({
       ...prev,
@@ -137,7 +137,7 @@ export default function ChatApp() {
               id: selected.uid,
               from: 'bot',
               text: pd3,
-              time: new Date().toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' })
+              time: Date.now()
             };
             //insert api
             axios.post('http://localhost:8000/post/insert/message',
@@ -184,7 +184,7 @@ export default function ChatApp() {
               id: selected.uid,
               from: 'bot',
               text: top3,
-              time: new Date().toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' })
+              time: Date.now()
             };
             //insert api
             axios.post('http://localhost:8000/post/insert/message',
@@ -209,7 +209,7 @@ export default function ChatApp() {
               id: selected.uid,
               from: 'bot',
               text: res.data.answer,
-              time: new Date().toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' })
+              time: Date.now()
             };
             //insert api
             axios.post('http://localhost:8000/post/insert/message',
@@ -299,12 +299,26 @@ export default function ChatApp() {
         </header>
 
         <div key={selected.id} className={styles.messages}>
-          <div className={styles.dateSep}>前天</div>
           {messages.map((m, idx) => (
-            <div key={idx} className={`${styles.message} ${m.from === 'bot' ? styles.bot : styles.user}`}>
-              <div className={styles.text} dangerouslySetInnerHTML={{ __html: m.text }}></div>
-              <span className={styles.time}>{m.time}</span>
-            </div>
+            <>
+              {
+                (idx > 0) ?
+                  (new Date(messages[idx - 1].time).toDateString() !== new Date(m.time).toDateString())
+                    ?
+                    <div className={styles.dateSep}>{
+                      (new Date(m.time).toDateString() === new Date().toDateString())
+                        ? '今天'
+                        : new Date(m.time).toLocaleDateString()
+                    }</div>
+                    :
+                    <div />
+                  : <div className={styles.dateSep}>{new Date(m.time).toLocaleDateString()}</div>
+              }
+              <div key={idx} className={`${styles.message} ${m.from === 'bot' ? styles.bot : styles.user}`}>
+                <div className={styles.text} dangerouslySetInnerHTML={{ __html: m.text }}></div>
+                <span className={styles.time}>{new Date(m.time).toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' })}</span>
+              </div>
+            </>
           ))}
           {
             typing && <div className={`${styles.typingBubble} ${styles.bot}`}>
