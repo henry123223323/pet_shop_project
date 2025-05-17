@@ -2407,10 +2407,14 @@ app.post('/orders/create', async (req, res) => {
   const { order, items } = req.body;
 
   if (!order || !items || !Array.isArray(items) || items.length === 0) {
-    return res.status(400).json({ error: '缺少訂單資料或明細' });
+    return res.status(400).json({
+      error: '無效的請求：order 或 items 缺失或格式錯誤',
+      received: { order, items }
+    });
   }
 
-  const conn2 = await q.getConnection ? await q.getConnection() : conn; // 確保可 transaction（若使用 pool）
+  const conn2 = await q.getConnection ? await q.getConnection() : conn;
+
   try {
     await q('START TRANSACTION');
 
@@ -2439,34 +2443,73 @@ app.post('/orders/create', async (req, res) => {
     const result = await q(insertOrderSQL, orderParams);
     const order_id = result.insertId;
 
-    // 2. 插入明細
-    const itemValues = items.map(item => [
-      order_id,
-      item.pid,
-      item.pd_name,
-      item.spec,
-      item.quantity,
-      item.unit_price,
-      item.total_price,
-      item.img_path
-    ]);
+    for (const item of items) {
+      const pid = parseInt(item.pid, 10);           // ✅ 確保是數字
+      const quantity = parseInt(item.quantity, 10); // ✅ 在這裡定義
+      console.log(item)
 
-    await q(
-      `INSERT INTO orderitem
-      (order_id, pid, pd_name, spec, quantity, unit_price, total_price, img_path)
-      VALUES ?`,
-      [itemValues]
-    );
+      // 2. 扣庫存 + 累加銷售數
+      await q(
+        `UPDATE productslist
+     SET stock = stock - ?,
+         sale_count = sale_count + ?
+     WHERE pid = ? AND stock >= ?`,
+        [quantity, quantity, pid, quantity]
+      );
+
+      // 3. 若庫存為 0 就下架
+      await q(
+        `UPDATE productslist
+     SET status = 0
+     WHERE pid = ? AND stock = 0`,
+        [pid]
+      );
+    }
+
+    // 4. 刪除優惠券
+    try {
+      if (typeof order.coupon_code === 'string' && order.coupon_code.trim() !== '') {
+        console.log("🔖 使用者有選擇 coupon：", order.coupon_code);
+        await q(
+          `DELETE FROM coupon
+       WHERE uid = ? AND coupon_code = ?`,
+          [order.uid, order.coupon_code]
+        );
+      }
+    } catch (e) {
+      console.warn("⚠️ 刪除優惠券時出錯（不影響訂單流程）", e.message);
+    }
+
+    // 5. 插入明細
+    const insertItemSQL = `
+  INSERT INTO orderitem
+  (order_id, pid, pd_name, spec, quantity, unit_price, total_price, img_path)
+  VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+`;
+
+    for (const item of items) {
+      await q(insertItemSQL, [
+        order_id,
+        item.pid,
+        item.pd_name,
+        item.spec || '',
+        item.quantity,
+        parseInt(item.unit_price, 10),
+        parseInt(item.total_price, 10),
+        item.img_path
+      ]);
+    }
 
     await q('COMMIT');
     res.status(200).json({ success: true, order_id });
 
   } catch (err) {
     await q('ROLLBACK');
-    console.error('新增訂單失敗:', err);
-    res.status(500).json({ error: '訂單建立失敗' });
+    console.error('❌ 新增訂單失敗:', err.message, err.stack);
+    res.status(500).json({ error: '訂單建立失敗：' + err.message });
   }
 });
+
 
 //登入後把登入前的購物車資料存進uid的該購物車資料庫
 app.post("/cart/merge", async (req, res) => {
@@ -2861,7 +2904,7 @@ app.post("/newAddress", function (req, res) {
   });
 });
 
-//增加商品
+//購物車增加商品
 app.post("/cart/add", async (req, res) => {
   let { uid, pid, spec, quantity, unit_price } = req.body;
 
@@ -2919,8 +2962,8 @@ app.post(
     conn.query(
       sql,
       [
-        chatroomID,       speakerID,    origMsg,
-        chatroomID,       '0',          botReply
+        chatroomID, speakerID, origMsg,
+        chatroomID, '0', botReply
       ],
       (err, results) => {
         if (err) {
@@ -2950,9 +2993,9 @@ app.get('/admin/reports/:chatroomID', (req, res) => {
     if (err) return res.status(500).json({ error: '伺服器錯誤' });
     const list = rows.map(r => ({
       speakerID: r.speakerID,
-      text:      r.text,
-      time:      new Date(r.time)
-                   .toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'})
+      text: r.text,
+      time: new Date(r.time)
+        .toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' })
     }));
     res.json(list);
   });

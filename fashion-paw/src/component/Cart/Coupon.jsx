@@ -42,7 +42,12 @@ class Coupon extends Component {
                     key={idx}
                     className={`${styles.couponcard} ${isUsed ? styles.used : ''}`}
                     onClick={() => {
-                      if (!isUsed) this.applyCouponFromList(c.coupon_code);
+                      if (isUsed) {
+                        // ✅ 取消套用
+                        this.cancelCoupon();
+                      } else {
+                        this.applyCouponFromList(c.coupon_code);
+                      }
                     }}
                   >
                     <div className={styles.coupondiscount}>{c.discount_ratio * 100} 折</div>
@@ -86,6 +91,17 @@ class Coupon extends Component {
     }
   };
 
+  cancelCoupon = () => {
+    this.setState({
+      applied: false,
+      discountAmount: 0,
+      coupon: '',
+      appliedCouponCode: ''
+    });
+
+    localStorage.removeItem('coupon_code'); // ✅ 清除本地記錄
+  };
+
   applyCoupon = (code = this.state.coupon) => {
     const { availableCoupons } = this.state;
 
@@ -97,6 +113,7 @@ class Coupon extends Component {
 
     if (matched) {
       const discountValue = parseFloat(matched.discount_ratio);
+      localStorage.setItem('coupon_code', matched.coupon_code);
       this.setState({
         applied: true,
         discountAmount: discountValue,

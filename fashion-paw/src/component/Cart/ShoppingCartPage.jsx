@@ -112,7 +112,7 @@ class ShoppingCartPage extends Component {
                             className='me-1 ml-2'
                           />
                           <label htmlFor={`selectAll-${uid}`} className='pt-1'>
-                            <label className='pl-3 '>
+                            <label className='pl-3 ' htmlFor={`selectAll-${uid}`}>
                               <SellerTitle uid={String(uid)} />
                             </label></label>
                         </div>
@@ -379,6 +379,7 @@ class ShoppingCartPage extends Component {
 
     localStorage.setItem('selectedItems', JSON.stringify(selectedCartItems));
     localStorage.setItem('discountAmount', discountAmount);
+
     window.location.href = '/CheckBillPage';
   };
 }

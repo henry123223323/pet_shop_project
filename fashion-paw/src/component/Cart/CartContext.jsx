@@ -33,10 +33,13 @@ export class CartProvider extends Component {
     setSellers = (userList) => {
 
         if (Array.isArray(userList)) {
-            const merged = [...this.state.sellers, ...userList.map(user => ({
-                ...user,
-                uid: String(user.uid) // ✅ 強制轉成 string
-            }))];
+            const merged = [
+                ...this.state.sellers,
+                ...userList.map(user => ({
+                    uid: String(user.uid),
+                    username: user.username,  // ✅ 僅保留需要的欄位
+                }))
+            ];
             const uniqueSellers = Array.from(
                 new Map(merged.map(user => [String(user.uid), user])).values()
             );
