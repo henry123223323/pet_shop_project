@@ -85,7 +85,7 @@ class PdDetailPage extends Component {
                       images={currentPd.images}
                       condition={currentPd.condition} />
                   </div>
-                  <div className='col-md-6 my-4'>
+                  <div className='col-md-6 my-4 ml-3'>
                     {/* 右邊說明 */}
                     <div>
                       <div className=''>

@@ -1,5 +1,5 @@
 // src/component/Homepage/MainNav/MegaMenu.jsx
-import React, { useState, useEffect,useRef} from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 // import { NavLink } from 'react-router-dom';  // 如果要讓卡片可點進詳細頁的話
 import navstyles from './MainNav.module.css';
 import axios from 'axios';
@@ -17,7 +17,7 @@ export default function MegaMenu({
     // 1) 後端 categories key → 中文
     const categoryNames = {
         pet_food: '飼料',
-        Complementary_Food: '副食',
+        complementary_food: '副食',
         snacks: '零食',
         Health_Supplements: '保健品',
         Living_Essentials: '生活家居',
@@ -26,7 +26,7 @@ export default function MegaMenu({
 
     // 2) tabs 中文排序
     const desiredTabOrder = [
-        '飼料', '副食','零食', '保健品',  '生活家居', '玩具'
+        '飼料', '副食', '零食', '保健品', '生活家居', '玩具'
     ];
 
     // 3) 後端 pet_type key → 中文
@@ -53,8 +53,8 @@ export default function MegaMenu({
 
         // 這裡自己決定要排入哪幾個 pid
         const featuredPIDs = pageKey === '/ProductPage'
-            ? ['11', '12', '13', '14', '15', '16', '17', '18']
-            : ['22', '24', '26'];
+            ? ['1', '2', '10', '11', '12', '13', '18', '20', '30', '31', '42', '45', '46', '48', '61', '62', '67', '68', '74', '75', '81', '82', '83', '87', '88', '89', '92', '93', '97', '98', '102', '103', '108', '109', '115', '116', '123', '124', '125']
+            : ['151', '153', '159', '160', '133', '134', '145', '146'];
 
         setLoading(true);
         Promise.all(
@@ -107,7 +107,7 @@ export default function MegaMenu({
                 onPetChange(pets[0]);
                 onTabChange(tabs[0]);
                 hasInit.current = true;
-              }
+            }
         })
             .catch(err => {
                 console.error('MegaMenu 載入失敗', err);
@@ -132,8 +132,8 @@ export default function MegaMenu({
                         <li key={petKey}>
                             <button
                                 className={
-                                    `${navstyles.sidebarLink} `+
-                                        `${petKey === selectedPet ? navstyles.activePet : ''}`}
+                                    `${navstyles.sidebarLink} ` +
+                                    `${petKey === selectedPet ? navstyles.activePet : ''}`}
                                 onClick={() => onPetChange(petKey)}
                             >
                                 {petNames[petKey] || petKey}
@@ -145,31 +145,51 @@ export default function MegaMenu({
 
             {/* 右側 tabs + content */}
             <section className={navstyles.content}>
+                {/* 如果是拾毛百貨，顯示分類 tabs */}
                 <div className={navstyles.tabs}>
-                    {data.tabs.map(tabKey => (
-                        <button
-                            key={tabKey}
-                            className={tabKey === activeTab ? navstyles.activeTab : ''}
-                            onClick={() => onTabChange(tabKey)}
-                        >
-                            {categoryNames[tabKey] || tabKey}
+                    {pageKey === '/SeProductPage' ? (
+                        <button className={`${navstyles.tab} ${navstyles.activeTab}`} disabled>
+                            商品總覽
                         </button>
-                    ))}
+                    ) : (
+                        data.tabs.map(tabKey => (
+                            <button
+                                key={tabKey}
+                                className={`${navstyles.tab} ${tabKey === activeTab ? navstyles.activeTab : ''}`}
+                                onClick={() => onTabChange(tabKey)}
+                            >
+                                {categoryNames[tabKey] || tabKey}
+                            </button>
+                        ))
+                    )}
                 </div>
 
                 <div className={navstyles.tabPane}>
-                    {(data.content[selectedPet]?.[activeTab] || []).map(item => (
-                        <a
-                            key={item.pid}
-                            className={navstyles.card}
-                            href={`http://localhost:3000/product/${item.pid}`}
-                        >
-                            <img src={item.img} alt={item.title} />
-                            <p>{item.title}</p>
-                        </a>
-                    ))}
-                </div>
+  {(() => {
+    const items =
+      pageKey === '/SeProductPage'
+        ? Object.values(data.content[selectedPet] || {}).flat()
+        : data.content[selectedPet]?.[activeTab] || [];
+
+    if (items.length === 0) {
+      return <p className={navstyles.emptyMsg}>暫無商品</p>;
+    }
+
+    return items.map(item => (
+      <a
+        key={item.pid}
+        className={navstyles.card}
+        href={`http://localhost:3000/product/${item.pid}`}
+      >
+        <img src={item.img} alt={item.title} />
+        <p>{item.title}</p>
+      </a>
+    ));
+  })()}
+</div>
+
             </section>
+
         </div>
     );
 }

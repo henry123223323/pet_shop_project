@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import MarketModal from '../market_manage/Market_Modal';
 import Pagination from './Page_manage';
+import styles from './New_product_manage.module.css'
 
 export default class New_Products_Manage extends Component {
   state = {
@@ -156,8 +157,9 @@ export default class New_Products_Manage extends Component {
 
     return (
       <>
+      <div className="d-flex justify-content-between align-items-center mb-3">
         {/* 搜尋欄 */}
-        <div className="mb-3" style={{ maxWidth: 300 }}>
+        <div className="mt-3" style={{ maxWidth: 300 }}>
           <input
             type="search"
             className="form-control"
@@ -168,18 +170,19 @@ export default class New_Products_Manage extends Component {
         </div>
 
         {/* 新品上架按鈕 放搜尋欄下面 */}
-        <div className="mb-3">
+        <div className="mt-3">
           <button
-            className="btn btn-outline-primary"
+            className={styles.btn}
             onClick={this.OpenAdd}
           >
             新品上架
           </button>
         </div>
+        </div>
 
         {/* 商品表格 */}
-        <table className="table table-striped table-hover">
-          <thead className="table-primary">
+        <table className={`table table-striped ${styles.tablestriped}`}>
+          <thead className={styles.tableprimary}>
             <tr>
               <th>主圖</th>
               <th>商品名稱</th>
@@ -213,19 +216,19 @@ export default class New_Products_Manage extends Component {
                 <td>{this.renderStatus(p.status)}</td>
                 <td>
                   <button
-                    className="btn btn-primary btn-sm me-1"
+                    className={styles.btn}
                     onClick={() => this.OpenFound(startIndex + idx)}
                   >
                     查看
                   </button>
                   <button
-                    className="btn btn-warning btn-sm me-1"
+                    className={styles.btnsubmit}
                     onClick={() => this.OpenEdit(startIndex + idx)}
                   >
                     編輯
                   </button>
                   <button
-                    className="btn btn-danger btn-sm"
+                    className={styles.btndel}
                     onClick={() => this.Delete(startIndex + idx)}
                   >
                     刪除

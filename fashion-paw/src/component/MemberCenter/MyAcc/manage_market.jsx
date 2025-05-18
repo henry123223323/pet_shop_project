@@ -3,6 +3,7 @@ import axios from 'axios'
 import Cookies from 'js-cookie'
 import Market_modal from './market_manage/Market_Modal'
 import PawDisplay from '../../ProductDetailPage/PawDisplay'
+import styles from './manage_market.module.css'
 
 // 全域設定
 const BASE_URL = 'http://localhost:8000'
@@ -123,42 +124,42 @@ export default class ManageMarket extends Component {
   }
 
   calladmin = (pd_name, chatroomID) => {
-  const speakerID = Cookies.get("user_uid");
-  const selectVal = this.selectRef.current?.value || '';
-  if (!selectVal) {
-    return alert('請先選擇回報原因');
+    const speakerID = Cookies.get("user_uid");
+    const selectVal = this.selectRef.current?.value || '';
+    if (!selectVal) {
+      return alert('請先選擇回報原因');
+    }
+    const text = `${pd_name}：${selectVal}`;
+    const enc = encodeURIComponent(text);
+
+    // 1. 存原始回報到後端
+    axios.post(`${BASE_URL}/post/calladmin/${chatroomID}/${speakerID}/${enc}`)
+      .then(res => {
+        // 先跳個前端提示
+        alert("回報已送出，感謝您的回饋！");
+
+        // 2. 立刻把「客服已收到通知囉，會盡快幫您處理！」也存到 message table
+        axios.post('http://localhost:8000/post/insert/message', {
+          ChatroomID: chatroomID,
+          speakerID: '0', // 假設你的機器人 ID 是 0
+          message: '💁‍客服已收到通知囉，會盡快幫您處理！',
+          isRead: 1
+        }).catch(err => console.error('[DB] 插入客服回覆失敗', err));
+
+        // 3. 再廣播給前端，畫面立刻更新
+        window.dispatchEvent(new CustomEvent('newChatMessage', {
+          detail: {
+            chatroomID,
+            text: '💁‍客服已收到通知囉，會盡快幫您處理！',
+            from: 'bot'
+          }
+        }));
+      })
+      .catch(err => {
+        console.error(err);
+        alert("回報失敗，請稍後再試");
+      });
   }
-  const text = `${pd_name}：${selectVal}`;
-  const enc  = encodeURIComponent(text);
-
-  // 1. 存原始回報到後端
-  axios.post(`${BASE_URL}/post/calladmin/${chatroomID}/${speakerID}/${enc}`)
-    .then(res => {
-      // 先跳個前端提示
-      alert("回報已送出，感謝您的回饋！");
-
-      // 2. 立刻把「客服已收到通知囉，會盡快幫您處理！」也存到 message table
-      axios.post('http://localhost:8000/post/insert/message', {
-        ChatroomID: chatroomID,
-        speakerID: '0', // 假設你的機器人 ID 是 0
-        message: '💁‍客服已收到通知囉，會盡快幫您處理！',
-        isRead: 1
-      }).catch(err => console.error('[DB] 插入客服回覆失敗', err));
-
-      // 3. 再廣播給前端，畫面立刻更新
-      window.dispatchEvent(new CustomEvent('newChatMessage', {
-        detail: {
-          chatroomID,
-          text: '💁‍客服已收到通知囉，會盡快幫您處理！',
-          from: 'bot'
-        }
-      }));
-    })
-    .catch(err => {
-      console.error(err);
-      alert("回報失敗，請稍後再試");
-    });
-}
 
 
 
@@ -195,17 +196,24 @@ export default class ManageMarket extends Component {
 
     return (
       <div className="container-fluid mt-4">
-        <h4 style={{color:"#333"}}>二手商品管理</h4>
+        <h4 style={{ color: "#333" }}>二手商品管理</h4>
         {/* 搜尋 & 新增 */}
-        <div className="row mb-3">
-          <div className="col-md-3">
-            <input type="search" className="form-control" placeholder="搜尋商品名稱"
-              value={searchTerm} onChange={this.handleSearchChange} />
+        <div className="d-flex justify-content-between align-items-center mb-3">
+          <div className="flex-grow-1">
+            <input
+              type="search"
+              className="form-control"
+              placeholder="搜尋商品名稱"
+              value={searchTerm}
+              onChange={this.handleSearchChange}
+              style={{ maxWidth: '200px' }}
+            />
           </div>
-          <div className="col-md-3">
-            <button className="btn btn-outline-primary" onClick={this.OpenAdd}>上架二手商品</button>
-          </div>
+          <button className={styles.btnadd} onClick={this.OpenAdd}>
+            上架二手商品
+          </button>
         </div>
+
 
         {/* 狀態顯示 */}
         {loading && <div>載入中…</div>}
@@ -213,8 +221,8 @@ export default class ManageMarket extends Component {
 
         {/* 商品列表 */}
         {!loading && !error && (
-          <table className="table table-striped table-hover align-middle">
-            <thead className="table-primary">
+          <table className={`table table-striped align-middle ${styles.tablestriped}`}>
+            <thead className={styles.tableprimary}>
               <tr>
                 <th>主圖</th>
                 <th>商品名稱</th>
@@ -250,9 +258,11 @@ export default class ManageMarket extends Component {
                   <td><PawDisplay rating={Number(p.new_level)} /></td>
                   <td>{this.renderStatus(p.status)}</td>
                   <td>
-                    <button className="btn btn-primary btn-sm me-1" onClick={() => this.OpenFound(start + idx)}>查看</button>
-                    <button className="btn btn-warning btn-sm me-1" onClick={() => this.OpenEdit(start + idx)}>編輯</button>
-                    <button className="btn btn-danger btn-sm" onClick={() => this.Delete(start + idx)}>刪除</button>
+                    <div className={styles.btnGroup}>
+                      <button className={styles.btnadd} onClick={() => this.OpenFound(start + idx)}>查看</button>
+                      <button className={styles.btnsubmit} onClick={() => this.OpenEdit(start + idx)}>編輯</button>
+                      <button className={styles.btndel} onClick={() => this.Delete(start + idx)}>刪除</button>
+                    </div>
                   </td>
                   <td>
                     <select ref={this.selectRef}>
@@ -262,7 +272,7 @@ export default class ManageMarket extends Component {
                       <option value="重複上架">重複上架</option>
                     </select>
                     <p></p>
-                    <button className='btn btn-danger' onClick={() => this.calladmin(p.pd_name, 1)}>回報</button>
+                    <button className='btn btn-danger ml-4' onClick={() => this.calladmin(p.pd_name, 1)}>回報</button>
                   </td>
                 </tr>
               ))}

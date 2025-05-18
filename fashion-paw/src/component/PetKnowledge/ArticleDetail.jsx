@@ -62,7 +62,7 @@ export default function ArticleDetail({ topic }) {
         </div>
         {/* 推薦商品列表 */}
         <div className={styles.recommendWrapper}>
-          <h2>推薦商品</h2>
+          {/* <h2>推薦商品</h2> */}
           <RecommendedProducts pet_type={pet} />
         </div>
       </div>

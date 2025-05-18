@@ -57,7 +57,7 @@ class ShoppingCartPage extends Component {
           {cartList.length === 0 && (
             <div className={styles.emptyCartNotice}>
               <h5>🛒 購物車內還沒有商品～快去逛逛吧！</h5>
-              <Link to="/ProductPage" className='mx-2 btn paw-btn-outline-darkorange'>逛逛新品</Link>
+              <Link to="/ProductPage" className='mx-2 btn paw-btn-outline-pri-darkbrown'>逛逛新品</Link>
               <Link to="/SeProductPage" className='mx-2 btn paw-btn-outline-pri-darkbrown'>找找二手</Link>
             </div>
           )}
@@ -68,7 +68,7 @@ class ShoppingCartPage extends Component {
                 {newItems.length > 0 && (
                   <div className='pe-md-4'>
                     {/* 新品購物車 */}
-                    <div className={styles.sectionTitle}>拾毛百貨</div>
+                    <div className={styles.sectionTitle}>拾毛新品百貨</div>
 
                     <div className={styles.cartBlock}>
                       <div className='d-flex align-items-center p-2 border-bottom'>
@@ -99,7 +99,7 @@ class ShoppingCartPage extends Component {
                 {/* 二手購物車 */}
                 {secondItems.length > 0 && (
                   <div className='ps-md-0'>
-                    <div className={styles.sectionTitle}>拾毛市場</div>
+                    <div className={styles.sectionTitle}>拾毛二手市場</div>
 
                     {Object.keys(secondItemsBySeller).map(uid => (
                       <div key={uid} className={styles.cartBlock}>

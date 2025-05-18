@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import cookie from "js-cookie";
 import axios from 'axios';
+import styles from './MyCoupon.module.css'
 
 
 
@@ -64,8 +65,8 @@ class MyCoupon extends Component {
         return (
             <>
             <h4 style={{color:"#333"}}>我的優惠券</h4>
-            <table className="table table-striped table-hover">
-                <thead>
+            <table className={`table table-striped ${styles.myCustomTable}`}>
+                <thead className={styles.tableprimary}>
                     <tr>
                         <th>coupon_id</th>
                         <th>discount_ratio</th>

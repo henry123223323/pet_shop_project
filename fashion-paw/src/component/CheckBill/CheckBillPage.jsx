@@ -42,7 +42,7 @@ class CheckBillPage extends Component {
             className={`mx-4 ${CBstyles.buydetail}`}
             onClick={this.toggleDetails}
           >
-            {showDetails ? "隱藏購買明細" : "顯示購買明細"}
+            {showDetails ? "隱藏購買商品明細" : "查看購買商品明細"}
           </div>
 
           {/* 商品資訊明細（折疊內容） */}

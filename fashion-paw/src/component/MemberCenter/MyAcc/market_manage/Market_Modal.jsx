@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie'; // 新增引入 Cookies
+import styles from './Market_Modal.module.css'
 
 export default class MarketModal extends Component {
   constructor(props) {
@@ -208,7 +209,7 @@ export default class MarketModal extends Component {
               <h5 className="modal-title">
                 {modalState === 'Add' ? '上架商品' : modalState === 'Edit' ? '編輯商品' : '查看商品'}
               </h5>
-              <button type="button" className="btn-close" onClick={close} />
+              {/* <button type="button" className="btn-close p-2" onClick={close} /> */}
             </div>
             <div className="modal-body">
               {fieldsToShow.map(cfg => {
@@ -256,15 +257,15 @@ export default class MarketModal extends Component {
                   <div className="flex-grow-1">
                     <input type="hidden" name="slot[]" value={`slot${idx}`} />
                     <input type="hidden" name="image_id[]" value={img.id || ''} />
-                    <input type="file" name={`images[${idx}]`} accept="image/*" className="form-control form-control-sm mb-1" onChange={e => this.uploadImageAtIndex(idx, e)} disabled={readOnly} />
+                    <input type="file" name={`images[${idx}]`} accept="image/*" className=" form-control-sm mb-1" onChange={e => this.uploadImageAtIndex(idx, e)} disabled={readOnly} />
                     <input type="text" name="img_value[]" className="form-control form-control-sm" placeholder="輸入圖片描述" value={img.img_value} onChange={e => this.handleValueChange(idx, e)} disabled={readOnly} />
                   </div>
                 </div>
               ))}
             </div>
             <div className="modal-footer">
-              <button className="btn btn-secondary" onClick={close}>取消</button>
-              {!readOnly && <button className="btn btn-primary" onClick={this.handleSubmit}>儲存</button>}
+              <button className={styles.btncancel} onClick={close}>取消</button>
+              {!readOnly && <button className={styles.btnsubmit} onClick={this.handleSubmit}>儲存</button>}
             </div>
           </div>
         </div>

@@ -9,7 +9,7 @@ class SellerInfo extends Component {
         const {review, userProfile, avgRating, ratingCount,sellerOtherPd}=this.props
         return (<>
         {/* <h1>賣家合併頁</h1> */}
-        <div className='paw-bg-lightenbrown my-3 py-3'>
+        <div className='my-3 py-3'>
         <SellerProfile 
             userProfile={userProfile}
             avgRating={avgRating}

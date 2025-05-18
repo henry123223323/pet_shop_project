@@ -88,7 +88,7 @@ export default function FilterBar({
 
           {/* 折舊程度 (改用 PawDisplay 圖案) */}
           <div className={`${styles.row} ${styles.depreciationRow}`}>
-            <span className={styles.label}>折舊程度</span>
+            <span className={styles.label}>保存狀況</span>
             <div className={styles.options}>
               {depreciates.map(n => (
                 <label key={n} style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
@@ -96,7 +96,7 @@ export default function FilterBar({
                     type="radio"
                     name="depreciation"
                     value={n}
-                    checked={selDep === n}
+                    checked={Number(selDep) === n}
                     onChange={() => setSelDep(n)}
                   />
                   {/* 外層 wrapper 留 n 顆 paw 的寬度 */}
@@ -128,9 +128,9 @@ export default function FilterBar({
           </div>
           <div className={styles.actions}>
             <button className={styles.clearBtn} onClick={() => {
-              setSelFuncs([]);
-              setSelBrands([]);
-              setSelPrice('');
+              setSelLocs([]);
+              setSelDep(null);
+               setSelPrice('');
             }}>
               清除篩選
             </button>

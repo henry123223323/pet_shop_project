@@ -15,7 +15,6 @@ function Homepage() {
       <Banner />
       <NewsBar />
       <SectionLinks />
-      <CategoryIcons />
       <BestsellerTabs />
       <NewsEventsSection />
       <InfoSection />

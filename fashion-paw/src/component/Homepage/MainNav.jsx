@@ -32,21 +32,11 @@ export default function MainNav() {
     },
     {
       label: '拾毛百貨',
-      submenu: [
-        { label: '狗狗', to: '/Novicefeeding/dog' },
-        { label: '貓咪', to: '/HealthCheck/dog' },
-        { label: '倉鼠', to: '/PartTouch/Touch' },
-        { label: '鳥', to: '/PetQuiz/Quiz' }
-      ]
+      to:"/ProductPage"
     },
     {
       label: '拾毛市場',
-      submenu: [
-        { label: '狗狗', to: '/Novicefeeding/dog' },
-        { label: '貓咪', to: '/HealthCheck/dog' },
-        { label: '倉鼠', to: '/PartTouch/Touch' },
-        { label: '鳥', to: '/PetQuiz/Quiz' }
-      ]
+      to:"/SeProductPage"
     },
     {
       label: '寵物小知識',
