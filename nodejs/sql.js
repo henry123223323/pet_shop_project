@@ -9,6 +9,7 @@ const util = require('util');
 var mysql = require("mysql");
 const imageType = require("image-type").default;
 const multer = require("multer");
+const { v4: uuidv4 } = require('uuid');
 const photoUpload = multer();
 // 再動就自己寫後端
 
@@ -2919,57 +2920,83 @@ module.exports = { q };//匯出q給payment使用
 
 
 
-app.post(
-  "/post/calladmin/:chatroomID/:speakerID/:message",
-  function (req, res) {
-    const { chatroomID, speakerID } = req.params;
-    const origMsg = decodeURIComponent(req.params.message);
-    // 罐頭回覆
-    const botReply = '客服已收到通知囉，會儘快幫您處理！';
-    // SQL：先 insert 原始回報，再 insert 罐頭回覆
-    const sql = `
-      INSERT INTO chatmessage (ChatroomID, speakerID, message, isRead)
-      VALUES (?, ?, ?, 0),
-             (?, ?, ?, 0);
-    `;
-    conn.query(
-      sql,
-      [
-        chatroomID, speakerID, origMsg,
-        chatroomID, '0', botReply
-      ],
-      (err, results) => {
-        if (err) {
-          console.error("插入失敗：", err);
-          return res.status(500).send("新增失敗");
-        }
-        // 回傳成功
-        res.json({ ok: true });
-      }
-    );
+// 已經有 express.json() middleware
+app.post('/post/insert/message', async (req, res) => {
+  const { ChatroomID, speakerID, message, isRead } = req.body;
+  const sql = `
+    INSERT INTO chatmessage (ChatroomID, speakerID, message, isRead, create_time)
+    VALUES (?, ?, ?, ?, NOW())
+  `;
+  try {
+    await q(sql, [ChatroomID, speakerID, message, isRead]);
+    res.json({ ok: true });
+  } catch (err) {
+    console.error('插入失敗', err);
+    res.status(500).json({ error: 'DB 寫入失敗' });
   }
-);
+});
 
-// 聊天室管理者去後臺撈資料
-app.get('/admin/reports/:chatroomID', (req, res) => {
+
+// 前端呼叫 axios.get(`/message/${selected.id}`)
+app.get('/message/:chatroomID', async (req, res) => {
   const { chatroomID } = req.params;
   const sql = `
-    SELECT
-      speakerID,
-      message   AS text,
-      create_time AS time
-    FROM chatmessage
-    WHERE ChatroomID = ?
-    ORDER BY create_time
+    SELECT 
+      speakerID AS speaker, 
+      message   AS text, 
+      DATE_FORMAT(create_time, '%H:%i') AS time 
+    FROM chatmessage 
+    WHERE ChatroomID = ? 
+    ORDER BY create_time ASC
   `;
-  conn.query(sql, [chatroomID], (err, rows) => {
-    if (err) return res.status(500).json({ error: '伺服器錯誤' });
-    const list = rows.map(r => ({
-      speakerID: r.speakerID,
-      text: r.text,
-      time: new Date(r.time)
-        .toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' })
-    }));
-    res.json(list);
-  });
+  try {
+    const rows = await q(sql, [chatroomID]);
+    res.json(rows);
+  } catch (err) {
+    console.error('拉取訊息失敗', err);
+    res.status(500).json({ error: 'Server Error' });
+  }
+});
+
+// 取得所有該開發者可見的訊息
+app.get('/admin/all-messages/:uidY', async (req, res) => {
+  const { uidY } = req.params;
+  try {
+    const rows = await q(
+      `SELECT cm.speakerID,
+              cm.message AS text,
+              DATE_FORMAT(cm.create_time,'%Y-%m-%d %H:%i') AS time,
+              cm.ChatroomID
+       FROM chatmessage cm
+       JOIN chatroomuser cu
+         ON cm.ChatroomID = cu.chatroomID
+      WHERE cu.uidY = ?
+      ORDER BY cm.create_time ASC`,
+      [uidY]
+    );
+    res.json(rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: '伺服器錯誤' });
+  }
+});
+
+app.post('/chatroom/create', async (req, res) => {
+  const { userA, userB } = req.body; // userA=使用者 uid, userB=客服 uid (0)
+  try {
+    // 1. 產生一個唯一 id
+    const roomId = uuidv4();  // 例如 'f47ac10b-58cc-4372-a567-0e02b2c3d479'
+
+    // 2. 把雙方都加到 chatroomuser
+    await q(
+      'INSERT INTO chatroomuser (chatroomID, uidY) VALUES (?,?),(?,?)',
+      [ roomId, userA, roomId, userB ]
+    );
+
+    // 3. 回傳這個新聊天室的 ID
+    res.json({ chatroomID: roomId });
+  } catch (err) {
+    console.error('建立聊天室失敗', err);
+    res.status(500).json({ error: '建立聊天室失敗' });
+  }
 });
