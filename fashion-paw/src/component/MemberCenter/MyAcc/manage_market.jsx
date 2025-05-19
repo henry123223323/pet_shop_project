@@ -129,7 +129,7 @@ calladmin = async (pd_name) => {
 
   const userText = `${pd_name}：${selectVal}`;
   const botText  = '客服已收到通知囉，會儘快幫您處理！';
-  const roomId   = '11';   // 固定寫到聊天室 11
+  const roomId   = '12';  
 
   try {
     // 1. 寫入使用者回報到 chatroomID=11
