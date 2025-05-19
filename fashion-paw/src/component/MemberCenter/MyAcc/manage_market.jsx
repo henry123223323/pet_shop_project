@@ -127,7 +127,8 @@ calladmin = async (pd_name) => {
   const selectVal  = this.selectRef.current?.value || '';
   if (!selectVal) return alert('請先選擇回報原因');
 
-  const userText = `${pd_name}：${selectVal}`;
+  const userText = `${pd_name}：${selectVal}
+  <br>請幫我刪除該商品</br>`;
   const botText  = '客服已收到通知囉，會儘快幫您處理！';
   const roomId   = '12';   // 固定寫到聊天室 11
 
