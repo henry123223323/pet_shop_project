@@ -9,7 +9,7 @@
   top: 0;
   left: 0;
   right: 0;
-  padding: 7rem 1rem 7rem 1rem;
+  padding: 7rem 1.5rem;
   box-shadow: 0 2px 0 rgba(0, 0, 0, 0.1);
   background: rgba(255, 255, 255, 0.9);
   transition: background-color 0.4s ease, box-shadow 0.3s ease;

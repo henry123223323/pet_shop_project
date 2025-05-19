@@ -4,7 +4,7 @@ import { BsBellFill } from 'react-icons/bs';
 
 const messages = [
   '結帳金額滿399免運費',
-  '貓砂買二送一',
+  '貓抓板買二送一',
   '全館玩具8折',
   '新會員註冊送100元折價券',
   '保健食品買三送一',
