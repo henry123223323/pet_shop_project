@@ -220,7 +220,7 @@ class Profile extends Component {
                                 <div className="modal-body">
                                     <div className="form-group">
                                         <label>用戶名稱</label>
-                                        <input type="text" className="form-control" ref={this.inputname} />
+                                        <input type="text" className="form-control" ref={this.inputname} defaultValue={this.state.username}/>
                                     </div>
                                     <div className="form-group">
                                         <label>大頭照</label>
@@ -228,14 +228,14 @@ class Profile extends Component {
                                         <img width={100} src={this.state.photo} alt="大頭照" />
                                         {/* 這裡顯示選擇的圖片 */}
                                     </div>
-                                    <div className="form-group">
+                                    {/* <div className="form-group">
                                         <label>電子信箱</label>
                                         <input type="email" className="form-control" ref={this.inputemail} />
                                     </div>
                                     <div className="form-group">
                                         <label>生日</label>
                                         <input type="date" className="form-control" ref={this.inputbirthday} />
-                                    </div>
+                                    </div> */}
                                     {/* <div className="form-group">
                                         <label>電話</label>
                                         <input type='phone' className="form-control" ref={this.inputphone} />

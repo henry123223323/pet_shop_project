@@ -659,14 +659,65 @@ app.post("/post/addressedit/:Aid/:AdressName/:AdressPhone/:City/:District/:addre
 // });
 
 
+app.post("/post/updatatime/:uid",function(req,res){
+  const uid = req.params.uid
+  const query = `
+  UPDATE userinfo
+  SET last_time_login = NOW()  -- 使用 NOW() 設置當前時間
+  WHERE uid = ?;  -- 使用 ? 來綁定 uid 變數
+`;
+
+ conn.query(query,[uid],function(err,results){
+  if (err) {
+      console.error("資料庫查詢錯誤:", err);
+      res.status(500).send("伺服器錯誤");
+    } else {
+      console.log("登入時間更新成功");
+      res.json(results); // 正確回傳結果給前端
+    }
+  
+
+
+
+
+ })
+
+
+})
+
+
+
+
+
+
 
 
 
 
 app.get("/get/getcollect/:uid", function (req, res) {
-  const uid = req.params.uid
+  const uid = req.params.uid;
   console.log(uid);
-  conn.query("SELECT p.pd_name as pd_name ,c.CollectId AS cid ,p.price as price,p.pid as id, i.img_path as img FROM collection c JOIN productslist p ON c.pid = p.pid LEFT JOIN product_image i ON p.pid = i.pid AND i.img_value = '主圖' WHERE c.uid = ?", [uid], function (err, results) {
+
+  const query = `
+    WITH numbered_images AS (
+      SELECT 
+        p.pd_name AS pd_name,
+        c.CollectId AS cid,
+        p.price AS price,
+        p.pid AS id,
+        i.img_path AS img,
+        ROW_NUMBER() OVER (PARTITION BY p.pid ORDER BY i.pd_img_id) AS row_num  -- 使用 pd_img_id 來排序
+      FROM collection c
+      JOIN productslist p ON c.pid = p.pid
+      LEFT JOIN product_image i ON p.pid = i.pid
+      WHERE c.uid = ?
+    )
+    SELECT pd_name, cid, price, id, img
+    FROM numbered_images
+    WHERE row_num = 1;  -- 只選擇每個商品的第一張圖片
+  `;
+
+  conn.query(query, [uid], function (err, results) {
     if (err) {
       console.error("資料庫查詢錯誤:", err);
       res.status(500).send("伺服器錯誤");
@@ -674,8 +725,8 @@ app.get("/get/getcollect/:uid", function (req, res) {
       console.log("收藏查詢成功");
       res.json(results); // 正確回傳結果給前端
     }
-  })
-})
+  });
+});
 
 app.post("/post/deletecollect/:uid/:cid", function (req, res) {
   const uid = req.params.uid
