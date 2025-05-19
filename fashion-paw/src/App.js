@@ -11,6 +11,7 @@ import Icon from './component/Homepage/Icon';
 import Homepage from './component/Homepage/Homepage';
 import MemberCenter from './component/MemberCenter/MyAccount';
 import Login from './component/MemberCenter/Login';
+import Third_SetCookie from './component/MemberCenter/Login/Third_SetCookie';
 import Register from './component/MemberCenter/Register';
 import ProductPage from './component/ProductPage/ProductPage';
 import SeProductPage from './component/SeProductPage/SeProductPage';
@@ -47,6 +48,7 @@ function App() {
             <Route path="/" component={Homepage} exact />
             <Route path="/MemberCenter" component={MemberCenter} />
             <Route path="/Login" component={Login} />
+            <Route path="/Third_SetCookie" component={Third_SetCookie} />
             <Route path="/Register" component={Register} />
             <Route path="/ProductPage/:pid" component={NewPdDetail} exact/>
             <Route path="/ProductPage" component={ProductPage} />

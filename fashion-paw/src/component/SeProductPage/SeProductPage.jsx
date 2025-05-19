@@ -33,6 +33,13 @@ export default function SeProductPage() {
   useEffect(() => {
     const fetchData = async () => {
       if (SearchProducts) {
+        console.log(typeof (SearchProducts[0].images));
+        SearchProducts.forEach(element => {
+          element.images = JSON.parse(element.images)
+        });
+        console.log(typeof (SearchProducts[0].images));
+
+        // 1. 有搜尋結果：直接塞入
         setProducts(SearchProducts);
         setCityTownArray(SearchProducts.map(pd => pd.city + pd.district));
       } else {
@@ -78,7 +85,7 @@ export default function SeProductPage() {
       }
     };
     fetchData();
-  }, [SearchProducts]);
+  }, [location.state]);
 
   // 載入收藏清單
   useEffect(() => {

@@ -32,7 +32,7 @@ const functions = [
     parameters: {
       type: 'object',
       properties: {
-        
+
       },
       required: []
     }
@@ -43,7 +43,7 @@ async function HOTRANKING(limit) {
   let result = await axios.get(`http://localhost:8000/get/hot-ranking`)
   console.log(result.data);
   return result.data;
-  
+
 }
 
 
@@ -55,10 +55,10 @@ async function searchProducts(keyword) {
       res_json.push({
         url: `http://localhost:3000/product/${pd.id}`,
         pd_name: pd.name,
-        price:pd.price,
-        img:`http://localhost:3000/${JSON.parse(pd.images)[0].img_path}`
+        price: pd.price,
+        img: `http://localhost:3000/${JSON.parse(pd.images)[0].img_path}`
       })
-      
+
     })
     return res_json
   }
@@ -89,14 +89,23 @@ router.post('/', async (req, res) => {
       .map(m => `Q: ${m.metadata.question}\nA: ${m.metadata.answer}`)
       .join('\n----\n');
     console.log(contexts);
-    
+
     const messages = [
       {
         role: 'system', content: `
         你是一位寵物用品購物網站【好拾毛】的客服助理。
+        ***講完一段話就換行***
         我們是賣全新、二手商品的購物網站,動物種類有貓、狗、鳥、鼠
-        • 只有當使用者問題中明確提到「請查詢商品庫存」、「請搜尋新聞」等動作時，才返回 function_call；
-        • 其他情況，一律以純文字形式回答。以下是知識庫範例：\n${contexts}` },
+        • 只有當使用者問題中明確提到「請查詢商品庫存」或尋找熱門商品等動作時，才返回 function_call；
+        •如果使用者回答'尋找商品',提醒他後面要打關鍵字,並給他看範例
+        •如果使用者問{怎麼養狗}回答,前面可以簡短回答她,告訴她我們網站設有小知識專區,下面的連結顯示給使用者
+         '<a ='http://localhost:3000/Novicefeeding/dog'> 點我 </a>' 
+        也跟她說可以使用我們的寵物知識小問答來了解寵物
+        •如果使用者問{怎麼養狗}回答,前面可以簡短回答她,告訴她我們網站設有小知識專區,下面的連結顯示給使用者
+         '<a ='http://localhost:3000/Novicefeeding/cat'> 點我 </a>' 
+        也跟她說可以使用我們的寵物知識小問答來了解寵物
+        • 其他情況，一律以純文字形式回答。以下是知識庫範例：\n${contexts}`
+      },
       { role: 'user', content: message }
     ];
     const chatResp = await openai.chat.completions.create({
@@ -104,7 +113,7 @@ router.post('/', async (req, res) => {
       messages,
       functions,
       function_call: 'auto',  // 讓模型自動決定要不要 call
-      temperature: 0.2,
+      temperature: 0.8,
       max_tokens: 512
     });
     let answer = chatResp.choices[0].message
@@ -119,22 +128,22 @@ router.post('/', async (req, res) => {
 
       }
       else if (name === 'get_hot_ranking') {
-      resultData = await HOTRANKING();
+        resultData = await HOTRANKING();
 
-    }
+      }
       else {
         resultData = { error: `Unknown function ${name}` };
       }
-      
-      return res.json({functions:name, answer: resultData });
+
+      return res.json({ functions: name, answer: resultData });
 
     }
-    
+
     else {
-      res.json({functions:"text", answer: answer.content });
+      res.json({ functions: "text", answer: answer.content });
 
     }
-console.log('ai');
+    console.log('ai');
 
   } catch (err) {
     console.error(err);

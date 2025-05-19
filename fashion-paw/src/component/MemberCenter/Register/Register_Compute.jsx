@@ -18,6 +18,25 @@ class Register_Compute extends Component {
             ]
         };
     }
+
+    componentDidMount() {
+        const params = new URLSearchParams(window.location.search);
+        const email = params.get("email");
+        const provider = params.get("provider");
+        const provider_id = params.get("provider_id");
+
+        // 如果是從第三方登入來，就直接跳到 Step 3
+        if (email && provider && provider_id) {
+            this.setState({
+                currentStep: 3, // ⬅️ 直接跳基本資料
+                email,
+                provider,
+                provider_id
+            });
+        }
+    }
+
+
     handleNext = () => {
         //按下一步 currentStep+1
         this.setState((prevState) => ({
@@ -50,7 +69,6 @@ class Register_Compute extends Component {
             console.log(this.state);
             console.log(this.state.userinfo);
             const newuserinfo = {
-
                 email: this.state.email,
                 username: this.state.userinfo.username,
                 password: this.state.password,
@@ -59,8 +77,14 @@ class Register_Compute extends Component {
                 birthday: this.state.userinfo.birthday,
                 power: this.state.userinfo.power,
                 Aboutme: this.state.userinfo.syoukai,
-                fullname: this.state.userinfo.userfullname
-            }
+                fullname: this.state.userinfo.userfullname,
+
+                // ✅ 加上條件式展開（如果有 provider 才加這兩欄）
+                ...(this.state.provider && {
+                    provider: this.state.provider,
+                    provider_id: this.state.provider_id
+                })
+            };
 
             axios.post("http://localhost:8000/post/createuserinfo", newuserinfo).then(response => {
                 console.log("新增成功！", response.data);
@@ -154,24 +178,24 @@ class Register_Compute extends Component {
 
 
     newuseraddress = () => {
-    const newuseraddress = {
-        uid: this.state.uid,
-        City: this.state.userinfo.city,
-        District: this.state.userinfo.district,
-        address: this.state.userinfo.adress,
-        AdressName: this.state.userinfo.userfullname,
-        AdressPhone: this.state.userinfo.phone
-    };
+        const newuseraddress = {
+            uid: this.state.uid,
+            City: this.state.userinfo.city,
+            District: this.state.userinfo.district,
+            address: this.state.userinfo.adress,
+            AdressName: this.state.userinfo.userfullname,
+            AdressPhone: this.state.userinfo.phone
+        };
 
-    axios.post("http://localhost:8000/post/newuseraddress", newuseraddress)
-        .then(response => {
-            console.log("新增成功！", response.data);
-            window.location.href = "/Login";  // 成功後重定向
-        })
-        .catch(error => {
-            console.error("新增失敗", error);
-        });
-}
+        axios.post("http://localhost:8000/post/newuseraddress", newuseraddress)
+            .then(response => {
+                console.log("新增成功！", response.data);
+                window.location.href = "/Login";  // 成功後重定向
+            })
+            .catch(error => {
+                console.error("新增失敗", error);
+            });
+    }
 
 
 
@@ -198,7 +222,9 @@ class Register_Compute extends Component {
             return <StepPassword next={this.handleNext} getpassword={this.getpassword} />
         }
         else {
-            return <StepBasicInfo next={this.handleNext} getallinfo={this.getallinfo} />
+            return <StepBasicInfo next={this.handleNext} getallinfo={this.getallinfo} provider={this.state.provider}
+                provider_id={this.state.provider_id}
+                email={this.state.email} />
         }
     }
     render() {

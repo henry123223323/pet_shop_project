@@ -114,7 +114,7 @@ export default function ChatApp() {
       id: user_id,
       from: 'user',
       text: input.trim(),
-      time: new Date().toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' })
+      time: Date.now()
     };
     setMessagesMap(prev => ({
       ...prev,
@@ -158,7 +158,7 @@ export default function ChatApp() {
               id: selected.uid,
               from: 'bot',
               text: pd3,
-              time: new Date().toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' })
+              time: Date.now()
             };
             //insert api
             axios.post('http://localhost:8000/post/insert/message',
@@ -205,7 +205,7 @@ export default function ChatApp() {
               id: selected.uid,
               from: 'bot',
               text: top3,
-              time: new Date().toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' })
+              time: Date.now()
             };
             //insert api
             axios.post('http://localhost:8000/post/insert/message',
@@ -230,7 +230,7 @@ export default function ChatApp() {
               id: selected.uid,
               from: 'bot',
               text: res.data.answer,
-              time: new Date().toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' })
+              time: Date.now()
             };
             //insert api
             axios.post('http://localhost:8000/post/insert/message',
@@ -322,10 +322,25 @@ export default function ChatApp() {
         <div key={selected.id} className={styles.messages}>
           <div className={styles.dateSep}>今天</div>
           {messages.map((m, idx) => (
-            <div key={idx} className={`${styles.message} ${m.from === 'bot' ? styles.bot : styles.user}`}>
-              <div className={styles.text} dangerouslySetInnerHTML={{ __html: m.text }}></div>
-              <span className={styles.time}>{m.time}</span>
-            </div>
+            <>
+              {
+                (idx > 0) ?
+                  (new Date(messages[idx - 1].time).toLocaleDateString() !== new Date(m.time).toLocaleDateString())
+                    ?
+                    <div className={styles.dateSep}>{
+                      (new Date(m.time).toLocaleDateString() === new Date().toLocaleDateString())
+                        ? '今天'
+                        : new Date(m.time).toLocaleDateString()
+                    }</div>
+                    :
+                    <div />
+                  : <div className={styles.dateSep}>{new Date(m.time).toLocaleDateString()}</div>
+              }
+              <div key={idx} className={`${styles.message} ${m.from === 'bot' ? styles.bot : styles.user}`}>
+                <div className={styles.text} dangerouslySetInnerHTML={{ __html: m.text }}></div>
+                <span className={styles.time}>{new Date(m.time).toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' })}</span>
+              </div>
+            </>
           ))}
           {
             typing && <div className={`${styles.typingBubble} ${styles.bot}`}>
@@ -344,7 +359,7 @@ export default function ChatApp() {
 
         <div className={styles.quickBtns}>
           <button onClick={() => setInput('熱門商品TOP3')}>熱門商品TOP3</button>
-          <button onClick={() => setInput('尋找商品:')}>尋找商品</button>
+          <button onClick={() => setInput('尋找商品 ')}>尋找商品</button>
         </div>
 
         <div className={styles.inputArea}>

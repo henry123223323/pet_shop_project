@@ -73,6 +73,10 @@ function buildAttrValues(pid, attrs) {
 }
 app.use('/verify', verifyRoutes);
 
+// 啟用 Google 登入與 session
+const initPassportAuth = require('./utils/initPassportAuth');
+initPassportAuth(app);
+
 //付款綠界API
 app.use('/payment', paymentRouter);
 app.use('/', cvsRoute);
@@ -756,7 +760,7 @@ app.post("/post/createuserinfo", function (req, res) {
   const imagePath = path.join(__dirname, 'media/userphoto.png'); // 圖片路徑
   const imageBuffer = fs.readFileSync(imagePath); // 把圖片讀進來成 buffer
 
-  const { email, username, password, firstname, lastname, birthday, power, Aboutme, fullname } = req.body;
+  const { email, username, password, firstname, lastname, birthday, power, Aboutme, fullname, provider, provider_id } = req.body;
 
   const sql = "INSERT INTO userinfo (email, username, password, firstname, lastname, birthday, power, Aboutme ,photo, fullname) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
@@ -776,9 +780,39 @@ app.post("/post/createuserinfo", function (req, res) {
       console.error("資料庫錯誤:", err);
       return res.status(500).send("新增失敗");
     }
-    res.json({ message: "新增成功", result });
+    const uid = result.insertId;
+
+    // ➕ 如果有第三方登入資料，就插入 third_user
+    if (provider && provider_id) {
+      const thirdSql = `
+        INSERT INTO third_user (uid, provider, provider_id)
+        VALUES (?, ?, ?)
+      `;
+
+      conn.query(thirdSql, [uid, provider, provider_id], (thirdErr) => {
+        if (thirdErr) {
+          console.error("third_user 插入錯誤:", thirdErr);
+          return res.status(500).json({
+            message: "註冊失敗，請稍後再試（third_user 綁定失敗）",
+            error: thirdErr
+          });
+        }
+
+        // 全部成功
+        res.json({
+          message: "會員建立與第三方綁定成功",
+          result
+        });
+      });
+    } else {
+      // 一般註冊情況
+      res.json({
+        message: "會員建立成功",
+        result
+      });
+    }
   });
-})
+});
 
 
 
@@ -2715,7 +2749,6 @@ app.get('/chatroom/message/:room', (req, res) => {
       text: msg.text,
       // 4. 格式化時間為 zh-TW 兩位小時兩位分鐘
       time: new Date(msg.time)
-        .toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' })
     })) : [];
 
     console.log(`聊天室 ${roomid} 訊息：`, messages);
@@ -2877,6 +2910,22 @@ app.post("/newAddress", function (req, res) {
     });
   });
 });
+
+app.post('/post/update_login_time', async (req, res) => {
+  let { lastTime, uid } = req.body;
+  const formatted = new Date(lastTime + 8 * 60 * 60 * 1000).toISOString().slice(0, 19).replace('T', ' ');
+  let sql = `
+  UPDATE userinfo SET last_time_login =?
+  WHERE uid=?
+  `
+  conn.query(sql, [formatted, uid], function (err, results) {
+    console.log(`登入時間更新:${formatted}`);
+
+
+  })
+
+})
+
 
 //增加商品
 app.post("/cart/add", async (req, res) => {
