@@ -303,10 +303,10 @@ export default function ChatApp() {
             <>
               {
                 (idx > 0) ?
-                  (new Date(messages[idx - 1].time).toDateString() !== new Date(m.time).toDateString())
+                  (new Date(messages[idx - 1].time).toLocaleDateString() !== new Date(m.time).toLocaleDateString())
                     ?
                     <div className={styles.dateSep}>{
-                      (new Date(m.time).toDateString() === new Date().toDateString())
+                      (new Date(m.time).toLocaleDateString() === new Date().toLocaleDateString())
                         ? '今天'
                         : new Date(m.time).toLocaleDateString()
                     }</div>

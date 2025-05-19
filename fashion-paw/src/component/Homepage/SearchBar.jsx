@@ -37,7 +37,8 @@ function SearchBar({ onSearch }) {
 
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    if (e)
+      e.preventDefault();
     if (!keyword.trim()) return;
     if (category === '新品') {
       let search_result = await axios.post('http://localhost:8000/post/productsreach/new', { keyword: keyword })
