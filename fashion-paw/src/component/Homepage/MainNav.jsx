@@ -27,7 +27,7 @@ export default function MainNav() {
       label: '關於好拾毛',
       submenu: [
         { label: '關於我們', to: '/Aboutus' },
-        { label: '相關規定', to: '/Help' }
+        { label: '幫助中心', to: '/Help' }
       ]
     },
     {
@@ -59,7 +59,7 @@ export default function MainNav() {
           <NavLink to="#">關於好拾毛</NavLink>
           <ul className={navstyles.dropdownMenu}>
             <li><NavLink to="/Aboutus">關於我們</NavLink></li>
-            <li><NavLink to="/Help">相關法規</NavLink></li>
+            <li><NavLink to="/Help">幫助中心</NavLink></li>
           </ul>
         </li>
 
