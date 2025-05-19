@@ -91,7 +91,7 @@ export default function ProductPage() {
 
     // FilterBar 篩選
     const { functions: funcs, brands, price, hotRanking } = filters;
-    if (funcs.length) items = items.filter(p => funcs.includes(p.categories_key));
+    if (funcs.length) items = items.filter(p => funcs.includes(p.categories_label));
     if (brands.length) items = items.filter(p => brands.includes(p.attributes_object.brand));
 
     // 價格
