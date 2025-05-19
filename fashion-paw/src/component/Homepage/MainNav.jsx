@@ -15,8 +15,8 @@ export default function MainNav() {
   };
 
   const pageNames = {
-    '/ProductPage': '拾毛百貨',
-    '/SeProductPage': '拾毛市場'
+    '/ProductPage': '拾毛新品百貨',
+    '/SeProductPage': '拾毛二手市場'
   };
 
   const paths = Object.keys(pageNames);
@@ -31,11 +31,11 @@ export default function MainNav() {
       ]
     },
     {
-      label: '拾毛百貨',
+      label: '拾毛新品百貨',
       to:"/ProductPage"
     },
     {
-      label: '拾毛市場',
+      label: '拾毛二手市場',
       to:"/SeProductPage"
     },
     {

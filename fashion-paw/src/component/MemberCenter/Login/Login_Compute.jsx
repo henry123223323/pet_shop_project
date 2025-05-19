@@ -101,9 +101,12 @@ class Login_Compute extends Component {
                                         onChange={(e) => this.setState({ resetEmail: e.target.value })}
                                     />
                                     <p className="text-secondary mt-2">{this.state.resetStatus}</p>
+                                </div>
 
+                                <div className="modal-footer">
+                                    {/* 傳送連結 */}
                                     <button
-                                        className='btn btn-primary mt-2'
+                                        className={styles.btnadd}
                                         onClick={async () => {
                                             const { resetEmail } = this.state;
                                             if (!resetEmail) {
@@ -135,10 +138,8 @@ class Login_Compute extends Component {
                                     >
                                         傳送連結
                                     </button>
-                                </div>
-
-                                <div className="modal-footer">
-                                    <button type="button" className="btn btn-secondary" onClick={() => {
+                                    {/* 取消 */}
+                                    <button type="button" className={styles.btncancel} onClick={() => {
                                         this.setState({
                                             show: false
                                         })

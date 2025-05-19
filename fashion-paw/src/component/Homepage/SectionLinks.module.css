@@ -48,3 +48,9 @@
   background: rgba(255,255,255,0.95);
   color: #70823C;          /* 你要的 hover 字色 */
 }
+.sectionImage {
+  max-height: 300px;
+  object-fit: cover;
+  width: 100%;
+  border-radius: 12px;
+}

@@ -100,7 +100,7 @@
   text-decoration: none;
   padding: 0.25rem;
   transition: color 0.2s;
-  font-size: 18px;
+  font-size: 16px;
 }
 
 /* 關於我們+寵物小知識的hoverlink+megapanel的card */
@@ -146,7 +146,7 @@
   width: 100%;
   text-align: center;
   padding: 0.5rem 1rem;
-  font-size: 17px;
+  font-size: 16px;
 }
 
 .dropdownMenu li:hover>a {

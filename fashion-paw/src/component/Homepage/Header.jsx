@@ -178,7 +178,7 @@ function Header() {
                 {(!isHome || showSolidHeader) ? (
                     <div className={styles.threeColContainer}>
                         <div className={styles.colLeft}>
-                            <Link to="/"><img src={Logo} alt="Logo" style={{ height: 100 }} /></Link>
+                            <Link to="/"><img src={Logo} alt="Logo" style={{ height: 80 }} /></Link>
                         </div>
                         <div className={styles.colCenter}>
                             <MainNav />
