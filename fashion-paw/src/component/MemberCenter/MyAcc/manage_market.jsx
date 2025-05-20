@@ -127,8 +127,7 @@ calladmin = async (pd_name) => {
   const selectVal  = this.selectRef.current?.value || '';
   if (!selectVal) return alert('請先選擇回報原因');
 
-  const userText = `${pd_name}：${selectVal}
-  <br>請幫我刪除該商品</br>`;
+  const userText = `${pd_name}：${selectVal}`;
   const botText  = '客服已收到通知囉，會儘快幫您處理！';
   const roomId   = '12';  
 
@@ -281,7 +280,6 @@ calladmin = async (pd_name) => {
                       <option value="無法出貨">無法出貨</option>
                       <option value="貨物損毀">貨物損毀</option>
                       <option value="重複上架">重複上架</option>
-                      <option value="操作問題">操作問題</option>
                     </select>
                     <p></p>
                     <button className='btn btn-danger' onClick={() => this.calladmin(p.pd_name)}>回報</button>
