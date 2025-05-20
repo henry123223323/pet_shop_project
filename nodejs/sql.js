@@ -759,7 +759,7 @@ app.get("/get/orderitemfirstpig/:order_id", function (req, res) {
 
 
 app.post("/post/createuserinfo", function (req, res) {
-  const imagePath = path.join(__dirname, 'media/userphoto.png'); // 圖片路徑
+  const imagePath = path.join(__dirname, 'media/defaultUserPhoto.png'); // 圖片路徑
   const imageBuffer = fs.readFileSync(imagePath); // 把圖片讀進來成 buffer
 
   const { email, username, password, firstname, lastname, birthday, power, Aboutme, fullname, provider, provider_id } = req.body;
