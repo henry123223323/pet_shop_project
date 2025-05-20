@@ -28,6 +28,11 @@ export default function ProductPage() {
   const [typeFilter, setTypeFilter] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('');
 
+  useEffect(() => {
+    console.log(filters);
+
+  }, [filters])
+
   // 讀取收藏
   useEffect(() => {
     async function fetchFav() {

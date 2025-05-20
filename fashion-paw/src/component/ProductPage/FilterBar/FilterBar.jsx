@@ -24,6 +24,8 @@ export default function FilterBar({
 
 
   useEffect(() => {
+    console.log(selFuncs);
+
     const fetchBrand = async () => {
       try {
         const res = await axios.get('http://localhost:8000/get/new_product/brand');
