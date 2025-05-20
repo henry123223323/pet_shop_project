@@ -174,7 +174,7 @@ class Profile extends Component {
                     </div>
                     <div className={styles.textbox}>
                         <label className={styles.text}>生日：</label>
-                        <span className='ptxt4 ml-5'>{this.state.birthday}</span>
+                        <span className='ptxt4 ml-5'>{new Date(this.state.birthday).toLocaleDateString()}</span>
                     </div>
                 </div>
 

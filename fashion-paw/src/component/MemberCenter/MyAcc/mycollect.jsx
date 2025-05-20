@@ -25,6 +25,10 @@ class mycollect extends Component {
             favorites: prevState.favorites.filter(fav => fav.id !== id)
         }));
     }
+    componentDidUpdate() {
+        console.log(this.state.favorites);
+
+    }
 
 
     componentDidMount() {

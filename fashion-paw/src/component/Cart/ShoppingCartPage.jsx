@@ -48,11 +48,11 @@ class ShoppingCartPage extends Component {
           </div>
 
           {/* 開發用：清空 localStorage 按鈕 */}
-          <div className="text-end my-3 px-4">
+          {/* <div className="text-end my-3 px-4">
             <button className="btn btn-outline-danger btn-sm" onClick={() => this.context.clearCart()}>
               🧹 清空購物車（Context + localStorage）
             </button>
-          </div>
+          </div> */}
 
           {cartList.length === 0 && (
             <div className={styles.emptyCartNotice}>
@@ -112,7 +112,7 @@ class ShoppingCartPage extends Component {
                             className='me-1 ml-2'
                           />
                           <label htmlFor={`selectAll-${uid}`} className='pt-1'>
-                            <label className='pl-3 '>
+                            <label className='pl-3 ' htmlFor={`selectAll-${uid}`}>
                               <SellerTitle uid={String(uid)} />
                             </label></label>
                         </div>
@@ -379,6 +379,7 @@ class ShoppingCartPage extends Component {
 
     localStorage.setItem('selectedItems', JSON.stringify(selectedCartItems));
     localStorage.setItem('discountAmount', discountAmount);
+
     window.location.href = '/CheckBillPage';
   };
 }

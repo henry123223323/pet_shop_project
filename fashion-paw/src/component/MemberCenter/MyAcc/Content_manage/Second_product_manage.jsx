@@ -41,17 +41,17 @@ export default class SecondProductManage extends Component {
   OpenAdd = () =>
     this.setState({ ModalState: 'Add', currentProduct: null, showModal: true });
 
-  OpenFound = async index => {
-    const { pid } = this.state.second_product[index];
-    try {
-      const res = await axios.get(
-        `http://localhost:8000/get/second-products/${pid}`
-      );
-      this.setState({ ModalState: 'Find', currentProduct: res.data, showModal: true });
-    } catch {
-      alert('無法取得商品詳情');
-    }
-  };
+  // OpenFound = async index => {
+  //   const { pid } = this.state.second_product[index];
+  //   try {
+  //     const res = await axios.get(
+  //       `http://localhost:8000/get/second-products/${pid}`
+  //     );
+  //     this.setState({ ModalState: 'Find', currentProduct: res.data, showModal: true });
+  //   } catch {
+  //     alert('無法取得商品詳情');
+  //   }
+  // };
 
   OpenEdit = async index => {
     const { pid } = this.state.second_product[index];
@@ -199,8 +199,8 @@ export default class SecondProductManage extends Component {
                     <td>{this.renderStatus(p.status)}</td>
                     <td>
                       <button
+                        href={`/product/${p.pid}`}        // 原生 a 會整頁載入
                         className={styles.btn}
-                        onClick={() => this.OpenFound(startIndex + i)}
                       >
                         查看
                       </button>

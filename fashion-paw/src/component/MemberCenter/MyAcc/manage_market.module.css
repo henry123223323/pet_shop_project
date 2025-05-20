@@ -17,7 +17,7 @@
     border-radius: 8px;
     padding: 6px 8px 6px 8px;
     box-shadow: 0 1px 5px rgba(0, 0, 0, 0.3);
-    margin: 0 0 5px 0;
+    margin: 0 5px 5px 0;
     color: white;
     font-size: 14px;
     /* min-width: 70px */
@@ -51,7 +51,7 @@
     border-radius: 8px;
     padding: 6px 8px 6px 8px;
     box-shadow: 0 1px 5px rgba(0, 0, 0, 0.3);
-    margin: 0 0 5px 0;
+    margin: 0 5px 5px 0;
     color: white;
     font-size: 14px;
     min-width: 40px;
@@ -68,4 +68,16 @@
 
 .tablestriped tbody tr:nth-of-type(odd) {
   background-color: #F7F0E7; 
+}
+.bb{
+    background-color: #F7F6EE;
+    border: none;
+    border-radius: 8px;
+    padding: 6px 8px 6px 8px;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.3);
+    margin: 0 5px 5px 0;
+    color: black;
+    font-size: 14px;
+    min-width: 40px;
+    
 }

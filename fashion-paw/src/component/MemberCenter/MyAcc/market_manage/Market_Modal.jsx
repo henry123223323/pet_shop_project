@@ -155,6 +155,17 @@ export default class MarketModal extends Component {
 
 
   render() {
+    const attrLabels = {
+      brand: '品牌',
+      pattern: '樣式',
+      name: '名稱',
+      model: '型號',
+      buydate: '購入時間',
+      new_level: '保存狀況',
+      size: '尺寸',
+      color: '顏色',
+      weight: '重量'
+    };
     const { modalState, productData } = this.state;
     const { close } = this.props;
     const readOnly = modalState === 'Find';
@@ -236,12 +247,21 @@ export default class MarketModal extends Component {
               })}
               <hr />
               <h5>商品屬性</h5>
-              {attrKeys.map(attr => (
-                <div className="form-group mb-2" key={attr}>
-                  <label>{attr}</label>
-                  <input type="text" name={`attribute.${attr}`} className="form-control" value={productData.attribute[attr]} onChange={this.handleAttrChange} disabled={readOnly} />
-                </div>
-              ))}
+              {Object.keys(productData.attribute)
+                .filter(key => !(productData.condition === 'new' && key === 'new_level'))
+                .map(attr => (
+                  <div className="form-group mb-2" key={attr}>
+                    <label>{attrLabels[attr] || attr}</label>
+                    <input
+                      type="text"
+                      name={`attribute.${attr}`}
+                      className="form-control"
+                      value={productData.attribute[attr]}
+                      onChange={this.handleAttrChange}
+                      disabled={readOnly}
+                    />
+                  </div>
+                ))}
               <hr />
               <h5>商品圖片與描述</h5>
               {productData.images.map((img, idx) => (

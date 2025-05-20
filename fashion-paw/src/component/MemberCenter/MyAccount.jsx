@@ -25,7 +25,7 @@ class MyAccount extends Component {
                             <Switch>
                                 <Route path="/MemberCenter/profile" component={Profile} />
                                 <Route path="/MemberCenter/orders" component={Orders} />
-                                <Route path="/MemberCenter/credit-card" component={Credit_Card} />
+                                {/* <Route path="/MemberCenter/credit-card" component={Credit_Card} /> */}
                                 <Route path="/MemberCenter/mycollect" component={mycollect} />
                                 <Route path="/MemberCenter/mycoupon" component={MyCoupon} />
                                 <Route path="/MemberCenter/myAddress" component={myAddress} />

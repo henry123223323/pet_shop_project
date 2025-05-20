@@ -9,8 +9,11 @@ const util = require('util');
 var mysql = require("mysql");
 const imageType = require("image-type").default;
 const multer = require("multer");
+const { v4: uuidv4 } = require('uuid');
 const photoUpload = multer();
 // 再動就自己寫後端
+
+
 
 
 const verifyRoutes = require('./routes/verify');
@@ -563,7 +566,7 @@ app.post("/post/makenewaddress/:uid/:AdressName/:AdressPhone/:City/:District/:ad
 
 
 app.get("/get/userinfo", function (req, res) {
-  conn.query("SELECT uid,email,username,photo,fullname,birthday,power,last_time_login,AboutMe as aboutme,Device as device FROM userinfo", function (err, results) {
+  conn.query("SELECT uid,email,password,username,photo,fullname,birthday,power,last_time_login,AboutMe as aboutme,Device as device FROM userinfo", function (err, results) {
     if (err) {
       console.error("資料庫查詢錯誤:", err);
       res.status(500).send("伺服器錯誤");
@@ -2395,7 +2398,28 @@ app.get('/get/recommend-products', (req, res) => {
     res.json(data);
   });
 });
+//撈單筆使用者資料的API
+app.get("/get/back-userinfo/:uid", (req, res) => {
+  const { uid } = req.params;
+  if (!uid) return res.status(400).json({ error: "需要帶入 UID" });
 
+  conn.query(
+    `SELECT uid, email, username, photo, power, last_time_login 
+     FROM userinfo
+     WHERE uid = ?`,
+    [uid],
+    (err, results) => {
+      if (err) {
+        console.error("DB 查詢錯誤:", err);
+        return res.status(500).send("伺服器錯誤");
+      }
+      if (results.length === 0) {
+        return res.status(404).json({ error: "找不到此使用者" });
+      }
+      res.json(results[0]);
+    }
+  );
+});
 
 
 
@@ -2407,10 +2431,14 @@ app.post('/orders/create', async (req, res) => {
   const { order, items } = req.body;
 
   if (!order || !items || !Array.isArray(items) || items.length === 0) {
-    return res.status(400).json({ error: '缺少訂單資料或明細' });
+    return res.status(400).json({
+      error: '無效的請求：order 或 items 缺失或格式錯誤',
+      received: { order, items }
+    });
   }
 
-  const conn2 = await q.getConnection ? await q.getConnection() : conn; // 確保可 transaction（若使用 pool）
+  const conn2 = await q.getConnection ? await q.getConnection() : conn;
+
   try {
     await q('START TRANSACTION');
 
@@ -2439,34 +2467,73 @@ app.post('/orders/create', async (req, res) => {
     const result = await q(insertOrderSQL, orderParams);
     const order_id = result.insertId;
 
-    // 2. 插入明細
-    const itemValues = items.map(item => [
-      order_id,
-      item.pid,
-      item.pd_name,
-      item.spec,
-      item.quantity,
-      item.unit_price,
-      item.total_price,
-      item.img_path
-    ]);
+    for (const item of items) {
+      const pid = parseInt(item.pid, 10);           // ✅ 確保是數字
+      const quantity = parseInt(item.quantity, 10); // ✅ 在這裡定義
+      console.log(item)
 
-    await q(
-      `INSERT INTO orderitem
-      (order_id, pid, pd_name, spec, quantity, unit_price, total_price, img_path)
-      VALUES ?`,
-      [itemValues]
-    );
+      // 2. 扣庫存 + 累加銷售數
+      await q(
+        `UPDATE productslist
+     SET stock = stock - ?,
+         sale_count = sale_count + ?
+     WHERE pid = ? AND stock >= ?`,
+        [quantity, quantity, pid, quantity]
+      );
+
+      // 3. 若庫存為 0 就下架
+      await q(
+        `UPDATE productslist
+     SET status = 0
+     WHERE pid = ? AND stock = 0`,
+        [pid]
+      );
+    }
+
+    // 4. 刪除優惠券
+    try {
+      if (typeof order.coupon_code === 'string' && order.coupon_code.trim() !== '') {
+        console.log("🔖 使用者有選擇 coupon：", order.coupon_code);
+        await q(
+          `DELETE FROM coupon
+       WHERE uid = ? AND coupon_code = ?`,
+          [order.uid, order.coupon_code]
+        );
+      }
+    } catch (e) {
+      console.warn("⚠️ 刪除優惠券時出錯（不影響訂單流程）", e.message);
+    }
+
+    // 5. 插入明細
+    const insertItemSQL = `
+  INSERT INTO orderitem
+  (order_id, pid, pd_name, spec, quantity, unit_price, total_price, img_path)
+  VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+`;
+
+    for (const item of items) {
+      await q(insertItemSQL, [
+        order_id,
+        item.pid,
+        item.pd_name,
+        item.spec || '',
+        item.quantity,
+        parseInt(item.unit_price, 10),
+        parseInt(item.total_price, 10),
+        item.img_path
+      ]);
+    }
 
     await q('COMMIT');
     res.status(200).json({ success: true, order_id });
 
   } catch (err) {
     await q('ROLLBACK');
-    console.error('新增訂單失敗:', err);
-    res.status(500).json({ error: '訂單建立失敗' });
+    console.error('❌ 新增訂單失敗:', err.message, err.stack);
+    res.status(500).json({ error: '訂單建立失敗：' + err.message });
   }
 });
+
 
 //登入後把登入前的購物車資料存進uid的該購物車資料庫
 app.post("/cart/merge", async (req, res) => {
@@ -2519,6 +2586,17 @@ app.get('/build_AIchatroom/:user_id', async (req, res) => {
 
   })
 })
+
+app.get('/build_chatroom/:user_id', async (req, res) => {
+  let { user_id } = req.params;
+  let sql = `
+  INSERT INTO chatroomuser (uidX,uidY) VALUES(?,0)
+  `
+  conn.query(sql, [user_id], function (err, rows) {
+
+  })
+})
+
 app.get('/AI_check/:userid', async (req, res) => {
   let { userid } = req.params;
   let sql = `
@@ -2535,6 +2613,24 @@ app.get('/AI_check/:userid', async (req, res) => {
     }
   })
 })
+
+app.get('/check/:userid', async (req, res) => {
+  let { userid } = req.params;
+  let sql = `
+  SELECT chatroomID 
+  FROM chatroomuser
+  WHERE uidX=? and uidY=0;
+  `
+  conn.query(sql, [userid], function (err, rows) {
+    if (rows.length > 0) {
+      res.json(rows)
+    }
+    else {
+      res.json(false)
+    }
+  })
+})
+
 // 從資料庫讀出購物車資料
 app.get("/cart/:uid", async (req, res) => {
   const uid = Number(req.params.uid);
@@ -2698,7 +2794,6 @@ app.get('/chatroom/message/:room', (req, res) => {
       text: msg.text,
       // 4. 格式化時間為 zh-TW 兩位小時兩位分鐘
       time: new Date(msg.time)
-        .toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' })
     })) : [];
 
     console.log(`聊天室 ${roomid} 訊息：`, messages);
@@ -2861,6 +2956,22 @@ app.post("/newAddress", function (req, res) {
   });
 });
 
+app.post('/post/update_login_time', async (req, res) => {
+  let { lastTime, uid } = req.body;
+  const formatted = new Date(lastTime + 8 * 60 * 60 * 1000).toISOString().slice(0, 19).replace('T', ' ');
+  let sql = `
+  UPDATE userinfo SET last_time_login =?
+  WHERE uid=?
+  `
+  conn.query(sql, [formatted, uid], function (err, results) {
+    console.log(`登入時間更新:${formatted}`);
+
+
+  })
+
+})
+
+
 //增加商品
 app.post("/cart/add", async (req, res) => {
   let { uid, pid, spec, quantity, unit_price } = req.body;
@@ -2903,57 +3014,83 @@ module.exports = { q };//匯出q給payment使用
 
 
 
-app.post(
-  "/post/calladmin/:chatroomID/:speakerID/:message",
-  function (req, res) {
-    const { chatroomID, speakerID } = req.params;
-    const origMsg = decodeURIComponent(req.params.message);
-    // 罐頭回覆
-    const botReply = '客服已收到通知囉，會儘快幫您處理！';
-    // SQL：先 insert 原始回報，再 insert 罐頭回覆
-    const sql = `
-      INSERT INTO chatmessage (ChatroomID, speakerID, message, isRead)
-      VALUES (?, ?, ?, 0),
-             (?, ?, ?, 0);
-    `;
-    conn.query(
-      sql,
-      [
-        chatroomID,       speakerID,    origMsg,
-        chatroomID,       '0',          botReply
-      ],
-      (err, results) => {
-        if (err) {
-          console.error("插入失敗：", err);
-          return res.status(500).send("新增失敗");
-        }
-        // 回傳成功
-        res.json({ ok: true });
-      }
-    );
+// 已經有 express.json() middleware
+app.post('/post/insert/message', async (req, res) => {
+  const { ChatroomID, speakerID, message, isRead } = req.body;
+  const sql = `
+    INSERT INTO chatmessage (ChatroomID, speakerID, message, isRead, create_time)
+    VALUES (?, ?, ?, ?, NOW())
+  `;
+  try {
+    await q(sql, [ChatroomID, speakerID, message, isRead]);
+    res.json({ ok: true });
+  } catch (err) {
+    console.error('插入失敗', err);
+    res.status(500).json({ error: 'DB 寫入失敗' });
   }
-);
+});
 
-// 管理者去後臺撈資料
-app.get('/admin/reports/:chatroomID', (req, res) => {
+
+// 前端呼叫 axios.get(`/message/${selected.id}`)
+app.get('/message/:chatroomID', async (req, res) => {
   const { chatroomID } = req.params;
   const sql = `
-    SELECT
-      speakerID,
-      message   AS text,
-      create_time AS time
-    FROM chatmessage
-    WHERE ChatroomID = ?
-    ORDER BY create_time
+    SELECT 
+      speakerID AS speaker, 
+      message   AS text, 
+      DATE_FORMAT(create_time, '%H:%i') AS time 
+    FROM chatmessage 
+    WHERE ChatroomID = ? 
+    ORDER BY create_time ASC
   `;
-  conn.query(sql, [chatroomID], (err, rows) => {
-    if (err) return res.status(500).json({ error: '伺服器錯誤' });
-    const list = rows.map(r => ({
-      speakerID: r.speakerID,
-      text:      r.text,
-      time:      new Date(r.time)
-                   .toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'})
-    }));
-    res.json(list);
-  });
+  try {
+    const rows = await q(sql, [chatroomID]);
+    res.json(rows);
+  } catch (err) {
+    console.error('拉取訊息失敗', err);
+    res.status(500).json({ error: 'Server Error' });
+  }
+});
+
+// 取得所有該開發者可見的訊息
+app.get('/admin/all-messages/:uidY', async (req, res) => {
+  const { uidY } = req.params;
+  try {
+    const rows = await q(
+      `SELECT cm.speakerID,
+              cm.message AS text,
+              DATE_FORMAT(cm.create_time,'%Y-%m-%d %H:%i') AS time,
+              cm.ChatroomID
+       FROM chatmessage cm
+       JOIN chatroomuser cu
+         ON cm.ChatroomID = cu.chatroomID
+      WHERE cu.uidY = ?
+      ORDER BY cm.create_time ASC`,
+      [uidY]
+    );
+    res.json(rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: '伺服器錯誤' });
+  }
+});
+
+app.post('/chatroom/create', async (req, res) => {
+  const { userA, userB } = req.body; // userA=使用者 uid, userB=客服 uid (0)
+  try {
+    // 1. 產生一個唯一 id
+    const roomId = uuidv4();  // 例如 'f47ac10b-58cc-4372-a567-0e02b2c3d479'
+
+    // 2. 把雙方都加到 chatroomuser
+    await q(
+      'INSERT INTO chatroomuser (chatroomID, uidY) VALUES (?,?),(?,?)',
+      [ roomId, userA, roomId, userB ]
+    );
+
+    // 3. 回傳這個新聊天室的 ID
+    res.json({ chatroomID: roomId });
+  } catch (err) {
+    console.error('建立聊天室失敗', err);
+    res.status(500).json({ error: '建立聊天室失敗' });
+  }
 });
