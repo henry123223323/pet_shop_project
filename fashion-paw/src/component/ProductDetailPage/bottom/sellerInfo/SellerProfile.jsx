@@ -1,0 +1,89 @@
+import React, { Component } from 'react';
+import PawDisplay from 'component/ProductDetailPage/PawDisplay';
+
+class SellerProfile extends Component {
+
+    render() {
+        const { userProfile, avgRating, ratingCount } = this.props
+        // console.log(avgRating)
+        // console.log(ratingCount)
+        return (<>
+
+            {/* 賣家基本資料 */}
+
+            <div className="container mx-1 ">
+                <div className="row">
+                    <div>
+
+
+                    </div>
+                    {/* 左邊：大頭貼＋總評價聯絡我，並排 */}
+                    <div className="col-12 col-md-6 d-flex flex-column align-items-center mb-3">
+                        {/* 大頭貼 */}
+                        <div className="mb-3">
+                            <img
+                                className="rounded img-fluid"
+                                src={userProfile.photoUrl} 
+                                alt="大頭貼"
+                                style={{
+                                    maxWidth: '250px', // 最大寬度限制
+                                    width: '100%',
+                                    height: 'auto', // 保持比例
+                                    objectFit: 'cover',
+                                    objectPosition: 'center center',
+                                }}
+                            />
+                        </div>
+
+                        {/* 總評價＋聯絡我（橫排） */}
+                        <div className="d-flex justify-content-center align-items-center  w-100">
+                            <div className="text-center rounded  px-2">
+
+                                {avgRating === "還沒有評價" ? "還沒有評價" : <><div className=' mx-1'><PawDisplay rating={Math.floor(avgRating)} /></div>
+                                    <span className="ptxt5">
+                                        （<span title="平均分數">{avgRating} </span>｜<span title='評論數'>{ratingCount}</span>）
+                                    </span></>}
+                            </div>
+                            <div className="btn paw-btn-middlebrown" onClick={this.contact}>
+                                聯絡我
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* 下方：關於賣家 */}
+                    <div className="col-md-6 rounded p-3">
+                        <div>
+                            <div>
+                                <p className='ptxtb4'>關於{userProfile.username}</p>
+                                <p className='px-3 '>
+                                    {userProfile.aboutme}
+                                </p>
+                            </div>
+                            <p>
+                                <span className='ptxtb4'>上次登錄時間：</span> <span>{formatDate(userProfile.last_time_login)}</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </>);
+    }
+    contact = () => {
+        alert("click")
+    }
+}
+
+const formatDate = (isoString) => {
+    const date = new Date(isoString);
+    const pad = (n) => n.toString().padStart(2, '0');
+  
+    const y = date.getFullYear();
+    const m = pad(date.getMonth() + 1);
+    const d = pad(date.getDate());
+    const h = pad(date.getHours());
+    const min = pad(date.getMinutes());
+    const s = pad(date.getSeconds());
+  
+    return `${y}-${m}-${d} ${h}:${min}:${s}`;
+  };
+export default SellerProfile;

@@ -1,87 +1,173 @@
 // src/component/ProductPage/ProductPage.jsx
 import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
+import axios from 'axios';
 import styles from './ProductPage.module.css';
+import cookie from "js-cookie";
 
-import Sidebar     from './Sidebar/Sidebar';
-import FilterBar   from './FilterBar/FilterBar';
-import SortBar     from './SortBar/SortBar';
+import FilterBar from './FilterBar/FilterBar';
+import Sidebar from './SideBar/SideBar';
+import SortBar from './SortBar/SortBar';
+import SwitchBtn from './SwitchBtn/SwitchBtn';
 import ProductList from './ProductList/ProductList';
-import HotRanking  from './HotRanking/HotRanking';
-import mockProducts from './mockProducts';
+import HotRanking from './HotRanking/HotRanking';
 
 export default function ProductPage() {
-  const [filtered, setFiltered]       = useState(mockProducts);
-  const [filters, setFilters]         = useState({ functions: [], brands: [], price: '' });
-  const [sortBy, setSortBy]           = useState('');
+  const user_id = cookie.get('user_uid')
+  const [petType, setPetType] = useState('')
+  const handleFilterChange = opts => {
+    setFilters(opts)
+  }
+  const location = useLocation();                     // ← 拿到 location
+  const searchState = location.state || {};
+  const searchProducts = searchState.products;
+  // 篩選、排序、顯示模式、資料、收藏
+  const [filters, setFilters] = useState({ functions: [], brands: [], price: '', hotRanking: '' });
+  const [sortBy, setSortBy] = useState('');
+  const [viewMode, setViewMode] = useState('grid');
+  const [products, setProducts] = useState([]);
+  const [displayItems, setDisplay] = useState([]);
   const [favoriteIds, setFavoriteIds] = useState([]);
-
-  // 當 filters 或 sortBy 改變時，重算 filtered
+  const [filterkey, setFilterKey] = useState(1)
+  // 1. 新增 Sidebar 篩選用 state
+  const [typeFilter, setTypeFilter] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState('');
   useEffect(() => {
-    let result = mockProducts;
+    async function fetchData() {
+      let favArray = await axios.get(`http://localhost:8000/select/collect/${user_id}/all`)
+      setFavoriteIds(favArray.data)
+    }
+    fetchData()
+  }, [user_id, setFavoriteIds])
 
-    // --- 1) 過濾 ---
-    const { functions, brands, price } = filters;
+  // 初始載入
+  useEffect(() => {
+    if (searchProducts) {
+      // 有搜尋結果就直接用
+      console.log(typeof (searchProducts[0].images));
+      searchProducts.forEach(element => {
+        element.images = JSON.parse(element.images)
+      });
+      console.log(typeof (searchProducts[0].images));
+      setProducts(searchProducts);
+    } else {
+      // 否則才呼叫後端撈「最新商品」
+      axios.get('http://localhost:8000/get/new_product/home')
+        .then(res => {
+          const data = res.data.map(prod => {
+            prod.images = JSON.parse(prod.images);
+            prod.attributes_object = JSON.parse(prod.attributes_object);
+            prod.created_at = new Date(prod.created_at);
+            // categories 中文化
+            switch (prod.categories) {
+              case 'pet_food': prod.categories = '乾糧'; break;
+              case 'complementary_food': prod.categories = '副食'; break;
+              case 'snacks': prod.categories = '零食'; break;
+              case 'Health_Supplements': prod.categories = '保健食品'; break;
+              case 'Living_Essentials': prod.categories = '家居'; break;
+              case 'toys': prod.categories = '玩具'; break;
+              default: prod.categories = '其他'; break;
+            }
+            return prod;
+          });
+          setProducts(data);
+        })
+        .catch(err => console.error('抓資料失敗:', err));
+    }
+  }, [location.state]);
+
+  // 2. 過濾＋排序＋Sidebar 篩選
+  useEffect(() => {
+
+    let items = [...products];
+
+    // --- 先套用 Sidebar 篩選 ---
+    if (typeFilter) items = items.filter(p => p.pet_type === typeFilter);
+    if (categoryFilter) items = items.filter(p => p.categories === categoryFilter);
+
+    // --- 再套用 FilterBar 的篩選 ---
+    const { functions: funcs = [], brands = [], price = '', hotRanking = '' } = filters;
+    if (funcs.length) items = items.filter(p => funcs.includes(p.categories));
+    if (brands.length) items = items.filter(p => brands.includes(p.attributes_object.brand));
     if (price) {
       const [min, max] = price.includes('+')
         ? [Number(price), Infinity]
         : price.split('-').map(Number);
-      result = result.filter(p => p.price >= min && p.price <= max);
+      items = items.filter(p => p.price >= min && p.price <= max);
     }
-    if (brands.length) {
-      result = result.filter(p => brands.includes(p.brand));
-    }
-    if (functions.length) {
-      result = result.filter(p => functions.includes(p.function));
-    }
+    if (hotRanking === 'hot_desc') items.sort((a, b) => b.hotranking - a.hotranking);
+    if (hotRanking === 'hot_asc') items.sort((a, b) => a.hotranking - b.hotranking);
 
-    // --- 2) 排序 ---
-    if (sortBy === 'price_asc') {
-      result = result.slice().sort((a,b)=> a.price - b.price);
-    } else if (sortBy === 'price_desc') {
-      result = result.slice().sort((a,b)=> b.price - a.price);
-    } else if (sortBy === 'createdAt') {
-      result = result.slice().sort((a,b)=> new Date(b.createdAt) - new Date(a.createdAt));
-    } else if (sortBy === 'updatedAt') {
-      result = result.slice().sort((a,b)=> new Date(b.updatedAt) - new Date(a.updatedAt));
+
+    // --- 最後排序 ---
+    if (sortBy === 'price_asc') items.sort((a, b) => a.price - b.price);
+    else if (sortBy === 'price_desc') items.sort((a, b) => b.price - a.price);
+    else if (sortBy === 'createdAt') items.sort((a, b) => b.created_at - a.created_at);
+
+    setDisplay(items);
+  }, [products, filters, sortBy, typeFilter, categoryFilter]);
+
+
+  const toggleFav = (id) => {
+    if (user_id) {
+      if (favoriteIds.includes(id)) {
+        //delete api
+        axios.get(`http://localhost:8000/delete/collect/${user_id}/${id}`)
+
+      }
+      else {
+        //insert api
+        axios.get(`http://localhost:8000/insert/collect/${user_id}/${id}`)
+
+      }
+
+      setFavoriteIds(prev =>
+        prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
+      )
+
     }
-
-    setFiltered(result);
-  }, [filters, sortBy]);
-
-  // FilterBar 傳回 newFilters
-  const handleFilterChange = newFilters => {
-    setFilters(newFilters);
+    else {
+      alert("請先登入!!!")
+    }
   };
-
-  // SortBar 傳回 sortKey
-  const handleSortChange = sortKey => {
-    setSortBy(sortKey);
-  };
-
-  // 收藏、加入購物車維持你之前的實作
-  const handleToggleFavorite = id => { /* ... */ };
-  const handleAddToCart      = id => { /* ... */ };
-
+  const addCart = id => console.log('Add to cart', id);
+  const doclearsort = () => {
+    setFilterKey(prev => prev + 1);
+    //刪除後取消fliter checkbox radio 選取
+  }
   return (
-    <div className={styles.container}>
-      <aside className={styles.sidebar}>
-        <Sidebar />
-      </aside>
-
-      <main className={styles.main}>
-        <FilterBar onFilterChange={handleFilterChange} />
-        <SortBar   onSortChange={handleSortChange} />
-        <ProductList
-          products={filtered}
-          favoriteIds={favoriteIds}
-          onToggleFavorite={handleToggleFavorite}
-          onAddToCart={handleAddToCart}
-        />
-      </main>
-
-      <aside className={styles.hotRanking}>
+    <div className={styles.pageWrapper}>
+      <div className={styles.mainContent}>
+        <div className={styles.filterBar}>
+          <FilterBar key={filterkey} onFilterChange={setFilters} />
+        </div>
+        <div className={styles.topBar}>
+          {/* <button onClick={doclearsort} className='btn btn-outline-primary'>清除篩選</button> */}
+          <SortBar onSortChange={setSortBy} />
+          <SwitchBtn viewMode={viewMode} onViewChange={setViewMode} />
+        </div>
+        <div className={styles.content}>
+          <aside className={styles.sidebar}>
+            {/* 3. 只帶定義好的 onSelectCategory */}
+            <Sidebar onSelectCategory={(type, cat) => {
+              setTypeFilter(type);
+              setCategoryFilter(cat);
+            }} />
+          </aside>
+          <section className={styles.main}>
+            <ProductList
+              products={displayItems}
+              favoriteIds={favoriteIds}
+              onToggleFavorite={toggleFav}
+              onAddToCart={addCart}
+              viewMode={viewMode}
+            />
+          </section>
+        </div>
+      </div>
+      <div className={styles.rankingSection}>
         <HotRanking />
-      </aside>
+      </div>
     </div>
   );
 }

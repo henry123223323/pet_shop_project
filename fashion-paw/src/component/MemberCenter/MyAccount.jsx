@@ -11,6 +11,7 @@ import myAddress from './MyAcc/myAddress';
 import Change_Password from './MyAcc/Change_Password';
 import manage_market from './MyAcc/manage_market';
 import Content_manage from './MyAcc/Content_manage';
+import AutoLoginByToken from './AutoLoginByToken';
 
 class MyAccount extends Component {
     state = {}
@@ -32,14 +33,10 @@ class MyAccount extends Component {
                                 <Route path="/MemberCenter/manage-market" component={manage_market} />
                                 <Route path="/MemberCenter/Content-manage" component={Content_manage} />
 
-                                <Route  path="/MemberCenter" exact>
+                                <Route path="/MemberCenter" exact>
                                     <Redirect to="/MemberCenter/profile" />
                                 </Route>
-
-                                
-
-
-                                
+                                <Route path="/MemberCenter/autoLoginByToken" component={AutoLoginByToken} />
 
                             </Switch>
                         </div>

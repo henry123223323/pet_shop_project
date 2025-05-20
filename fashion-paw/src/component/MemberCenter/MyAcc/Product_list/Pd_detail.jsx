@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import axios from 'axios';
+
 class Order_detail extends Component {
     state = {
         order: {
@@ -34,9 +36,30 @@ class Order_detail extends Component {
         }
     }
     componentDidMount() {
-        let newState = { ...this.state }
-        newState.order = this.props.product
-        this.setState(newState)
+        const product = this.props.product;
+        const order_id = product.order_id;
+
+        // 初始設定，先顯示畫面
+        this.setState({
+            order: {
+                ...product,
+                order_item: []
+            }
+        });
+
+        // 主動去抓最新 order_item
+        axios.get(`http://localhost:8000/get/orderitems/${order_id}`)
+            .then((response) => {
+                this.setState(prevState => ({
+                    order: {
+                        ...prevState.order,
+                        order_item: response.data
+                    }
+                }));
+            })
+            .catch((error) => {
+                console.error("查詢 order_item 失敗:", error);
+            });
     }
     render() {
         return (
@@ -46,11 +69,11 @@ class Order_detail extends Component {
                         <div className="modal-content">
                             <div className="modal-header">
 
-                            <span className='badge badge-warning rounded-pill'>{this.state.order.ordernum}</span>
-                            <span className='badge badge-warning rounded-pill'>{(this.state.order.neworsecond == "new") ? "全新" : "二手"}</span>
-                            <span className='badge badge-warning rounded-pill'>{this.state.order.orderstate}</span>
-                            <span className='badge badge-warning rounded-pill'>{this.state.order.orderdate}</span>
-                            <span className='badge badge-warning rounded-pill'>{this.state.order.price}</span>
+                                <span className='badge badge-warning rounded-pill'>{this.state.order.ordernum}</span>
+                                <span className='badge badge-warning rounded-pill'>{(this.state.order.neworsecond == "new") ? "全新" : "二手"}</span>
+                                <span className='badge badge-warning rounded-pill'>{this.state.order.orderstate}</span>
+                                <span className='badge badge-warning rounded-pill'>{this.state.order.orderdate}</span>
+                                <span className='badge badge-warning rounded-pill'>{this.state.order.price}</span>
                                 <button type="button" className="close btn" onClick={this.props.close}>
                                     <span>&times;</span>
                                 </button>
@@ -70,16 +93,19 @@ class Order_detail extends Component {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {this.state.order.order_item.map((pd, index) => (
-                                            <tr key={index}>
-                                                <td>{pd.pid}</td>
-                                                <td>{pd.pd_name}</td>
-                                                <td>{pd.quantity}</td>
-                                                <td>{pd.unit_price}</td>
-                                                <td>{pd.quantity * pd.unit_price}</td>
-                                                <td><img src={pd.img_path} alt="" style={{ width: "60px" }} /></td>
-                                            </tr>
-                                        ))}
+                                        {Array.isArray(this.state.order.order_item) &&
+                                            this.state.order.order_item.map((pd, index) => (
+                                                <tr key={index}>
+                                                    <td>{pd.pid}</td>
+                                                    <td>{pd.pd_name}</td>
+                                                    <td>{pd.quantity}</td>
+                                                    <td>{pd.unit_price}</td>
+                                                    <td>{pd.quantity * pd.unit_price}</td>
+                                                    <td>
+                                                        <img src={pd.img_path} alt="" style={{ width: "60px" }} />
+                                                    </td>
+                                                </tr>
+                                            ))}
                                     </tbody>
                                 </table>
 
