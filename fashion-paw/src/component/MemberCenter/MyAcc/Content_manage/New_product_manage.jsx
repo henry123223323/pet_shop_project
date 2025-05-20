@@ -220,7 +220,7 @@ export default class New_Products_Manage extends Component {
                     className={styles.btn}
                   >
                     查看
-                  </a>
+                  </button>
                   <button
                     className={styles.btnsubmit}
                     onClick={() => this.OpenEdit(startIndex + idx)}
