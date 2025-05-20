@@ -1,7 +1,7 @@
 /* header樣式 */
 .header {
   width: 100%;
-  height: var(--header-height);
+  min-height: var(--header-height);
   display: flex;
   flex-direction: column;
   row-gap: 0.5rem;
@@ -9,7 +9,7 @@
   top: 0;
   left: 0;
   right: 0;
-  padding: 7rem 1rem 7rem 1rem;
+  padding: 1rem 1.5rem;
   box-shadow: 0 2px 0 rgba(0, 0, 0, 0.1);
   background: rgba(255, 255, 255, 0.9);
   transition: background-color 0.4s ease, box-shadow 0.3s ease;
@@ -74,7 +74,12 @@
   display: flex;
   align-items: center;
   white-space: nowrap;
+  color: black;
 }
+
+/* .hello{
+color: black;
+} */
 
 .logoutBtn {
   background: none;
@@ -154,7 +159,7 @@
 
 .greeting {
   font-weight: 500;
-  color: #DDB227;
+  color: #87512D;
   transition: color .2s;
 }
 
@@ -191,6 +196,7 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   color: #333;
   transition: all 0.3s ease;
+  --header-height: 20px;
 }
 
 

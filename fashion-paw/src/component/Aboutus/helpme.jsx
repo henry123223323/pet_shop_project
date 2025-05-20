@@ -296,29 +296,37 @@ class HelpMe extends Component {
                 {/* 四個box */}
                 <a href="#123" className={style.aboutusdera}>
                     <div className={style.first_box} id="onebox" ref={this.oneboxRef}>
-                        <h4>如何選擇適合的寵物陪伴你生活</h4> <hr />
-                        <span>根據生活型態選擇合適的寵物，增添更多歡樂。</span>
+                        <div className={style.boxContent}>
+                            <h5>如何選擇適合的寵物陪伴你生活</h5> <hr />
+                            <span>根據生活型態選擇合適的寵物，增添更多歡樂。</span>
+                        </div>
                     </div>
                 </a>
 
                 <a href="#456" className={style.aboutusdera}>
                     <div className={style.two_box} id="twobox" ref={this.twoboxRef}>
-                        <h4>如何正確照顧你的小型寵物</h4> <hr />
-                        <span>正確的照顧方式讓小型寵物快樂健康地成長，提升生活品質。</span>
+                        <div className={style.boxContent}>
+                            <h5>如何正確照顧你的小型寵物</h5> <hr />
+                            <span>正確的照顧方式讓小型寵物快樂健康地成長，提升生活品質。</span>
+                        </div>
                     </div>
                 </a>
 
                 <a href="#789" className={style.aboutusdera}>
                     <div className={style.three_box} id="threebox" ref={this.threeboxRef}>
-                        <h4>如何為寵物創造安全的居住環境</h4> <hr />
-                        <span>為寵物創建一個安全舒適的家，讓它們生活得更健康快樂。</span>
+                        <div className={style.boxContent}>
+                            <h5>如何為寵物創造安全的居住環境</h5> <hr />
+                            <span>為寵物創建一個安全舒適的家，讓它們生活得更健康快樂。</span>
+                        </div>
                     </div>
                 </a>
 
                 <a href="#101" className={style.aboutusdera}>
                     <div className={style.four_box} id="fourbox" ref={this.fourboxRef}>
-                        <h4>如何照顧老年寵物的健康</h4> <hr />
-                        <span>老年寵物需要特別的關懷，照顧它們的健康，讓牠們安享晚年。</span>
+                        <div className={style.boxContent}>
+                            <h4>如何照顧老年寵物的健康</h4> <hr />
+                            <span>老年寵物需要特別的關懷，照顧它們的健康，讓牠們安享晚年。</span>
+                        </div>
                     </div>
                 </a>
 
@@ -327,20 +335,28 @@ class HelpMe extends Component {
                     <div
                         key={article.id}
                         style={{
-                            textAlign: "center",
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: "center",
+                            alignItems: "center",
                             marginTop: index === 0 ? "900px" : "0px"  // 第一篇文章才加 marginTop
                         }}
+                        className='container-lg'
                     >
-                        <h1 id={article.id}>{article.title}</h1>
-                        <p>
-                            {article.content.split('\n').map((line, i) => (
-                                <React.Fragment key={i}>
-                                    {line}
-                                    <br />
-                                </React.Fragment>
-                            ))}
-                        </p>
-                        <hr />
+                        <div style={{ width: "100%", maxWidth: "800px", textAlign: "left",marginBottom:50 }}>
+                            <h4 id={article.id} style={{ textAlign: "center" }}>
+                                {article.title}
+                            </h4>
+                            <p>
+                                {article.content.split("\n").map((line, i) => (
+                                    <React.Fragment key={i}>
+                                        {line}
+                                        <br />
+                                    </React.Fragment>
+                                ))}
+                            </p>
+                            <hr />
+                        </div>
                     </div>
                 ))}
             </>

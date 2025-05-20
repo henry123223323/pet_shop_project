@@ -19,14 +19,23 @@ export default function InfoSection() {
     axios.get('http://localhost:8000/get/article')
       .then(res => {
         // 1) 先把 raw row 轉成我們想要的 key
-        const mapped = res.data.map(row => ({
+        const mapped = res.data.map(row => {
+        const type = row.article_type?.trim()
+        const cleanedPath = row.banner_URL?.replace(/\\/g, '/')
+
+        const imgPath = (type && cleanedPath)
+          ? `/media/pet_know/${type}/${cleanedPath}`
+          : '/media/default/no-image.png'
+
+        return {
           id:            row.ArticleID,
           title:         row.title,
-          img:           row.banner_URL,
-          created_at:    row.create_at,       // 跟 DB 一樣是 create_at
+          img:           imgPath,
+          created_at:    row.create_at,
           pet_type:      row.pet_type,
           article_type:  row.article_type,
-        }))
+        }
+      })
         // 2) 排序、取最新 4 筆
         const sorted4 = mapped
           .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))

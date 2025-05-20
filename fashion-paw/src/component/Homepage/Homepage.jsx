@@ -7,19 +7,19 @@ import CategoryIcons from './CategoryIcons';
 import BestsellerTabs from './BestsellerTabs';
 import NewsEventsSection from './NewsEventsSection';
 import InfoSection from './InfoSection';
+// import styles from './Homepage.module.css'
 
 function Homepage() {
 
   return (
-    <>
+    <div>
       <Banner />
       <NewsBar />
       <SectionLinks />
-      <CategoryIcons />
       <BestsellerTabs />
       <NewsEventsSection />
       <InfoSection />
-    </>
+    </div>
   );
 }
 

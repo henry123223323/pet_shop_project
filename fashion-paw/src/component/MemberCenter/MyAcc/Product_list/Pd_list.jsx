@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Order_detail from './Pd_detail';
 import cookie from "js-cookie";
 import axios from 'axios';
+import styles from './Pd_list.module.css'
 
 
 class PD_list extends Component {
@@ -124,7 +125,7 @@ class PD_list extends Component {
                     </div>
                     {/* 查看訂單明細 */}
                     <div className="col-md-2 col-8 text-md-end text-end mt-3 mt-md-0">
-                        <button className="btn btn-outline-secondary" onClick={this.WatchDetail}>查看</button>
+                        <button className={styles.btnadd} onClick={this.WatchDetail}>查看</button>
                     </div>
                 </div>
             </div>

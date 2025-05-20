@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import styles from '../Credit_Card.module.css'
 
 class Credit_Card_item extends Component {
     state = {
@@ -50,7 +51,7 @@ class Credit_Card_item extends Component {
                         <p className="mb-1">有效期限：{card.expiry}</p>
                     </div>
                     <div>
-                        <button className="btn btn-outline-danger btn-sm" onClick={this.delete}>
+                        <button className={styles.btndel} onClick={this.delete}>
                             刪除
                         </button>
                     </div>

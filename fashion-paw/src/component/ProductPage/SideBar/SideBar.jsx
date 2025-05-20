@@ -41,7 +41,7 @@ export default function Sidebar({ onSelectCategory = () => {} }) {
                 dog:   '狗狗專區',
                 cat:   '貓咪專區',
                 bird:  '鳥類專區',
-                mouse: '老鼠專區',
+                mouse: '倉鼠專區',
               }[type]}
               {expandedType === type ? ' ▾' : ' ▸'}
             </button>

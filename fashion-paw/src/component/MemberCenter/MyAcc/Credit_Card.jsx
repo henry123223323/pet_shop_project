@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import Credit_Card_item from './credit_card/Credit_card_item';
 import cookie from "js-cookie";
 import axios from 'axios';
+import styles from './Credit_Card.module.css'
 
 
 
@@ -114,11 +115,11 @@ class Credit_Card extends Component {
 
         return (
             <>
-                <h2>我的信用卡{this.state.creditCards && this.state.creditCards[0] && this.state.creditCards[0].credit_num}</h2>
+                <h4 style={{color:"#333"}}>我的信用卡{this.state.creditCards && this.state.creditCards[0] && this.state.creditCards[0].credit_num}</h4>
                 <div key={card.cid}>
                     <p >{card.cid}</p>
                 </div>
-                <button className="btn btn-primary" onClick={this.toggleModal}>新增</button>
+                <button className={styles.btnadd} onClick={this.toggleModal}>新增信用卡</button>
                 {card.map((card_item, index) => {
                     console.log(card_item.id);
                     
@@ -156,8 +157,8 @@ class Credit_Card extends Component {
 
                                     </div>
                                     <div className="modal-footer">
-                                        <button type="button" className="btn btn-secondary" onClick={this.toggleModal}>取消</button>
-                                        <input type="submit" className="btn btn-primary" value="確認" onClick={this.addnewcard} />
+                                        <button type="button" className={styles.btncancel} onClick={this.toggleModal}>取消</button>
+                                        <input type="submit" className={styles.btnsubmit} value="確認" onClick={this.addnewcard} />
                                     </div>
                                 </form>
                             </div>

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import cookie from "js-cookie";
 import axios from 'axios';
+import styles from './MyCoupon.module.css'
 
 
 
@@ -62,8 +63,10 @@ class MyCoupon extends Component {
     render() {
         let { coupon } = this.state
         return (
-            <table className="table table-striped table-hover">
-                <thead>
+            <>
+            <h4 style={{color:"#333"}}>我的優惠券</h4>
+            <table className={`table table-striped ${styles.myCustomTable}`}>
+                <thead className={styles.tableprimary}>
                     <tr>
                         <th>折扣</th>
                         <th>折扣碼</th>
@@ -86,6 +89,7 @@ class MyCoupon extends Component {
                     })}
                 </tbody>
             </table>
+            </>
         );
     }
 }

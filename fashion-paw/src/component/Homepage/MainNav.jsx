@@ -15,8 +15,8 @@ export default function MainNav() {
   };
 
   const pageNames = {
-    '/ProductPage': '拾毛百貨',
-    '/SeProductPage': '拾毛市場'
+    '/ProductPage': '拾毛新品百貨',
+    '/SeProductPage': '拾毛二手市場'
   };
 
   const paths = Object.keys(pageNames);
@@ -27,26 +27,16 @@ export default function MainNav() {
       label: '關於好拾毛',
       submenu: [
         { label: '關於我們', to: '/Aboutus' },
-        { label: '相關規定', to: '/Help' }
+        { label: '幫助中心', to: '/Help' }
       ]
     },
     {
-      label: '拾毛百貨',
-      submenu: [
-        { label: '狗狗', to: '/Novicefeeding/dog' },
-        { label: '貓咪', to: '/HealthCheck/dog' },
-        { label: '倉鼠', to: '/PartTouch/Touch' },
-        { label: '鳥', to: '/PetQuiz/Quiz' }
-      ]
+      label: '拾毛新品百貨',
+      to:"/ProductPage"
     },
     {
-      label: '拾毛市場',
-      submenu: [
-        { label: '狗狗', to: '/Novicefeeding/dog' },
-        { label: '貓咪', to: '/HealthCheck/dog' },
-        { label: '倉鼠', to: '/PartTouch/Touch' },
-        { label: '鳥', to: '/PetQuiz/Quiz' }
-      ]
+      label: '拾毛二手市場',
+      to:"/SeProductPage"
     },
     {
       label: '寵物小知識',
@@ -69,7 +59,7 @@ export default function MainNav() {
           <NavLink to="#">關於好拾毛</NavLink>
           <ul className={navstyles.dropdownMenu}>
             <li><NavLink to="/Aboutus">關於我們</NavLink></li>
-            <li><NavLink to="/Help">相關法規</NavLink></li>
+            <li><NavLink to="/Help">幫助中心</NavLink></li>
           </ul>
         </li>
 
@@ -81,7 +71,14 @@ export default function MainNav() {
             onMouseLeave={() => setOpenKey(null)}
           >
 
-            <span className={navstyles.menuLink}>{pageNames[path]}</span>
+            <NavLink
+              to={path}
+              className={navstyles.menuLink}
+              activeClassName={navstyles.activeLink}
+            >
+              {pageNames[path]}
+            </NavLink>
+
 
             {/* 這裡渲染 MegaMenu */}
             <MegaMenu

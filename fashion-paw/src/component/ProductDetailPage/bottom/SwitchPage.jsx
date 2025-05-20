@@ -8,10 +8,10 @@ class SwitchPage extends Component {
             <div className={styles.btnarea}>
                 {/* <h1>switch</h1> */}
                 <div className='d-flex'>
-                    <div className={`flex-fill ${styles.btndesc} ${currentPage === "description" ? styles.btnClickingdesc : ""}`}
+                    <div className={`flex-fill ${styles.switchbtn} ${currentPage === "description" ? styles.btnClickingdesc : ""}`}
                         onClick={() => changePage("description")}>商品說明
                     </div>
-                    <div className={`flex-fill ${styles.btnseller} ${currentPage === "seller" ? styles.btnClickingseller : ""}`}
+                    <div className={`flex-fill ${styles.switchbtn} ${currentPage === "seller" ? styles.btnClickingseller : ""}`}
                         onClick={() => changePage("seller")}>{condition === "new" ? "商品評論" : "賣家資訊"}
                     </div>
 

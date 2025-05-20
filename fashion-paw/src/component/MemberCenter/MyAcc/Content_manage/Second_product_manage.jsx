@@ -4,6 +4,7 @@ import axios from 'axios';
 import MarketModal from '../market_manage/Market_Modal';
 import Pagination from './Page_manage';
 import PawDisplay from '../../../ProductDetailPage/PawDisplay';
+import styles from './Second_product_manage.module.css'
 
 export default class SecondProductManage extends Component {
   state = {
@@ -165,8 +166,8 @@ export default class SecondProductManage extends Component {
 
         {!loading && !error && (
           <>
-            <table className="table table-striped table-hover">
-              <thead className="table-primary">
+            <table className={`table table-striped ${styles.tablestriped}`}>
+              <thead className={styles.tableprimary}>
                 <tr>
                   <th>主圖</th>
                   <th>名稱</th>
@@ -197,20 +198,20 @@ export default class SecondProductManage extends Component {
                     <td><PawDisplay rating={Number(p.new_level)} /></td>
                     <td>{this.renderStatus(p.status)}</td>
                     <td>
-                      <a
+                      <button
                         href={`/product/${p.pid}`}        // 原生 a 會整頁載入
-                        className="btn btn-primary btn-sm "
+                        className={styles.btn}
                       >
                         查看
-                      </a>
+                      </button>
                       <button
-                        className="btn btn-warning btn-sm ml-1"
+                        className={styles.btnsubmit}
                         onClick={() => this.OpenEdit(startIndex + i)}
                       >
                         編輯
                       </button>
                       <button
-                        className="btn btn-danger btn-sm ml-1"
+                        className={styles.btndel}
                         onClick={() => this.Delete(startIndex + i)}
                       >
                         刪除

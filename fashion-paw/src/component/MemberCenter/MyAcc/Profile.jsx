@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import cookie from "js-cookie";
 import axios from 'axios';
+import styles from './Profile.module.css'
 
 // import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -154,22 +155,27 @@ class Profile extends Component {
 
         return (
             <>
-                <h2>個人檔案</h2>
-                <button className="btn btn-primary" onClick={this.toggleModal}>編輯</button>
-                <button className="btn btn-primary" onClick={this.tooglePasswordModal}>變更密碼</button>
-                <div className=" border fs-4 border-danger mt-3 p-3">
-                    <label className='pb2'>用戶名稱:</label>
-                    <span className='p2'>{this.state.username}</span><br />
-                    <label className='pb2'>電子信箱:</label>
-                    <span className='p2'>{this.state.email}</span><br />
-                    <label className='pb2'>大頭照:</label>
-                    {this.state.photo && (
-                        <img src={this.state.photo} alt="User Profile" style={{ borderRadius: "100%", width: "80px" }} />
-                    )}<br />
-
-                    <label className='pb2'>生日:</label>
-                    <span className='p2'>{new Date(this.state.birthday).toLocaleDateString()}</span>
-
+                <h4 className={styles.title}>個人檔案</h4>
+                {this.state.photo && (
+                    <img src={this.state.photo} alt="User Profile" className={styles.headphoto} />
+                )}
+                <div className={styles.btnblock}>
+                    <button className={styles.btn} onClick={this.toggleModal}>編輯個人檔案</button>
+                    <button className={styles.btn} onClick={this.tooglePasswordModal}>修改密碼</button>
+                </div>
+                <div className="fs-4 mt-1 p-3">
+                    <div className={styles.textbox}>
+                        <label className={styles.text}>名稱：</label>
+                        <span className='ptxt4 ml-5'>{this.state.username}</span>
+                    </div>
+                    <div className={styles.textbox}>
+                        <label className={styles.text}>電子信箱：</label>
+                        <span className='ptxt4 ml-4'>{this.state.email}</span>
+                    </div>
+                    <div className={styles.textbox}>
+                        <label className={styles.text}>生日：</label>
+                        <span className='ptxt4 ml-5'>{new Date(this.state.birthday).toLocaleDateString()}</span>
+                    </div>
                 </div>
 
                 {/* Bootstrap Modal */}
@@ -184,15 +190,15 @@ class Profile extends Component {
                                     </button>
                                 </div>
                                 <div className="modal-body">
-                                    <label htmlFor="">輸入密碼:</label>
+                                    <label htmlFor="">輸入密碼：</label>
                                     <input type="text" />
                                     <p></p>
-                                    <label htmlFor=""  >再次輸入密碼:</label>
+                                    <label htmlFor="">再次輸入密碼：</label>
                                     <input type="text" ref={this.inputpassword} />
                                 </div>
                                 <div className="modal-footer">
-                                    <button type="button" className="btn btn-secondary" onClick={this.tooglePasswordModal}>取消</button>
-                                    <button type="button" className="btn btn-primary" onClick={this.editpassword} >儲存變更</button>
+                                    <button type="button" className={styles.btncancel} onClick={this.tooglePasswordModal}>取消</button>
+                                    <button type="button" className={styles.btnsubmit} onClick={this.editpassword} >儲存變更</button>
                                 </div>
                             </div>
                         </div>
@@ -210,13 +216,13 @@ class Profile extends Component {
                                 </div>
                                 <div className="modal-body">
                                     <div className="form-group">
-                                        <label>用戶名稱</label>
+                                        <label>名稱</label>
                                         <input type="text" className="form-control" ref={this.inputname} />
                                     </div>
                                     <div className="form-group">
-                                        <label>大頭照</label>
-                                        <input type="file" className="form-control" onChange={this.PhotoChange} ref={this.inputphoto} />
-                                        <img width={100} src={this.state.photo} alt="大頭照" />
+                                        {/* <label>大頭照</label> */}
+                                        <input type="file"  onChange={this.PhotoChange} className='ml-2' ref={this.inputphoto} />
+                                        <img className={styles.modalimg} src={this.state.photo} alt="大頭照" />
                                         {/* 這裡顯示選擇的圖片 */}
                                     </div>
                                     <div className="form-group">
@@ -233,8 +239,8 @@ class Profile extends Component {
                                     </div> */}
                                 </div>
                                 <div className="modal-footer">
-                                    <button type="button" className="btn btn-secondary" onClick={this.toggleModal}>取消</button>
-                                    <button type="button" className="btn btn-primary" onClick={this.handleSave} >儲存變更</button>
+                                    <button type="button" className={styles.btncancel} onClick={this.toggleModal}>取消</button>
+                                    <button type="button" className={styles.btnsubmit} onClick={this.handleSave} >儲存變更</button>
                                 </div>
                             </div>
                         </div>

@@ -1,14 +1,14 @@
 .moveimg {
     position: absolute;
-    top:550px;
+    top: 550px;
     left: 0%;
     height: 100px;
     width: 100px;
-    
+
 }
 
 
-.moveing{
+.moveing {
     animation-name: gotoright;
     animation-duration: 4s;
     animation-fill-mode: forwards;
@@ -19,7 +19,7 @@
     0% {
         left: 0%
     }
-    
+
 
     20% {
         top: 430px
@@ -34,7 +34,7 @@
     }
 
     100% {
-        left: 80%
+        left: 83%
     }
 }
 
@@ -47,26 +47,26 @@
     }
 
     25% {
-        transform: scaleX(-1) translateY(-60px);
+        transform: scaleX(-1) translateY(-20px);
         opacity: 0.5;
     }
 
     40% {
-        transform: scaleX(1) translateY(-60px);
+        transform: scaleX(1) translateY(-25px);
         opacity: 0.8;
     }
 
     50% {
-        transform: scaleX(-1) translateY(-60px);
+        transform: scaleX(-1) translateY(-30px);
         opacity: 1;
     }
 
     60% {
-        transform: scaleX(1) translateY(-60px)
+        transform: scaleX(1) translateY(-25px)
     }
 
     75% {
-        transform: scaleX(-1) translateY(-60px)
+        transform: scaleX(-1) translateY(-20px)
     }
 
 
@@ -76,25 +76,19 @@
 
 }
 
-
-
-
-
-
-
 .first_box,
 .two_box,
 .three_box,
 .four_box {
-    width: 150px;
+    width: 200px;
     height: 200px;
     position: absolute;
     visibility: hidden;
     /* top: 10%;
     left: 20%; */
-    border: 1px black solid;
-    border-radius: 10%;
-    background-color: dimgray;
+    border: 1px #70823C solid;
+    border-radius: 10px;
+    background-color: #F7F0E7;
 }
 
 .first_box:hover,
@@ -105,24 +99,30 @@
     box-shadow: 0 6px 25px rgba(0, 0, 0, 0.3);
 }
 
-
-
-
 .three_box {
-    top: 330px;
+    top: 310px;
     left: 50%;
 }
 
 .four_box {
-    top: 700px;
+    top: 670px;
     left: 65%;
 }
 
 
 .two_box {
-    top: 700px;
+    top: 670px;
     left: 35%;
 
+}
+
+.first_box {
+    top: 310px;
+    left: 20%;
+}
+
+.boxContent {
+  padding: 15px;
 }
 
 .dancebox {
@@ -131,18 +131,17 @@
     animation-timing-function: linear;
 }
 
-.first_box {
-    top: 330px;
-    left: 20%;
-}
-
 .aboutusdera {
-
-    /* 更改超連結文字顏色 */
     text-decoration: none;
     /* 拿掉底線 */
-
-    color: aliceblue;
+    color: #3d2d1b;
+    /* 更改超連結文字顏色 */
+}
+.aboutusdera:hover {
+    text-decoration: none;
+    /* 拿掉底線 */
+    color: #b38567;
+    /* 更改超連結文字顏色 */
 }
 
 @keyframes dogrun {
