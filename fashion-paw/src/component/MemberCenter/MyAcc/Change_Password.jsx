@@ -11,15 +11,15 @@ class Change_Password extends Component {
         status: ''
     };
 
-    // componentDidMount() {
-    //     const token = new URLSearchParams(window.location.search).get('token');
-    //     if (!token) {
-    //         this.setState({ status: '❌ 缺少 token，無法進入頁面' });
-    //         return;
-    //     }
+    componentDidMount() {
+        const token = new URLSearchParams(window.location.search).get('token');
+        if (!token) {
+            this.setState({ status: '❌ 缺少 token，無法進入頁面' });
+            return;
+        }
 
-    //     this.setState({ token }, this.verifyToken);
-    // }
+        this.setState({ token }, this.verifyToken);
+    }
 
     verifyToken = async () => {
         try {

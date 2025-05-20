@@ -28,6 +28,11 @@ export default function ProductPage() {
   const [typeFilter, setTypeFilter] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('');
 
+  useEffect(() => {
+    console.log(filters);
+
+  }, [filters])
+
   // 讀取收藏
   useEffect(() => {
     async function fetchFav() {
@@ -44,7 +49,12 @@ export default function ProductPage() {
   // 初始載入資料
   useEffect(() => {
     if (searchProducts) {
-      // 使用搜尋結果
+      // 有搜尋結果就直接用
+      console.log(typeof (searchProducts[0].images));
+      searchProducts.forEach(element => {
+        element.images = JSON.parse(element.images)
+      });
+      console.log(typeof (searchProducts[0].images));
       setProducts(searchProducts);
     } else {
       // 從後端撈取最新商品
@@ -74,7 +84,7 @@ export default function ProductPage() {
         })
         .catch(err => console.error('抓資料失敗:', err));
     }
-  }, [searchProducts]);
+  }, [location.state]);
 
   // 過濾、排序
   useEffect(() => {
@@ -86,7 +96,7 @@ export default function ProductPage() {
 
     // FilterBar 篩選
     const { functions: funcs, brands, price, hotRanking } = filters;
-    if (funcs.length) items = items.filter(p => funcs.includes(p.categories_key));
+    if (funcs.length) items = items.filter(p => funcs.includes(p.categories_label));
     if (brands.length) items = items.filter(p => brands.includes(p.attributes_object.brand));
 
     // 價格
