@@ -3,6 +3,7 @@ import axios from 'axios'
 import Cookies from 'js-cookie'
 import Market_modal from './market_manage/Market_Modal'
 import PawDisplay from '../../ProductDetailPage/PawDisplay'
+import styles from './manage_market.module.css'
 
 // 全域設定
 const BASE_URL = 'http://localhost:8000'
@@ -201,26 +202,30 @@ calladmin = async (pd_name) => {
 
     return (
       <div className="container-fluid mt-4">
-        <h3 className="mb-3">二手商品管理</h3>
+        <h4 style={{ color: "#333" }}>二手商品管理</h4>
         {/* 搜尋 & 新增 */}
-        <div className="row mb-3">
-          <div className="col-md-3">
-            <input
-              type="search"
-              className="form-control"
-              placeholder="搜尋商品名稱"
-              value={searchTerm}
-              onChange={this.handleSearchChange}
-            />
-            {/* 按鈕放同一 col，並加上 mt-2 */}
-            <button
-              className="btn btn-outline-primary mt-2 "
-              onClick={this.OpenAdd}
-            >
-              上架二手商品
-            </button>
-          </div>
-        </div>
+        <div className="d-flex justify-content-between align-items-center mb-3">
+  {/* 左邊：搜尋列 */}
+  <div style={{ maxWidth: 300 }}>
+    <input
+      type="search"
+      className="form-control"
+      placeholder="搜尋商品名稱或類別"
+      value={searchTerm}
+      onChange={this.handleSearchChange}
+    />
+  </div>
+
+  {/* 右邊：上架按鈕 */}
+  <button
+    className={styles.btnadd}
+    onClick={this.OpenAdd}
+  >
+    新品上架
+  </button>
+</div>
+
+
 
         {/* 狀態顯示 */}
         {loading && <div>載入中…</div>}
@@ -228,8 +233,8 @@ calladmin = async (pd_name) => {
 
         {/* 商品列表 */}
         {!loading && !error && (
-          <table className="table table-striped table-hover align-middle">
-            <thead className="table-primary">
+          <table className={`table table-striped align-middle ${styles.tablestriped}`}>
+            <thead className={styles.tableprimary}>
               <tr>
                 <th>主圖</th>
                 <th>商品名稱</th>
@@ -265,14 +270,14 @@ calladmin = async (pd_name) => {
                   <td><PawDisplay rating={Number(p.new_level)} /></td>
                   <td>{this.renderStatus(p.status)}</td>
                   <td>
-                    <a
+                    <button
                       href={`/product/${p.pid}`}        // 原生 a 會整頁載入
-                      className="btn btn-primary btn-sm"
+                      className={styles.btnadd}
                     >
                       查看
-                    </a>
-                    <button className="btn btn-warning btn-sm ml-1" onClick={() => this.OpenEdit(start + idx)}>編輯</button>
-                    <button className="btn btn-danger btn-sm ml-1" onClick={() => this.Delete(start + idx)}>刪除</button>
+                    </button>
+                    <button className={styles.btnsubmit} onClick={() => this.OpenEdit(start + idx)}>編輯</button>
+                    <button className={styles.btndel} onClick={() => this.Delete(start + idx)}>刪除</button>
                   </td>
                   <td>
                     <select ref={this.selectRef}>
@@ -294,7 +299,7 @@ calladmin = async (pd_name) => {
         <nav aria-label="Page navigation">
           <ul className="pagination justify-content-start">
             <li className={`page-item ${page === 1 ? 'disabled' : ''}`}>
-              <button className="page-link" onClick={() => this.setPage(page - 1)}>
+              <button className={styles.btnadd} onClick={() => this.setPage(page - 1)}>
                 上一頁
               </button>
             </li>
@@ -303,13 +308,13 @@ calladmin = async (pd_name) => {
                 key={i}
                 className={`page-item ${page === i + 1 ? 'active' : ''}`}
               >
-                <button className="page-link" onClick={() => this.setPage(i + 1)}>
+                <button className={styles.bb} onClick={() => this.setPage(i + 1)}>
                   {i + 1}
                 </button>
               </li>
             ))}
             <li className={`page-item ${page === totalPages ? 'disabled' : ''}`}>
-              <button className="page-link" onClick={() => this.setPage(page + 1)}>
+              <button className={styles.btnadd} onClick={() => this.setPage(page + 1)}>
                 下一頁
               </button>
             </li>

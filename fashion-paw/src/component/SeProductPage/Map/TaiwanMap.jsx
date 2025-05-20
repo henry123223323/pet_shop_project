@@ -3,6 +3,7 @@ import './Map.css'
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import axios from 'axios';
+import styles from './TaiwanMap.module.css'
 
 const countyViewSettings = {
     "臺北市": { center: [25.0375, 121.5637], zoom: 11 },
@@ -304,9 +305,12 @@ class TaiwanMap extends Component {
         let { countyLoaded, townshipLoaded } = this.state
         let loading = !countyLoaded || !townshipLoaded
 
-        return (<>
-            <p id="selectedArea">目前選擇：無</p>
-            <button className='map-button btn btn-primary' onClick={this.resetMap}>🔄 回到全台視角</button>
+        return (
+        <>
+        <div className={styles.position}>
+            
+            <button className={`map-button ${styles.returnbtn}`} onClick={this.resetMap}>回到全台視角</button><p id="selectedArea" className={styles.title}>目前選擇：無</p>
+            </div>
             <div id="map">
                 {loading && <div id="mapLoadingOverlay">
                     <div className="spinner" id="load">{this.getLoadingText()}</div>

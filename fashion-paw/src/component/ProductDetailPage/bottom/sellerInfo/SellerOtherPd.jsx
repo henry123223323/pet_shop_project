@@ -23,8 +23,8 @@ class SellerOtherPd extends Component {
     }
     return (<>
       {/* 商品區 */}
-      <div className="paw-bg-pri-darkbrown py-1">
-        <p className="px-3 py-2 ptxtb2">賣家的其他商品</p>
+      <div className={styles.wrapper}>
+        <p className="ptxtb3">賣家的其他商品</p>
 
         {/* 卡片區 */}
         <div className={`d-flex align-items-center ${styles.main}`}>
@@ -49,7 +49,7 @@ class SellerOtherPd extends Component {
             {sellerOtherPd.map((pd) => (
               <div key={pd.pid} className="card rounded mx-1" style={{ maxWidth: '200px', minWidth: '150px' }}>
                 <div className='d-flex flex-column justify-content-between' style={{ height: '100%' }}>
-                  <div className="px-3">
+                  <div className={`${styles.card} px-3`}>
                     <a href={`/product/${pd.pid}`}>
                       <img
                         src={pd.img_path ? `${pd.img_path}` : "/media/default/no-image.png"}
@@ -57,10 +57,10 @@ class SellerOtherPd extends Component {
                         alt="商品圖"
                       />
                     </a>
-                    <a href={`/product/${pd.pid}`} className="ptxtb4 d-block text-truncate">
+                    <a href={`/product/${pd.pid}`} className="ptxt4 d-block text-truncate">
                       {pd.pd_name}
                     </a>
-                    <div className="ptxt5 mt-1 text-center">NT$ {pd.price}</div>
+                    <div className={`${styles.price} text-center`}>NT$ {pd.price}</div>
                   </div>
 
                   <div className="d-flex justify-content-center mb-2">

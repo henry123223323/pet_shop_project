@@ -2,6 +2,10 @@
     position: relative;
 }
 
+.shareBtn{
+    margin-left: 10px;
+}
+
 .shareBtn:hover .shareOriginal {
     display: none;
 }

@@ -11,7 +11,7 @@ class Pagination extends Component {
         return (
             <div className="flex gap-2 justify-center mt-4">
                 <button
-                    className="px-3 py-1 rounded border"
+                    className="px-3 py-1 rounded border "
                     disabled={currentPage === 1}
                     onClick={() => onPageChange(currentPage - 1)}
                 >

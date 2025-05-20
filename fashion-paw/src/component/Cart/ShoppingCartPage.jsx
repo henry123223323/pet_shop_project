@@ -57,7 +57,7 @@ class ShoppingCartPage extends Component {
           {cartList.length === 0 && (
             <div className={styles.emptyCartNotice}>
               <h5>🛒 購物車內還沒有商品～快去逛逛吧！</h5>
-              <Link to="/ProductPage" className='mx-2 btn paw-btn-outline-darkorange'>逛逛新品</Link>
+              <Link to="/ProductPage" className='mx-2 btn paw-btn-outline-pri-darkbrown'>逛逛新品</Link>
               <Link to="/SeProductPage" className='mx-2 btn paw-btn-outline-pri-darkbrown'>找找二手</Link>
             </div>
           )}
