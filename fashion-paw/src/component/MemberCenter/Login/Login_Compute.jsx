@@ -37,7 +37,7 @@ class Login_Compute extends Component {
                     //response.data 是陣列，遍歷每一個使用者
                     const user = response.data.find(user => user.email === email);
 
-                    if (user.password) {
+                    if (user.password === password) {
                         // console.log(user.power);
                         this.state.power = user.power
 
