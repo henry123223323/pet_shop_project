@@ -112,7 +112,7 @@ class PD_list extends Component {
                             </div>
                             <div className="col-md-2 col-6">
                                 <strong>訂單狀態</strong><br />
-                                已寄件
+                                已下單
                             </div>
                             <div className="col-md-2 col-6">
                                 <strong>總金額</strong><br />
