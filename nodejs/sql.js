@@ -14,6 +14,8 @@ const photoUpload = multer();
 // 再動就自己寫後端
 
 
+
+
 const verifyRoutes = require('./routes/verify');
 const upload = require('../fashion-paw/uploadProductImg');
 const uploadArticleImg = require('../fashion-paw/uploadArticleImg');
@@ -564,7 +566,7 @@ app.post("/post/makenewaddress/:uid/:AdressName/:AdressPhone/:City/:District/:ad
 
 
 app.get("/get/userinfo", function (req, res) {
-  conn.query("SELECT uid,email,username,photo,fullname,birthday,power,last_time_login,AboutMe as aboutme,Device as device FROM userinfo", function (err, results) {
+  conn.query("SELECT uid,email,password,username,photo,fullname,birthday,power,last_time_login,AboutMe as aboutme,Device as device FROM userinfo", function (err, results) {
     if (err) {
       console.error("資料庫查詢錯誤:", err);
       res.status(500).send("伺服器錯誤");
