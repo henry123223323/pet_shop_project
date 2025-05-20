@@ -48,11 +48,11 @@ class ShoppingCartPage extends Component {
           </div>
 
           {/* 開發用：清空 localStorage 按鈕 */}
-          <div className="text-end my-3 px-4">
+          {/* <div className="text-end my-3 px-4">
             <button className="btn btn-outline-danger btn-sm" onClick={() => this.context.clearCart()}>
               🧹 清空購物車（Context + localStorage）
             </button>
-          </div>
+          </div> */}
 
           {cartList.length === 0 && (
             <div className={styles.emptyCartNotice}>
@@ -68,7 +68,7 @@ class ShoppingCartPage extends Component {
                 {newItems.length > 0 && (
                   <div className='pe-md-4'>
                     {/* 新品購物車 */}
-                    <div className={styles.sectionTitle}>拾毛百貨</div>
+                    <div className={styles.sectionTitle}>拾毛新品百貨</div>
 
                     <div className={styles.cartBlock}>
                       <div className='d-flex align-items-center p-2 border-bottom'>
@@ -99,7 +99,7 @@ class ShoppingCartPage extends Component {
                 {/* 二手購物車 */}
                 {secondItems.length > 0 && (
                   <div className='ps-md-0'>
-                    <div className={styles.sectionTitle}>拾毛市場</div>
+                    <div className={styles.sectionTitle}>拾毛二手市場</div>
 
                     {Object.keys(secondItemsBySeller).map(uid => (
                       <div key={uid} className={styles.cartBlock}>
