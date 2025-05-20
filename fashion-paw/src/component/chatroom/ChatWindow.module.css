@@ -219,3 +219,21 @@
     transform: scale(1.4);
   }
 }
+
+/* 1. 讓 .message 本身啟用彈性排版（flex item 已有，但建議明示） */
+.message {
+  display: flex;
+  flex-direction: column;
+}
+
+/* 2. bot 訊息貼左 */
+.bot {
+  margin-right: auto;       /* 推回左邊 */
+  text-align: left;         /* 文字靠左 */
+}
+
+/* 3. user 訊息貼右 */
+.user {
+  margin-left: auto;        /* 推回右邊 */
+  text-align: right;        /* 文字靠右 */
+}

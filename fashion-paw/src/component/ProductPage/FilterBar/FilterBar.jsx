@@ -6,6 +6,7 @@ import styles from './FilterBar.module.css';
 const functions = ['乾糧', '副食', '零食', '保健食品', '玩具', '生活家居'];
 let brands = ['AAAA', 'BBBB', 'CCCC'];
 const prices = [
+  { value: '100以下', label: '100以下' },
   { value: '101-300', label: '101–300' },
   { value: '301-600', label: '301–600' },
   { value: '601-999', label: '601–999' },
@@ -23,6 +24,8 @@ export default function FilterBar({
 
 
   useEffect(() => {
+    console.log(selFuncs);
+
     const fetchBrand = async () => {
       try {
         const res = await axios.get('http://localhost:8000/get/new_product/brand');

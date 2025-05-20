@@ -37,24 +37,24 @@ class MyCoupon extends Component {
         }
     }
 
-    getcoupon=()=>{
+    getcoupon = () => {
         let uid = cookie.get("user_uid")
 
         axios.get(`http://localhost:8000/get/getcoupon/${uid}`).then((response) => {
             console.log("查詢成功:", response.data);
-            
+
             this.setState({
                 coupon: response.data
             })
 
         })
-        .catch((error) => {
-            console.error("查詢失敗:", error);
-        });
+            .catch((error) => {
+                console.error("查詢失敗:", error);
+            });
     }
 
 
-    componentDidMount(){
+    componentDidMount() {
         this.getcoupon()
     }
 
@@ -65,23 +65,21 @@ class MyCoupon extends Component {
             <table className="table table-striped table-hover">
                 <thead>
                     <tr>
-                        <th>coupon_id</th>
-                        <th>discount_ratio</th>
-                        <th>coupon_code</th>
-                        <th>create_at</th>
-                        <th>overdate</th>
-                        <th>description</th>
+                        <th>折扣</th>
+                        <th>折扣碼</th>
+                        <th>生效日</th>
+                        <th>到期日</th>
+                        <th>說明</th>
                     </tr>
                 </thead>
                 <tbody>
                     {coupon.map((cop, index) => {
                         return <>
                             <tr key={index}>
-                                <td>{cop.coupon_id}</td>
-                                <td>{cop.discount_ratio}</td>
+                                <td><h2>{cop.discount_ratio * 100}折</h2 ></td>
                                 <td>{cop.coupon_code}</td>
-                                <td>{cop.create_at}</td>
-                                <td>{cop.overdate}</td>
+                                <td>{new Date(cop.create_at).toLocaleDateString()}</td>
+                                <td>{new Date(cop.overdate).toLocaleDateString()}</td>
                                 <td>{cop.description}</td>
                             </tr>
                         </>

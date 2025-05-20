@@ -122,43 +122,50 @@ export default class ManageMarket extends Component {
     }
   }
 
-  calladmin = (pd_name, chatroomID) => {
+calladmin = async (pd_name) => {
   const speakerID = Cookies.get("user_uid");
-  const selectVal = this.selectRef.current?.value || '';
-  if (!selectVal) {
-    return alert('請先選擇回報原因');
-  }
-  const text = `${pd_name}：${selectVal}`;
-  const enc  = encodeURIComponent(text);
+  const selectVal  = this.selectRef.current?.value || '';
+  if (!selectVal) return alert('請先選擇回報原因');
 
-  // 1. 存原始回報到後端
-  axios.post(`${BASE_URL}/post/calladmin/${chatroomID}/${speakerID}/${enc}`)
-    .then(res => {
-      // 先跳個前端提示
-      alert("回報已送出，感謝您的回饋！");
+  const userText = `${pd_name}：${selectVal}
+  <br>請幫我刪除該商品</br>`;
+  const botText  = '客服已收到通知囉，會儘快幫您處理！';
+  const roomId   = '12';   // 固定寫到聊天室 11
 
-      // 2. 立刻把「客服已收到通知囉，會盡快幫您處理！」也存到 message table
-      axios.post('http://localhost:8000/post/insert/message', {
-        ChatroomID: chatroomID,
-        speakerID: '0', // 假設你的機器人 ID 是 0
-        message: '💁‍客服已收到通知囉，會盡快幫您處理！',
-        isRead: 1
-      }).catch(err => console.error('[DB] 插入客服回覆失敗', err));
-
-      // 3. 再廣播給前端，畫面立刻更新
-      window.dispatchEvent(new CustomEvent('newChatMessage', {
-        detail: {
-          chatroomID,
-          text: '💁‍客服已收到通知囉，會盡快幫您處理！',
-          from: 'bot'
-        }
-      }));
-    })
-    .catch(err => {
-      console.error(err);
-      alert("回報失敗，請稍後再試");
+  try {
+    // 1. 寫入使用者回報到 chatroomID=11
+    await axios.post('http://localhost:8000/post/insert/message', {
+      ChatroomID: roomId,
+      speakerID,
+      message: userText,
+      isRead: 1
     });
+
+    // 2. 寫入客服回覆到同一個聊天室
+    await axios.post('http://localhost:8000/post/insert/message', {
+      ChatroomID: roomId,
+      speakerID: '0',
+      message: botText,
+      isRead: 1
+    });
+
+    // 3. 推播到前端聊天室 (ChatApp 裡監聽 newChatMessage)
+    window.dispatchEvent(new CustomEvent('newChatMessage', {
+      detail: { chatroomID: roomId, text: userText, from: 'user' }
+    }));
+    window.dispatchEvent(new CustomEvent('newChatMessage', {
+      detail: { chatroomID: roomId, text: botText,  from: 'bot'  }
+    }));
+
+    alert('回報已送出，感謝您的回饋！');
+  } catch (err) {
+    console.error('calladmin 失敗', err);
+    alert('回報失敗，請稍後再試');
+  }
 }
+
+
+
 
 
 
@@ -199,11 +206,20 @@ export default class ManageMarket extends Component {
         {/* 搜尋 & 新增 */}
         <div className="row mb-3">
           <div className="col-md-3">
-            <input type="search" className="form-control" placeholder="搜尋商品名稱"
-              value={searchTerm} onChange={this.handleSearchChange} />
-          </div>
-          <div className="col-md-3">
-            <button className="btn btn-outline-primary" onClick={this.OpenAdd}>上架二手商品</button>
+            <input
+              type="search"
+              className="form-control"
+              placeholder="搜尋商品名稱"
+              value={searchTerm}
+              onChange={this.handleSearchChange}
+            />
+            {/* 按鈕放同一 col，並加上 mt-2 */}
+            <button
+              className="btn btn-outline-primary mt-2 "
+              onClick={this.OpenAdd}
+            >
+              上架二手商品
+            </button>
           </div>
         </div>
 
@@ -250,9 +266,14 @@ export default class ManageMarket extends Component {
                   <td><PawDisplay rating={Number(p.new_level)} /></td>
                   <td>{this.renderStatus(p.status)}</td>
                   <td>
-                    <button className="btn btn-primary btn-sm me-1" onClick={() => this.OpenFound(start + idx)}>查看</button>
-                    <button className="btn btn-warning btn-sm me-1" onClick={() => this.OpenEdit(start + idx)}>編輯</button>
-                    <button className="btn btn-danger btn-sm" onClick={() => this.Delete(start + idx)}>刪除</button>
+                    <a
+                      href={`/product/${p.pid}`}        // 原生 a 會整頁載入
+                      className="btn btn-primary btn-sm"
+                    >
+                      查看
+                    </a>
+                    <button className="btn btn-warning btn-sm ml-1" onClick={() => this.OpenEdit(start + idx)}>編輯</button>
+                    <button className="btn btn-danger btn-sm ml-1" onClick={() => this.Delete(start + idx)}>刪除</button>
                   </td>
                   <td>
                     <select ref={this.selectRef}>
@@ -260,9 +281,10 @@ export default class ManageMarket extends Component {
                       <option value="無法出貨">無法出貨</option>
                       <option value="貨物損毀">貨物損毀</option>
                       <option value="重複上架">重複上架</option>
+                      <option value="操作問題">操作問題</option>
                     </select>
                     <p></p>
-                    <button className='btn btn-danger' onClick={() => this.calladmin(p.pd_name, 1)}>回報</button>
+                    <button className='btn btn-danger' onClick={() => this.calladmin(p.pd_name)}>回報</button>
                   </td>
                 </tr>
               ))}
@@ -271,13 +293,31 @@ export default class ManageMarket extends Component {
         )}
 
         {/* 分頁 */}
-        <nav aria-label="Page navigation"><ul className="pagination justify-content-center">
-          <li className={`page-item ${page === 1 ? 'disabled' : ''}`}><button className="page-link" onClick={() => this.setPage(page - 1)}>上一頁</button></li>
-          {[...Array(totalPages)].map((_, i) => (
-            <li key={i} className={`page-item ${page === i + 1 ? 'active' : ''}`}><button className="page-link" onClick={() => this.setPage(i + 1)}>{i + 1}</button></li>
-          ))}
-          <li className={`page-item ${page === totalPages ? 'disabled' : ''}`}><button className="page-link" onClick={() => this.setPage(page + 1)}>下一頁</button></li>
-        </ul></nav>
+        <nav aria-label="Page navigation">
+          <ul className="pagination justify-content-start">
+            <li className={`page-item ${page === 1 ? 'disabled' : ''}`}>
+              <button className="page-link" onClick={() => this.setPage(page - 1)}>
+                上一頁
+              </button>
+            </li>
+            {[...Array(totalPages)].map((_, i) => (
+              <li
+                key={i}
+                className={`page-item ${page === i + 1 ? 'active' : ''}`}
+              >
+                <button className="page-link" onClick={() => this.setPage(i + 1)}>
+                  {i + 1}
+                </button>
+              </li>
+            ))}
+            <li className={`page-item ${page === totalPages ? 'disabled' : ''}`}>
+              <button className="page-link" onClick={() => this.setPage(page + 1)}>
+                下一頁
+              </button>
+            </li>
+          </ul>
+        </nav>
+
 
         {/* Modal */}
         {showModal && (

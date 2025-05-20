@@ -40,17 +40,17 @@ export default class SecondProductManage extends Component {
   OpenAdd = () =>
     this.setState({ ModalState: 'Add', currentProduct: null, showModal: true });
 
-  OpenFound = async index => {
-    const { pid } = this.state.second_product[index];
-    try {
-      const res = await axios.get(
-        `http://localhost:8000/get/second-products/${pid}`
-      );
-      this.setState({ ModalState: 'Find', currentProduct: res.data, showModal: true });
-    } catch {
-      alert('無法取得商品詳情');
-    }
-  };
+  // OpenFound = async index => {
+  //   const { pid } = this.state.second_product[index];
+  //   try {
+  //     const res = await axios.get(
+  //       `http://localhost:8000/get/second-products/${pid}`
+  //     );
+  //     this.setState({ ModalState: 'Find', currentProduct: res.data, showModal: true });
+  //   } catch {
+  //     alert('無法取得商品詳情');
+  //   }
+  // };
 
   OpenEdit = async index => {
     const { pid } = this.state.second_product[index];
@@ -197,20 +197,20 @@ export default class SecondProductManage extends Component {
                     <td><PawDisplay rating={Number(p.new_level)} /></td>
                     <td>{this.renderStatus(p.status)}</td>
                     <td>
-                      <button
-                        className="btn btn-primary btn-sm me-1"
-                        onClick={() => this.OpenFound(startIndex + i)}
+                      <a
+                        href={`/product/${p.pid}`}        // 原生 a 會整頁載入
+                        className="btn btn-primary btn-sm "
                       >
                         查看
-                      </button>
+                      </a>
                       <button
-                        className="btn btn-warning btn-sm me-1"
+                        className="btn btn-warning btn-sm ml-1"
                         onClick={() => this.OpenEdit(startIndex + i)}
                       >
                         編輯
                       </button>
                       <button
-                        className="btn btn-danger btn-sm"
+                        className="btn btn-danger btn-sm ml-1"
                         onClick={() => this.Delete(startIndex + i)}
                       >
                         刪除

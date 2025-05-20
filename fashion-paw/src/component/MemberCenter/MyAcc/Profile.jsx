@@ -45,8 +45,8 @@ class Profile extends Component {
         })
 
 
-        this.setState({ showModal: !this.state.showModal },()=>{this.getuserinfo()});
-        
+        this.setState({ showModal: !this.state.showModal }, () => { this.getuserinfo() });
+
 
     }
 
@@ -109,27 +109,27 @@ class Profile extends Component {
 
 
     editpassword = () => {
-    const password = this.inputpassword.current?.value;
-    const uid = cookie.get("user_uid");
+        const password = this.inputpassword.current?.value;
+        const uid = cookie.get("user_uid");
 
-    if (!password) {
-        alert("請輸入密碼！");
-        return;
-    }
+        if (!password) {
+            alert("請輸入密碼！");
+            return;
+        }
 
-    axios.post("http://localhost:8000/post/editpassword", {
-        uid,
-        password
-    })
-    .then((response) => {
-        console.log("密碼更新成功:", response.data);
-        this.getuserinfo();
-        this.tooglePasswordModal();
-    })
-    .catch((error) => {
-        console.error("密碼更新失敗:", error);
-    });
-};
+        axios.post("http://localhost:8000/post/editpassword", {
+            uid,
+            password
+        })
+            .then((response) => {
+                console.log("密碼更新成功:", response.data);
+                this.getuserinfo();
+                this.tooglePasswordModal();
+            })
+            .catch((error) => {
+                console.error("密碼更新失敗:", error);
+            });
+    };
 
 
 
@@ -168,7 +168,7 @@ class Profile extends Component {
                     )}<br />
 
                     <label className='pb2'>生日:</label>
-                    <span className='p2'>{this.state.birthday}</span>
+                    <span className='p2'>{new Date(this.state.birthday).toLocaleDateString()}</span>
 
                 </div>
 
