@@ -23,18 +23,18 @@ export default class SecondProductManage extends Component {
   }
 
   loadData = async () => {
-  try {
-    const res = await axios.get('http://localhost:8000/get/second-products');
-    // 用 Map 去重，只保留第一張圖代表的那筆
-    const unique = [...new Map(
-      res.data.map(item => [ item.pid, item ])
-    ).values()];
-    this.setState({ second_product: unique, loading: false });
-  } catch (err) {
-    console.error(err);
-    this.setState({ error: '無法取得二手商品', loading: false });
-  }
-};
+    try {
+      const res = await axios.get('http://localhost:8000/get/second-products');
+      // 用 Map 去重，只保留第一張圖代表的那筆
+      const unique = [...new Map(
+        res.data.map(item => [item.pid, item])
+      ).values()];
+      this.setState({ second_product: unique, loading: false });
+    } catch (err) {
+      console.error(err);
+      this.setState({ error: '無法取得二手商品', loading: false });
+    }
+  };
 
   toggleModal = () => {
     this.setState(s => ({ showModal: !s.showModal }));
@@ -201,8 +201,8 @@ export default class SecondProductManage extends Component {
                     <td>{this.renderStatus(p.status)}</td>
                     <td>
                       <button
-                        href={`/product/${p.pid}`}        // 原生 a 會整頁載入
                         className={styles.btn}
+                        onClick={() => window.location.href = `/product/${p.pid}`}
                       >
                         查看
                       </button>

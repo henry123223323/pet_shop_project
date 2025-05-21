@@ -51,17 +51,17 @@ export default class New_Products_Manage extends Component {
     this.setState({ currentProduct: null, ModalState: 'Add', showModal: true });
   };
 
-  // 查看
-  OpenFound = async idx => {
-    const pid = this.filteredProducts()[idx].pid;
-    try {
-      const res = await axios.get(`http://localhost:8000/get/new-products/${pid}`);
-      this.setState({ currentProduct: res.data, ModalState: 'Find', showModal: true });
-    } catch (err) {
-      console.error('讀取商品詳情失敗：', err);
-      alert('無法取得商品詳情');
-    }
-  };
+  // // 查看
+  // OpenFound = async idx => {
+  //   const pid = this.filteredProducts()[idx].pid;
+  //   try {
+  //     const res = await axios.get(`http://localhost:8000/get/new-products/${pid}`);
+  //     this.setState({ currentProduct: res.data, ModalState: 'Find', showModal: true });
+  //   } catch (err) {
+  //     console.error('讀取商品詳情失敗：', err);
+  //     alert('無法取得商品詳情');
+  //   }
+  // };
 
   // 編輯
   OpenEdit = async idx => {
@@ -157,27 +157,27 @@ export default class New_Products_Manage extends Component {
 
     return (
       <>
-      <div className="d-flex justify-content-between align-items-center mb-3">
-        {/* 搜尋欄 */}
-        <div className="mt-3" style={{ maxWidth: 300 }}>
-          <input
-            type="search"
-            className="form-control"
-            placeholder="搜尋商品名稱或類別"
-            value={searchTerm}
-            onChange={this.handleSearchChange}
-          />
-        </div>
+        <div className="d-flex justify-content-between align-items-center mb-3">
+          {/* 搜尋欄 */}
+          <div className="mt-3" style={{ maxWidth: 300 }}>
+            <input
+              type="search"
+              className="form-control"
+              placeholder="搜尋商品名稱或類別"
+              value={searchTerm}
+              onChange={this.handleSearchChange}
+            />
+          </div>
 
-        {/* 新品上架按鈕 放搜尋欄下面 */}
-        <div className="mt-3">
-          <button
-            className={styles.btn}
-            onClick={this.OpenAdd}
-          >
-            新品上架
-          </button>
-        </div>
+          {/* 新品上架按鈕 放搜尋欄下面 */}
+          <div className="mt-3">
+            <button
+              className={styles.btn}
+              onClick={this.OpenAdd}
+            >
+              新品上架
+            </button>
+          </div>
         </div>
 
         {/* 商品表格 */}
@@ -216,8 +216,8 @@ export default class New_Products_Manage extends Component {
                 <td>{this.renderStatus(p.status)}</td>
                 <td>
                   <button
-                    href={`/product/${p.pid}`}        // 原生 a 會整頁載入
                     className={styles.btn}
+                    onClick={() => window.location.href = `/product/${p.pid}`}
                   >
                     查看
                   </button>
