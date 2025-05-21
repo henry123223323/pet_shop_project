@@ -23,16 +23,18 @@ export default class SecondProductManage extends Component {
   }
 
   loadData = async () => {
-    this.setState({ loading: true, error: null });
-    try {
-      const res = await axios.get('http://localhost:8000/get/second-products', {
-      });
-      this.setState({ second_product: res.data, loading: false });
-    } catch (err) {
-      console.error('取得二手商品失敗：', err);
-      this.setState({ error: '無法取得二手商品', loading: false });
-    }
-  };
+  try {
+    const res = await axios.get('http://localhost:8000/get/second-products');
+    // 用 Map 去重，只保留第一張圖代表的那筆
+    const unique = [...new Map(
+      res.data.map(item => [ item.pid, item ])
+    ).values()];
+    this.setState({ second_product: unique, loading: false });
+  } catch (err) {
+    console.error(err);
+    this.setState({ error: '無法取得二手商品', loading: false });
+  }
+};
 
   toggleModal = () => {
     this.setState(s => ({ showModal: !s.showModal }));

@@ -221,7 +221,7 @@ calladmin = async (pd_name) => {
     className={styles.btnadd}
     onClick={this.OpenAdd}
   >
-    新品上架
+    商品上架
   </button>
 </div>
 
