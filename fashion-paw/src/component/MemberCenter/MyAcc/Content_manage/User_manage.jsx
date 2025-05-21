@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Pagination from './Page_manage';
 import axios from 'axios';
+import styles from './User_manage.module.css'
 
 class User_manage extends Component {
   state = {
@@ -31,8 +32,8 @@ class User_manage extends Component {
         last_time_login: new Date(user.last_time_login).toLocaleString(),
         photo: user.photo
           ? URL.createObjectURL(
-              new Blob([new Uint8Array(user.photo.data)], { type: 'image/webp' })
-            )
+            new Blob([new Uint8Array(user.photo.data)], { type: 'image/webp' })
+          )
           : null,
       }));
       this.setState({ backuserinfo });
@@ -113,8 +114,8 @@ class User_manage extends Component {
 
     return (
       <>
-        <table className="table table-striped table-hover">
-          <thead>
+        <table className={`table table-striped mt-5 ${styles.tablestriped}`}>
+          <thead className={styles.tableprimary}>
             <tr>
               <th>使用者編號</th>
               <th>使用者暱稱</th>
@@ -135,10 +136,10 @@ class User_manage extends Component {
                 <td>{user.last_time_login}</td>
                 <td>{this.Renderpower(user.power)}</td>
                 <td>
-                  <button className="btn btn-primary" onClick={() => this.EditUser(startIndex + idx)}>
+                  <button className={styles.btnsubmit} onClick={() => this.EditUser(startIndex + idx)}>
                     編輯
                   </button>
-                  <button className="btn btn-danger me-2" onClick={() => this.handleDelete(user.uid)}>
+                  <button className={styles.btndel} onClick={() => this.handleDelete(user.uid)}>
                     刪除
                   </button>
                 </td>
@@ -160,7 +161,7 @@ class User_manage extends Component {
               <div className="modal-content">
                 <div className="modal-header">
                   <h5 className="modal-title">編輯會員資料</h5>
-                  <button type="button" className="btn-close" onClick={this.toggleModal}></button>
+                  {/* <button type="button" className="btn-close" onClick={this.toggleModal}></button> */}
                 </div>
                 <form onSubmit={this.handleSubmit}>
                   <div className="modal-body" style={{ maxHeight: '70vh', overflowY: 'auto' }}>
@@ -209,15 +210,16 @@ class User_manage extends Component {
                       <input type="text" className="form-control" name="device" value={editinguser.device} onChange={this.handleChange} />
                     </div>
                     {/* 大頭照 */}
-                    <div className="mb-3">
+                    <div className={styles.profilephoto}>
                       <label className="form-label">大頭照</label>
-                      <input type="file" className="form-control" onChange={this.handlePhotoChange} />
-                      {editinguser.photo && <img src={editinguser.photo} width={100} alt="大頭照" />}
+                      <input type="file" className="" onChange={this.handlePhotoChange} />
+                      {editinguser.photo && <img src={editinguser.photo} className={styles.headphoto} alt="大頭照" />}
                     </div>
                   </div>
                   <div className="modal-footer">
-                    <button type="submit" className="btn btn-primary">儲存變更</button>
-                    <button type="button" className="btn btn-secondary" onClick={this.toggleModal}>取消</button>
+                    <button type="button" className={styles.btncancel} onClick={this.toggleModal}>取消</button>
+                    <button type="submit" className={styles.btnsubmit}>儲存變更</button>
+
                   </div>
                 </form>
               </div>

@@ -25,6 +25,7 @@ import SyncCartOnLogin from './component/Cart/SyncCartOnLogin';
 import CheckBillPage from './component/CheckBill/CheckBillPage';
 import Helpme from './component/Aboutus/helpme';
 import Needhelp from './component/Aboutus/needhelp';
+import Chatroom from './component/Aboutus/chatroom';
 import ChatWindow from 'component/chatroom/ChatWindow';
 
 
@@ -49,17 +50,17 @@ function App() {
             <Route path="/Login" component={Login} />
             <Route path="/Third_SetCookie" component={Third_SetCookie} />
             <Route path="/Register" component={Register} />
-            <Route path="/ProductPage" component={ProductPage} exact />
+            <Route path="/ProductPage/:pid" component={NewPdDetail} exact/>
+            <Route path="/ProductPage" component={ProductPage} />
             <Route path="/SeProductPage" component={SeProductPage} exact />
             <Route path="/product/:pid" component={ProductRouter} exact />
-            <Route path="/ProductPage/:pid" component={NewPdDetail} exact />
             <Route path="/SeProductPage/:pid" component={SecondPdDetail} exact />
             <Route path="/ShoppingCartPage" component={ShoppingCartPage} exact />
             <Route path="/CheckBillPage" component={CheckBillPage} exact />
             <Route path="/Aboutus" component={Helpme} exact />
             <Route path="/Help" component={Needhelp} exact />
-            {/* 動態路由：:chatroomID */}
-            <Route path="/chat/:chatroomID" component={ChatWindow} exact />
+            <Route path="/Chatroom" component={Chatroom} exact />
+
             {/* 寵物小知識：列表頁 */}
             <Route
               path="/Novicefeeding/:pet"

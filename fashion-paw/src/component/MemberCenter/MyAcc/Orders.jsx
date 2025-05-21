@@ -107,9 +107,9 @@ class Orders extends Component {
         let { products } = this.state
         return (
             <div>
-                <h3>購物紀錄</h3>
-                <label for="">搜尋</label>
-                <input type="search" name="" id="" />
+                <h4 style={{color:"#333"}}>購物紀錄</h4>
+                {/* <label for="">搜尋</label>
+                <input type="search" name="" id="" /> */}
                 <div className="container mt-4">
                     {products?.map((pd, index) => {
                         return <PD_list key={index} product={pd} />

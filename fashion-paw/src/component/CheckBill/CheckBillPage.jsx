@@ -8,6 +8,7 @@ import ConfirmBtn from '../share/ConfirmBtn';
 import cookie from 'js-cookie';
 import styles from '../Cart/ShoppingCartPage.module.css';
 import CBstyles from './CheckBillPage.module.css';
+import { CartContext } from '../Cart/CartContext';
 
 
 
@@ -22,6 +23,8 @@ class CheckBillPage extends Component {
     payMethod: '',        // 來自 PayWay
     receiptData: {},      // 來自 Receipt
   }
+  static contextType = CartContext;
+
   render() {
 
     const selectedItems = JSON.parse(localStorage.getItem('selectedItems') || '[]');
@@ -42,7 +45,7 @@ class CheckBillPage extends Component {
             className={`mx-4 ${CBstyles.buydetail}`}
             onClick={this.toggleDetails}
           >
-            {showDetails ? "隱藏購買明細" : "顯示購買明細"}
+            {showDetails ? "隱藏購買商品明細" : "查看購買商品明細"}
           </div>
 
           {/* 商品資訊明細（折疊內容） */}
@@ -85,7 +88,7 @@ class CheckBillPage extends Component {
           <div className="col-12 col-md-9">
             {/* 寄送方式 */}
             <div className='pt-4 px-4'>
-                <div className={styles.sectionTitle}>寄送方式</div>
+              <div className={styles.sectionTitle}>寄送方式</div>
               <div className='border rounded px-1'>
                 <DeliverWay
                   onChange={(data) => this.setState({ deliveryData: data })}
@@ -95,29 +98,29 @@ class CheckBillPage extends Component {
             <div className='row'>
               {/* 發票資訊 */}
               {hasNewItem &&
-              <div className="col-12 col-md-6">
-                <div className='py-4 pl-4'>
+                <div className="col-12 col-md-6">
+                  <div className='py-4 pl-4'>
                     <div className={styles.sectionTitle}>發票資訊</div>
-                  <div className='border rounded px-1'>
-                    <Receipt
-                      selectedItems={selectedItems}
-                      onChange={(data) => this.setState({ receiptData: data })}
-                    />
+                    <div className='border rounded px-1'>
+                      <Receipt
+                        selectedItems={selectedItems}
+                        onChange={(data) => this.setState({ receiptData: data })}
+                      />
+                    </div>
                   </div>
-                </div>
                 </div>}
 
               {/* 付款方式 */}
               <div className="col-12 col-md-6">
-              <div className='p-4'>
+                <div className='p-4'>
                   <div className={styles.sectionTitle}>付款方式</div>
-                <div className='border rounded'>
-                  <PayWay onChange={(data) => this.setState({
-                    payMethod: data.pay_way,
-                    cardLast4: data.card_last4
-                  })} />
+                  <div className='border rounded'>
+                    <PayWay onChange={(data) => this.setState({
+                      payMethod: data.pay_way,
+                      cardLast4: data.card_last4
+                    })} />
+                  </div>
                 </div>
-              </div>
               </div>
             </div>
           </div>
@@ -150,7 +153,7 @@ class CheckBillPage extends Component {
     const fromCart = localStorage.getItem("fromCart") === "true";
     const selectedItems = JSON.parse(localStorage.getItem('selectedItems')) || [];
     const uid = cookie.get("user_uid");
-      console.log("目前使用者",uid)
+    console.log("目前使用者", uid)
 
     if (!fromCart || selectedItems.length === 0) {
       alert("請先從購物車選擇商品");
@@ -207,7 +210,7 @@ class CheckBillPage extends Component {
 
 
     const uid = cookie.get("user_uid");
-      console.log("目前使用者",uid)
+    console.log("目前使用者", uid)
 
     //更新載具
     if (receiptData.rememberCarrier && receiptData.phoneCarrier) {
@@ -255,8 +258,9 @@ class CheckBillPage extends Component {
     }
 
     const orderId = "HSM" + Date.now();
+    const coupon_code = localStorage.getItem('coupon_code')?.trim() || '';
     const orderData = {
-      uid: uid, 
+      uid: uid,
       order_type: selectedItems[0]?.condition,
       display_order_num: orderId,
       total_price: finalTotal,
@@ -266,7 +270,8 @@ class CheckBillPage extends Component {
       receiver_name: deliveryData.receiver_name,
       receiver_phone: deliveryData.receiver_phone,
       receiver_address: finalReceiverAddress,
-      receipt: receiptData?.value || '未填'
+      receipt: receiptData?.value || '未填',
+      coupon_code
     };
 
     console.log("🧾 訂單資料：", orderData);
@@ -282,10 +287,28 @@ class CheckBillPage extends Component {
       if (res.status === 200) {
         // ✅ 清除 localStorage 中的購物資料
         localStorage.removeItem('selectedItems');
-        localStorage.removeItem('discountAmount');
         localStorage.removeItem('selectedCVS');
+        localStorage.removeItem('coupon_code');
+        localStorage.removeItem('discountAmount');
 
-        // ✅ 判斷付款方式
+        //  1. 移除購物車已結帳項目（Context）
+        const { removeFromCart } = this.context;
+        selectedItems.forEach(item => {
+          removeFromCart(item.cart_id);
+        });
+
+        //  2. 後端同步刪除
+        for (const item of selectedItems) {
+          await axios.delete('http://localhost:8000/cart/remove', {
+            data: {
+              uid: item.uid,
+              pid: item.pid,
+              spec: item.spec || null
+            }
+          });
+        }
+
+        // ✅ 3. 判斷付款方式
         if (payMethod === '線上付款') {
           // 👉 綠界付款流程
           const { data } = await axios.post('http://localhost:8000/payment/create-order', {
@@ -306,11 +329,16 @@ class CheckBillPage extends Component {
         }
       }
     } catch (error) {
-      console.error("❌ 訂單建立失敗：", error);
+      console.error("❌ 訂單建立失敗：", {
+        message: error.message,
+        code: error.code,
+        response: error.response?.data,
+        status: error.response?.status,
+        stack: error.stack
+      });
       alert("訂單送出失敗，請稍後再試");
-    }
-  };
-
+    };
+  }
 }
 
 export default CheckBillPage;

@@ -73,7 +73,12 @@ class CartList extends Component {
 
             <Link to={`/product/${item.pid}`}>
               <img
-                src={item.image}
+                src={
+                  item.image ||
+                  (Array.isArray(item.images) && item.images[0]?.img_path) ||
+                  "/media/default/no-image.png"
+                }
+                alt={item.productName}
                 alt="商品圖片"
                 style={{
                   width: '100px',

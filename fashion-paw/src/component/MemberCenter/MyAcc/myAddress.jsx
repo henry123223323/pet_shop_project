@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import MyAddressItem from './myAddress/myAddress_item';
 import axios from 'axios';
 import cookie from "js-cookie";
+import styles from './myAddress.module.css'
 
 class MyAddress extends Component {
     constructor(props) {
@@ -233,8 +234,8 @@ class MyAddress extends Component {
 
         return (
             <>
-                <h2>我的地址當前AID:{this.state.Aid}</h2>
-                <button className="btn btn-primary" onClick={this.toggleModal}>新增</button>
+                <h4 style={{color:"#333"}}>我的地址</h4>
+                <button className={styles.btnadd} onClick={this.toggleModal}>新增</button>
 
                 {address.map((addr_item, index) => (
                     <MyAddressItem
@@ -279,8 +280,8 @@ class MyAddress extends Component {
                                         </div>
                                     </div>
                                     <div className="modal-footer">
-                                        <button type="button" className="btn btn-secondary" onClick={this.toggleModal}>取消</button>
-                                        <input type="submit" className="btn btn-primary" value={editingIndex === null ? "確認新增" : "確認修改"} onClick={()=>this.uporcr(editingIndex)} />
+                                        <button type="button" className={styles.btncancel} onClick={this.toggleModal}>取消</button>
+                                        <input type="submit" className={styles.btnsubmit} value={editingIndex === null ? "確認新增" : "確認修改"} onClick={()=>this.uporcr(editingIndex)} />
                                     </div>
                                 </form>
                             </div>

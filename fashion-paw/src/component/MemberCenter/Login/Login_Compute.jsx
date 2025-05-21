@@ -95,11 +95,11 @@ class Login_Compute extends Component {
                 <div className={styles.loginCard}>
                     <h1 className={styles.loginTitle}>登入</h1>
                     <form className={styles.loginForm} onSubmit={this.logintest}>
-                        <label htmlFor="email" className={styles.textAP}>Email帳號：</label>
-                        <input type="email" id="email" ref={this.email} className={styles.inputField} />
+                        <label htmlFor="email" className={styles.textAP}>帳號：</label>
+                        <input type="email" id="email" ref={this.email} className={styles.inputField} placeholder='請輸入Email帳號' />
 
                         <label htmlFor="password" className={styles.textAP}>密碼：</label>
-                        <input type="password" id="password" ref={this.password} className={styles.inputField} />
+                        <input type="password" id="password" ref={this.password} className={styles.inputField} placeholder='請填寫密碼' />
 
                         <input type="submit" value="登入" className={styles.submitButton} />
                     </form>
@@ -127,9 +127,12 @@ class Login_Compute extends Component {
                                         onChange={(e) => this.setState({ resetEmail: e.target.value })}
                                     />
                                     <p className="text-secondary mt-2">{this.state.resetStatus}</p>
+                                </div>
 
+                                <div className="modal-footer">
+                                    {/* 傳送連結 */}
                                     <button
-                                        className='btn btn-primary mt-2'
+                                        className={styles.btnadd}
                                         onClick={async () => {
                                             const { resetEmail } = this.state;
                                             if (!resetEmail) {
@@ -161,10 +164,8 @@ class Login_Compute extends Component {
                                     >
                                         傳送連結
                                     </button>
-                                </div>
-
-                                <div className="modal-footer">
-                                    <button type="button" className="btn btn-secondary" onClick={() => {
+                                    {/* 取消 */}
+                                    <button type="button" className={styles.btncancel} onClick={() => {
                                         this.setState({
                                             show: false
                                         })

@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import Pagination from './Page_manage';
 import Article_modal from './Article_modal';
 import axios from 'axios';
+import styles from './Article_manage.module.css'
 
 export default class Article_manage extends Component {
   state = {
@@ -185,8 +186,9 @@ editArticle = async form => {
 
     return (
       <>
+      <div className="d-flex justify-content-between align-items-center mb-3">
         {/* 搜尋欄 */}
-        <div className="mb-3" style={{ maxWidth: 300 }}>
+        <div className="mt-3" style={{ maxWidth: 300 }}>
           <input
             type="search"
             className="form-control"
@@ -197,18 +199,19 @@ editArticle = async form => {
         </div>
 
         {/* 新增文章按鈕 放搜尋欄下面 */}
-        <div className="mb-3">
+        <div className="mt-3">
           <button
-            className="btn btn-outline-primary"
+            className={styles.btn}
             onClick={this.openAdd}
           >
             新增文章
           </button>
         </div>
+        </div>
 
         {/* 文章列表 */}
-        <table className="table table-striped table-hover">
-          <thead className="table-primary">
+        <table className={`table table-striped ${styles.tablestriped}`}>
+          <thead className={styles.tableprimary}>
             <tr>
               <th>ArticleID</th>
               <th>標題</th>
@@ -226,13 +229,13 @@ editArticle = async form => {
                 <td>{a.create_at}</td>
                 <td>
                   <button
-                    className="btn btn-sm btn-outline-primary me-2"
+                    className={styles.btnsubmit}
                     onClick={() => this.openEdit(start + i)}
                   >
                     編輯
                   </button>
                   <button
-                    className="btn btn-sm btn-outline-danger"
+                    className={styles.btndel}
                     onClick={() => this.deleteArticle(start + i)}
                   >
                     刪除

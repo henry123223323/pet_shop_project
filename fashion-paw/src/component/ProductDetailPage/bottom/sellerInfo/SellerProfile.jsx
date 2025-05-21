@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PawDisplay from 'component/ProductDetailPage/PawDisplay';
+import styles from './SellerProfile.module.css'
 
 class SellerProfile extends Component {
 
@@ -12,21 +13,17 @@ class SellerProfile extends Component {
             {/* 賣家基本資料 */}
 
             <div className="container mx-1 ">
-                <div className="row">
-                    <div>
-
-
-                    </div>
+                <div className={styles.wrapper}>
                     {/* 左邊：大頭貼＋總評價聯絡我，並排 */}
-                    <div className="col-12 col-md-6 d-flex flex-column align-items-center mb-3">
+                    <div className="">
                         {/* 大頭貼 */}
                         <div className="mb-3">
                             <img
                                 className="rounded img-fluid"
-                                src={userProfile.photoUrl} 
+                                src={userProfile.photoUrl}
                                 alt="大頭貼"
                                 style={{
-                                    maxWidth: '250px', // 最大寬度限制
+                                    maxWidth: '150px', // 最大寬度限制
                                     width: '100%',
                                     height: 'auto', // 保持比例
                                     objectFit: 'cover',
@@ -44,28 +41,29 @@ class SellerProfile extends Component {
                                         （<span title="平均分數">{avgRating} </span>｜<span title='評論數'>{ratingCount}</span>）
                                     </span></>}
                             </div>
-                            <div className="btn paw-btn-middlebrown" onClick={this.contact}>
-                                聯絡我
-                            </div>
+
                         </div>
                     </div>
 
                     {/* 下方：關於賣家 */}
-                    <div className="col-md-6 rounded p-3">
-                        <div>
-                            <div>
-                                <p className='ptxtb4'>關於{userProfile.username}</p>
-                                <p className='px-3 '>
-                                    {userProfile.aboutme}
-                                </p>
-                            </div>
-                            <p>
-                                <span className='ptxtb4'>上次登錄時間：</span> <span>{formatDate(userProfile.last_time_login)}</span>
+                    <div className={`py-3 pl-4 ${styles.aboutseller}`} >
+                        <div className={styles.about}>
+                            <p className='ptxtb4'>關於{userProfile.username}
                             </p>
+                            <p>
+                                <span className='ptxt5'>上次登錄時間：</span> <span className='ptxt5'>{formatDate(userProfile.last_time_login)}</span>
+                            </p>
+                            <div className={styles.contactbtn} onClick={this.contact}>
+                                聯絡我
+                            </div>
                         </div>
+                        <p>
+                            {userProfile.aboutme}
+                        </p>
                     </div>
                 </div>
             </div>
+
         </>);
     }
     contact = () => {
@@ -76,14 +74,14 @@ class SellerProfile extends Component {
 const formatDate = (isoString) => {
     const date = new Date(isoString);
     const pad = (n) => n.toString().padStart(2, '0');
-  
+
     const y = date.getFullYear();
     const m = pad(date.getMonth() + 1);
     const d = pad(date.getDate());
     const h = pad(date.getHours());
     const min = pad(date.getMinutes());
     const s = pad(date.getSeconds());
-  
+
     return `${y}-${m}-${d} ${h}:${min}:${s}`;
-  };
+};
 export default SellerProfile;

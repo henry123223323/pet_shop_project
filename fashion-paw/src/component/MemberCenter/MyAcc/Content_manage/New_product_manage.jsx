@@ -3,7 +3,8 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import MarketModal from '../market_manage/Market_Modal';
 import Pagination from './Page_manage';
-
+import styles from './New_product_manage.module.css'
+import { Link } from 'react-router-dom';
 export default class New_Products_Manage extends Component {
   state = {
     showModal: false,
@@ -50,17 +51,17 @@ export default class New_Products_Manage extends Component {
     this.setState({ currentProduct: null, ModalState: 'Add', showModal: true });
   };
 
-  // 查看
-  OpenFound = async idx => {
-    const pid = this.filteredProducts()[idx].pid;
-    try {
-      const res = await axios.get(`http://localhost:8000/get/new-products/${pid}`);
-      this.setState({ currentProduct: res.data, ModalState: 'Find', showModal: true });
-    } catch (err) {
-      console.error('讀取商品詳情失敗：', err);
-      alert('無法取得商品詳情');
-    }
-  };
+  // // 查看
+  // OpenFound = async idx => {
+  //   const pid = this.filteredProducts()[idx].pid;
+  //   try {
+  //     const res = await axios.get(`http://localhost:8000/get/new-products/${pid}`);
+  //     this.setState({ currentProduct: res.data, ModalState: 'Find', showModal: true });
+  //   } catch (err) {
+  //     console.error('讀取商品詳情失敗：', err);
+  //     alert('無法取得商品詳情');
+  //   }
+  // };
 
   // 編輯
   OpenEdit = async idx => {
@@ -134,14 +135,14 @@ export default class New_Products_Manage extends Component {
 
   // 顯示類別
   renderCategory = cat =>
-    ({
-      pet_food: '飼料',
-      complementary_food: '副食',
-      snacks: '零食',
-      Health_Supplements: '保健食品',
-      Living_Essentials: '生活家居',
-      toys: '玩具'
-    }[cat] || cat);
+  ({
+    pet_food: '飼料',
+    complementary_food: '副食',
+    snacks: '零食',
+    Health_Supplements: '保健食品',
+    Living_Essentials: '生活家居',
+    toys: '玩具'
+  }[cat] || cat);
 
   render() {
     const {
@@ -156,30 +157,32 @@ export default class New_Products_Manage extends Component {
 
     return (
       <>
-        {/* 搜尋欄 */}
-        <div className="mb-3" style={{ maxWidth: 300 }}>
-          <input
-            type="search"
-            className="form-control"
-            placeholder="搜尋商品名稱或類別"
-            value={searchTerm}
-            onChange={this.handleSearchChange}
-          />
-        </div>
+        <div className="d-flex justify-content-between align-items-center mb-3">
+          {/* 搜尋欄 */}
+          <div className="mt-3" style={{ maxWidth: 300 }}>
+            <input
+              type="search"
+              className="form-control"
+              placeholder="搜尋商品名稱或類別"
+              value={searchTerm}
+              onChange={this.handleSearchChange}
+            />
+          </div>
 
-        {/* 新品上架按鈕 放搜尋欄下面 */}
-        <div className="mb-3">
-          <button
-            className="btn btn-outline-primary"
-            onClick={this.OpenAdd}
-          >
-            新品上架
-          </button>
+          {/* 新品上架按鈕 放搜尋欄下面 */}
+          <div className="mt-3">
+            <button
+              className={styles.btn}
+              onClick={this.OpenAdd}
+            >
+              新品上架
+            </button>
+          </div>
         </div>
 
         {/* 商品表格 */}
-        <table className="table table-striped table-hover">
-          <thead className="table-primary">
+        <table className={`table table-striped ${styles.tablestriped}`}>
+          <thead className={styles.tableprimary}>
             <tr>
               <th>主圖</th>
               <th>商品名稱</th>
@@ -195,15 +198,15 @@ export default class New_Products_Manage extends Component {
                 <td>
                   {p.imageUrl
                     ? <img
-                        src={p.imageUrl}
-                        alt={p.pd_name}
-                        style={{
-                          width: 80,
-                          height: 80,
-                          objectFit: 'cover',
-                          borderRadius: 4
-                        }}
-                      />
+                      src={p.imageUrl}
+                      alt={p.pd_name}
+                      style={{
+                        width: 80,
+                        height: 80,
+                        objectFit: 'cover',
+                        borderRadius: 4
+                      }}
+                    />
                     : <span className="text-muted">無圖</span>
                   }
                 </td>
@@ -213,19 +216,19 @@ export default class New_Products_Manage extends Component {
                 <td>{this.renderStatus(p.status)}</td>
                 <td>
                   <button
-                    className="btn btn-primary btn-sm me-1"
-                    onClick={() => this.OpenFound(startIndex + idx)}
+                    className={styles.btn}
+                    onClick={() => window.location.href = `/product/${p.pid}`}
                   >
                     查看
                   </button>
                   <button
-                    className="btn btn-warning btn-sm me-1"
+                    className={styles.btnsubmit}
                     onClick={() => this.OpenEdit(startIndex + idx)}
                   >
                     編輯
                   </button>
                   <button
-                    className="btn btn-danger btn-sm"
+                    className={styles.btndel}
                     onClick={() => this.Delete(startIndex + idx)}
                   >
                     刪除

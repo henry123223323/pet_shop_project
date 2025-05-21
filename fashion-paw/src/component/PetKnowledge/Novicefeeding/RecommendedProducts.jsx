@@ -67,8 +67,8 @@ export default function RecommendedProducts({ pet_type, product_category }) {
               ? <img src={item.imageUrl} alt={item.name} className={styles.image} />
               : <div className={styles.noImage}>暫無圖片</div>}
             <div className={styles.info}>
-              <p>商品名稱：{item.name}</p>
-              <p>NT${item.price} </p>
+              <p>{item.name}</p>
+              <p className={styles.price}>NT${item.price} </p>
             </div>
             <div className={styles.btnContainer}>
               <AddToMyFavorite

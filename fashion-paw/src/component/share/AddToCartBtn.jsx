@@ -22,7 +22,7 @@ class AddToCartBtn extends Component {
           </button>
         ) : (
           <button
-            className={`mx-3 ${styles.iconBtn}`}
+            className={`ml-4 ${styles.iconBtn}`}
             onClick={this.addToCart}
           >
             <i className="bi bi-cart" style={{ fontSize: this.props.size || "20px" }}></i>

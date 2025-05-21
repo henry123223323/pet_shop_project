@@ -7,7 +7,7 @@ class PdInfo extends Component {
         const {condition, description,images,pdAttr}=this.props
         return (<>
         {/* <h1>二手商品說明頁</h1> */}
-        <div className='m-3 px-2 paw-bg-darkorange'>
+        <div className='m-3 px-2 '>
         <PdDescription condition={condition} description={description} images={images}/>
         <PdAttr condition={condition} pdAttr={pdAttr} />
         <br /><br />

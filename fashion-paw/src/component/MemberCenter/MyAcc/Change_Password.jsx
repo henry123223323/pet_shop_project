@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
+import styles from './Change_Password.module.css'
 
 class Change_Password extends Component {
     state = {
@@ -11,15 +12,15 @@ class Change_Password extends Component {
         status: ''
     };
 
-    // componentDidMount() {
-    //     const token = new URLSearchParams(window.location.search).get('token');
-    //     if (!token) {
-    //         this.setState({ status: '❌ 缺少 token，無法進入頁面' });
-    //         return;
-    //     }
+    componentDidMount() {
+        const token = new URLSearchParams(window.location.search).get('token');
+        if (!token) {
+            this.setState({ status: '❌ 缺少 token，無法進入頁面' });
+            return;
+        }
 
-    //     this.setState({ token }, this.verifyToken);
-    // }
+        this.setState({ token }, this.verifyToken);
+    }
 
     verifyToken = async () => {
         try {
@@ -96,7 +97,7 @@ class Change_Password extends Component {
                         onChange={(e) => this.setState({ confirmPassword: e.target.value })}
                         className="form-control mb-3"
                     />
-                    <input type="submit" value="確認更改" className="btn btn-primary" />
+                    <input type="submit" value="確認更改" className={styles.btnsubmit} />
                 </form>
                 {status && <p className="text-info mt-3">{status}</p>}
             </>

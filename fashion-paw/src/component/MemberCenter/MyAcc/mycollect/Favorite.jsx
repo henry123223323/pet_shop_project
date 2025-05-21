@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import cookie from "js-cookie";
 import axios from 'axios';
 import AddToMyFavorite from 'component/share/AddToMyFavorite';
+import styles from './Favorite.module.css'
 
 class FavoriteCard extends Component {
     constructor(props) {
@@ -50,16 +51,17 @@ class FavoriteCard extends Component {
 
         return (
             <>
-                <div className="col-12 col-sm-6 col-md-4 col-lg-3 card shadow-sm" style={{ width: '18rem', position: 'relative' }}>
+                <div className="col-12 col-sm-4 col-md-4 col-lg-3 card shadow-sm mr-4 my-3" style={{ width: '8rem', position: 'relative' }}>
                     <img src={img} className="card-img-top img-fluid" alt={pd_name} />
                     <div className="card-body">
-                        <h5 className="card-title">{pd_name}</h5>
-                        <p className="card-text">NT$ {price}</p>
-                        <a className="btn btn-outline-primary" href={`/product/${id}`}>
-                            進入商品頁
-                        </a>
-                        <AddToMyFavorite type="text" onClick={this.handleShow} isFavorite={true} />
-
+                        <h5 className={styles.pdname}>{pd_name}</h5>
+                        <p className={styles.price}>NT$ {price}</p>
+                        <div className={styles.linkbox}>
+                            <a className={styles.pdbtn} href={`/product/${id}`}>
+                                查看商品
+                            </a>
+                            <AddToMyFavorite type="text" onClick={this.handleShow} isFavorite={true} />
+                        </div>
                     </div>
                 </div>
 
@@ -72,9 +74,9 @@ class FavoriteCard extends Component {
                                 <div className="modal-body">
                                     <h5>確認取消收藏</h5>
                                     <p>你確定要將「{pd_name}」從收藏中移除嗎？</p>
-                                    <div className="modal-buttons">
-                                        <button className="btn btn-secondary" onClick={this.handleClose}>關閉</button>
-                                        <button className="btn btn-danger" onClick={this.handleConfirmRemove}>確定移除</button>
+                                    <div className={styles.closebtn}>
+                                        <button className={styles.btncancel} onClick={this.handleClose}>關閉</button>
+                                        <button className={styles.btndel} onClick={this.handleConfirmRemove}>確定移除</button>
                                     </div>
                                 </div>
 

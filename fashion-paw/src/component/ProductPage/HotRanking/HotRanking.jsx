@@ -1,18 +1,18 @@
 // src/component/ProductPage/HotRanking/HotRanking.jsx
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
+import cookie from 'js-cookie';
 import styles from './HotRanking.module.css';
-// import mockRanking from './mockRanking';
-import cookie from "js-cookie";
 
-// 引入共用按鈕元件
+// 共用按鈕元件
 import AddToCartBtn from '../../share/AddToCartBtn';
 import AddToMyFavorite from '../../share/AddToMyFavorite';
 
 export default function HotRanking() {
   const [ranking, setRanking] = useState([]);
   const [favoriteIds, setFavoriteIds] = useState([]);
-  const user_id = cookie.get('user_uid')
+  const user_id = cookie.get('user_uid');
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -27,40 +27,35 @@ export default function HotRanking() {
       })
       .finally(() => setLoading(false));
 
-    async function fetchData() {
-      let favArray = await axios.get(`http://localhost:8000/select/collect/${user_id}/all`)
-      setFavoriteIds(favArray.data)
-    }
-    fetchData()
-  }, [user_id, setFavoriteIds])
-
-  const handleToggleFavorite = id => {
-    if (user_id) {
-
-      if (favoriteIds.includes(id)) {
-        //delete api
-        axios.get(`http://localhost:8000/delete/collect/${user_id}/${id}`)
-
+    async function fetchFavorites() {
+      if (user_id) {
+        const res = await axios.get(
+          `http://localhost:8000/select/collect/${user_id}/all`
+        );
+        setFavoriteIds(res.data);
       }
-      else {
-        //insert api
-        axios.get(`http://localhost:8000/insert/collect/${user_id}/${id}`)
-
-      }
-
-      setFavoriteIds(prev =>
-        prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
-      );
     }
-    else {
-      alert('請先登入!!!');
+    fetchFavorites();
+  }, [user_id]);
+
+  const handleToggleFavorite = pid => {
+    if (!user_id) {
+      return alert('請先登入!!!');
     }
 
+    const api = favoriteIds.includes(pid)
+      ? `/delete/collect/${user_id}/${pid}`
+      : `/insert/collect/${user_id}/${pid}`;
+
+    axios.get(`http://localhost:8000${api}`);
+    setFavoriteIds(prev =>
+      prev.includes(pid) ? prev.filter(x => x !== pid) : [...prev, pid]
+    );
   };
 
-  const handleAddToCart = id => {
+  const handleAddToCart = pid => {
     alert('已加入購物車');
-    console.log('HotRanking add to cart:', id);
+    console.log('HotRanking add to cart:', pid);
   };
 
   if (loading) return <div className={styles.container}>載入中…</div>;
@@ -73,14 +68,32 @@ export default function HotRanking() {
         {ranking.map(item => {
           const { pid, pd_name, price, imageUrl } = item;
           const isFav = favoriteIds.includes(pid);
-          // 直接使用後端的完整 imageUrl，否則顯示預設圖
+                // 直接使用後端的完整 imageUrl，否則顯示預設圖
           const imgSrc = imageUrl || '/placeholder.png';
+
+          const safeImagePath = imageUrl || '/media/default/no-image.png';
+          const product = {
+            pid: String(pid),
+            pd_name,
+            price,
+            condition: 'new',
+            image: safeImagePath,
+            images: [{ img_path: safeImagePath }], // 給 normalizeCartItem 用
+            quantity: 1,
+          };
 
           return (
             <div key={pid} className={styles.card}>
               <div className={styles.imageWrapper}>
-                <img src={imgSrc} alt={pd_name} className={styles.image} />
+                <Link to={`/product/${pid}`}>
+                  <img
+                    src={imgSrc}
+                    alt={pd_name}
+                    className={styles.image}
+                  />
+                </Link>
               </div>
+
               <p className={styles.name}>{pd_name}</p>
               <p className={styles.price}>
                 NT${Number(price).toLocaleString()}
@@ -95,8 +108,9 @@ export default function HotRanking() {
                 />
                 <AddToCartBtn
                   type="icon"
-                  product={{ ...item, image: item.imageUrl }}
+                  product={product}
                   quantity={1}
+                  onClick={() => handleAddToCart(pid)}
                   aria-label="加入購物車"
                 />
               </div>

@@ -4,6 +4,7 @@ import axios from 'axios';
 import MarketModal from '../market_manage/Market_Modal';
 import Pagination from './Page_manage';
 import PawDisplay from '../../../ProductDetailPage/PawDisplay';
+import styles from './Second_product_manage.module.css'
 
 export default class SecondProductManage extends Component {
   state = {
@@ -22,13 +23,15 @@ export default class SecondProductManage extends Component {
   }
 
   loadData = async () => {
-    this.setState({ loading: true, error: null });
     try {
-      const res = await axios.get('http://localhost:8000/get/second-products', {
-      });
-      this.setState({ second_product: res.data, loading: false });
+      const res = await axios.get('http://localhost:8000/get/second-products');
+      // 用 Map 去重，只保留第一張圖代表的那筆
+      const unique = [...new Map(
+        res.data.map(item => [item.pid, item])
+      ).values()];
+      this.setState({ second_product: unique, loading: false });
     } catch (err) {
-      console.error('取得二手商品失敗：', err);
+      console.error(err);
       this.setState({ error: '無法取得二手商品', loading: false });
     }
   };
@@ -40,17 +43,17 @@ export default class SecondProductManage extends Component {
   OpenAdd = () =>
     this.setState({ ModalState: 'Add', currentProduct: null, showModal: true });
 
-  OpenFound = async index => {
-    const { pid } = this.state.second_product[index];
-    try {
-      const res = await axios.get(
-        `http://localhost:8000/get/second-products/${pid}`
-      );
-      this.setState({ ModalState: 'Find', currentProduct: res.data, showModal: true });
-    } catch {
-      alert('無法取得商品詳情');
-    }
-  };
+  // OpenFound = async index => {
+  //   const { pid } = this.state.second_product[index];
+  //   try {
+  //     const res = await axios.get(
+  //       `http://localhost:8000/get/second-products/${pid}`
+  //     );
+  //     this.setState({ ModalState: 'Find', currentProduct: res.data, showModal: true });
+  //   } catch {
+  //     alert('無法取得商品詳情');
+  //   }
+  // };
 
   OpenEdit = async index => {
     const { pid } = this.state.second_product[index];
@@ -165,8 +168,8 @@ export default class SecondProductManage extends Component {
 
         {!loading && !error && (
           <>
-            <table className="table table-striped table-hover">
-              <thead className="table-primary">
+            <table className={`table table-striped ${styles.tablestriped}`}>
+              <thead className={styles.tableprimary}>
                 <tr>
                   <th>主圖</th>
                   <th>名稱</th>
@@ -198,19 +201,19 @@ export default class SecondProductManage extends Component {
                     <td>{this.renderStatus(p.status)}</td>
                     <td>
                       <button
-                        className="btn btn-primary btn-sm me-1"
-                        onClick={() => this.OpenFound(startIndex + i)}
+                        className={styles.btn}
+                        onClick={() => window.location.href = `/product/${p.pid}`}
                       >
                         查看
                       </button>
                       <button
-                        className="btn btn-warning btn-sm me-1"
+                        className={styles.btnsubmit}
                         onClick={() => this.OpenEdit(startIndex + i)}
                       >
                         編輯
                       </button>
                       <button
-                        className="btn btn-danger btn-sm"
+                        className={styles.btndel}
                         onClick={() => this.Delete(startIndex + i)}
                       >
                         刪除

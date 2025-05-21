@@ -141,32 +141,32 @@ class Needhelp extends Component {
                             <div onClick={this.apple}className={style.quest} >
                                 {this.state.quest1}
                             </div>
-                            <span>{this.state.answer1}</span>
+                            <span className={style.answer}>{this.state.answer1}</span>
                             <div onClick={this.banana} className={style.quest}>{this.state.quest2}</div>
-                            <span>{this.state.answer2}</span>
+                            <span className={style.answer}>{this.state.answer2}</span>
                             <div onClick={this.pieapple} className={style.quest}>{this.state.quest3}</div>
-                            <span>{this.state.answer3}</span>
+                            <span className={style.answer}>{this.state.answer3}</span>
 
                         </div>
                     )}
                     {this.state.showBananaBlock && (
                         <div>
                             <div className={style.quest} onClick={this.cat}>{this.state.quest4}</div>
-                            <span>{this.state.answer4}</span>
+                            <span className={style.answer}>{this.state.answer4}</span>
                             <div className={style.quest} onClick={this.dog}>{this.state.quest5}</div>
-                            <span>{this.state.answer5}</span>
+                            <span className={style.answer}>{this.state.answer5}</span>
                             <div className={style.quest} onClick={this.fish}>{this.state.quest6}</div>
-                            <span>{this.state.answer6}</span>
+                            <span className={style.answer}>{this.state.answer6}</span>
                         </div>
                     )}
                     {this.state.showCatBlock &&(
                         <div>
                             <div className={style.quest} onClick={this.eleven}>{this.state.quest7}</div>
-                            <span>{this.state.answer7}</span>
+                            <span className={style.answer}>{this.state.answer7}</span>
                             <div className={style.quest} onClick={this.killer13}>{this.state.quest8}</div>
-                            <span>{this.state.answer8}</span>
+                            <span className={style.answer}>{this.state.answer8}</span>
                             <div className={style.quest} onClick={this.orange}>{this.state.quest9}</div>
-                            <span>{this.state.answer9}</span>
+                            <span className={style.answer}>{this.state.answer9}</span>
 
                         </div>
                     )}

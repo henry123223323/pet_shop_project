@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie'; // 新增引入 Cookies
+import styles from './Market_Modal.module.css'
 
 export default class MarketModal extends Component {
   constructor(props) {
@@ -154,6 +155,17 @@ export default class MarketModal extends Component {
 
 
   render() {
+    const attrLabels = {
+      brand: '品牌',
+      pattern: '樣式',
+      name: '名稱',
+      model: '型號',
+      buydate: '購入時間',
+      new_level: '保存狀況',
+      size: '尺寸',
+      color: '顏色',
+      weight: '重量'
+    };
     const { modalState, productData } = this.state;
     const { close } = this.props;
     const readOnly = modalState === 'Find';
@@ -208,7 +220,7 @@ export default class MarketModal extends Component {
               <h5 className="modal-title">
                 {modalState === 'Add' ? '上架商品' : modalState === 'Edit' ? '編輯商品' : '查看商品'}
               </h5>
-              <button type="button" className="btn-close" onClick={close} />
+              {/* <button type="button" className="btn-close p-2" onClick={close} /> */}
             </div>
             <div className="modal-body">
               {fieldsToShow.map(cfg => {
@@ -235,12 +247,21 @@ export default class MarketModal extends Component {
               })}
               <hr />
               <h5>商品屬性</h5>
-              {attrKeys.map(attr => (
-                <div className="form-group mb-2" key={attr}>
-                  <label>{attr}</label>
-                  <input type="text" name={`attribute.${attr}`} className="form-control" value={productData.attribute[attr]} onChange={this.handleAttrChange} disabled={readOnly} />
-                </div>
-              ))}
+              {Object.keys(productData.attribute)
+                .filter(key => !(productData.condition === 'new' && key === 'new_level'))
+                .map(attr => (
+                  <div className="form-group mb-2" key={attr}>
+                    <label>{attrLabels[attr] || attr}</label>
+                    <input
+                      type="text"
+                      name={`attribute.${attr}`}
+                      className="form-control"
+                      value={productData.attribute[attr]}
+                      onChange={this.handleAttrChange}
+                      disabled={readOnly}
+                    />
+                  </div>
+                ))}
               <hr />
               <h5>商品圖片與描述</h5>
               {productData.images.map((img, idx) => (
@@ -256,15 +277,15 @@ export default class MarketModal extends Component {
                   <div className="flex-grow-1">
                     <input type="hidden" name="slot[]" value={`slot${idx}`} />
                     <input type="hidden" name="image_id[]" value={img.id || ''} />
-                    <input type="file" name={`images[${idx}]`} accept="image/*" className="form-control form-control-sm mb-1" onChange={e => this.uploadImageAtIndex(idx, e)} disabled={readOnly} />
+                    <input type="file" name={`images[${idx}]`} accept="image/*" className=" form-control-sm mb-1" onChange={e => this.uploadImageAtIndex(idx, e)} disabled={readOnly} />
                     <input type="text" name="img_value[]" className="form-control form-control-sm" placeholder="輸入圖片描述" value={img.img_value} onChange={e => this.handleValueChange(idx, e)} disabled={readOnly} />
                   </div>
                 </div>
               ))}
             </div>
             <div className="modal-footer">
-              <button className="btn btn-secondary" onClick={close}>取消</button>
-              {!readOnly && <button className="btn btn-primary" onClick={this.handleSubmit}>儲存</button>}
+              <button className={styles.btncancel} onClick={close}>取消</button>
+              {!readOnly && <button className={styles.btnsubmit} onClick={this.handleSubmit}>儲存</button>}
             </div>
           </div>
         </div>

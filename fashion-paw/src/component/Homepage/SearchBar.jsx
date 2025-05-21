@@ -36,27 +36,41 @@ function SearchBar({ onSearch }) {
   }, []);
 
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    if (e)
+      e.preventDefault();
     if (!keyword.trim()) return;
     if (category === '新品') {
       let search_result = await axios.post('http://localhost:8000/post/productsreach/new', { keyword: keyword })
-      console.log(search_result.data);
-      history.push({
-        pathname: '/ProductPage',
-        state: {
-          products: search_result.data,
-        }
-      });
+      console.log(search_result.data.length);
+      if (search_result.data.length) {
+        history.push({
+          pathname: '/ProductPage',
+          state: {
+            products: search_result.data,
+          }
+        });
+
+      }
+      else {
+        alert('查無商品')
+      }
     }
     else {
       let search_result = await axios.post('http://localhost:8000/post/productsreach/second', { keyword: keyword })
-      console.log(search_result.data);
-      history.push({
-        pathname: '/SeProductPage',
-        state: {
-          products: search_result.data,
-        }
-      });
+      console.log(search_result.data.length);
+      if (search_result.data.length) {
+        history.push({
+          pathname: '/SeProductPage',
+          state: {
+            products: search_result.data,
+          }
+        });
+
+      }
+      else {
+        alert('查無商品')
+      }
     }
     // 2) 如果有輸入關鍵字，就跑 alert（或呼叫 onSearch）
     // alert(`你搜尋了：${keyword}（分類：${category}）`);
@@ -64,7 +78,8 @@ function SearchBar({ onSearch }) {
   return (
     <form className={styles.wrapper}
       ref={wrapperRef}
-      onSubmit={handleSubmit}>
+      onSubmit={handleSubmit}
+    >
 
       {open && (
         <>

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import styles from '../myAddress.module.css'
 
 class MyAddressItem extends Component {
     delete = () => {
@@ -18,10 +19,10 @@ class MyAddressItem extends Component {
                         <p className="mb-1">{city} {district} {address}</p>
                     </div>
                     <div>
-                        <button className="btn btn-outline-primary btn-sm" onClick={this.props.edit} >
+                        <button className={styles.btnsubmit} onClick={this.props.edit} >
                             編輯
                         </button>
-                        <button className="btn btn-outline-danger btn-sm" onClick={this.delete}>
+                        <button className={styles.btndel} onClick={this.delete}>
                             刪除
                         </button>
                     </div>

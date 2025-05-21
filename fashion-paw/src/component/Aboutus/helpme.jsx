@@ -275,20 +275,28 @@ class HelpMe extends Component {
                     <div
                         key={article.id}
                         style={{
-                            textAlign: "center",
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: "center",
+                            alignItems: "center",
                             marginTop: index === 0 ? "900px" : "0px"  // 第一篇文章才加 marginTop
                         }}
+                        className='container-lg'
                     >
-                        <h1 id={article.id}>{article.title}</h1>
-                        <p>
-                            {article.content.split('\n').map((line, i) => (
-                                <React.Fragment key={i}>
-                                    {line}
-                                    <br />
-                                </React.Fragment>
-                            ))}
-                        </p>
-                        <hr />
+                        <div style={{ width: "100%", maxWidth: "800px", textAlign: "left",marginBottom:50 }}>
+                            <h4 id={article.id} style={{ textAlign: "center" }}>
+                                {article.title}
+                            </h4>
+                            <p>
+                                {article.content.split("\n").map((line, i) => (
+                                    <React.Fragment key={i}>
+                                        {line}
+                                        <br />
+                                    </React.Fragment>
+                                ))}
+                            </p>
+                            <hr />
+                        </div>
                     </div>
                 ))}
             </>

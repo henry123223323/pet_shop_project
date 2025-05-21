@@ -11,7 +11,7 @@ export default function Footer() {
           <div className="col-6 col-md-3 mb-4">
             <ul className={styles.list}>
               <li><a href="/Aboutus">關於我們</a></li>
-              <li><a href="/Help">相關法規</a></li>
+              <li><a href="/Help">幫助中心</a></li>
             </ul>
           </div>
           {/* 第二欄 */}

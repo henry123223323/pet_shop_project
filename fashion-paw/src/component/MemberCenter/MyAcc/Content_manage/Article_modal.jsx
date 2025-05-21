@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import axios from 'axios'
+import styles from './Article_manage.module.css'
 
 export default class Article_modal extends Component {
   constructor(props) {
@@ -288,9 +289,9 @@ export default class Article_modal extends Component {
               )}
             </div>
             <div className="modal-footer">
-              <button className="btn btn-secondary" onClick={close}>取消</button>
+              <button className={styles.btncancel} onClick={close}>取消</button>
               {!readOnly && (
-                <button className="btn btn-primary" onClick={this.handleSubmit}>
+                <button className={styles.btnsubmit} onClick={this.handleSubmit}>
                   {mode === 'Add' ? '新增' : '儲存'}
                 </button>
               )}

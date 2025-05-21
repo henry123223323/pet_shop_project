@@ -21,8 +21,8 @@ class AddToMyFavorite extends Component {
                 <i className={`bi bi-heart-fill ${styles.favHover}`}></i>
               </>
             )}
-            <span className={`ms-1 ${styles.favOriginal} `}>{isFavorite ? "已收藏" : "收藏"}</span>
-            <span className={`ms-1 ${styles.favHover} `}>{isFavorite ? "已收藏" : "收藏"}</span>
+            <span className={`ms-1 ${styles.favOriginal} `}>{isFavorite ? " 已收藏" : " 收藏"}</span>
+            <span className={`ms-1 ${styles.favHover} `}>{isFavorite ? " 已收藏" : " 收藏"}</span>
           </>
         ) : (
           <>
