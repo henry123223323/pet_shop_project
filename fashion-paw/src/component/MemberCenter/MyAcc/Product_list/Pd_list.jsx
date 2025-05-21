@@ -108,6 +108,8 @@ class PD_list extends Component {
                                     second: '2-digit',
                                     hour12: false
                                 }).replace(/\//g, '-')}
+
+
                             </div>
                             <div className="col-md-2 col-6">
                                 <strong>訂單狀態</strong><br />

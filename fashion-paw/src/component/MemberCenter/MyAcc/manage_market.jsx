@@ -123,46 +123,46 @@ export default class ManageMarket extends Component {
     }
   }
 
-calladmin = async (pd_name) => {
-  const speakerID = Cookies.get("user_uid");
-  const selectVal  = this.selectRef.current?.value || '';
-  if (!selectVal) return alert('請先選擇回報原因');
+  calladmin = async (pd_name) => {
+    const speakerID = Cookies.get("user_uid");
+    const selectVal = this.selectRef.current?.value || '';
+    if (!selectVal) return alert('請先選擇回報原因');
 
-  const userText = `${pd_name}：${selectVal}`;
-  const botText  = '客服已收到通知囉，會儘快幫您處理！';
-  const roomId   = '12';  
+    const userText = `${pd_name}：${selectVal}`;
+    const botText = '客服已收到通知囉，會儘快幫您處理！';
+    const roomId = '12';
 
-  try {
-    // 1. 寫入使用者回報到 chatroomID=11
-    await axios.post('http://localhost:8000/post/insert/message', {
-      ChatroomID: roomId,
-      speakerID,
-      message: userText,
-      isRead: 1
-    });
+    try {
+      // 1. 寫入使用者回報到 chatroomID=11
+      await axios.post('http://localhost:8000/post/insert/message', {
+        ChatroomID: roomId,
+        speakerID,
+        message: userText,
+        isRead: 1
+      });
 
-    // 2. 寫入客服回覆到同一個聊天室
-    await axios.post('http://localhost:8000/post/insert/message', {
-      ChatroomID: roomId,
-      speakerID: '0',
-      message: botText,
-      isRead: 1
-    });
+      // 2. 寫入客服回覆到同一個聊天室
+      await axios.post('http://localhost:8000/post/insert/message', {
+        ChatroomID: roomId,
+        speakerID: '0',
+        message: botText,
+        isRead: 1
+      });
 
-    // 3. 推播到前端聊天室 (ChatApp 裡監聽 newChatMessage)
-    window.dispatchEvent(new CustomEvent('newChatMessage', {
-      detail: { chatroomID: roomId, text: userText, from: 'user' }
-    }));
-    window.dispatchEvent(new CustomEvent('newChatMessage', {
-      detail: { chatroomID: roomId, text: botText,  from: 'bot'  }
-    }));
+      // 3. 推播到前端聊天室 (ChatApp 裡監聽 newChatMessage)
+      window.dispatchEvent(new CustomEvent('newChatMessage', {
+        detail: { chatroomID: roomId, text: userText, from: 'user' }
+      }));
+      window.dispatchEvent(new CustomEvent('newChatMessage', {
+        detail: { chatroomID: roomId, text: botText, from: 'bot' }
+      }));
 
-    alert('回報已送出，感謝您的回饋！');
-  } catch (err) {
-    console.error('calladmin 失敗', err);
-    alert('回報失敗，請稍後再試');
+      alert('回報已送出，感謝您的回饋！');
+    } catch (err) {
+      console.error('calladmin 失敗', err);
+      alert('回報失敗，請稍後再試');
+    }
   }
-}
 
 
 
@@ -205,25 +205,25 @@ calladmin = async (pd_name) => {
         <h4 style={{ color: "#333" }}>二手商品管理</h4>
         {/* 搜尋 & 新增 */}
         <div className="d-flex justify-content-between align-items-center mb-3">
-  {/* 左邊：搜尋列 */}
-  <div style={{ maxWidth: 300 }}>
-    <input
-      type="search"
-      className="form-control"
-      placeholder="搜尋商品名稱或類別"
-      value={searchTerm}
-      onChange={this.handleSearchChange}
-    />
-  </div>
+          {/* 左邊：搜尋列 */}
+          <div style={{ maxWidth: 300 }}>
+            <input
+              type="search"
+              className="form-control"
+              placeholder="搜尋商品名稱或類別"
+              value={searchTerm}
+              onChange={this.handleSearchChange}
+            />
+          </div>
 
-  {/* 右邊：上架按鈕 */}
-  <button
-    className={styles.btnadd}
-    onClick={this.OpenAdd}
-  >
-    新品上架
-  </button>
-</div>
+          {/* 右邊：上架按鈕 */}
+          <button
+            className={styles.btnadd}
+            onClick={this.OpenAdd}
+          >
+            商品上架
+          </button>
+        </div>
 
 
 
@@ -270,12 +270,12 @@ calladmin = async (pd_name) => {
                   <td><PawDisplay rating={Number(p.new_level)} /></td>
                   <td>{this.renderStatus(p.status)}</td>
                   <td>
-                    <a
-                      href={`/product/${p.pid}`}        // 原生 a 會整頁載入
-                      className={styles.btnadd}
+                    <button
+                      className={styles.btn}
+                      onClick={() => window.location.href = `/product/${p.pid}`}
                     >
                       查看
-                    </a>
+                    </button>
                     <button className={styles.btnsubmit} onClick={() => this.OpenEdit(start + idx)}>編輯</button>
                     <button className={styles.btndel} onClick={() => this.Delete(start + idx)}>刪除</button>
                   </td>

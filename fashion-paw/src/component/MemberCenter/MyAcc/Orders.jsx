@@ -70,8 +70,8 @@ class Orders extends Component {
         let uid = cookie.get("user_uid")
 
         axios.get(`http://localhost:8000/get/getorder/${uid}`).then((response) => {
-            // console.log("查詢成功:", response.data);
-            
+            console.log("查詢成功:", response.data);
+            console.log("前端收到幾筆訂單：", response.data.length);
 
 
             this.setState({

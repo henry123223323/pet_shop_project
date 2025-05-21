@@ -38,7 +38,9 @@ class Login_Compute extends Component {
                     const user = response.data.find(user => user.email === email);
 
                     if (user.password === password) {
-                        // console.log(user.power);
+                        // console.log(user);
+                        // console.log(password);
+                        
                         this.state.power = user.power
 
 
@@ -50,9 +52,8 @@ class Login_Compute extends Component {
                         cookie.set('user_power', user.power, { expires: 1, SameSite: 'Lax' })
                         console.log('成功設置cookie', cookie.get('user_uid'));
                         console.log('成功設置cookie', cookie.get('user_power'));
-                        //更改最後登入時間
-                        axios.post('http://localhost:8000/post/update_login_time', { lastTime: Date.now(), uid: user.uid })
-                        window.location.href = "/";
+                        this.updatatime()
+                        // window.location.href = "/";
 
                     } else {
                         alert("email或密碼錯誤")
@@ -63,6 +64,29 @@ class Login_Compute extends Component {
                 });
         }
     }
+
+
+    updatatime=()=>{
+        let uid = cookie.get("user_uid")
+        axios.post(`http://localhost:8000/post/updatatime/${uid}`).then((response) => {
+            console.log("建立成功:");
+            
+            window.location.href = "/"
+        })
+        .catch((error) => {
+            console.error("更新失敗:", error);
+        });
+
+
+
+
+    }
+
+
+
+
+
+
 
     render() {
         let { show } = this.state
