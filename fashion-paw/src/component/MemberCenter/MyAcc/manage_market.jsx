@@ -271,7 +271,7 @@ export default class ManageMarket extends Component {
                   <td>{this.renderStatus(p.status)}</td>
                   <td>
                     <button
-                      className={styles.btn}
+                      className={styles.btnadd}
                       onClick={() => window.location.href = `/product/${p.pid}`}
                     >
                       查看
