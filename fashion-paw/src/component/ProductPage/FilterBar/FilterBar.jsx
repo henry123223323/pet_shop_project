@@ -22,6 +22,8 @@ export default function FilterBar({
   const [selPrice, setSelPrice] = useState('');
   const [filterkey, setFilterKey] = useState(1)
 
+  const [brandstate, setbrandstate] = useState(false);
+
 
   useEffect(() => {
     console.log(selFuncs);
@@ -56,6 +58,11 @@ export default function FilterBar({
     setFn(prev => prev.includes(val) ? prev.filter(x => x !== val) : [...prev, val]);
   };
 
+  const brandclose = (e) => {
+    setbrandstate(prev => !prev)
+    console.log(brandstate);
+
+  }
   return (
     <div className={styles.filterBar}>
       {/* 第一行：功能 */}
@@ -79,17 +86,45 @@ export default function FilterBar({
       <div className={styles.row}>
         <span className={styles.label}>品牌</span>
         <div className={styles.options}>
-          {brands.map(b => (
-            <label key={b}>
-              <input
-                type="checkbox"
-                checked={selBrands.includes(b)}
-                onChange={() => toggleArray(selBrands, setSelBrands, b)}
-              />
-              {b}
-            </label>
-          ))}
+
+          {
+            brandstate ? (
+              brands.map(b => (
+                <label key={b}>
+                  <input
+                    type="checkbox"
+                    checked={selBrands.includes(b)}
+                    onChange={() => toggleArray(selBrands, setSelBrands, b)}
+                  />
+                  {b}
+                </label>
+              ))
+            ) : (
+              brands.map((b, idx) => (
+                (idx < 7)
+                  ? (
+                    <label key={b}>
+                      <input
+                        type="checkbox"
+                        checked={selBrands.includes(b)}
+                        onChange={() => toggleArray(selBrands, setSelBrands, b)}
+                      />
+                      {b}
+                    </label>
+                  )
+                  : <div></div>
+              ))
+            )
+
+          }
         </div>
+        <span htmlFor="" className='btn' onClick={brandclose}>
+          {
+            brandstate
+              ? <i class={`bi bi-caret-up-square ${styles.btnud}`}></i>
+              : <i class={`bi bi-caret-down-square ${styles.btnud}`}></i>
+          }
+        </span>
       </div>
 
       {/* 第三行：價格 */}
@@ -119,7 +154,7 @@ export default function FilterBar({
           清除篩選
         </button>
       </div>
-    </div>
+    </div >
 
   );
 }
