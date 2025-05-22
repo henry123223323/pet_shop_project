@@ -17,6 +17,11 @@
   padding-top: 10px;
 }
 
+.btnud{
+  color: #3E2F1C;
+  font-size: 18px;
+}
+
 /* 左側標籤文字 */
 .label {
   width: 60px;

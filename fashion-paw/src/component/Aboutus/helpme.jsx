@@ -21,7 +21,7 @@ class HelpMe extends Component {
         this.kusa2Ref = React.createRef();
         this.kusa3Ref = React.createRef();
         this.kusa4Ref = React.createRef();
-                this.state = {
+        this.state = {
             articles: [
                 {
                     id: "123",
@@ -302,7 +302,8 @@ class HelpMe extends Component {
                     <div className={style.first_box} id="onebox" ref={this.oneboxRef}>
                         <div className={style.boxContent}>
                             <h5>好拾毛</h5> <hr />
-                            <span>為寵物打造更綠意的未來</span>
+                            <span>為寵物打造</span><br />
+                            <span>更綠意的未來</span>
                         </div>
                     </div>
                 </a>
@@ -311,7 +312,8 @@ class HelpMe extends Component {
                     <div className={style.two_box} id="twobox" ref={this.twoboxRef}>
                         <div className={style.boxContent}>
                             <h5>核心理念</h5> <hr />
-                            <span>我們深信每一個寵物都是家的一份子</span>
+                            <span>我們深信每一個寵物</span><br />
+                            <span>都是家的一份子</span>
                         </div>
                     </div>
                 </a>
@@ -320,7 +322,8 @@ class HelpMe extends Component {
                     <div className={style.three_box} id="threebox" ref={this.threeboxRef}>
                         <div className={style.boxContent}>
                             <h5>承諾願景</h5> <hr />
-                            <span>我們的願景具體承諾如下</span>
+                            <span>我們的願景</span><br />
+                            <span>具體承諾如下</span>
                         </div>
                     </div>
                 </a>
@@ -329,7 +332,10 @@ class HelpMe extends Component {
                     <div className={style.four_box} id="fourbox" ref={this.fourboxRef}>
                         <div className={style.boxContent}>
                             <h5>企業社會責任</h5> <hr />
-                            <span>好拾毛深知我們的使命不僅是提供高品質的寵物用品</span>
+                            <div className={style.boxContentdetail}>
+                                <span>好拾毛的使命是</span><br/>
+                                <span>提供高品質的寵物用品</span>
+                            </div>
                         </div>
                     </div>
                 </a>
@@ -347,7 +353,7 @@ class HelpMe extends Component {
                         }}
                         className='container-lg'
                     >
-                        <div style={{ width: "100%", maxWidth: "800px", textAlign: "left",marginBottom:50 }}>
+                        <div style={{ width: "100%", maxWidth: "800px", textAlign: "left", marginBottom: 50 }}>
                             <h4 id={article.id} style={{ textAlign: "center" }}>
                                 {article.title}
                             </h4>

@@ -84,7 +84,7 @@
 .three_box,
 .four_box {
     width: 200px;
-    height: 180px;
+    height: 145px;
     position: absolute;
     visibility: hidden;
     /* top: 10%;
@@ -103,30 +103,34 @@
 }
 
 .three_box {
-    top: 310px;
+    top: 330px;
     left: 50%;
 }
 
 .four_box {
-    top: 670px;
+    top: 710px;
     left: 65%;
 }
 
 
 .two_box {
-    top: 670px;
+    top: 710px;
     left: 35%;
 
 }
 
 .first_box {
-    top: 310px;
+    top: 330px;
     left: 20%;
 }
 
 .boxContent {
     text-align: center;
     padding: 15px;
+}
+
+.boxContentdetail{
+
 }
 
 .dancebox {
