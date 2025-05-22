@@ -128,7 +128,8 @@ export default class ManageMarket extends Component {
     const selectVal = this.selectRef.current?.value || '';
     if (!selectVal) return alert('請先選擇回報原因');
 
-    const userText = `${pd_name}：${selectVal}`;
+    const userText = `${pd_name}：${selectVal}
+    <br>請幫我刪除</br>`;
     const botText = '客服已收到通知囉，會儘快幫您處理！';
     const roomId = '12';
 
@@ -277,7 +278,7 @@ export default class ManageMarket extends Component {
                       查看
                     </button>
                     <button className={styles.btnsubmit} onClick={() => this.OpenEdit(start + idx)}>編輯</button>
-                    <button className={styles.btndel} onClick={() => this.Delete(start + idx)}>刪除</button>
+                    {/* <button className={styles.btndel} onClick={() => this.Delete(start + idx)}>刪除</button> */}
                   </td>
                   <td>
                     <select ref={this.selectRef}>
