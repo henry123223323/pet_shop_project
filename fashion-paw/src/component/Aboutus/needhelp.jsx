@@ -10,7 +10,7 @@ class Needhelp extends Component {
         this.g3 = React.createRef();
 
         this.state = {
-            showAppleBlock: false,
+            showAppleBlock: true,
             showBananaBlock: false,
             showCatBlock: false,
             answer1: '',
